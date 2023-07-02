@@ -1,0 +1,19 @@
+---
+title: "Pratical retrieval augmented generation (RAG)"
+author: "ZZ Si"
+date: "2023-06-29"
+categories: [code, generative ai, retrieval]
+# image: "image.jpg"
+---
+
+To overcome the token limit of large language models, one important recipe is retrieval augmentation.
+
+The augmentation can generally happen at 3 places:
+
+- Prompts (inputs)
+- Generated tokens (outputs)
+- Attention layers (intermediate outputs)
+
+## References
+
+- [Long-range Language Modeling with Self-retrieval](https://arxiv.org/pdf/2306.13421.pdf)
