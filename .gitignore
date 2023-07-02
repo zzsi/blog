@@ -1,2 +1,6 @@
 /.quarto/
 /_site/
+/_freeze/
+/.vscode/
+# Mac OS files
+.DS_Store

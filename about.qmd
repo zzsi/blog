@@ -17,3 +17,5 @@ about:
 ---
 
 About this blog
+
+Notes on practical AI and engineering.
