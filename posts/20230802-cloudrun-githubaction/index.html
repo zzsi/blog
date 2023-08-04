@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-05-15">
+<meta name="dcterms.date" content="2023-06-22">
 
-<title>Blog - Post With Code</title>
+<title>Blog - Secure continuous deployment with Github action for Google Cloud Run</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -142,11 +142,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Post With Code</h1>
+      <h1 class="title">Secure continuous deployment with Github action for Google Cloud Run</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
                 <div class="quarto-category">code</div>
-                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">mlops</div>
+                <div class="quarto-category">cloud</div>
               </div>
                   </div>
   </div>
@@ -164,7 +164,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 15, 2023</p>
+        <p class="date">June 22, 2023</p>
       </div>
     </div>
     
@@ -182,15 +182,186 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This is a post with executable code.</p>
-<div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello!</code></pre>
-</div>
-</div>
+<p>Deploying ML models and other python apps to cloud can be tedious. Compute instances need to be provisioned; networking needs to be sorted out; autoscaling needs to be configured; secrets and credentials need to be safely managed.</p>
+<p>Rather than spending hours on the above Dev-Ops tasks (don’t get me wrong, Dev-Ops and ML-Ops are important), I would like to focus on modeling: recipes that produce the best models and make them available for people to use. After years and many projects, I found Google Cloud Run to be a low maintainence solution, with CI/CD managed by Github Action. Similar solutions can be had with AWS ECS and Azure Container Instances. But this post will focus on Cloud Run.</p>
+<section id="prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
+<ul>
+<li>Docker</li>
+<li><a href="https://cloud.google.com/sdk/docs/install">Google Cloud SDK</a></li>
+</ul>
+</section>
+<section id="sample-app" class="level2">
+<h2 class="anchored" data-anchor-id="sample-app">Sample app</h2>
+<section id="running-it-locally" class="level3">
+<h3 class="anchored" data-anchor-id="running-it-locally">Running it locally</h3>
+<pre><code>docker run --rm -it -p 801:801 python:3.8-slim python -m http.server 801 -d /home/</code></pre>
+<p>Run it locally and we can verify it works by visiting <code>localhost:801</code> in a browser.</p>
+</section>
+<section id="deploy-to-cloud-run-manually" class="level3">
+<h3 class="anchored" data-anchor-id="deploy-to-cloud-run-manually">Deploy to Cloud Run manually</h3>
+<p>However, the above docker image does not quite work for Cloud Run, as Cloud Run requires your app in the docker image to use the <code>PORT</code> environment variable to determine which port the app listens to.</p>
+<p>To solve this we need to build a simple docker image with the following <code>Dockerfile</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> python:3.8-slim</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> PORT=8080</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> <span class="ex">python</span> <span class="at">-m</span> http.server <span class="va">$PORT</span> <span class="at">-d</span> /home</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><a href="https://cloud.google.com/sdk/docs/install">Install <code>gcloud</code></a> and <a href="https://cloud.google.com/sdk/gcloud/reference/auth/login">authenticate</a>. Then build and deploy it with the following script (fill in the GCP project id):</p>
+<pre class="shell"><code>project=your-gcp-project-id
+app=example-app
+platform=linux/amd64
+region=us-central1
+docker build --platform $platform -t example-app-image .
+
+image=us.gcr.io/$project/$app:latest
+docker tag example-app-image $image
+docker push $image
+gcloud run deploy $app --image $image --cpu 1 --memory 1Gi --min-instances 1 --region $region --allow-unauthenticated</code></pre>
+<p>Note that there are a couple of hard-coded defaults like the region (<code>us-central1</code>), and image subdomain (<code>us.gcr.io</code>). Feel free to adjust.</p>
+<p>If successful, we will see something like this:</p>
+<pre><code>Deploying container to Cloud Run service [example-app] in project [your-project-id] region [us-central1]
+✓ Deploying new service... Done.                                                 
+  ✓ Creating Revision...                                                         
+  ✓ Routing traffic...                                                           
+  ✓ Setting IAM Policy...                                                        
+Done.                                                                            
+Service [example-app] revision [example-app-...] has been deployed and is serving 100 percent of traffic.</code></pre>
+</section>
+</section>
+<section id="manage-secrets" class="level2">
+<h2 class="anchored" data-anchor-id="manage-secrets">Manage secrets</h2>
+<p>If the app needs to access secrets such as API keys and passwords, then it is a necessary to store and manage them securely.</p>
+<p><a href="https://cloud.google.com/secret-manager/docs/creating-and-accessing-secrets">Create a secret</a> in GCP’s secret manager, and grant minimal necessary access.</p>
+<p>Each secret is versioned. For example, we may create a secret: <code>MY_API_KEY:latest</code> with <code>latest</code> being the version tag.</p>
+<p>When using <code>gcloud run deploy</code> to deploy the app, pass in additional arguments:</p>
+<p><code>--update-secrets=MY_API_KEY=MY_API_KEY:latest,OTHER_API_KEY=OTHER_API_KEY:latest</code></p>
+<p>In the docker container, the secret value will be made available in the environment variable <code>MY_API_KEY</code>.</p>
+</section>
+<section id="set-up-github-action-for-continuous-and-secure-deployment" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-github-action-for-continuous-and-secure-deployment">Set up Github action for continuous and secure deployment</h2>
+<p>While manually running the <code>gcloud</code> command is sufficient to deploy the app to Cloud Run, sometimes it can make sense to set up continuous deployment triggered by github push or release events.</p>
+<section id="service-account" class="level3">
+<h3 class="anchored" data-anchor-id="service-account">Service account</h3>
+<p>First, we need to <a href="https://cloud.google.com/iam/docs/service-accounts-create">follow these instructions to create a service account</a> and grant some permissions:</p>
+<p>Go to IAM, click “grant access” and set: - principal: the new service account just created - role cloud run admin - role: roles/artifactregistry.createOnPushWriter - role: Secret manager secret accessor</p>
+<p>Grant the default compute-engine account access to Secret Manager Secret Accessor role. Go to IAM and set: - principal: the default compute-engine service account - role: Secret Manager Secret Accessor</p>
+<p>Go to IAM/service accounts, click into the default compute-engine service account, then allow the new service account to use this compute engine service account: - principal: the new service account just created - role: “Service account user”</p>
+<p>I spent hours debugging permission errors in the github actions and found the above steps helped resolving the errors. More info <a href="https://github.com/google-github-actions/deploy-cloudrun">here</a> and <a href="https://cloud.google.com/run/docs/securing/service-identity#permissions-required-to-assign">here</a>. However, I suspect some of them are not necessary. Please let me know (zhangzhang.si AT gmail.com) if you have a different experience.</p>
+</section>
+<section id="docker-artifacts-repository" class="level3">
+<h3 class="anchored" data-anchor-id="docker-artifacts-repository">Docker artifacts repository</h3>
+<p>A docker artifacts repository must be created in the same project as the Cloud Run service (we assume the location is “us-central1”):</p>
+<pre><code>gcloud artifacts repositories create slack-llm --location=us-central1 --repository-format=docker</code></pre>
+<p>This artifacts repository will hold the docker image of the app.</p>
+</section>
+<section id="workload-identify-federation-and-keyless-authentication" class="level3">
+<h3 class="anchored" data-anchor-id="workload-identify-federation-and-keyless-authentication">Workload identify federation and keyless authentication</h3>
+<p>Google recommends <a href="https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions">setting up keyless authentication from github actions</a>. To do that, we need to create a Workload Identify Pool:</p>
+<pre class="shell"><code>gcloud iam workload-identity-pools create "my-pool" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --display-name="Demo pool" \
+  --description="My Identify Pool"</code></pre>
+<p>Then create a Workload Identify Provider:</p>
+<pre class="shell"><code>gcloud iam workload-identity-pools providers create-oidc "my-provider" \
+  --project="${PROJECT_ID}" \
+  --location="global" \
+  --workload-identity-pool="my-pool" \
+  --display-name="Demo provider" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=assertion.aud" \
+  --issuer-uri="https://token.actions.githubusercontent.com"</code></pre>
+<p>Then allow authentications from the Workload Identity Provider to impersonate the desired Service Account:</p>
+<pre><code>gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --project="${PROJECT_ID}" \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool/attribute.repository/my-org/my-repo"</code></pre>
+<p>If we do not want to restrict the binding to the specific github repo, then:</p>
+<pre><code>gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --project="${PROJECT_ID}" \
+  --role="roles/iam.workloadIdentityUser" \
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool"</code></pre>
+</section>
+</section>
+<section id="github-secrets" class="level2">
+<h2 class="anchored" data-anchor-id="github-secrets">Github secrets</h2>
+<p>Add the following github secrets:</p>
+<pre class="shell"><code>WIF_PROVIDER=projects/my-gcp-project-number/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+
+WIF_SERVICE_ACCOUNT=my-service-account@my-project.iam.gserviceaccount.com</code></pre>
+</section>
+<section id="github-action-yaml-file" class="level2">
+<h2 class="anchored" data-anchor-id="github-action-yaml-file">Github action yaml file</h2>
+<p>Now we should be ready to set up the actual github action. This is a redacted version of my working github action yaml file:</p>
+<pre><code>name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: your-gcp-project-id
+  GAR_LOCATION: us-central1
+  REPOSITORY: your-artifacts-repo-name
+  SERVICE: your-app-name
+  REGION: us-central1
+
+jobs:
+  deploy:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v1'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
+          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
+
+      # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
+
+      # Authenticate Docker to Google Cloud Artifact Registry
+      - name: Docker Auth
+        id: docker-auth
+        uses: 'docker/login-action@v1'
+        with:
+          username: 'oauth2accesstoken'
+          password: '${{ steps.auth.outputs.access_token }}'
+          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
+
+      - name: Build and Push Container
+        run: |-
+          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" ./
+          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"
+
+      # END - Docker auth and build
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          # NOTE: If using a pre-built image, update the image name here
+          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}
+          # The secrets will be made available as environment variables.
+          secrets: |
+            API_KEY1=MY_API_KEY1:latest
+            PASSWORD2=MY_PASSWORD2:latest
+
+      # If required, use the Cloud Run url output in later steps
+      - name: Show Output
+        run: echo ${{ steps.deploy.outputs.url }}</code></pre>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

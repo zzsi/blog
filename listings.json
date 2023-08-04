@@ -2,8 +2,11 @@
   {
     "listing": "/index.html",
     "items": [
-      "/posts/post-with-code/index.html",
+      "/posts/20230629-rag/index.html",
+      "/posts/20230622-cloudrun-githubaction/index.html",
+      "/posts/20230802-cloudrun-githubaction/index.html",
       "/posts/presentation0/index.html",
+      "/posts/post-with-code/index.html",
       "/posts/welcome/index.html"
     ]
   }

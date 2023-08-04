@@ -1,17 +1,108 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "myblog",
-    "section": "",
-    "text": "Post With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nPresentation\n\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nMay 12, 2023\n\n\nZZ Si\n\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "posts/post-with-code/index.html",
     "href": "posts/post-with-code/index.html",
     "title": "Post With Code",
     "section": "",
-    "text": "This is a post with executable code."
+    "text": "This is a post with executable code.\n\nprint(\"Hello!\")\n\nHello!"
+  },
+  {
+    "objectID": "posts/20230629-rag/index.html",
+    "href": "posts/20230629-rag/index.html",
+    "title": "Pratical retrieval augmented generation (RAG)",
+    "section": "",
+    "text": "To overcome the token limit of large language models, one important recipe is retrieval augmentation.\nThe augmentation can generally happen at 3 places:"
+  },
+  {
+    "objectID": "posts/20230629-rag/index.html#references",
+    "href": "posts/20230629-rag/index.html#references",
+    "title": "Pratical retrieval augmented generation (RAG)",
+    "section": "References",
+    "text": "References\n\nLong-range Language Modeling with Self-retrieval"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog\nNotes on practical AI and engineering."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Notes on practical AI and engineering",
+    "section": "",
+    "text": "Pratical retrieval augmented generation (RAG)\n\n\n\n\n\n\n\ncode\n\n\ngenerative ai\n\n\nretrieval\n\n\n\n\n\n\n\n\n\n\n\nJun 29, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nSecure continuous deployment with Github action for Google Cloud Run\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nJun 22, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nSecure continuous deployment with Github action for Google Cloud Run\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nJun 22, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nPresentation\n\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nMay 12, 2023\n\n\nZZ Si\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/20230622-cloudrun-githubaction/index.html",
+    "href": "posts/20230622-cloudrun-githubaction/index.html",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "",
+    "text": "Deploying ML models and other python apps to cloud can be tedious. Compute instances need to be provisioned; networking needs to be sorted out; autoscaling needs to be configured; secrets and credentials need to be safely managed.\nI do not want to spend even a minute on any of above, because I would like to focus on recipes that produce the best models and make them available for people to use. After years and many projects, I found Google Cloud Run to be a low maintainence solution, with CI/CD managed by Github Action. Similar solutions can be had with AWS ECS and Azure Container Instances. But this post focus on Cloud Run."
+  },
+  {
+    "objectID": "posts/20230622-cloudrun-githubaction/index.html#prerequisites",
+    "href": "posts/20230622-cloudrun-githubaction/index.html#prerequisites",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Prerequisites",
+    "text": "Prerequisites\n\nDocker\nGoogle Cloud SDK"
+  },
+  {
+    "objectID": "posts/20230622-cloudrun-githubaction/index.html#sample-app",
+    "href": "posts/20230622-cloudrun-githubaction/index.html#sample-app",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Sample app",
+    "text": "Sample app\ndocker run -it -p 801:801 -e PORT=801 httpd:2.4\nCloud Run requires your app in the docker image to use the PORT environment variable to determine which port the app listens to."
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html",
+    "href": "posts/20230802-cloudrun-githubaction/index.html",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "",
+    "text": "Deploying ML models and other python apps to cloud can be tedious. Compute instances need to be provisioned; networking needs to be sorted out; autoscaling needs to be configured; secrets and credentials need to be safely managed.\nRather than spending hours on the above Dev-Ops tasks (don’t get me wrong, Dev-Ops and ML-Ops are important), I would like to focus on modeling: recipes that produce the best models and make them available for people to use. After years and many projects, I found Google Cloud Run to be a low maintainence solution, with CI/CD managed by Github Action. Similar solutions can be had with AWS ECS and Azure Container Instances. But this post will focus on Cloud Run."
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html#prerequisites",
+    "href": "posts/20230802-cloudrun-githubaction/index.html#prerequisites",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Prerequisites",
+    "text": "Prerequisites\n\nDocker\nGoogle Cloud SDK"
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html#sample-app",
+    "href": "posts/20230802-cloudrun-githubaction/index.html#sample-app",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Sample app",
+    "text": "Sample app\n\nRunning it locally\ndocker run --rm -it -p 801:801 python:3.8-slim python -m http.server 801 -d /home/\nRun it locally and we can verify it works by visiting localhost:801 in a browser.\n\n\nDeploy to Cloud Run manually\nHowever, the above docker image does not quite work for Cloud Run, as Cloud Run requires your app in the docker image to use the PORT environment variable to determine which port the app listens to.\nTo solve this we need to build a simple docker image with the following Dockerfile:\nFROM python:3.8-slim\nENV PORT=8080\nCMD python -m http.server $PORT -d /home\nInstall gcloud and authenticate. Then build and deploy it with the following script (fill in the GCP project id):\nproject=your-gcp-project-id\napp=example-app\nplatform=linux/amd64\nregion=us-central1\ndocker build --platform $platform -t example-app-image .\n\nimage=us.gcr.io/$project/$app:latest\ndocker tag example-app-image $image\ndocker push $image\ngcloud run deploy $app --image $image --cpu 1 --memory 1Gi --min-instances 1 --region $region --allow-unauthenticated\nNote that there are a couple of hard-coded defaults like the region (us-central1), and image subdomain (us.gcr.io). Feel free to adjust.\nIf successful, we will see something like this:\nDeploying container to Cloud Run service [example-app] in project [your-project-id] region [us-central1]\n✓ Deploying new service... Done.                                                 \n  ✓ Creating Revision...                                                         \n  ✓ Routing traffic...                                                           \n  ✓ Setting IAM Policy...                                                        \nDone.                                                                            \nService [example-app] revision [example-app-...] has been deployed and is serving 100 percent of traffic."
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html#manage-secrets",
+    "href": "posts/20230802-cloudrun-githubaction/index.html#manage-secrets",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Manage secrets",
+    "text": "Manage secrets\nIf the app needs to access secrets such as API keys and passwords, then it is a necessary to store and manage them securely.\nCreate a secret in GCP’s secret manager, and grant minimal necessary access.\nEach secret is versioned. For example, we may create a secret: MY_API_KEY:latest with latest being the version tag.\nWhen using gcloud run deploy to deploy the app, pass in additional arguments:\n--update-secrets=MY_API_KEY=MY_API_KEY:latest,OTHER_API_KEY=OTHER_API_KEY:latest\nIn the docker container, the secret value will be made available in the environment variable MY_API_KEY."
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html#set-up-github-action-for-continuous-and-secure-deployment",
+    "href": "posts/20230802-cloudrun-githubaction/index.html#set-up-github-action-for-continuous-and-secure-deployment",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Set up Github action for continuous and secure deployment",
+    "text": "Set up Github action for continuous and secure deployment\nWhile manually running the gcloud command is sufficient to deploy the app to Cloud Run, sometimes it can make sense to set up continuous deployment triggered by github push or release events.\n\nService account\nFirst, we need to follow these instructions to create a service account and grant some permissions:\nGo to IAM, click “grant access” and set: - principal: the new service account just created - role cloud run admin - role: roles/artifactregistry.createOnPushWriter - role: Secret manager secret accessor\nGrant the default compute-engine account access to Secret Manager Secret Accessor role. Go to IAM and set: - principal: the default compute-engine service account - role: Secret Manager Secret Accessor\nGo to IAM/service accounts, click into the default compute-engine service account, then allow the new service account to use this compute engine service account: - principal: the new service account just created - role: “Service account user”\nI spent hours debugging permission errors in the github actions and found the above steps helped resolving the errors. More info here and here. However, I suspect some of them are not necessary. Please let me know (zhangzhang.si AT gmail.com) if you have a different experience.\n\n\nDocker artifacts repository\nA docker artifacts repository must be created in the same project as the Cloud Run service (we assume the location is “us-central1”):\ngcloud artifacts repositories create slack-llm --location=us-central1 --repository-format=docker\nThis artifacts repository will hold the docker image of the app.\n\n\nWorkload identify federation and keyless authentication\nGoogle recommends setting up keyless authentication from github actions. To do that, we need to create a Workload Identify Pool:\ngcloud iam workload-identity-pools create \"my-pool\" \\\n  --project=\"${PROJECT_ID}\" \\\n  --location=\"global\" \\\n  --display-name=\"Demo pool\" \\\n  --description=\"My Identify Pool\"\nThen create a Workload Identify Provider:\ngcloud iam workload-identity-pools providers create-oidc \"my-provider\" \\\n  --project=\"${PROJECT_ID}\" \\\n  --location=\"global\" \\\n  --workload-identity-pool=\"my-pool\" \\\n  --display-name=\"Demo provider\" \\\n  --attribute-mapping=\"google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=assertion.aud\" \\\n  --issuer-uri=\"https://token.actions.githubusercontent.com\"\nThen allow authentications from the Workload Identity Provider to impersonate the desired Service Account:\ngcloud iam service-accounts add-iam-policy-binding \"my-service-account@${PROJECT_ID}.iam.gserviceaccount.com\" \\\n  --project=\"${PROJECT_ID}\" \\\n  --role=\"roles/iam.workloadIdentityUser\" \\\n  --member=\"principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool/attribute.repository/my-org/my-repo\"\nIf we do not want to restrict the binding to the specific github repo, then:\ngcloud iam service-accounts add-iam-policy-binding \"my-service-account@${PROJECT_ID}.iam.gserviceaccount.com\" \\\n  --project=\"${PROJECT_ID}\" \\\n  --role=\"roles/iam.workloadIdentityUser\" \\\n  --member=\"principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool\""
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html#github-secrets",
+    "href": "posts/20230802-cloudrun-githubaction/index.html#github-secrets",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Github secrets",
+    "text": "Github secrets\nAdd the following github secrets:\nWIF_PROVIDER=projects/my-gcp-project-number/locations/global/workloadIdentityPools/my-pool/providers/my-provider\n\nWIF_SERVICE_ACCOUNT=my-service-account@my-project.iam.gserviceaccount.com"
+  },
+  {
+    "objectID": "posts/20230802-cloudrun-githubaction/index.html#github-action-yaml-file",
+    "href": "posts/20230802-cloudrun-githubaction/index.html#github-action-yaml-file",
+    "title": "Secure continuous deployment with Github action for Google Cloud Run",
+    "section": "Github action yaml file",
+    "text": "Github action yaml file\nNow we should be ready to set up the actual github action. This is a redacted version of my working github action yaml file:\nname: Build and Deploy to Cloud Run\n\non:\n  push:\n    branches:\n      - main\n\nenv:\n  PROJECT_ID: your-gcp-project-id\n  GAR_LOCATION: us-central1\n  REPOSITORY: your-artifacts-repo-name\n  SERVICE: your-app-name\n  REGION: us-central1\n\njobs:\n  deploy:\n    # Add 'id-token' with the intended permissions for workload identity federation\n    permissions:\n      contents: 'read'\n      id-token: 'write'\n\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v2\n\n      - name: Google Auth\n        id: auth\n        uses: 'google-github-actions/auth@v1'\n        with:\n          token_format: 'access_token'\n          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider\n          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com\n\n      # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)\n\n      # Authenticate Docker to Google Cloud Artifact Registry\n      - name: Docker Auth\n        id: docker-auth\n        uses: 'docker/login-action@v1'\n        with:\n          username: 'oauth2accesstoken'\n          password: '${{ steps.auth.outputs.access_token }}'\n          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'\n\n      - name: Build and Push Container\n        run: |-\n          docker build -t \"${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}\" ./\n          docker push \"${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}\"\n\n      # END - Docker auth and build\n\n      - name: Deploy to Cloud Run\n        id: deploy\n        uses: google-github-actions/deploy-cloudrun@v1\n        with:\n          service: ${{ env.SERVICE }}\n          region: ${{ env.REGION }}\n          # NOTE: If using a pre-built image, update the image name here\n          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}\n          # The secrets will be made available as environment variables.\n          secrets: |\n            API_KEY1=MY_API_KEY1:latest\n            PASSWORD2=MY_PASSWORD2:latest\n\n      # If required, use the Cloud Run url output in later steps\n      - name: Show Output\n        run: echo ${{ steps.deploy.outputs.url }}"
   },
   {
     "objectID": "posts/welcome/index.html",
@@ -19,12 +110,5 @@
     "title": "Welcome To My Blog",
     "section": "",
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this blog"
   }
 ]
