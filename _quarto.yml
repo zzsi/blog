@@ -7,9 +7,11 @@ website:
     right:
       - about.qmd
       - icon: github
-        href: https://github.com/
-      - icon: twitter
-        href: https://twitter.com
+        href: https://github.com/zzsi
+      - icon: linkedin
+        href: https://www.linkedin.com/in/zhangzhangsi/
+      # - icon: twitter
+      #   href: https://twitter.com
 format:
   html:
     # theme: cosmo
