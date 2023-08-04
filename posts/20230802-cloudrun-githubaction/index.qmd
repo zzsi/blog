@@ -1,10 +1,12 @@
 ---
-title: "Secure continuous deployment with Github action for Google Cloud Run"
+title: "Deploying machine learning apps to Google Cloud Run with Github actions"
 author: "ZZ Si"
-date: "2023-06-22"
-categories: [code, mlops, cloud]
+date: "2023-08-02"
+toc: true
+categories: [code, mlops, GCP, cloud]
 # image: "image.jpg"
 ---
+
 
 Deploying ML models and other python apps to cloud can be tedious. Compute instances need to be provisioned; networking needs to be sorted out; autoscaling needs to be configured; secrets and credentials need to be safely managed.
 
@@ -12,12 +14,15 @@ Rather than spending hours on the above Dev-Ops tasks (don't get me wrong, Dev-O
 
 ## Prerequisites
 
-- Docker
+To follow along with the tutorial, you need:
+
+- [Docker](https://docs.docker.com/get-docker/)
 - [Google Cloud SDK](https://cloud.google.com/sdk/docs/install)
 
-## Sample app
 
-### Running it locally
+## Sample App
+
+Let's start from a very simple http server and run it locally.
 
 ```
 docker run --rm -it -p 801:801 python:3.8-slim python -m http.server 801 -d /home/
@@ -31,15 +36,20 @@ However, the above docker image does not quite work for Cloud Run, as Cloud Run 
 
 To solve this we need to build a simple docker image with the following `Dockerfile`:
 
+
 ```dockerfile
 FROM python:3.8-slim
 ENV PORT=8080
 CMD python -m http.server $PORT -d /home
 ```
 
-[Install `gcloud`](https://cloud.google.com/sdk/docs/install) and [authenticate](https://cloud.google.com/sdk/gcloud/reference/auth/login). Then build and deploy it with the following script (fill in the GCP project id):
+[Install `gcloud`](https://cloud.google.com/sdk/docs/install) and [authenticate](https://cloud.google.com/sdk/gcloud/reference/auth/login). Then build and deploy it with the following script (click to expand):
+
+:::{.callout-note collapse="true"}
+## Shell script for deploy to google cloud run
 
 ```shell
+# Make sure to fill in the GCP project id:
 project=your-gcp-project-id
 app=example-app
 platform=linux/amd64
@@ -51,10 +61,14 @@ docker tag example-app-image $image
 docker push $image
 gcloud run deploy $app --image $image --cpu 1 --memory 1Gi --min-instances 1 --region $region --allow-unauthenticated
 ```
+:::
 
 Note that there are a couple of hard-coded defaults like the region (`us-central1`), and image subdomain (`us.gcr.io`). Feel free to adjust.
 
 If successful, we will see something like this:
+
+:::{.callout-note collapse="true"}
+## Console output during deployment
 
 ```
 Deploying container to Cloud Run service [example-app] in project [your-project-id] region [us-central1]
@@ -65,6 +79,7 @@ Deploying container to Cloud Run service [example-app] in project [your-project-
 Done.                                                                            
 Service [example-app] revision [example-app-...] has been deployed and is serving 100 percent of traffic.
 ```
+:::
 
 ## Manage secrets
 
@@ -80,7 +95,7 @@ When using `gcloud run deploy` to deploy the app, pass in additional arguments:
 
 In the docker container, the secret value will be made available in the environment variable `MY_API_KEY`.
 
-## Set up Github action for continuous and secure deployment
+## Set up a secure Github action for continuous deployment
 
 While manually running the `gcloud` command is sufficient to deploy the app to Cloud Run, sometimes it can make sense to set up continuous deployment triggered by github push or release events.
 
@@ -104,13 +119,15 @@ service account, then allow the new service account to use this compute engine s
 - principal: the new service account just created
 - role: "Service account user"
 
+:::{.callout-tip}
 I spent hours debugging permission errors in the github actions and found the above steps helped resolving the errors. More info [here](https://github.com/google-github-actions/deploy-cloudrun) and [here](https://cloud.google.com/run/docs/securing/service-identity#permissions-required-to-assign). However, I suspect some of them are not necessary. Please let me know (zhangzhang.si AT gmail.com) if you have a different experience.
+:::
 
 ### Docker artifacts repository
 
 A docker artifacts repository must be created in the same project as the Cloud Run service (we assume the location is "us-central1"):
 
-```
+```shell
 gcloud artifacts repositories create slack-llm --location=us-central1 --repository-format=docker
 ```
 
@@ -118,8 +135,11 @@ This artifacts repository will hold the docker image of the app.
 
 ### Workload identify federation and keyless authentication
 
-Google recommends [setting up keyless authentication from github actions](https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions). To do that, we need to create a Workload Identify Pool:
+For better cloud security, Google recommends [setting up keyless authentication from github actions](https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions). To do that, we need to:
 
+
+:::{.callout-note collapse="true"}
+## Create a Workload Identify Pool
 ```shell
 gcloud iam workload-identity-pools create "my-pool" \
   --project="${PROJECT_ID}" \
@@ -127,8 +147,10 @@ gcloud iam workload-identity-pools create "my-pool" \
   --display-name="Demo pool" \
   --description="My Identify Pool"
 ```
+:::
 
-Then create a Workload Identify Provider:
+:::{.callout-note collapse="true"}
+## Then create a Workload Identify Provider:
 
 ```shell
 gcloud iam workload-identity-pools providers create-oidc "my-provider" \
@@ -139,28 +161,31 @@ gcloud iam workload-identity-pools providers create-oidc "my-provider" \
   --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=assertion.aud" \
   --issuer-uri="https://token.actions.githubusercontent.com"
 ```
+:::
 
-Then allow authentications from the Workload Identity Provider to impersonate the desired Service Account:
+:::{.callout-note collapse="true"}
+## Then allow authentications from the Workload Identity Provider to impersonate the desired Service Account:
 
-```
+```shell
 gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool/attribute.repository/my-org/my-repo"
 ```
 
-If we do not want to restrict the binding to the specific github repo, then:
+Alternatively, if we do not want to restrict the binding to the specific github repo, then:
 
-```
+```shell
 gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool"
 ```
+:::
 
-## Github secrets
+### Github secrets
 
-Add the following github secrets:
+Add the following github secrets (see instructions on [how to add secrets to a github repo](https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-encrypted-secrets-for-your-repository-and-organization-for-github-codespaces)):
 
 ```shell
 WIF_PROVIDER=projects/my-gcp-project-number/locations/global/workloadIdentityPools/my-pool/providers/my-provider
@@ -168,11 +193,16 @@ WIF_PROVIDER=projects/my-gcp-project-number/locations/global/workloadIdentityPoo
 WIF_SERVICE_ACCOUNT=my-service-account@my-project.iam.gserviceaccount.com
 ```
 
-## Github action yaml file
+### Github action yaml file
 
 Now we should be ready to set up the actual github action. This is a redacted version of my working github action yaml file:
 
-```
+
+:::{.callout-tip title="YAML File" collapse="true" icon="false" appearance="default"}
+
+## YAML for Github Action
+
+```yaml
 name: Build and Deploy to Cloud Run
 
 on:
@@ -242,3 +272,8 @@ jobs:
       - name: Show Output
         run: echo ${{ steps.deploy.outputs.url }}
 ```
+:::
+
+Put this in `.github/workflows/deploy.yml` and the next time you push a change to `main`, it should automatically deploy to Cloud Run.
+
+Enjoy!
