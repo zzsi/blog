@@ -21,39 +21,18 @@
     "text": "References\n\nLong-range Language Modeling with Self-retrieval"
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Notes on practical AI and engineering",
+    "section": "",
+    "text": "Pratical retrieval augmented generation (RAG)\n\n\n\n\n\n\n\ncode\n\n\ngenerative ai\n\n\nretrieval\n\n\n\n\n\n\n\n\n\n\n\nJun 29, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nSecure continuous deployment with Github action for Google Cloud Run\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nJun 22, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nPresentation\n\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nMay 12, 2023\n\n\nZZ Si\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
     "text": "About this blog\nNotes on practical AI and engineering."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Notes on practical AI and engineering",
-    "section": "",
-    "text": "Pratical retrieval augmented generation (RAG)\n\n\n\n\n\n\n\ncode\n\n\ngenerative ai\n\n\nretrieval\n\n\n\n\n\n\n\n\n\n\n\nJun 29, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nSecure continuous deployment with Github action for Google Cloud Run\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nJun 22, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nSecure continuous deployment with Github action for Google Cloud Run\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nJun 22, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nPresentation\n\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\n\n\n\n\n  \n\n\n\n\nPost With Code\n\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\n\n\nMay 15, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\n\n\nMay 12, 2023\n\n\nZZ Si\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/20230622-cloudrun-githubaction/index.html",
-    "href": "posts/20230622-cloudrun-githubaction/index.html",
-    "title": "Secure continuous deployment with Github action for Google Cloud Run",
-    "section": "",
-    "text": "Deploying ML models and other python apps to cloud can be tedious. Compute instances need to be provisioned; networking needs to be sorted out; autoscaling needs to be configured; secrets and credentials need to be safely managed.\nI do not want to spend even a minute on any of above, because I would like to focus on recipes that produce the best models and make them available for people to use. After years and many projects, I found Google Cloud Run to be a low maintainence solution, with CI/CD managed by Github Action. Similar solutions can be had with AWS ECS and Azure Container Instances. But this post focus on Cloud Run."
-  },
-  {
-    "objectID": "posts/20230622-cloudrun-githubaction/index.html#prerequisites",
-    "href": "posts/20230622-cloudrun-githubaction/index.html#prerequisites",
-    "title": "Secure continuous deployment with Github action for Google Cloud Run",
-    "section": "Prerequisites",
-    "text": "Prerequisites\n\nDocker\nGoogle Cloud SDK"
-  },
-  {
-    "objectID": "posts/20230622-cloudrun-githubaction/index.html#sample-app",
-    "href": "posts/20230622-cloudrun-githubaction/index.html#sample-app",
-    "title": "Secure continuous deployment with Github action for Google Cloud Run",
-    "section": "Sample app",
-    "text": "Sample app\ndocker run -it -p 801:801 -e PORT=801 httpd:2.4\nCloud Run requires your app in the docker image to use the PORT environment variable to determine which port the app listens to."
   },
   {
     "objectID": "posts/20230802-cloudrun-githubaction/index.html",
