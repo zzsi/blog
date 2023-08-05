@@ -9,7 +9,7 @@
 <meta name="author" content="ZZ Si">
 <meta name="dcterms.date" content="2023-08-02">
 
-<title>Blog - Secure continuous deployment with Github action for Google Cloud Run</title>
+<title>Blog - Deploying machine learning apps to Google Cloud Run with Github actions</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -100,7 +100,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -122,12 +122,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/zzsi" rel="" target=""><i class="bi bi-github" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/zhangzhangsi/" rel="" target=""><i class="bi bi-linkedin" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
@@ -142,10 +142,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Secure continuous deployment with Github action for Google Cloud Run</h1>
+      <h1 class="title">Deploying machine learning apps to Google Cloud Run with Github actions</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">mlops</div>
+                <div class="quarto-category">GCP</div>
                 <div class="quarto-category">cloud</div>
               </div>
                   </div>
@@ -175,7 +176,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link active" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#sample-app" id="toc-sample-app" class="nav-link" data-scroll-target="#sample-app">Sample App</a>
+  <ul class="collapse">
+  <li><a href="#deploy-to-cloud-run-manually" id="toc-deploy-to-cloud-run-manually" class="nav-link" data-scroll-target="#deploy-to-cloud-run-manually">Deploy to Cloud Run manually</a></li>
+  </ul></li>
+  <li><a href="#manage-secrets" id="toc-manage-secrets" class="nav-link" data-scroll-target="#manage-secrets">Manage secrets</a></li>
+  <li><a href="#set-up-a-secure-github-action-for-continuous-deployment" id="toc-set-up-a-secure-github-action-for-continuous-deployment" class="nav-link" data-scroll-target="#set-up-a-secure-github-action-for-continuous-deployment">Set up a secure Github action for continuous deployment</a>
+  <ul class="collapse">
+  <li><a href="#service-account" id="toc-service-account" class="nav-link" data-scroll-target="#service-account">Service account</a></li>
+  <li><a href="#docker-artifacts-repository" id="toc-docker-artifacts-repository" class="nav-link" data-scroll-target="#docker-artifacts-repository">Docker artifacts repository</a></li>
+  <li><a href="#workload-identify-federation-and-keyless-authentication" id="toc-workload-identify-federation-and-keyless-authentication" class="nav-link" data-scroll-target="#workload-identify-federation-and-keyless-authentication">Workload identify federation and keyless authentication</a></li>
+  <li><a href="#github-secrets" id="toc-github-secrets" class="nav-link" data-scroll-target="#github-secrets">Github secrets</a></li>
+  <li><a href="#github-action-yaml-file" id="toc-github-action-yaml-file" class="nav-link" data-scroll-target="#github-action-yaml-file">Github action yaml file</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -186,18 +208,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Rather than spending hours on the above Dev-Ops tasks (don’t get me wrong, Dev-Ops and ML-Ops are important), I would like to focus on modeling: recipes that produce the best models and make them available for people to use. After years and many projects, I found Google Cloud Run to be a low maintainence solution, with CI/CD managed by Github Action. Similar solutions can be had with AWS ECS and Azure Container Instances. But this post will focus on Cloud Run.</p>
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
+<p>To follow along with the tutorial, you need:</p>
 <ul>
-<li>Docker</li>
+<li><a href="https://docs.docker.com/get-docker/">Docker</a></li>
 <li><a href="https://cloud.google.com/sdk/docs/install">Google Cloud SDK</a></li>
 </ul>
 </section>
 <section id="sample-app" class="level2">
-<h2 class="anchored" data-anchor-id="sample-app">Sample app</h2>
-<section id="running-it-locally" class="level3">
-<h3 class="anchored" data-anchor-id="running-it-locally">Running it locally</h3>
+<h2 class="anchored" data-anchor-id="sample-app">Sample App</h2>
+<p>Let’s start from a very simple http server and run it locally.</p>
 <pre><code>docker run --rm -it -p 801:801 python:3.8-slim python -m http.server 801 -d /home/</code></pre>
 <p>Run it locally and we can verify it works by visiting <code>localhost:801</code> in a browser.</p>
-</section>
 <section id="deploy-to-cloud-run-manually" class="level3">
 <h3 class="anchored" data-anchor-id="deploy-to-cloud-run-manually">Deploy to Cloud Run manually</h3>
 <p>However, the above docker image does not quite work for Cloud Run, as Cloud Run requires your app in the docker image to use the <code>PORT</code> environment variable to determine which port the app listens to.</p>
@@ -205,8 +226,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb2"><pre class="sourceCode dockerfile code-with-copy"><code class="sourceCode dockerfile"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> python:3.8-slim</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> PORT=8080</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">CMD</span> <span class="ex">python</span> <span class="at">-m</span> http.server <span class="va">$PORT</span> <span class="at">-d</span> /home</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><a href="https://cloud.google.com/sdk/docs/install">Install <code>gcloud</code></a> and <a href="https://cloud.google.com/sdk/gcloud/reference/auth/login">authenticate</a>. Then build and deploy it with the following script (fill in the GCP project id):</p>
-<pre class="shell"><code>project=your-gcp-project-id
+<p><a href="https://cloud.google.com/sdk/docs/install">Install <code>gcloud</code></a> and <a href="https://cloud.google.com/sdk/gcloud/reference/auth/login">authenticate</a>. Then build and deploy it with the following script (click to expand):</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Shell script for deploy to google cloud run
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<pre class="shell"><code># Make sure to fill in the GCP project id:
+project=your-gcp-project-id
 app=example-app
 platform=linux/amd64
 region=us-central1
@@ -216,8 +250,23 @@ image=us.gcr.io/$project/$app:latest
 docker tag example-app-image $image
 docker push $image
 gcloud run deploy $app --image $image --cpu 1 --memory 1Gi --min-instances 1 --region $region --allow-unauthenticated</code></pre>
+</div>
+</div>
+</div>
 <p>Note that there are a couple of hard-coded defaults like the region (<code>us-central1</code>), and image subdomain (<code>us.gcr.io</code>). Feel free to adjust.</p>
 <p>If successful, we will see something like this:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Console output during deployment
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <pre><code>Deploying container to Cloud Run service [example-app] in project [your-project-id] region [us-central1]
 ✓ Deploying new service... Done.                                                 
   ✓ Creating Revision...                                                         
@@ -225,6 +274,9 @@ gcloud run deploy $app --image $image --cpu 1 --memory 1Gi --min-instances 1 --r
   ✓ Setting IAM Policy...                                                        
 Done.                                                                            
 Service [example-app] revision [example-app-...] has been deployed and is serving 100 percent of traffic.</code></pre>
+</div>
+</div>
+</div>
 </section>
 </section>
 <section id="manage-secrets" class="level2">
@@ -236,8 +288,8 @@ Service [example-app] revision [example-app-...] has been deployed and is servin
 <p><code>--update-secrets=MY_API_KEY=MY_API_KEY:latest,OTHER_API_KEY=OTHER_API_KEY:latest</code></p>
 <p>In the docker container, the secret value will be made available in the environment variable <code>MY_API_KEY</code>.</p>
 </section>
-<section id="set-up-github-action-for-continuous-and-secure-deployment" class="level2">
-<h2 class="anchored" data-anchor-id="set-up-github-action-for-continuous-and-secure-deployment">Set up Github action for continuous and secure deployment</h2>
+<section id="set-up-a-secure-github-action-for-continuous-deployment" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-a-secure-github-action-for-continuous-deployment">Set up a secure Github action for continuous deployment</h2>
 <p>While manually running the <code>gcloud</code> command is sufficient to deploy the app to Cloud Run, sometimes it can make sense to set up continuous deployment triggered by github push or release events.</p>
 <section id="service-account" class="level3">
 <h3 class="anchored" data-anchor-id="service-account">Service account</h3>
@@ -245,23 +297,61 @@ Service [example-app] revision [example-app-...] has been deployed and is servin
 <p>Go to IAM, click “grant access” and set: - principal: the new service account just created - role cloud run admin - role: roles/artifactregistry.createOnPushWriter - role: Secret manager secret accessor</p>
 <p>Grant the default compute-engine account access to Secret Manager Secret Accessor role. Go to IAM and set: - principal: the default compute-engine service account - role: Secret Manager Secret Accessor</p>
 <p>Go to IAM/service accounts, click into the default compute-engine service account, then allow the new service account to use this compute engine service account: - principal: the new service account just created - role: “Service account user”</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>I spent hours debugging permission errors in the github actions and found the above steps helped resolving the errors. More info <a href="https://github.com/google-github-actions/deploy-cloudrun">here</a> and <a href="https://cloud.google.com/run/docs/securing/service-identity#permissions-required-to-assign">here</a>. However, I suspect some of them are not necessary. Please let me know (zhangzhang.si AT gmail.com) if you have a different experience.</p>
+</div>
+</div>
 </section>
 <section id="docker-artifacts-repository" class="level3">
 <h3 class="anchored" data-anchor-id="docker-artifacts-repository">Docker artifacts repository</h3>
 <p>A docker artifacts repository must be created in the same project as the Cloud Run service (we assume the location is “us-central1”):</p>
-<pre><code>gcloud artifacts repositories create slack-llm --location=us-central1 --repository-format=docker</code></pre>
+<pre class="shell"><code>gcloud artifacts repositories create slack-llm --location=us-central1 --repository-format=docker</code></pre>
 <p>This artifacts repository will hold the docker image of the app.</p>
 </section>
 <section id="workload-identify-federation-and-keyless-authentication" class="level3">
 <h3 class="anchored" data-anchor-id="workload-identify-federation-and-keyless-authentication">Workload identify federation and keyless authentication</h3>
-<p>Google recommends <a href="https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions">setting up keyless authentication from github actions</a>. To do that, we need to create a Workload Identify Pool:</p>
+<p>For better cloud security, Google recommends <a href="https://cloud.google.com/blog/products/identity-security/enabling-keyless-authentication-from-github-actions">setting up keyless authentication from github actions</a>. To do that, we need to:</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Create a Workload Identify Pool
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <pre class="shell"><code>gcloud iam workload-identity-pools create "my-pool" \
   --project="${PROJECT_ID}" \
   --location="global" \
   --display-name="Demo pool" \
   --description="My Identify Pool"</code></pre>
-<p>Then create a Workload Identify Provider:</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Then create a Workload Identify Provider:
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
 <pre class="shell"><code>gcloud iam workload-identity-pools providers create-oidc "my-provider" \
   --project="${PROJECT_ID}" \
   --location="global" \
@@ -269,98 +359,133 @@ Service [example-app] revision [example-app-...] has been deployed and is servin
   --display-name="Demo provider" \
   --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.aud=assertion.aud" \
   --issuer-uri="https://token.actions.githubusercontent.com"</code></pre>
-<p>Then allow authentications from the Workload Identity Provider to impersonate the desired Service Account:</p>
-<pre><code>gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Then allow authentications from the Workload Identity Provider to impersonate the desired Service Account:
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<pre class="shell"><code>gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool/attribute.repository/my-org/my-repo"</code></pre>
-<p>If we do not want to restrict the binding to the specific github repo, then:</p>
-<pre><code>gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
+<p>Alternatively, if we do not want to restrict the binding to the specific github repo, then:</p>
+<pre class="shell"><code>gcloud iam service-accounts add-iam-policy-binding "my-service-account@${PROJECT_ID}.iam.gserviceaccount.com" \
   --project="${PROJECT_ID}" \
   --role="roles/iam.workloadIdentityUser" \
   --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/my-pool"</code></pre>
+</div>
+</div>
+</div>
 </section>
-</section>
-<section id="github-secrets" class="level2">
-<h2 class="anchored" data-anchor-id="github-secrets">Github secrets</h2>
-<p>Add the following github secrets:</p>
+<section id="github-secrets" class="level3">
+<h3 class="anchored" data-anchor-id="github-secrets">Github secrets</h3>
+<p>Add the following github secrets (see instructions on <a href="https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-encrypted-secrets-for-your-repository-and-organization-for-github-codespaces">how to add secrets to a github repo</a>):</p>
 <pre class="shell"><code>WIF_PROVIDER=projects/my-gcp-project-number/locations/global/workloadIdentityPools/my-pool/providers/my-provider
 
 WIF_SERVICE_ACCOUNT=my-service-account@my-project.iam.gserviceaccount.com</code></pre>
 </section>
-<section id="github-action-yaml-file" class="level2">
-<h2 class="anchored" data-anchor-id="github-action-yaml-file">Github action yaml file</h2>
+<section id="github-action-yaml-file" class="level3">
+<h3 class="anchored">Github action yaml file</h3>
 <p>Now we should be ready to set up the actual github action. This is a redacted version of my working github action yaml file:</p>
-<pre><code>name: Build and Deploy to Cloud Run
+<div class="callout callout-style-default callout-tip no-icon callout-titled" title="YAML File">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+YAML File
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<section id="yaml-for-github-action" class="level2 callout-body-container callout-body">
+<h2 class="anchored" data-anchor-id="yaml-for-github-action">YAML for Github Action</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Build and Deploy to Cloud Run</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> main</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">PROJECT_ID</span><span class="kw">:</span><span class="at"> your-gcp-project-id</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">GAR_LOCATION</span><span class="kw">:</span><span class="at"> us-central1</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">REPOSITORY</span><span class="kw">:</span><span class="at"> your-artifacts-repo-name</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">SERVICE</span><span class="kw">:</span><span class="at"> your-app-name</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">REGION</span><span class="kw">:</span><span class="at"> us-central1</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">    # Add 'id-token' with the intended permissions for workload identity federation</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">permissions</span><span class="kw">:</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">contents</span><span class="kw">:</span><span class="at"> </span><span class="st">'read'</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">id-token</span><span class="kw">:</span><span class="at"> </span><span class="st">'write'</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Checkout</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v2</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Google Auth</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> auth</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> </span><span class="st">'google-github-actions/auth@v1'</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">token_format</span><span class="kw">:</span><span class="at"> </span><span class="st">'access_token'</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">workload_identity_provider</span><span class="kw">:</span><span class="at"> </span><span class="st">'${{ secrets.WIF_PROVIDER }}'</span><span class="co"> # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">service_account</span><span class="kw">:</span><span class="at"> </span><span class="st">'${{ secrets.WIF_SERVICE_ACCOUNT }}'</span><span class="co"> # e.g. - my-service-account@my-project.iam.gserviceaccount.com</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co">      # </span><span class="re">BEGIN</span><span class="co"> - Docker auth and build (</span><span class="al">NOTE</span><span class="co">: If you already have a container image, these Docker steps can be omitted)</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a><span class="co">      # Authenticate Docker to Google Cloud Artifact Registry</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Docker Auth</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> docker-auth</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> </span><span class="st">'docker/login-action@v1'</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">username</span><span class="kw">:</span><span class="at"> </span><span class="st">'oauth2accesstoken'</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">password</span><span class="kw">:</span><span class="at"> </span><span class="st">'${{ steps.auth.outputs.access_token }}'</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">registry</span><span class="kw">:</span><span class="at"> </span><span class="st">'${{ env.GAR_LOCATION }}-docker.pkg.dev'</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Build and Push Container</span></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="fu">        run</span><span class="kw">: </span><span class="ch">|-</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" ./</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a><span class="co">      # </span><span class="re">END</span><span class="co"> - Docker auth and build</span></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Deploy to Cloud Run</span></span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> deploy</span></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> google-github-actions/deploy-cloudrun@v1</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">service</span><span class="kw">:</span><span class="at"> ${{ env.SERVICE }}</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">region</span><span class="kw">:</span><span class="at"> ${{ env.REGION }}</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a><span class="co">          # </span><span class="al">NOTE</span><span class="co">: If using a pre-built image, update the image name here</span></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">image</span><span class="kw">:</span><span class="at"> ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="co">          # The secrets will be made available as environment variables.</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="fu">          secrets</span><span class="kw">: </span><span class="ch">|</span></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>            API_KEY1=MY_API_KEY1:latest</span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>            PASSWORD2=MY_PASSWORD2:latest</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="co">      # If required, use the Cloud Run url output in later steps</span></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Show Output</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> echo ${{ steps.deploy.outputs.url }}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</div>
+</div>
+<p>Put this in <code>.github/workflows/deploy.yml</code> and the next time you push a change to <code>main</code>, it should automatically deploy to Cloud Run.</p>
+<p>Enjoy!</p>
 
-on:
-  push:
-    branches:
-      - main
 
-env:
-  PROJECT_ID: your-gcp-project-id
-  GAR_LOCATION: us-central1
-  REPOSITORY: your-artifacts-repo-name
-  SERVICE: your-app-name
-  REGION: us-central1
-
-jobs:
-  deploy:
-    # Add 'id-token' with the intended permissions for workload identity federation
-    permissions:
-      contents: 'read'
-      id-token: 'write'
-
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Google Auth
-        id: auth
-        uses: 'google-github-actions/auth@v1'
-        with:
-          token_format: 'access_token'
-          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider
-          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com
-
-      # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)
-
-      # Authenticate Docker to Google Cloud Artifact Registry
-      - name: Docker Auth
-        id: docker-auth
-        uses: 'docker/login-action@v1'
-        with:
-          username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
-          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'
-
-      - name: Build and Push Container
-        run: |-
-          docker build -t "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}" ./
-          docker push "${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"
-
-      # END - Docker auth and build
-
-      - name: Deploy to Cloud Run
-        id: deploy
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          # NOTE: If using a pre-built image, update the image name here
-          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}
-          # The secrets will be made available as environment variables.
-          secrets: |
-            API_KEY1=MY_API_KEY1:latest
-            PASSWORD2=MY_PASSWORD2:latest
-
-      # If required, use the Cloud Run url output in later steps
-      - name: Show Output
-        run: echo ${{ steps.deploy.outputs.url }}</code></pre>
-
-
+</section>
 </section>
 
 </main> <!-- /main -->
