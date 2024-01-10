@@ -2,30 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://github.com/zzsi/blog/posts/20230629-rag/index.html</loc>
-    <lastmod>2023-11-03T00:34:39.043Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/drafts/welcome/index.html</loc>
-    <lastmod>2023-11-03T00:34:37.703Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/drafts/post-with-code/index.html</loc>
-    <lastmod>2023-11-03T00:34:35.499Z</lastmod>
+    <lastmod>2024-01-10T18:13:14.484Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/zzsi/blog/index.html</loc>
-    <lastmod>2023-11-03T00:34:29.883Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/about.html</loc>
-    <lastmod>2023-11-03T00:34:30.691Z</lastmod>
+    <lastmod>2024-01-10T18:13:13.600Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/zzsi/blog/drafts/presentation0/index.html</loc>
-    <lastmod>2023-11-03T00:34:36.891Z</lastmod>
+    <lastmod>2024-01-10T18:13:09.812Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/about.html</loc>
+    <lastmod>2024-01-10T18:13:08.964Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/drafts/welcome/index.html</loc>
+    <lastmod>2024-01-10T18:13:09.516Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/drafts/post-with-code/index.html</loc>
+    <lastmod>2024-01-10T18:13:13.184Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/zzsi/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
-    <lastmod>2023-11-03T00:34:38.691Z</lastmod>
+    <lastmod>2024-01-10T18:13:14.244Z</lastmod>
   </url>
 </urlset>

@@ -14,20 +14,6 @@
     "text": "References\n\nLong-range Language Modeling with Self-retrieval"
   },
   {
-    "objectID": "drafts/welcome/index.html",
-    "href": "drafts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "drafts/post-with-code/index.html",
-    "href": "drafts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code.\n\nprint(\"Hello!\")\n\nHello!"
-  },
-  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Notes on practical AI and life",
@@ -40,6 +26,20 @@
     "title": "About",
     "section": "",
     "text": "About this blog\nNotes on practical AI and engineering."
+  },
+  {
+    "objectID": "drafts/welcome/index.html",
+    "href": "drafts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "drafts/post-with-code/index.html",
+    "href": "drafts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\nprint(\"Hello!\")\n\nHello!"
   },
   {
     "objectID": "posts/20230802-cloudrun-githubaction/index.html",
