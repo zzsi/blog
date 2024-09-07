@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/20240825-sustainable-future/index.html",
       "/posts/20230802-cloudrun-githubaction/index.html",
       "/posts/20230629-rag/index.html"
     ]

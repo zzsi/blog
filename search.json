@@ -1,47 +1,5 @@
 [
   {
-    "objectID": "posts/20230629-rag/index.html",
-    "href": "posts/20230629-rag/index.html",
-    "title": "Pratical retrieval augmented generation (RAG)",
-    "section": "",
-    "text": "To overcome the token limit of large language models, one important recipe is retrieval augmentation.\nThe augmentation can generally happen at 3 places:"
-  },
-  {
-    "objectID": "posts/20230629-rag/index.html#references",
-    "href": "posts/20230629-rag/index.html#references",
-    "title": "Pratical retrieval augmented generation (RAG)",
-    "section": "References",
-    "text": "References\n\nLong-range Language Modeling with Self-retrieval"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Notes on practical AI and life",
-    "section": "",
-    "text": "Deploying machine learning apps to Google Cloud Run with Github actions\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\nGCP\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nAug 2, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nPratical retrieval augmented generation (RAG)\n\n\n\n\n\n\n\ncode\n\n\ngenerative ai\n\n\nretrieval\n\n\n\n\n\n\n\n\n\n\n\nJun 29, 2023\n\n\nZZ Si\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this blog\nNotes on practical AI and engineering."
-  },
-  {
-    "objectID": "drafts/welcome/index.html",
-    "href": "drafts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
-    "objectID": "drafts/post-with-code/index.html",
-    "href": "drafts/post-with-code/index.html",
-    "title": "Post With Code",
-    "section": "",
-    "text": "This is a post with executable code.\n\nprint(\"Hello!\")\n\nHello!"
-  },
-  {
     "objectID": "posts/20230802-cloudrun-githubaction/index.html",
     "href": "posts/20230802-cloudrun-githubaction/index.html",
     "title": "Deploying machine learning apps to Google Cloud Run with Github actions",
@@ -82,5 +40,61 @@
     "title": "Deploying machine learning apps to Google Cloud Run with Github actions",
     "section": "YAML for Github Action",
     "text": "YAML for Github Action\nname: Build and Deploy to Cloud Run\n\non:\n  push:\n    branches:\n      - main\n\nenv:\n  PROJECT_ID: your-gcp-project-id\n  GAR_LOCATION: us-central1\n  REPOSITORY: your-artifacts-repo-name\n  SERVICE: your-app-name\n  REGION: us-central1\n\njobs:\n  deploy:\n    # Add 'id-token' with the intended permissions for workload identity federation\n    permissions:\n      contents: 'read'\n      id-token: 'write'\n\n    runs-on: ubuntu-latest\n    steps:\n      - name: Checkout\n        uses: actions/checkout@v2\n\n      - name: Google Auth\n        id: auth\n        uses: 'google-github-actions/auth@v1'\n        with:\n          token_format: 'access_token'\n          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}' # e.g. - projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider\n          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}' # e.g. - my-service-account@my-project.iam.gserviceaccount.com\n\n      # BEGIN - Docker auth and build (NOTE: If you already have a container image, these Docker steps can be omitted)\n\n      # Authenticate Docker to Google Cloud Artifact Registry\n      - name: Docker Auth\n        id: docker-auth\n        uses: 'docker/login-action@v1'\n        with:\n          username: 'oauth2accesstoken'\n          password: '${{ steps.auth.outputs.access_token }}'\n          registry: '${{ env.GAR_LOCATION }}-docker.pkg.dev'\n\n      - name: Build and Push Container\n        run: |-\n          docker build -t \"${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}\" ./\n          docker push \"${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}\"\n\n      # END - Docker auth and build\n\n      - name: Deploy to Cloud Run\n        id: deploy\n        uses: google-github-actions/deploy-cloudrun@v1\n        with:\n          service: ${{ env.SERVICE }}\n          region: ${{ env.REGION }}\n          # NOTE: If using a pre-built image, update the image name here\n          image: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}\n          # The secrets will be made available as environment variables.\n          secrets: |\n            API_KEY1=MY_API_KEY1:latest\n            PASSWORD2=MY_PASSWORD2:latest\n\n      # If required, use the Cloud Run url output in later steps\n      - name: Show Output\n        run: echo ${{ steps.deploy.outputs.url }}"
+  },
+  {
+    "objectID": "posts/20240825-sustainable-future/index.html",
+    "href": "posts/20240825-sustainable-future/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased 100-fold, with per-capita GDP rising 15-fold since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial general intelligence (AGI) promises to usher in a second wave of growth—this time, much more sustainable. Could AGI help us achieve the elusive goal of expanding our economies while preserving the planet?\n\n\nThe current model of aligning production strictly with consumer demand, championed by giants like Amazon, has certainly brought efficiency gains and reduced certain types of waste. By using sophisticated predictive analytics, companies can now forecast what consumers are likely to purchase with remarkable accuracy, stocking inventory accordingly to minimize overproduction.\nHowever, this approach primarily serves existing demand, much of which is driven not by genuine need but by desires shaped by advertising, social media, and a pervasive consumer culture. This kind of demand often leads to overconsumption of resources and excessive waste, contributing to environmental degradation.\n\n\n\nTo pivot towards sustainability, we need to bridge the gap between demand and need. This means rethinking how and why products are produced and considering the broader impact of these production and consumption patterns on the environment and society. Here are some strategies that can help achieve this balance:\n\n\nCompanies can play a proactive role in shaping sustainable consumer behaviors. Through education and transparent marketing, we can encourage consumers to make informed choices, focusing on quality and sustainability rather than mere novelty or status.\n\n\n\nMoving towards a needs-based production model involves a fundamental shift in business strategy. This model focuses on producing goods that meet essential needs and support well-being without excess. It requires engaging with communities to understand their real needs and developing products that address these without contributing to unnecessary consumption.\n\n\n\nAdopting circular economy principles means designing products for longevity, reparability, and recyclability from the outset. Businesses can innovate to ensure that resources are kept in use for as long as possible, extracting the maximum value from them while in use and recovering and regenerating products and materials at the end of their life.\n\n\n\nBeyond minimizing harm, we can explore how businesses can positively impact the environment. This includes investing in products and technologies that help restore natural ecosystems, such as biodegradable materials and systems that purify air and water.\n\n\n\nRedefining corporate success metrics to include environmental and social impacts is crucial. This involves developing new KPIs that measure a company’s contribution to sustainable development and societal well-being alongside traditional financial metrics.\n\n\n\n\nWhile AI and automation provide tools to increase efficiency, they should be part of a larger toolkit that includes sustainable practices, responsible consumption education, and innovative business models. Only by changing both production and consumption can we hope to achieve a future where economic growth does not come at the expense of the planet."
+  },
+  {
+    "objectID": "posts/20240825-sustainable-future/index.html#from-consumerism-to-sustainability-ais-role-in-shaping-the-future-of-economic-growth",
+    "href": "posts/20240825-sustainable-future/index.html#from-consumerism-to-sustainability-ais-role-in-shaping-the-future-of-economic-growth",
+    "title": "Blog",
+    "section": "",
+    "text": "Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased 100-fold, with per-capita GDP rising 15-fold since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial general intelligence (AGI) promises to usher in a second wave of growth—this time, much more sustainable. Could AGI help us achieve the elusive goal of expanding our economies while preserving the planet?\n\n\nThe current model of aligning production strictly with consumer demand, championed by giants like Amazon, has certainly brought efficiency gains and reduced certain types of waste. By using sophisticated predictive analytics, companies can now forecast what consumers are likely to purchase with remarkable accuracy, stocking inventory accordingly to minimize overproduction.\nHowever, this approach primarily serves existing demand, much of which is driven not by genuine need but by desires shaped by advertising, social media, and a pervasive consumer culture. This kind of demand often leads to overconsumption of resources and excessive waste, contributing to environmental degradation.\n\n\n\nTo pivot towards sustainability, we need to bridge the gap between demand and need. This means rethinking how and why products are produced and considering the broader impact of these production and consumption patterns on the environment and society. Here are some strategies that can help achieve this balance:\n\n\nCompanies can play a proactive role in shaping sustainable consumer behaviors. Through education and transparent marketing, we can encourage consumers to make informed choices, focusing on quality and sustainability rather than mere novelty or status.\n\n\n\nMoving towards a needs-based production model involves a fundamental shift in business strategy. This model focuses on producing goods that meet essential needs and support well-being without excess. It requires engaging with communities to understand their real needs and developing products that address these without contributing to unnecessary consumption.\n\n\n\nAdopting circular economy principles means designing products for longevity, reparability, and recyclability from the outset. Businesses can innovate to ensure that resources are kept in use for as long as possible, extracting the maximum value from them while in use and recovering and regenerating products and materials at the end of their life.\n\n\n\nBeyond minimizing harm, we can explore how businesses can positively impact the environment. This includes investing in products and technologies that help restore natural ecosystems, such as biodegradable materials and systems that purify air and water.\n\n\n\nRedefining corporate success metrics to include environmental and social impacts is crucial. This involves developing new KPIs that measure a company’s contribution to sustainable development and societal well-being alongside traditional financial metrics.\n\n\n\n\nWhile AI and automation provide tools to increase efficiency, they should be part of a larger toolkit that includes sustainable practices, responsible consumption education, and innovative business models. Only by changing both production and consumption can we hope to achieve a future where economic growth does not come at the expense of the planet."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Notes on practical AI and life",
+    "section": "",
+    "text": "From Consumerism to Sustainability – AI’s Role in Shaping the Future of Economic Growth\n\n\n\n\n\n\n\n\n\n\n \n\n\n\n\n  \n\n\n\n\nDeploying machine learning apps to Google Cloud Run with Github actions\n\n\n\n\n\n\n\ncode\n\n\nmlops\n\n\nGCP\n\n\ncloud\n\n\n\n\n\n\n\n\n\n\n\nAug 2, 2023\n\n\nZZ Si\n\n\n\n\n\n\n  \n\n\n\n\nPratical retrieval augmented generation (RAG)\n\n\n\n\n\n\n\ncode\n\n\ngenerative ai\n\n\nretrieval\n\n\n\n\n\n\n\n\n\n\n\nJun 29, 2023\n\n\nZZ Si\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "drafts/post-with-code/index.html",
+    "href": "drafts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\nprint(\"Hello!\")\n\nHello!"
+  },
+  {
+    "objectID": "drafts/welcome/index.html",
+    "href": "drafts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this blog\nNotes on practical AI and engineering."
+  },
+  {
+    "objectID": "posts/20230629-rag/index.html",
+    "href": "posts/20230629-rag/index.html",
+    "title": "Pratical retrieval augmented generation (RAG)",
+    "section": "",
+    "text": "To overcome the token limit of large language models, one important recipe is retrieval augmentation.\nThe augmentation can generally happen at 3 places:"
+  },
+  {
+    "objectID": "posts/20230629-rag/index.html#references",
+    "href": "posts/20230629-rag/index.html#references",
+    "title": "Pratical retrieval augmented generation (RAG)",
+    "section": "References",
+    "text": "References\n\nLong-range Language Modeling with Self-retrieval"
   }
 ]
