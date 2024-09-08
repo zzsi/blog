@@ -1,38 +1,79 @@
-
-## From Consumerism to Sustainability -- AI's Role in Shaping the Future of Economic Growth
+---
+title: "From Consumerism to Sustainability: AI's Role in Shaping the Future of Economic Growth)"
+author: "ZZ Si"
+date: "2024-08-25"
+categories: [economics, ai, environment]
+# image: "image.jpg"
+---
 
 Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased 100-fold, with per-capita GDP rising 15-fold since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial general intelligence (AGI) promises to usher in a second wave of growth—this time, much more sustainable. Could AGI help us achieve the elusive goal of expanding our economies while preserving the planet?
 
-### The Limitations of Demand-Driven Production
 
-The current model of aligning production strictly with consumer demand, championed by giants like Amazon, has certainly brought efficiency gains and reduced certain types of waste. By using sophisticated predictive analytics, companies can now forecast what consumers are likely to purchase with remarkable accuracy, stocking inventory accordingly to minimize overproduction.
+%% In an era dominated by ever-increasing consumer demand, businesses and economies strive for constant growth. But at what cost? While AI and advanced data analytics have revolutionized supply chain management, making production leaner and more responsive, we must ask ourselves: Are we addressing the real needs or just fueling unsustainable consumerism? %%
 
-However, this approach primarily serves existing demand, much of which is driven not by genuine need but by desires shaped by advertising, social media, and a pervasive consumer culture. This kind of demand often leads to overconsumption of resources and excessive waste, contributing to environmental degradation.
+## The Miracle and Pitfall of Demand-Driven Production
 
-### Bridging the Gap Between Demand and Need
+### The miracle
 
-To pivot towards sustainability, we need to bridge the gap between demand and need. This means rethinking how and why products are produced and considering the broader impact of these production and consumption patterns on the environment and society. Here are some strategies that can help achieve this balance:
+The past two centuries have indeed been nothing short of a miracle in terms of economic growth, not just for the sheer scale of economic expansion but for its profound impact on human well-being.
 
-#### 1. **Demand Management and Consumer Education**
+Before the Industrial Revolution, global poverty was widespread, with the vast majority of the population living on subsistence agriculture, vulnerable to disease, famine, and political instability. But with the advent of mechanized production, steam power, and eventually electricity, societies began to shift from agrarian economies to industrial ones, spurring rapid urbanization and creating millions of new jobs.
 
-Companies can play a proactive role in shaping sustainable consumer behaviors. Through education and transparent marketing, we can encourage consumers to make informed choices, focusing on quality and sustainability rather than mere novelty or status.
+![L0000878 Wentworth st, Whitechapel Credit: Wellcome Library, London. Wellcome Images images@wellcome.ac.uk http://wellcomeimages.org Wentworth st, Whitechapel Engraving 1872 By: Gustave DoreLondon: a pilgrimage. Dore, Gustave and Jerrold, Blanchard Published: 1872 Copyrighted work available under Creative Commons Attribution only licence CC BY 4.0 http://creativecommons.org/licenses/by/4.0/](https://abbeymuseum.com.au/wp-content/uploads/2021/01/Victorian-Poverty-Debates-Content-banner-1024x817.jpg)
 
-#### 2. **Needs-Based Production Models**
+![](https://images.csmonitor.com/csm/2016/02/966969_1_0227-grocery_standard.jpg?alias=standard_900x600) ([source](https://www.csmonitor.com/Business/Saving-Money/2016/0228/Shopping-for-one-A-dozen-grocery-hacks-for-living-single))
 
-Moving towards a needs-based production model involves a fundamental shift in business strategy. This model focuses on producing goods that meet essential needs and support well-being without excess. It requires engaging with communities to understand their real needs and developing products that address these without contributing to unnecessary consumption.
+As economies grew, so did living standards. In the 20th century, especially after World War II, growth accelerated dramatically. Advances in medicine, sanitation, and food production allowed populations to boom while simultaneously reducing mortality rates. Global poverty, which once seemed an inescapable fate for most, began to decline sharply. According to the World Bank, extreme poverty (defined as living on less than $1.90 a day) fell from about 80% of the world's population in 1820 to less than 10% today. This reduction in poverty was most pronounced in Asia, where countries like China and India harnessed industrialization and global trade to lift hundreds of millions out of destitution.
 
-#### 3. **Embracing Circular Economy Principles**
+As the engines of industry roared to life, they did more than just produce—they created a world where, for the first time, sufficient goods could be made to meet the needs of millions. Farms, once worked by hand, now harnessed the power of machines, yielding crops at unprecedented rates. Factories churned out textiles, tools, and eventually, the comforts of modern living that had once been unimaginable luxuries. This newfound capacity wasn’t just about survival; it was about abundance. Goods that had once been scarce or accessible only to the wealthy became attainable for the masses. Food production soared, homes were built, and technologies that improved everyday life spread across the globe. In this wave of growth, the world became a place where production was not only sufficient but could also fulfill the aspirations of those who sought more than just the bare necessities.
 
-Adopting circular economy principles means designing products for longevity, reparability, and recyclability from the outset. Businesses can innovate to ensure that resources are kept in use for as long as possible, extracting the maximum value from them while in use and recovering and regenerating products and materials at the end of their life.
+### The pitfall
 
-#### 4. **Regenerative Practices**
+While we feel grateful for the growth and abundance that this era of production has brought us, it's important to recognize the shadows cast by this prosperity. For every product that meets a need, there are countless others that sit unused, discarded, or wasted. The very systems that allowed us to produce more than ever before also led to overproduction, filling landfills with excess and polluting our air and waters with the byproducts of unchecked growth.
 
-Beyond minimizing harm, we can explore how businesses can positively impact the environment. This includes investing in products and technologies that help restore natural ecosystems, such as biodegradable materials and systems that purify air and water.
 
-#### 5. **New Metrics for Success**
+![Car graveyard after Chinese company went bankrupt](https://pbs.twimg.com/media/GV18QX6WwAA9Yh7?format=jpg&name=large)
+![Ariel picture of the tire graveyard in Kuwait. Final resting place of over 7,000,000 rubber tires.](https://pbs.twimg.com/media/GV2MH78WwAA16WR?format=jpg&name=medium)
 
-Redefining corporate success metrics to include environmental and social impacts is crucial. This involves developing new KPIs that measure a company's contribution to sustainable development and societal well-being alongside traditional financial metrics.
+(source of pictures: [@Wolf of X](https://x.com/tradingMaxiSL/status/1827755833733615850))
 
-### Conclusion
+![Clothing graveyard. The so-called “clothing graveyard,” about 30,000 tons of discarded clothing piled in a landfill in the Atacama Desert, Chile, in 2021.](https://cdn.britannica.com/67/249867-050-A203039B/graveyard-for-used-clothes-Chile-Atacama-Desert.jpg)
 
-While AI and automation provide tools to increase efficiency, they should be part of a larger toolkit that includes sustainable practices, responsible consumption education, and innovative business models. Only by changing both production and consumption can we hope to achieve a future where economic growth does not come at the expense of the planet.
+(source: [Antonio Cossio—picture alliance/Getty Images](https://www.britannica.com/art/fast-fashion))
+
+Is such a level of waste inevitable? I would argue that it is, given the nature of how our economies have evolved. The growth we’ve witnessed, particularly over the last century, has been driven largely by demand—an insatiable appetite for more. With the rise of consumerism, the focus shifted from simply meeting needs to creating new desires. As historian Frederick Allen observed, "Business had learned as never before the importance of the ultimate consumer. Unless he could be persuaded to buy and buy lavishly, the whole stream of six-cylinder cars, super heterodynes, cigarettes, rouge compacts, and electric ice boxes would be dammed up at its outlets."
+
+This relentless push to fuel demand led companies to innovate not just in production but also in persuasion. Advertising, marketing, and product design all became tools to keep the consumer engaged and always wanting more. The result? A system where the pressure to buy, to replace, and to upgrade created a cycle of overproduction and, inevitably, waste.
+
+## Is consumerism at fault?
+
+The solution is not to stay away from consumerism and demand-driven market economy.
+Without demand, there would be no profit, and without profit, companies would have no reason to put products on the market. This, in turn, would halt productivity, leaving not enough food on families’ tables or goods in their homes.
+
+Over-production is also inevitable. The reality is that producing just enough to meet actual needs isn’t sufficient, because market systems and distribution networks are inherently imperfect. Food, clothes that are produced do not always reach who need them. True efficiency is hard to achieve, and inequality makes this even worse. If the distribution efficiency is only 10%, then we must produce ten times the necessary amount to meet the demand. This excess production, while ensuring availability, often leads to surplus and waste.
+
+Surplus eats into profits if it isn’t consumed. To keep factories running, corporations thriving, and jobs secure, our dear consumers must continually want more. This is the crux of the demand-driven economy: without constant consumption, the entire system risks stagnation. As a result, businesses invest heavily in marketing, innovation, and new product lines to stimulate desire, encouraging consumers to keep buying—whether or not their needs have truly changed.
+
+![[need_demand_supply.png]]
+
+## A way out: targeted production with AI
+
+[Amazon’s inventory planning system](https://www.amazon.science/latest-news/the-evolution-of-amazons-inventory-planning-system) points to a promising direction. Algorithms can forecast what consumers are likely to purchase with remarkable accuracy, which allow buying and placing inventory accordingly to optimize order fulfillment. As a result, efficiency went up, and waste went down.
+
+And we can push this even further. If demand is way higher than actual need, why not shift production to better match what people really need? Imagine if we weren't constantly hit with endless ads and social media bragging. Our homes would be less cluttered, people wouldn’t need to take on debt just to keep up with the luxury status game, and we could all spend more time with loved ones or out in nature. Life would feel simpler and more focused on what really matters, rather than being driven by overconsumption.
+
+This can happen through targeted production, with AI helping in two ways: automation (boosting production efficiency) and forecasting (improving market efficiency). 
+
+Automation isn’t new—it’s been part of past tech revolutions—but AI is different because it’s more versatile. It can handle many things from language tasks to tool use, extending the 'Crown Jewels' of human intelligence. AI can streamline workflows across corporate functions like accounting, finance, engineering, sales, and marketing, making processes faster and more efficient. 
+Forecasting will further increase market efficiency by accurately predicting demand, allowing businesses to align production more closely with real-time consumer needs. 
+These two factors—automation and forecasting—make anticipatory production and just-in-time production possible. Instead of waiting for demand to fully materialize, we can anticipate and initiate production just ahead of time—producing what is likely needed, when it’s needed. 
+
+Indirectly, AI can help curb the constant stimulation of consumer desires. The problem isn’t advertising itself but rather the excessive advertising that arises in overcrowded, saturated markets. When businesses struggle to meaningfully differentiate their products, they rely heavily on aggressive marketing to capture attention, contributing to the cycle of overconsumption. This reflects poor planning and a lack of clear insight into what consumers truly need—a symptom of incomplete information and insufficient foresight into future demands.
+
+When businesses begin to realize they can be profitable with automation and better planning instead of excessive advertising, they can step back from the exhausting zero-sum game of trying to out-market each other. Their shareholders and employees can finally find peace.
+
+## Looking ahead
+
+The AI revolution is still in its early days, and there are challenges like job displacement and energy use that worry people. But despite these hurdles, I am hopeful AI can help future generations enjoy a more sustainable and prosperous future.
+
+
