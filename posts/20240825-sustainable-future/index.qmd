@@ -6,10 +6,11 @@ categories: [economics, ai, environment]
 # image: "image.jpg"
 ---
 
-Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased 100-fold, with per-capita GDP rising 15-fold since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial intelligence (AI) promises to usher in a second wave of growth—this time, much more sustainable. Could AI help us achieve the elusive goal of expanding our economies while preserving the planet?
+
+Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased [100-fold](https://ourworldindata.org/grapher/global-gdp-over-the-long-run), with per-capita GDP rising [15-fold](https://ourworldindata.org/grapher/gdp-per-capita-maddison?tab=chart) since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial intelligence (AI) promises to usher in a second wave of growth—this time, much more sustainable. Could AI help us achieve the elusive goal of expanding our economies while preserving the planet?
 
 
-%% In an era dominated by ever-increasing consumer demand, businesses and economies strive for constant growth. But at what cost? While AI and advanced data analytics have revolutionized supply chain management, making production leaner and more responsive, we must ask ourselves: Are we addressing the real needs or just fueling unsustainable consumerism? %%
+<!-- %% In an era dominated by ever-increasing consumer demand, businesses and economies strive for constant growth. But at what cost? While AI and advanced data analytics have revolutionized supply chain management, making production leaner and more responsive, we must ask ourselves: Are we addressing the real needs or just fueling unsustainable consumerism? %% -->
 
 ## The Miracle and Pitfall of Demand-Driven Production
 
@@ -19,9 +20,15 @@ The past two centuries have indeed been nothing short of a miracle in terms of e
 
 Before the Industrial Revolution, global poverty was widespread, with the vast majority of the population living on subsistence agriculture, vulnerable to disease, famine, and political instability. But with the advent of mechanized production, steam power, and eventually electricity, societies began to shift from agrarian economies to industrial ones, spurring rapid urbanization and creating millions of new jobs.
 
-![L0000878 Wentworth st, Whitechapel Credit: Wellcome Library, London. Wellcome Images images@wellcome.ac.uk http://wellcomeimages.org Wentworth st, Whitechapel Engraving 1872 By: Gustave DoreLondon: a pilgrimage. Dore, Gustave and Jerrold, Blanchard Published: 1872 Copyrighted work available under Creative Commons Attribution only licence CC BY 4.0 http://creativecommons.org/licenses/by/4.0/](https://abbeymuseum.com.au/wp-content/uploads/2021/01/Victorian-Poverty-Debates-Content-banner-1024x817.jpg)
+<!-- picture occupies half of the width: -->
 
-![A modern grocery store](https://images.csmonitor.com/csm/2016/02/966969_1_0227-grocery_standard.jpg?alias=standard_900x600) ([source](https://www.csmonitor.com/Business/Saving-Money/2016/0228/Shopping-for-one-A-dozen-grocery-hacks-for-living-single))
+
+
+![Poverty then](https://abbeymuseum.com.au/wp-content/uploads/2021/01/Victorian-Poverty-Debates-Content-banner-1024x817.jpg){width=300px} ([source](https://abbeymuseum.com.au/event/victorian-poverty-debates-in-the-1880s-from-charity-to-welfare-by-dr-geoff-ginn/))
+
+<!-- L0000878 Wentworth st, Whitechapel Credit: Wellcome Library, London. Wellcome Images images@wellcome.ac.uk http://wellcomeimages.org Wentworth st, Whitechapel Engraving 1872 By: Gustave DoreLondon: a pilgrimage. Dore, Gustave and Jerrold, Blanchard Published: 1872 Copyrighted work available under Creative Commons Attribution only licence CC BY 4.0 http://creativecommons.org/licenses/by/4.0/ -->
+
+![Abundance now](https://images.csmonitor.com/csm/2016/02/966969_1_0227-grocery_standard.jpg?alias=standard_900x600){width=300px} ([source](https://www.csmonitor.com/Business/Saving-Money/2016/0228/Shopping-for-one-A-dozen-grocery-hacks-for-living-single))
 
 As economies grew, so did living standards. In the 20th century, especially after World War II, growth accelerated dramatically. Advances in medicine, sanitation, and food production allowed populations to boom while simultaneously reducing mortality rates. Global poverty, which once seemed an inescapable fate for most, began to decline sharply. According to the World Bank, extreme poverty (defined as living on less than $1.90 a day) fell from about 80% of the world's population in 1820 to less than 10% today. This reduction in poverty was most pronounced in Asia, where countries like China and India harnessed industrialization and global trade to lift hundreds of millions out of destitution.
 
@@ -32,17 +39,14 @@ As the engines of industry roared to life, they did more than just produce—the
 While we feel grateful for the growth and abundance that this era of production has brought us, it's important to recognize the shadows cast by this prosperity. For every product that meets a need, there are countless others that sit unused, discarded, or wasted. The very systems that allowed us to produce more than ever before also led to overproduction, filling landfills with excess and polluting our air and waters with the byproducts of unchecked growth.
 
 
-![Car graveyard after Chinese company went bankrupt](GV18QX6WwAA9Yh7.jpeg)
+![Car graveyard after Chinese company went bankrupt. Source: [@Wolf of X](https://x.com/tradingMaxiSL/status/1827755833733615850)](GV18QX6WwAA9Yh7.jpeg){width=500px fig-align="left"}
 
-![Ariel picture of the tire graveyard in Kuwait. Final resting place of over 7,000,000 rubber tires.](GV2MH78WwAA16WR.jpeg)
+![Ariel picture of the tire graveyard in Kuwait. Final resting place of over 7,000,000 rubber tires. Source: [@Wolf of X](https://x.com/tradingMaxiSL/status/1827755833733615850)](GV2MH78WwAA16WR.jpeg){width=500px fig-align="left"}
 
-(source of above pictures: [@Wolf of X](https://x.com/tradingMaxiSL/status/1827755833733615850))
+![Clothing graveyard. The so-called “clothing graveyard,” about 30,000 tons of discarded clothing piled in a landfill in the Atacama Desert, Chile, in 2021. Source: [Antonio Cossio—picture alliance/Getty Images](https://www.britannica.com/art/fast-fashion)](https://cdn.britannica.com/67/249867-050-A203039B/graveyard-for-used-clothes-Chile-Atacama-Desert.jpg){width=500px fig-align="left"}
 
-![Clothing graveyard. The so-called “clothing graveyard,” about 30,000 tons of discarded clothing piled in a landfill in the Atacama Desert, Chile, in 2021.](https://cdn.britannica.com/67/249867-050-A203039B/graveyard-for-used-clothes-Chile-Atacama-Desert.jpg)
 
-(source: [Antonio Cossio—picture alliance/Getty Images](https://www.britannica.com/art/fast-fashion))
-
-Is such a level of waste inevitable? I would argue that it is, given the nature of how our economies have evolved. The growth we’ve witnessed, particularly over the last century, has been driven largely by demand—an insatiable appetite for more. With the rise of consumerism, the focus shifted from simply meeting needs to creating new desires. As historian Frederick Allen observed, "Business had learned as never before the importance of the ultimate consumer. Unless he could be persuaded to buy and buy lavishly, the whole stream of six-cylinder cars, super heterodynes, cigarettes, rouge compacts, and electric ice boxes would be dammed up at its outlets."
+Is such a level of waste inevitable? I would argue that it is, given the nature of how our economies have evolved. The growth we’ve witnessed, particularly over the last century, has been driven largely by demand—an insatiable appetite for more. With the rise of consumerism, the focus shifted from simply meeting needs to creating new desires. As historian Frederick Allen observed, "Business had learned as never before the importance of the ultimate consumer. Unless he could be persuaded to buy and buy lavishly, the whole stream of six-cylinder cars, super heterodynes, cigarettes, rouge compacts, and electric ice boxes would be dammed up at its outlets." ([source](https://www.bbc.com/future/article/20210120-how-the-world-became-consumerist))
 
 This relentless push to fuel demand led companies to innovate not just in production but also in persuasion. Advertising, marketing, and product design all became tools to keep the consumer engaged and always wanting more. The result? A system where the pressure to buy, to replace, and to upgrade created a cycle of overproduction and, inevitably, waste.
 
@@ -55,7 +59,7 @@ Over-production is also inevitable. The reality is that producing just enough to
 
 Surplus eats into profits if it isn’t consumed. To keep factories running, corporations thriving, and jobs secure, our dear consumers must continually want more. This is the crux of the demand-driven economy: without constant consumption, the entire system risks stagnation. As a result, businesses invest heavily in marketing, innovation, and new product lines to stimulate desire, encouraging consumers to keep buying—whether or not their needs have truly changed.
 
-![](need_demand_supply.png)
+![Growth of supply and manufactured demand beyond need](need_demand_supply.png){width=300px fig-align="left"}
 
 ## A way out: targeted production with AI
 
