@@ -1,5 +1,5 @@
 ---
-title: "From Consumerism to Sustainability: AI's Role in Shaping the Future of Economic Growth)"
+title: "From Consumerism to Sustainability: AI's Role in Shaping the Future of Economic Growth"
 author: "ZZ Si"
 date: "2024-08-25"
 categories: [economics, ai, environment]
@@ -55,7 +55,7 @@ Over-production is also inevitable. The reality is that producing just enough to
 
 Surplus eats into profits if it isn’t consumed. To keep factories running, corporations thriving, and jobs secure, our dear consumers must continually want more. This is the crux of the demand-driven economy: without constant consumption, the entire system risks stagnation. As a result, businesses invest heavily in marketing, innovation, and new product lines to stimulate desire, encouraging consumers to keep buying—whether or not their needs have truly changed.
 
-![[need_demand_supply.png]]
+![](need_demand_supply.png)
 
 ## A way out: targeted production with AI
 
