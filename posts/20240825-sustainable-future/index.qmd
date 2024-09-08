@@ -6,7 +6,7 @@ categories: [economics, ai, environment]
 # image: "image.jpg"
 ---
 
-Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased 100-fold, with per-capita GDP rising 15-fold since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial general intelligence (AGI) promises to usher in a second wave of growth—this time, much more sustainable. Could AGI help us achieve the elusive goal of expanding our economies while preserving the planet?
+Since the advent of the free market, human society has experienced an unprecedented wave of growth and prosperity. Global GDP has increased 100-fold, with per-capita GDP rising 15-fold since the early 1800s. However, this tremendous growth has exacted a significant toll on the environment. As we stand on the brink of another nascent revolution, artificial intelligence (AI) promises to usher in a second wave of growth—this time, much more sustainable. Could AI help us achieve the elusive goal of expanding our economies while preserving the planet?
 
 
 %% In an era dominated by ever-increasing consumer demand, businesses and economies strive for constant growth. But at what cost? While AI and advanced data analytics have revolutionized supply chain management, making production leaner and more responsive, we must ask ourselves: Are we addressing the real needs or just fueling unsustainable consumerism? %%
@@ -21,7 +21,7 @@ Before the Industrial Revolution, global poverty was widespread, with the vast m
 
 ![L0000878 Wentworth st, Whitechapel Credit: Wellcome Library, London. Wellcome Images images@wellcome.ac.uk http://wellcomeimages.org Wentworth st, Whitechapel Engraving 1872 By: Gustave DoreLondon: a pilgrimage. Dore, Gustave and Jerrold, Blanchard Published: 1872 Copyrighted work available under Creative Commons Attribution only licence CC BY 4.0 http://creativecommons.org/licenses/by/4.0/](https://abbeymuseum.com.au/wp-content/uploads/2021/01/Victorian-Poverty-Debates-Content-banner-1024x817.jpg)
 
-![](https://images.csmonitor.com/csm/2016/02/966969_1_0227-grocery_standard.jpg?alias=standard_900x600) ([source](https://www.csmonitor.com/Business/Saving-Money/2016/0228/Shopping-for-one-A-dozen-grocery-hacks-for-living-single))
+![A modern grocery store](https://images.csmonitor.com/csm/2016/02/966969_1_0227-grocery_standard.jpg?alias=standard_900x600) ([source](https://www.csmonitor.com/Business/Saving-Money/2016/0228/Shopping-for-one-A-dozen-grocery-hacks-for-living-single))
 
 As economies grew, so did living standards. In the 20th century, especially after World War II, growth accelerated dramatically. Advances in medicine, sanitation, and food production allowed populations to boom while simultaneously reducing mortality rates. Global poverty, which once seemed an inescapable fate for most, began to decline sharply. According to the World Bank, extreme poverty (defined as living on less than $1.90 a day) fell from about 80% of the world's population in 1820 to less than 10% today. This reduction in poverty was most pronounced in Asia, where countries like China and India harnessed industrialization and global trade to lift hundreds of millions out of destitution.
 
@@ -32,10 +32,11 @@ As the engines of industry roared to life, they did more than just produce—the
 While we feel grateful for the growth and abundance that this era of production has brought us, it's important to recognize the shadows cast by this prosperity. For every product that meets a need, there are countless others that sit unused, discarded, or wasted. The very systems that allowed us to produce more than ever before also led to overproduction, filling landfills with excess and polluting our air and waters with the byproducts of unchecked growth.
 
 
-![Car graveyard after Chinese company went bankrupt](https://pbs.twimg.com/media/GV18QX6WwAA9Yh7?format=jpg&name=large)
-![Ariel picture of the tire graveyard in Kuwait. Final resting place of over 7,000,000 rubber tires.](https://pbs.twimg.com/media/GV2MH78WwAA16WR?format=jpg&name=medium)
+![Car graveyard after Chinese company went bankrupt](GV18QX6WwAA9Yh7.jpeg)
 
-(source of pictures: [@Wolf of X](https://x.com/tradingMaxiSL/status/1827755833733615850))
+![Ariel picture of the tire graveyard in Kuwait. Final resting place of over 7,000,000 rubber tires.](GV2MH78WwAA16WR.jpeg)
+
+(source of above pictures: [@Wolf of X](https://x.com/tradingMaxiSL/status/1827755833733615850))
 
 ![Clothing graveyard. The so-called “clothing graveyard,” about 30,000 tons of discarded clothing piled in a landfill in the Atacama Desert, Chile, in 2021.](https://cdn.britannica.com/67/249867-050-A203039B/graveyard-for-used-clothes-Chile-Atacama-Desert.jpg)
 
