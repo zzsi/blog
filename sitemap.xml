@@ -2,34 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://github.com/zzsi/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
-    <lastmod>2024-09-08T20:04:25.058Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/posts/20240825-sustainable-future/index.html</loc>
-    <lastmod>2024-09-08T20:04:24.182Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/index.html</loc>
-    <lastmod>2024-09-08T20:04:23.522Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/drafts/presentation0/index.html</loc>
-    <lastmod>2024-09-08T20:04:22.494Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/drafts/post-with-code/index.html</loc>
-    <lastmod>2024-09-08T20:04:22.214Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/zzsi/blog/drafts/welcome/index.html</loc>
-    <lastmod>2024-09-08T20:04:23.034Z</lastmod>
+    <lastmod>2024-09-09T16:57:20.727Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/zzsi/blog/about.html</loc>
-    <lastmod>2024-09-08T20:04:23.758Z</lastmod>
+    <lastmod>2024-09-09T16:57:19.647Z</lastmod>
   </url>
   <url>
-    <loc>https://github.com/zzsi/blog/posts/20230629-rag/index.html</loc>
-    <lastmod>2024-09-08T20:04:24.446Z</lastmod>
+    <loc>https://github.com/zzsi/blog/drafts/20230629-rag/index.html</loc>
+    <lastmod>2024-09-09T16:57:18.979Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/drafts/presentation0/index.html</loc>
+    <lastmod>2024-09-09T16:57:18.175Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/drafts/post-with-code/index.html</loc>
+    <lastmod>2024-09-09T16:57:17.859Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/drafts/welcome/index.html</loc>
+    <lastmod>2024-09-09T16:57:18.723Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/index.html</loc>
+    <lastmod>2024-09-09T16:57:19.395Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/zzsi/blog/posts/20240825-sustainable-future/index.html</loc>
+    <lastmod>2024-09-09T16:57:20.071Z</lastmod>
   </url>
 </urlset>
