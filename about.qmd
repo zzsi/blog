@@ -21,7 +21,7 @@ Notes on practical AI and engineering.
 
 ## ZZ Si
 
-- Co-founder and Engineer @[KUNGFU.AI](kungfu.ai)
+- Co-founder and Engineer @[KUNGFU.AI](https://kungfu.ai)
 - Expertise: Computer vision, Generative models, Practical AI
 - Previously: Apple, Google, Expedia and 2 other startups
 - Ph.D. Stats @UCLA'11, B.S. CS @Tsinghua'06
