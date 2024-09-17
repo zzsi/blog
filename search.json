@@ -44,23 +44,16 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "About this blog",
     "section": "",
     "text": "Notes on practical AI and engineering."
   },
   {
-    "objectID": "about.html#about-this-blog",
-    "href": "about.html#about-this-blog",
-    "title": "About",
-    "section": "",
-    "text": "Notes on practical AI and engineering."
-  },
-  {
-    "objectID": "about.html#about-me",
-    "href": "about.html#about-me",
-    "title": "About",
-    "section": "About me",
-    "text": "About me\nZZ Si\n\nCo-founder and Engineer @KUNGFU.AI\nExpertise: Computer vision, Generative models, Practical AI\nPreviously: Apple, Google, Expedia and 2 other startups\nPh.D. Stats @UCLA’11, B.S. CS @Tsinghua’06"
+    "objectID": "about.html#zz-si",
+    "href": "about.html#zz-si",
+    "title": "About this blog",
+    "section": "ZZ Si",
+    "text": "ZZ Si\n\nCo-founder and Engineer @KUNGFU.AI\nExpertise: Computer vision, Generative models, Practical AI\nPreviously: Apple, Google, Expedia and 2 other startups\nPh.D. Stats @UCLA’11, B.S. CS @Tsinghua’06"
   },
   {
     "objectID": "drafts/20230629-rag/index.html",
