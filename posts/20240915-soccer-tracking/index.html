@@ -198,6 +198,7 @@ Pre-requisites
 <ul>
 <li>You need a machine with GPU to run the code. The code is tested on a machine with a GeForce RTX 3090, and it uses about 3GB of GPU memory.</li>
 <li>You need to have <code>git</code>, <code>docker</code> and <code>python</code> (3.6+) installed.</li>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html">NVidia container toolkit</a> is required to use the GPU in the docker container.</li>
 </ul>
 </section>
 </div>
@@ -239,6 +240,7 @@ Install
 <h3 class="anchored" data-anchor-id="step-2-install-the-dependencies-by-building-a-docker-image">Step 2: Install the dependencies by building a docker image</h3>
 <p>Change directory back to the root of the <code>cvlization</code> repo, and run</p>
 <pre><code>bash examples/sports/soccer_game_visual_tracking/build.sh</code></pre>
+<p>This will build a docker image with necessary dependencies. If you prefer to not use docker, you can install the dependencies manually by following the instructions in the <code>Dockerfile</code> in the same directory.</p>
 </section>
 </div>
 </div>
@@ -256,6 +258,7 @@ Run the code
 <section id="step-3-run-the-code" class="level3 callout-body-container callout-body">
 <h3 class="anchored" data-anchor-id="step-3-run-the-code">Step 3: Run the code</h3>
 <pre><code>bash examples/sports/soccer_game_visual_tracking/predict.sh</code></pre>
+<p>This will use the docker image to run the code. If you prefer to run the code without docker, you can directly use the command in the <code>predict.sh</code> script in the same directory.</p>
 <p>In this script, we are using a 30 second clip from a soccer game. The script will track the pitch and players, identify the team, goal keepers, referee, and ball, and generate a bird’s eye view video. Feel free to modify the script to use a different video or to change the tracking parameters.</p>
 <p>You will find the output video in <code>examples/sports/soccer_game_visual_tracking/0bfacc_0-radar.mp4</code>. This is the video shown on the top of the page. On a machine with a GeForce RTX 3090, it takes about 20 minutes to run, with 3GB of GPU memory used.</p>
 </section>
