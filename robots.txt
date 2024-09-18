@@ -1,1 +1,1 @@
-Sitemap: https://github.com/zzsi/blog/sitemap.xml
+Sitemap: https://zzsi.github.io/blog/sitemap.xml
