@@ -7,7 +7,7 @@ categories: [computer vision, ai, sports, soccer]
 # image: "image.jpg"
 ---
 
-I was intrigued to see this example where a variety (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches may enjoy this.
+I was intrigued to see this example where multiple (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches ma\y enjoy this.
 
 <!-- ![](football-ai.mp4) -->
 ![](0bfacc_0-radar-2.mp4)
@@ -18,14 +18,16 @@ Below I share a workflow to reproduce both success and limitations of this socce
 
 ## Reproducing the birds-eye view creation
 
-:::{.callout-tip title="download" collapse="false" icon="false" appearance="default"}
+:::{.callout-tip title="Pre-requisites" collapse="false" icon="false" appearance="default"}
+
 ### Pre-requisites
 
 - You need a machine with GPU to run the code. The code is tested on a machine with a GeForce RTX 3090, and it uses about 3GB of GPU memory.
 - You need to have `git`, `docker` and `python` (3.6+) installed.
+- [NVidia container toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) is required to use the GPU in the docker container.
 :::
 
-:::{.callout-tip title="download" collapse="false" icon="false" appearance="default"}
+:::{.callout-tip title="Download" collapse="false" icon="false" appearance="default"}
 ### Step 1: Download the code and data
 `cvlization` is an open source repo with many working examples of computer vision workflows. Clone the repo:
 
@@ -42,20 +44,24 @@ bash download_data.sh
 ```
 :::
 
-:::{.callout-note title="Install" collapse="false" icon="false" appearance="default"}
+:::{.callout-tip title="Install" collapse="false" icon="false" appearance="default"}
 ### Step 2: Install the dependencies by building a docker image
 Change directory back to the root of the `cvlization` repo, and run
 
 ```
 bash examples/sports/soccer_game_visual_tracking/build.sh
 ```
+
+This will build a docker image with necessary dependencies. If you prefer to not use docker, you can install the dependencies manually by following the instructions in the `Dockerfile` in the same directory.
 :::
 
-:::{.callout-note title="Run the code" collapse="false" icon="false" appearance="default"}
+:::{.callout-tip title="Run the code" collapse="false" icon="false" appearance="default"}
 ### Step 3: Run the code
 ```
 bash examples/sports/soccer_game_visual_tracking/predict.sh
 ```
+
+This will use the docker image to run the code. If you prefer to run the code without docker, you can directly use the command in the `predict.sh` script in the same directory.
 
 In this script, we are using a 30 second clip from a soccer game. The script will track the pitch and players, identify the team, goal keepers, referee, and ball, and generate a bird's eye view video. Feel free to modify the script to use a different video or to change the tracking parameters.
 
@@ -94,7 +100,11 @@ Regardless, it is a great starting point to build a more reliable system for soc
 
 ## Makeing it better: more accurate player detection and tracking
 
-### Global tracking transformer
+### Transformers for object tracking
+
+Accurate tracking requires attending to relationships between detected players on different frames, their roles, jersey colors etc. Transformers architecture is well suited for this task.
+
+#### Global tracking transformer
 
 [Global tracking transformers](http://arxiv.org/abs/2203.13250) takes a video as input, and predict object tracks in an end-to-end fashion. It was trained on LVIS and COCO, capable of tracking 1000+ categories of objects. Below is the result for tracking persons and the ball. It also identified the billboards though they are not directly useful for our purpose here. This is the tracking result overlayed on the input video:
 
