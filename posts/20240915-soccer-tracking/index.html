@@ -159,7 +159,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#does-it-work-on-other-soccer-videos" id="toc-does-it-work-on-other-soccer-videos" class="nav-link" data-scroll-target="#does-it-work-on-other-soccer-videos">Does it work on other soccer videos?</a></li>
   <li><a href="#makeing-it-better-more-accurate-player-detection-and-tracking" id="toc-makeing-it-better-more-accurate-player-detection-and-tracking" class="nav-link" data-scroll-target="#makeing-it-better-more-accurate-player-detection-and-tracking">Makeing it better: more accurate player detection and tracking</a>
   <ul class="collapse">
-  <li><a href="#global-tracking-transformer" id="toc-global-tracking-transformer" class="nav-link" data-scroll-target="#global-tracking-transformer">Global tracking transformer</a></li>
+  <li><a href="#transformers-for-object-tracking" id="toc-transformers-for-object-tracking" class="nav-link" data-scroll-target="#transformers-for-object-tracking">Transformers for object tracking</a></li>
   <li><a href="#vision-language-models-open-vocabulary-and-zero-shot-object-detection" id="toc-vision-language-models-open-vocabulary-and-zero-shot-object-detection" class="nav-link" data-scroll-target="#vision-language-models-open-vocabulary-and-zero-shot-object-detection">Vision-language models, open vocabulary and zero-shot object detection</a></li>
   </ul></li>
   <li><a href="#datasets" id="toc-datasets" class="nav-link" data-scroll-target="#datasets">Datasets</a></li>
@@ -298,8 +298,11 @@ Run the code
 </section>
 <section id="makeing-it-better-more-accurate-player-detection-and-tracking" class="level2">
 <h2 class="anchored" data-anchor-id="makeing-it-better-more-accurate-player-detection-and-tracking">Makeing it better: more accurate player detection and tracking</h2>
-<section id="global-tracking-transformer" class="level3">
-<h3 class="anchored" data-anchor-id="global-tracking-transformer">Global tracking transformer</h3>
+<section id="transformers-for-object-tracking" class="level3">
+<h3 class="anchored" data-anchor-id="transformers-for-object-tracking">Transformers for object tracking</h3>
+<p>Accurate tracking requires attending to relationships between detected players on different frames, their roles, jersey colors etc. Transformers architecture is well suited for this task.</p>
+<section id="global-tracking-transformer" class="level4">
+<h4 class="anchored" data-anchor-id="global-tracking-transformer">Global tracking transformer</h4>
 <p><a href="http://arxiv.org/abs/2203.13250">Global tracking transformers</a> takes a video as input, and predict object tracks in an end-to-end fashion. It was trained on LVIS and COCO, capable of tracking 1000+ categories of objects. Below is the result for tracking persons and the ball. It also identified the billboards though they are not directly useful for our purpose here. This is the tracking result overlayed on the input video:</p>
 <p><video src="soccer1_clip1_gtr_output.mp4" class="img-fluid" width="550" controls=""><a href="soccer1_clip1_gtr_output.mp4">Video</a></video></p>
 <p>Comparing YOLOv8 and Global Tracking Transformer, the latter seems more accurate.</p>
@@ -326,6 +329,7 @@ Run the code
 </div>
 </div>
 </div>
+</section>
 </section>
 <section id="vision-language-models-open-vocabulary-and-zero-shot-object-detection" class="level3">
 <h3 class="anchored" data-anchor-id="vision-language-models-open-vocabulary-and-zero-shot-object-detection">Vision-language models, open vocabulary and zero-shot object detection</h3>
