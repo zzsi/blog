@@ -1,5 +1,5 @@
 ---
-title: "Notes on practical AI and life"
+title: "Notes on practical AI, engineering and life"
 listing:
   contents: posts
   sort: "date desc"

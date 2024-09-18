@@ -1,1 +1,9 @@
 /* css styles */
+.callout {
+    /* margin-top: 0; */
+    /* 1.25rem by default */
+    /* margin-bottom: 0; */
+    /* 1.25rem by default */
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
