@@ -1,0 +1,164 @@
+---
+title: "Computer vision for soccer games"
+author: "ZZ Si"
+date: "2024-09-15"
+toc: true
+categories: [computer vision, ai, sports, soccer]
+# image: "image.jpg"
+---
+
+I was intrigued to see this example where a variety (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches may enjoy this.
+
+<!-- ![](football-ai.mp4) -->
+![](0bfacc_0-radar-2.mp4)
+
+This is an [open source demo from Roboflow](https://github.com/roboflow/sports), and is easy to reproduce. Since it is a proof of concept, more work needs to be done to make it work for other real world videos, where there a large portion of the soccer field is not visible, or when the camera moved fast (which happens quite often). This is a common challenge for practical computer vision: it can be hard to make an impressive model work on your data.
+
+Below I share a workflow to reproduce both success and limitations of this soccer tracking example, and some ideas to improve it to make it work on more challenging data. Similar techniques can be applied to other sports, like tennis, (American) football, basketball, pickle ball, etc.
+
+## Reproducing the birds-eye view creation
+
+:::{.callout-tip title="download" collapse="false" icon="false" appearance="default"}
+### Pre-requisites
+
+- You need a machine with GPU to run the code. The code is tested on a machine with a GeForce RTX 3090, and it uses about 3GB of GPU memory.
+- You need to have `git`, `docker` and `python` (3.6+) installed.
+:::
+
+:::{.callout-tip title="download" collapse="false" icon="false" appearance="default"}
+### Step 1: Download the code and data
+`cvlization` is an open source repo with many working examples of computer vision workflows. Clone the repo:
+
+```
+git clone https://github.com/kungfuai/cvlization.git
+cd cvlization
+```
+
+In `examples/sports/soccer_game_visual_tracking`, there is a README file that explains how to download the model weights and example video data (`pip` install [gdown](https://pypi.org/project/gdown/) if you haven't already).
+
+```
+cd examples/sports/soccer_game_visual_tracking
+bash download_data.sh
+```
+:::
+
+:::{.callout-note title="Install" collapse="false" icon="false" appearance="default"}
+### Step 2: Install the dependencies by building a docker image
+Change directory back to the root of the `cvlization` repo, and run
+
+```
+bash examples/sports/soccer_game_visual_tracking/build.sh
+```
+:::
+
+:::{.callout-note title="Run the code" collapse="false" icon="false" appearance="default"}
+### Step 3: Run the code
+```
+bash examples/sports/soccer_game_visual_tracking/predict.sh
+```
+
+In this script, we are using a 30 second clip from a soccer game. The script will track the pitch and players, identify the team, goal keepers, referee, and ball, and generate a bird's eye view video. Feel free to modify the script to use a different video or to change the tracking parameters.
+
+You will find the output video in `examples/sports/soccer_game_visual_tracking/0bfacc_0-radar.mp4`. This is the video shown on the top of the page. On a machine with a GeForce RTX 3090, it takes about 20 minutes to run, with 3GB of GPU memory used.
+:::
+
+
+## Under the hood
+
+The computer vision models and algorithms under the hood include:
+
+- A keypoint detection (pose estimation) model for 32 keypoints on the soccer pitch (Yolo-v8, 70M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_pitch_keypoint_detector.ipynb), mAP=0.99, 1 hour on NVidia T4, trained on hundreds of images).
+
+![](keypoint.png){width=320px fig-align="center"}
+
+- An object detection model for players, referrees and goal keepers (Yolo-v8, 68M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb), mAP=0.79, 40min on NNivida L4).
+
+![](player.png){width=320px fig-align="center"}
+
+- Another object detection model for the ball (Yolo-v8, 68M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb), mAP=0.93, 1.3 hours on NVidia A100). The ball is very small in the image, so it is hard to detect.
+- A multi-object tracking model to track the players and the ball ([Bytetrack](https://github.com/ifzhang/ByteTrack), [implementation and python API](https://supervision.roboflow.com/trackers/#bytetrack)).
+- A vision embedding model and clustering algorithm for team identification. [SigLIP](https://arxiv.org/abs/2303.15343) is used to extract embedding vectors from cropped players. [UMAP](https://arxiv.org/abs/1802.03426) is used for dimensionality reduction. [K-means](https://en.wikipedia.org/wiki/K-means_clustering) is used for clustering. Also Resolve the team IDs for detected goalkeepers based on the proximity to team centroids (based on player locations).
+- An image registration/stitching algorithm to create the bird's eye view. Homography is estimated between the pitch keypoints and the reference coornidates of the pitch, using OpenCV's [findHomography](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga4abc2ece9fab9398f2e560d53c8c9780). The pitch in the footage is then warped to a top-down view using [perspectiveTransform](https://docs.opencv.org/3.0-beta/modules/core/doc/operations_on_arrays.html#perspectivetransform).
+- Player re-identification models (e.g. [MOTIP](https://github.com/MCG-NJU/MOTIP)). When the footage is cut or camera is changed to a different angle, the player IDs are lost. We need to re-identify the players in order to connect the player tracks across different clips. I did not find the implemetation in this POC.
+
+
+## Does it work on other soccer videos?
+
+I picked a random soccer game clip, and the result is not as good as the example video. The camera moved faster, zooming in to a partial view of the pitch near the goal post. This posed challenges to the keypoint detection model, and the player tracking model. Some players were not detected due to motion blur and occlusion. Key points of the pitch were not detected in some frames, and the algorithm was not able to create a bird's eye view for those frames. The result is shown below:
+
+![](radar-soccer1_clip1_2.mp4){width=550px}
+
+Regardless, it is a great starting point to build a more reliable system for soccer game analytics. For fun, I also tried it on a very challenging video with a couple of professional players against 100 pupils. Interestingly, the algorithm was able to detect most the players, and create a bird's eye view, as long as a large portion of the pitch is visible:
+
+![](soccer_funny_radar.png){width=550px}
+
+## Makeing it better: more accurate player detection and tracking
+
+### Global tracking transformer
+
+[Global tracking transformers](http://arxiv.org/abs/2203.13250) takes a video as input, and predict object tracks in an end-to-end fashion. It was trained on LVIS and COCO, capable of tracking 1000+ categories of objects. Below is the result for tracking persons and the ball. It also identified the billboards though they are not directly useful for our purpose here. This is the tracking result overlayed on the input video:
+
+![](soccer1_clip1_gtr_output.mp4){width=550px}
+
+Comparing YOLOv8 and Global Tracking Transformer, the latter seems more accurate.
+
+::: {layout-nrow=1}
+![YOLOv8](player_det_yolo.png){width=360px fig-align="left"}
+
+![Global Tracking Transformer](player_det_gtr.png){width=350px fig-align="left"}
+:::
+
+### Vision-language models, open vocabulary and zero-shot object detection
+
+With recent advances in vision-language models, we can leverage the visual knowledge in pretrained large models. How well do they work in detecting players?
+
+#### [Grounding DINO](https://github.com/IDEA-Research/GroundingDINO) 
+
+This model has a DINO transformer backbone and produced by grounded pre-training. You can prompt the model with a sentence or a phrase, and it will highlight the corresponding region in the image. Below is the architecture of Grounding DINO:
+
+![Architecture of Grounding DINO](grounding_dino.png){width=550px}
+
+![With one prompt, Grounding DINO was able to detect players but had a hard time distinguishing the goal keeper from other players.](result_grounding_dino_soccer_goalie.png){width=550px, fig-align="left"}
+
+#### [YOLO World](https://arxiv.org/abs/2401.17270)
+
+This model is an open-vocabulary object detection model. It can detect objects that are not in the training set, and can be used for zero-shot object detection. You can prompt it with a list of words, such as "player, ball, goal keeper".
+
+Compared to Grounding DINO, YOLO World seems less accurate and misses some players when they overlap.
+
+![YOLO-World-XL player detection result.](result_yoloworldxl.png){width=550px, fig-align="left"}
+
+These are just two examples of recent models.
+
+<!-- ### Player re-identification
+
+This is a challenging problem, and there are many ways to approach it. One way is to use a deep learning model to extract features from the players, and then use a clustering algorithm to group the features into different players. This is similar to the team identification algorithm used in the original code, but it is more challenging because the players are moving and changing their appearance. -->
+
+## Datasets
+
+You may need to fine tune the models on more soccer game videos with annotations. Here are some datasets that can be useful:
+
+[SoccerNet](https://www.soccer-net.org/home) is a large-scale dataset for soccer analysis. It contains 550 complete broadcast soccer games and 12 single camera games taken from the major European leagues. It supports various vision tasks such as action spotting, camera calibration, player re-identification and tracking.
+
+This [Kaggle dataset](https://www.kaggle.com/datasets/shreyamainkar/football-soccer-videos-dataset) also contains soccer game videos from Premier League showdowns to FIFA World Cup classics.
+
+## Business use cases
+
+Boardly, here are some areas where computer vision can be used in soccer analytics:
+
+- **Performance Analysis**: By tracking player movement, positioning, and interactions, teams can better understand individual and team performance, making it easier to identify strengths and areas for improvement.
+- **Tactical Insights**: Coaches can analyze formations, pressing patterns, and set-pieces to gain a competitive edge, adjusting their game plans based on data.
+- ** Player Development**: Young athletes can leverage computer vision technology to receive feedback on their performance and improve their skills over time.
+- **Fan Engagement**: Computer vision can create engaging, immersive content for fans, such as 3D replays or interactive match highlights, bringing them closer to the action.
+
+Here is a very incomplete list of companies and use cases:
+
+- [Veo](https://www.veo.co/): AI-powered cameras for automatic sports recording, tracking game action, and AI-tagged highlights for analysis.
+- [Traceup](https://traceup.com/): Video captures that allow tracking players individually, creating personalized highlight reels that parents, players, and coaches can view from various angles.
+- [Track160](https://www.track160.com/soccer-technology): Skeleton tracking, identifying and monitoring the movement of players and the ball, tagging and analyzing events in a match, physical and tactical breakdowns of player performances.
+- [NY Times created 3D stories](https://rd.nytimes.com/projects/modeling-key-world-cup-moments-with-machine-learning/) that allow fans to experience game-defining moments from multiple angles and gain deeper insights into player positioning, ball movement, and tactics.
+
+
+## Conclusion
+
+This is just a start. I am glad to see computer vision applied to everyday life, and hope this post spark some ideas.
