@@ -128,7 +128,7 @@ This model has a DINO transformer backbone and produced by grounded pre-training
 
 ![Architecture of Grounding DINO](grounding_dino.png){width=550px}
 
-![With one prompt, Grounding DINO was able to detect players but had a hard time distinguishing the goal keeper from other players.](result_grounding_dino_soccer_goalie.png){width=550px, fig-align="left"}
+![With one prompt, Grounding DINO was able to detect players but had a hard time distinguishing the goal keeper from other players.](result_grounding_dino_replicate.png){width=550px, fig-align="left"}
 
 #### [YOLO World](https://arxiv.org/abs/2401.17270)
 

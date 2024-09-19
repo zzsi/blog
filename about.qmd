@@ -22,8 +22,8 @@ Notes on practical AI and engineering.
 ## ZZ Si
 
 - Co-founder and Engineer @[KUNGFU.AI](https://kungfu.ai)
-- Expertise: Computer vision, Generative models, Practical AI
-- Previously: Apple, Google, Expedia and 2 other startups
+- Expertise: Computer vision, Generative models, Practical AI deployment
+- Previously: Apple, Google, Expedia, Impossible Ventures (acquired by Capital One), Vicarious (acquired by Google Deepmind)
 - Ph.D. Stats @UCLA'11, B.S. CS @Tsinghua'06
 
 
