@@ -7,7 +7,7 @@ categories: [computer vision, ai, sports, soccer]
 # image: "image.jpg"
 ---
 
-I was intrigued to see this example where multiple (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches ma\y enjoy this.
+I was intrigued to see this example where multiple (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches may enjoy this.
 
 <!-- ![](football-ai.mp4) -->
 ![](0bfacc_0-radar-2.mp4)
@@ -73,19 +73,19 @@ You will find the output video in `examples/sports/soccer_game_visual_tracking/0
 
 The computer vision models and algorithms under the hood include:
 
-- A keypoint detection (pose estimation) model for 32 keypoints on the soccer pitch (Yolo-v8, 70M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_pitch_keypoint_detector.ipynb), mAP=0.99, 1 hour on NVidia T4, trained on hundreds of images).
+- A **keypoint detection (pose estimation)** model for 32 keypoints on the soccer pitch (Yolo-v8, 70M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_pitch_keypoint_detector.ipynb), mAP=0.99, 1 hour on NVidia T4, trained on hundreds of images).
 
 ![](keypoint.png){width=320px fig-align="center"}
 
-- An object detection model for players, referrees and goal keepers (Yolo-v8, 68M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb), mAP=0.79, 40min on NNivida L4).
+- An **object detection** model for players, referrees and goal keepers (Yolo-v8, 68M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb), mAP=0.79, 40min on NNivida L4).
 
 ![](player.png){width=320px fig-align="center"}
 
 - Another object detection model for the ball (Yolo-v8, 68M, [training notebook](https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb), mAP=0.93, 1.3 hours on NVidia A100). The ball is very small in the image, so it is hard to detect.
-- A multi-object tracking model to track the players and the ball ([Bytetrack](https://github.com/ifzhang/ByteTrack), [implementation and python API](https://supervision.roboflow.com/trackers/#bytetrack)).
-- A vision embedding model and clustering algorithm for team identification. [SigLIP](https://arxiv.org/abs/2303.15343) is used to extract embedding vectors from cropped players. [UMAP](https://arxiv.org/abs/1802.03426) is used for dimensionality reduction. [K-means](https://en.wikipedia.org/wiki/K-means_clustering) is used for clustering. Also Resolve the team IDs for detected goalkeepers based on the proximity to team centroids (based on player locations).
-- An image registration/stitching algorithm to create the bird's eye view. Homography is estimated between the pitch keypoints and the reference coornidates of the pitch, using OpenCV's [findHomography](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga4abc2ece9fab9398f2e560d53c8c9780). The pitch in the footage is then warped to a top-down view using [perspectiveTransform](https://docs.opencv.org/3.0-beta/modules/core/doc/operations_on_arrays.html#perspectivetransform).
-- Player re-identification models (e.g. [MOTIP](https://github.com/MCG-NJU/MOTIP)). When the footage is cut or camera is changed to a different angle, the player IDs are lost. We need to re-identify the players in order to connect the player tracks across different clips. I did not find the implemetation in this POC.
+- A **multi-object tracking** model to track the players and the ball ([Bytetrack](https://github.com/ifzhang/ByteTrack), [implementation and python API](https://supervision.roboflow.com/trackers/#bytetrack)).
+- A vision **embedding model and clustering** algorithm for team identification. [SigLIP](https://arxiv.org/abs/2303.15343) is used to extract embedding vectors from cropped players. [UMAP](https://arxiv.org/abs/1802.03426) is used for dimensionality reduction. [K-means](https://en.wikipedia.org/wiki/K-means_clustering) is used for clustering. Also Resolve the team IDs for detected goalkeepers based on the proximity to team centroids (based on player locations).
+- An **image registration/stitching** algorithm to create the bird's eye view. Homography is estimated between the pitch keypoints and the reference coornidates of the pitch, using OpenCV's [findHomography](https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga4abc2ece9fab9398f2e560d53c8c9780). The pitch in the footage is then warped to a top-down view using [perspectiveTransform](https://docs.opencv.org/3.0-beta/modules/core/doc/operations_on_arrays.html#perspectivetransform).
+- **Player re-identification** models (e.g. [MOTIP](https://github.com/MCG-NJU/MOTIP)). When the footage is cut or camera is changed to a different angle, the player IDs are lost. We need to re-identify the players in order to connect the player tracks across different clips. I did not find the implemetation in this POC.
 
 
 ## Does it work on other soccer videos?
