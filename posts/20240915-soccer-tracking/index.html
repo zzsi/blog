@@ -175,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>I was intrigued to see this example where multiple (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches maenjoy this.</p>
+<p>I was intrigued to see this example where multiple (at least 5) computer vision techniques to create visual appealing analytics from soccer game footage. Soccer fans and coaches may enjoy this.</p>
 <!-- ![](football-ai.mp4) -->
 <p><video src="0bfacc_0-radar-2.mp4" class="img-fluid" controls=""><a href="0bfacc_0-radar-2.mp4">Video</a></video></p>
 <p>This is an <a href="https://github.com/roboflow/sports">open source demo from Roboflow</a>, and is easy to reproduce. Since it is a proof of concept, more work needs to be done to make it work for other real world videos, where there a large portion of the soccer field is not visible, or when the camera moved fast (which happens quite often). This is a common challenge for practical computer vision: it can be hard to make an impressive model work on your data.</p>
@@ -269,7 +269,7 @@ Run the code
 <h2 class="anchored" data-anchor-id="under-the-hood">Under the hood</h2>
 <p>The computer vision models and algorithms under the hood include:</p>
 <ul>
-<li>A keypoint detection (pose estimation) model for 32 keypoints on the soccer pitch (Yolo-v8, 70M, <a href="https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_pitch_keypoint_detector.ipynb">training notebook</a>, mAP=0.99, 1 hour on NVidia T4, trained on hundreds of images).</li>
+<li>A <strong>keypoint detection (pose estimation)</strong> model for 32 keypoints on the soccer pitch (Yolo-v8, 70M, <a href="https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_pitch_keypoint_detector.ipynb">training notebook</a>, mAP=0.99, 1 hour on NVidia T4, trained on hundreds of images).</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -277,7 +277,7 @@ Run the code
 </figure>
 </div>
 <ul>
-<li>An object detection model for players, referrees and goal keepers (Yolo-v8, 68M, <a href="https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb">training notebook</a>, mAP=0.79, 40min on NNivida L4).</li>
+<li>An <strong>object detection</strong> model for players, referrees and goal keepers (Yolo-v8, 68M, <a href="https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb">training notebook</a>, mAP=0.79, 40min on NNivida L4).</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -286,10 +286,10 @@ Run the code
 </div>
 <ul>
 <li>Another object detection model for the ball (Yolo-v8, 68M, <a href="https://github.com/roboflow/sports/blob/main/examples/soccer/notebooks/train_ball_detector.ipynb">training notebook</a>, mAP=0.93, 1.3 hours on NVidia A100). The ball is very small in the image, so it is hard to detect.</li>
-<li>A multi-object tracking model to track the players and the ball (<a href="https://github.com/ifzhang/ByteTrack">Bytetrack</a>, <a href="https://supervision.roboflow.com/trackers/#bytetrack">implementation and python API</a>).</li>
-<li>A vision embedding model and clustering algorithm for team identification. <a href="https://arxiv.org/abs/2303.15343">SigLIP</a> is used to extract embedding vectors from cropped players. <a href="https://arxiv.org/abs/1802.03426">UMAP</a> is used for dimensionality reduction. <a href="https://en.wikipedia.org/wiki/K-means_clustering">K-means</a> is used for clustering. Also Resolve the team IDs for detected goalkeepers based on the proximity to team centroids (based on player locations).</li>
-<li>An image registration/stitching algorithm to create the bird’s eye view. Homography is estimated between the pitch keypoints and the reference coornidates of the pitch, using OpenCV’s <a href="https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga4abc2ece9fab9398f2e560d53c8c9780">findHomography</a>. The pitch in the footage is then warped to a top-down view using <a href="https://docs.opencv.org/3.0-beta/modules/core/doc/operations_on_arrays.html#perspectivetransform">perspectiveTransform</a>.</li>
-<li>Player re-identification models (e.g.&nbsp;<a href="https://github.com/MCG-NJU/MOTIP">MOTIP</a>). When the footage is cut or camera is changed to a different angle, the player IDs are lost. We need to re-identify the players in order to connect the player tracks across different clips. I did not find the implemetation in this POC.</li>
+<li>A <strong>multi-object tracking</strong> model to track the players and the ball (<a href="https://github.com/ifzhang/ByteTrack">Bytetrack</a>, <a href="https://supervision.roboflow.com/trackers/#bytetrack">implementation and python API</a>).</li>
+<li>A vision <strong>embedding model and clustering</strong> algorithm for team identification. <a href="https://arxiv.org/abs/2303.15343">SigLIP</a> is used to extract embedding vectors from cropped players. <a href="https://arxiv.org/abs/1802.03426">UMAP</a> is used for dimensionality reduction. <a href="https://en.wikipedia.org/wiki/K-means_clustering">K-means</a> is used for clustering. Also Resolve the team IDs for detected goalkeepers based on the proximity to team centroids (based on player locations).</li>
+<li>An <strong>image registration/stitching</strong> algorithm to create the bird’s eye view. Homography is estimated between the pitch keypoints and the reference coornidates of the pitch, using OpenCV’s <a href="https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html#ga4abc2ece9fab9398f2e560d53c8c9780">findHomography</a>. The pitch in the footage is then warped to a top-down view using <a href="https://docs.opencv.org/3.0-beta/modules/core/doc/operations_on_arrays.html#perspectivetransform">perspectiveTransform</a>.</li>
+<li><strong>Player re-identification</strong> models (e.g.&nbsp;<a href="https://github.com/MCG-NJU/MOTIP">MOTIP</a>). When the footage is cut or camera is changed to a different angle, the player IDs are lost. We need to re-identify the players in order to connect the player tracks across different clips. I did not find the implemetation in this POC.</li>
 </ul>
 </section>
 <section id="does-it-work-on-other-soccer-videos" class="level2">
