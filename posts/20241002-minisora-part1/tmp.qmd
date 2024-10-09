@@ -1,0 +1,8 @@
+To some degree, this is a moment more significant than large language models (no offense to language models, as 
+the ability to model language is a crown jewel of intelligence). The reason is that vision as an intelligence 
+is shared by many species, and emerged way before language. Visual motor skills are critical for survival. This 
+is so much to unlock how artificial intelligence learns what the world looks like.
+
+As someone trained in computer vision, I find this development both shocking and exciting. It feels like a breakthrough in AI, similar to the introduction of GPT-2 for language models. While the commercial applications are still in their early stages, SORA clearly shows a path forward for video generation technology.
+
+Inspired by this breakthrough, I conducted several hundred experiments on a smaller scale in April 2024. My goal was to explore whether it's possible to train a minimal video generation model with limited resources. This blog post summarizes my learnings and shares insights from this journey.
