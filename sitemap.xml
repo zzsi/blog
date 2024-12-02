@@ -2,46 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://zzsi.github.io/blog/posts/20240915-soccer-tracking/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.842Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.918Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/welcome/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/presentation0/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/about.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/post-with-code/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20230629-rag/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
+    <lastmod>2024-12-02T20:23:24.314Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20240825-sustainable-future/index.html</loc>
-    <lastmod>2024-10-09T15:21:33.770Z</lastmod>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
   </url>
   <url>
-    <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/tmp.html</loc>
-    <lastmod>2024-10-09T15:21:33.918Z</lastmod>
+    <loc>https://zzsi.github.io/blog/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20230629-rag/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/post-with-code/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/about.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/presentation0/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/welcome/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/index.html</loc>
+    <lastmod>2024-12-02T20:23:24.386Z</lastmod>
   </url>
 </urlset>
