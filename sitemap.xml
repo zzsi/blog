@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://zzsi.github.io/blog/posts/20240915-soccer-tracking/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.314Z</lastmod>
-  </url>
-  <url>
     <loc>https://zzsi.github.io/blog/posts/20240825-sustainable-future/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20230629-rag/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/post-with-code/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/about.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/presentation0/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/welcome/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.242Z</lastmod>
+    <lastmod>2025-07-14T19:39:22.592Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/index.html</loc>
-    <lastmod>2024-12-02T20:23:24.386Z</lastmod>
+    <lastmod>2025-07-14T19:39:22.714Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20231205/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.590Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20250712-agentic-causal/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.716Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20230629-rag/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.587Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/post-with-code/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.587Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/about.html</loc>
+    <lastmod>2025-07-14T19:39:22.587Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/welcome/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.587Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/presentation0/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.587Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.588Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20230510/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.588Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20240915-soccer-tracking/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.650Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
+    <lastmod>2025-07-14T19:39:22.588Z</lastmod>
   </url>
 </urlset>

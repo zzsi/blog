@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-06-29">
+<meta name="dcterms.date" content="2023-12-05">
 
-<title>Pratical retrieval augmented generation (RAG) – Blog</title>
+<title>OpenAI wants you to bring your data to create powerful GPTs (and should you?) – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
 <body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -112,61 +112,74 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">OpenAI wants you to bring your data to create powerful GPTs (and should you?)</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">llm</div>
+                <div class="quarto-category">open source</div>
+                <div class="quarto-category">generative ai</div>
+                <div class="quarto-category">retrieval</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>ZZ Si </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 5, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Pratical retrieval augmented generation (RAG)</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">generative ai</div>
-    <div class="quarto-category">retrieval</div>
-  </div>
-  </div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2023</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
 
 
-</header>
-
-
-<p>To reduce hallucination and overcome the token limit of large language models, one important recipe is retrieval augmentation.</p>
-<p>The retrieval augmentation can generally happen at 3 places:</p>
+<section id="gpts-app-store-for-llms" class="level2">
+<h2 class="anchored" data-anchor-id="gpts-app-store-for-llms">GPTs, App Store for LLMs?</h2>
+<p>On OpenAI Dev day, an important feature was announced that allows users to create custom GPTs by uploading documents, tailoring instructions and connecting the GPT model to plugins like web browsing. I have been using it and it helps my work and life. Here are two examples:</p>
 <ul>
-<li>Prompts (inputs)</li>
-<li>Generated tokens (outputs)</li>
-<li>Attention layers (intermediate outputs)</li>
+<li>I created a GPT to help me understand research papers. To research a topic such as “video generation with diffusion models”, I downloaded papers from Arxiv, and simply upload to my GPT. I can then ask questions like “how do diffusion models ensure temporary consistency of generated videos”, and it will answer my question by referencing snippets from the papers.</li>
+<li>My 10 year old is into Zelda: Tears of the Kingdom. He created a GPT to help him with the game by using the web browsing plugin. He has been telling me it helped him a lot.</li>
 </ul>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+</section>
+<section id="retrieval-augmented-generation" class="level2">
+<h2 class="anchored" data-anchor-id="retrieval-augmented-generation">Retrieval augmented generation</h2>
+<p>When you chat with a custom GPT, what happens is a retrieval augmented generation (RAG) process. Without changing the models weights (a.k.a. no fine-tuning), you get a customized GPT. The core LLM gets access to one or more data sources that can be frequently updated. The data source can be a your own documents, a knowledge base built by your team, or the whole web.</p>
+<p>Many have built and shared RAG applications using open source tools like Langchain and LlamaIndex, on top of a proprietary OpenAI model such as GPT3.5. Important knobs include:</p>
 <ul>
-<li><a href="https://arxiv.org/pdf/2306.13421.pdf">Long-range Language Modeling with Self-retrieval</a></li>
+<li>prompt template</li>
+<li>prompt flow (linear, tree)</li>
 </ul>
+<p>In terms of quality of outputs from such systems, OpenAI’s GPT models have been quite ahead of competitors.</p>
+</section>
+<section id="are-open-source-alternatives-actually-good" class="level2">
+<h2 class="anchored" data-anchor-id="are-open-source-alternatives-actually-good">Are open source alternatives actually good?</h2>
+<p>I have been using GPT3.5-turbo for most of my LLM applications. Now there are viable open source alternatives with a permissive license.</p>
+<p>On <a href="https://huggingface.co/spaces/lmsys/chatbot-arena-leaderboard">Chatbot Arena</a>, Mistral 8x7B (Apache 2.0) ranks higher than some versions of GPT3.5-turbo. Claude and Gemini Pro also rank higher than some GPT3.5-turbo models, though they are proprietary.</p>
+<p><img src="chatbot_arena.png" class="img-fluid"></p>
 
 
 </section>

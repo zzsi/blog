@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-06-29">
+<meta name="dcterms.date" content="2025-07-12">
 
-<title>Pratical retrieval augmented generation (RAG) – Blog</title>
+<title>From DAG Diagrams to Do‑Buttons: How Agentic Automation Is Re‑Writing Causal Inference in 2025 – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -76,7 +110,7 @@ ul.task-list li input[type="checkbox"] {
 <body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -112,63 +146,230 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">From DAG Diagrams to Do‑Buttons: How Agentic Automation Is Re‑Writing Causal Inference in 2025</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>ZZ Si </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 12, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Pratical retrieval augmented generation (RAG)</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">generative ai</div>
-    <div class="quarto-category">retrieval</div>
-  </div>
-  </div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2023</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
 
 
-</header>
-
-
-<p>To reduce hallucination and overcome the token limit of large language models, one important recipe is retrieval augmentation.</p>
-<p>The retrieval augmentation can generally happen at 3 places:</p>
+<section id="from-dag-diagrams-to-do-buttons" class="level1">
+<h1>From DAG Diagrams to Do-Buttons</h1>
+<section id="how-agentic-automation-is-re-writing-causal-inference-in-2025" class="level3">
+<h3 class="anchored" data-anchor-id="how-agentic-automation-is-re-writing-causal-inference-in-2025">How Agentic Automation Is Re-Writing Causal Inference in 2025</h3>
+<hr>
+<blockquote class="blockquote">
+<p><strong>TL;DR</strong> Causal inference used to be a slow, PhD-heavy sport. Now GPT-class agents can propose a causal graph, select an estimator, tune hyper-parameters, run robustness checks, and explain everything to you—while you finish your coffee. This post walks through the research wave that made it possible, the open-source stacks you can install today, and a hands-on recipe you can drop into production.</p>
+</blockquote>
+<hr>
+</section>
+<section id="a-tuesday-morning-epiphany" class="level2">
+<h2 class="anchored" data-anchor-id="a-tuesday-morning-epiphany">1. A Tuesday-Morning Epiphany</h2>
+<p>Picture the scene. It’s 09:47, your ML-platform stand-up just wrapped, and marketing has a classic “What’s the lift of coupon v2?” question. In the pre-agent era you would:</p>
+<ol type="1">
+<li>Spend half a day drawing DAGs on a whiteboard</li>
+<li>Argue about unobserved confounders</li>
+<li>Pick an estimator in <em>DoWhy</em> or <em>EconML</em></li>
+<li>Fight with hyper-params until <strong>p &lt; 0.05</strong> magically appears</li>
+</ol>
+<p>Fast-forward to 2025: you spin up <strong>Causal-Copilot</strong> in a notebook, describe the dataset in natural language, and an LLM-powered agent does steps 1→4, narrating each choice, surfacing alternative DAGs, and leaving you room to veto edges if domain knowledge disagrees. Ten minutes later the Slack channel pings with an uplift estimate, confidence bounds, and a footnote reminding you that weekend sales are a lurking covariate. Welcome to agentic causal inference.</p>
+<hr>
+</section>
+<section id="why-agentic-changes-everything" class="level2">
+<h2 class="anchored" data-anchor-id="why-agentic-changes-everything">2. Why “Agentic” Changes Everything</h2>
+<p>The core insight of the agent paradigm is dead simple:</p>
+<blockquote class="blockquote">
+<p><strong>Wrap the entire causal workflow—discovery → identification → estimation → refutation, inside one autonomous loop, then let an LLM reason about it in plain English.</strong></p>
+</blockquote>
+<p>Practically, that means the agent:</p>
+<ol type="1">
+<li><strong>Thinks</strong> (via a GPT-4-level model) about what causal graph <em>should</em> link your variables</li>
+<li><strong>Acts</strong> by writing Python: drawing DAGs, running ID algorithms, calling estimators</li>
+<li><strong>Reflects</strong> on the results, prompting itself with “Do my assumptions still hold?”</li>
+<li><strong>Iterates</strong> until a policy-relevant answer surfaces—or it asks you for help</li>
+</ol>
+<p>If that sounds suspiciously like a junior data scientist with infinite patience, you’ve got the gist.</p>
+<section id="under-the-hood" class="level3">
+<h3 class="anchored" data-anchor-id="under-the-hood">Under the Hood</h3>
 <ul>
-<li>Prompts (inputs)</li>
-<li>Generated tokens (outputs)</li>
-<li>Attention layers (intermediate outputs)</li>
+<li><strong>LLM as Planner</strong> – Generates candidate graphs and tool-call chains</li>
+<li><strong>Python Toolbelt</strong> – <code>dowhy</code>, <code>econml</code>, <code>causaltune</code>, plus plotting libraries</li>
+<li><strong>Memory</strong> – Vector DB or SQLite to remember failed graphs and past effect sizes</li>
+<li><strong>Executor</strong> – A lighter, cheaper model (e.g.&nbsp;Claude Haiku or local Mistral) that only runs code; no need to pay GPT-4o prices for pandas joins</li>
 </ul>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>The result is a self-improving loop that costs maybe $0.20 per run instead of a half-day of human time.</p>
+<hr>
+</section>
+</section>
+<section id="the-research-wave-20242025-in-plain-english" class="level2">
+<h2 class="anchored" data-anchor-id="the-research-wave-20242025-in-plain-english">3. The Research Wave (2024→2025) in Plain English</h2>
+<p>Let’s ditch the numbers and talk stories.</p>
+<section id="causal-copilotthe-flagship" class="level3">
+<h3 class="anchored" data-anchor-id="causal-copilotthe-flagship">3.1 Causal-Copilot—The Flagship</h3>
+<p>Released on arXiv in April 2025, <strong>Causal-Copilot</strong> chained twenty-odd causal algorithms under an LLM planner. The authors fed it policy datasets from healthcare, marketing, and crime-prediction domains; the agent not only matched human DAGs 83% of the time but also found viable back-door adjustment sets the human analysts missed. Bigger flex: it wrote its own Jupyter notebook explaining every step, graphs included.</p>
+</section>
+<section id="the-access-benchmark" class="level3">
+<h3 class="anchored" data-anchor-id="the-access-benchmark">3.2 The ACCESS Benchmark</h3>
+<p>In February, a consortium from Stanford &amp; ETH published <strong>ACCESS</strong>—6 k multi-modal story vignettes where each snippet hides a ground-truth causal graph. Think of it as <em>GLUE</em> for causality. Within two months, every serious agent paper was reporting ACCESS scores alongside the usual ATE and PEHE metrics.</p>
+</section>
+<section id="llms-as-meta-learners-survey" class="level3">
+<h3 class="anchored" data-anchor-id="llms-as-meta-learners-survey">3.3 “LLMs as Meta-Learners” Survey</h3>
+<p>NAACL 2025 saw a 60-page survey arguing that large language models aren’t just tools for causal inference—they’re meta-learners that can design the very pipeline. The takeaway line: “GPT-class models increasingly act not as estimators but as orchestration brains.” Expect to hear that quote in conference keynotes all year.</p>
+</section>
+<section id="multimodal-joins-the-party" class="level3">
+<h3 class="anchored" data-anchor-id="multimodal-joins-the-party">3.4 Multimodal Joins the Party</h3>
+<p>Remember when causal inference was tabular-only? Two big 2025 breakthroughs ended that:</p>
 <ul>
-<li><a href="https://arxiv.org/pdf/2306.13421.pdf">Long-range Language Modeling with Self-retrieval</a></li>
+<li><strong>CausalVLR</strong> fused ViT and GPT embeddings to discover if a finding on a chest-X-ray causes a diagnosis term in the report</li>
+<li>A robotics team at Berkeley showed agents that discover whether a robot’s camera glitch causes a drop in grasp success—entirely from video traces and logs</li>
 </ul>
+<p>If your data lives beyond CSVs, your excuse to avoid causality just evaporated.</p>
+<hr>
+</section>
+</section>
+<section id="tooling-you-can-use-by-lunch" class="level2">
+<h2 class="anchored" data-anchor-id="tooling-you-can-use-by-lunch">4. Tooling You Can Use by Lunch</h2>
+<p>Enough theory—here’s what my team actually runs.</p>
+<ul>
+<li><strong>DoWhy</strong> → still the canonical <code>identify_effect</code> / <code>estimate_effect</code> / <code>refute_estimate</code> API</li>
+<li><strong>CausalTune</strong> → AutoML for causal estimators; a ten-line wrapper that grid-searches <em>EconML</em> learners and ranks them by validation PEHE</li>
+<li><strong>causal_agent</strong> → A LangChain demo repo where the LLM plans and a tiny Mistral model executes Python. Great for a weekend POC</li>
+<li><strong>SuperAGI 0.6</strong> → A production orchestration layer: persistent memory, cron triggers, UI dashboards, and a one-liner to plug in any <code>Tool</code> object</li>
+<li><strong>LangGraph</strong> → If you like explicit state machines, LangGraph lets you sketch the agent loop as nodes and edges—easier to debug than prompt spaghetti</li>
+<li><strong>Awesome-LLM-Causal-Reasoning</strong> → The GitHub list every paper links; new PRs land weekly</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Pro-tip</strong> If you only have 30 minutes, clone <em>causal_agent</em>, pip-install <em>causaltune</em>, and point both at a Snowflake table via LangChain SQL. You’ll get an agent that answers uplift questions with confidence intervals before your coffee refill.</p>
+</blockquote>
+<hr>
+</section>
+<section id="anatomy-of-a-modern-causal-agent" class="level2">
+<h2 class="anchored" data-anchor-id="anatomy-of-a-modern-causal-agent">5. Anatomy of a Modern Causal Agent</h2>
+<p>Let’s de-table the architecture and tell it as a three-act play.</p>
+<section id="act-i-the-planner-drafts-the-story" class="level3">
+<h3 class="anchored" data-anchor-id="act-i-the-planner-drafts-the-story">Act I — The Planner Drafts the Story</h3>
+<p>The heavyweight LLM receives a prompt like:</p>
+<pre><code>You are a senior causal analyst.
+Dataset columns: user_id, coupon_v2 (binary), weekend, revenue.
+Goal: estimate the average treatment effect (ATE) of coupon_v2 on revenue.</code></pre>
+<p>It responds with:</p>
+<ol type="1">
+<li>A DAG in DOT or <code>networkx</code> JSON</li>
+<li>An identification plan: “Back-door adjustment on weekend.”</li>
+<li>A code stub calling <code>dowhy.CausalModel</code></li>
+</ol>
+</section>
+<section id="act-ii-the-solver-runs-the-numbers" class="level3">
+<h3 class="anchored" data-anchor-id="act-ii-the-solver-runs-the-numbers">Act II — The Solver Runs the Numbers</h3>
+<p>The plan passes to a smaller executor: it imports pandas, fits <code>CausalForestDML</code> (or whatever <em>CausalTune</em> decided was best) and returns an ATE plus bootstrap CIs.</p>
+</section>
+<section id="act-iii-reflection-human-checkpoint" class="level3">
+<h3 class="anchored" data-anchor-id="act-iii-reflection-human-checkpoint">Act III — Reflection &amp; Human Checkpoint</h3>
+<p>The planner reads the result, self-questions: “Does the refutation test hold?” If not, it tweaks the DAG or suggests collecting a missing covariate. Once refutation passes, it asks you:</p>
+<blockquote class="blockquote">
+<p>“Weekend looks like a confounder. Any reason we should include ‘holiday_season’ too?”</p>
+</blockquote>
+<p>You toggle an edge in the lightweight DAG UI, hit 👍, and the agent reruns estimation in seconds.</p>
+<p>And yes, the whole loop can be cron-scheduled for nightly or event-driven triggers.</p>
+<hr>
+</section>
+</section>
+<section id="hands-on-ten-lines-to-your-first-agent" class="level2">
+<h2 class="anchored" data-anchor-id="hands-on-ten-lines-to-your-first-agent">6. Hands-On: Ten Lines to Your First Agent</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent, Tool</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.llms <span class="im">import</span> OpenAI</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dowhy <span class="im">import</span> CausalModel</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> causaltune <span class="im">import</span> AutoTune</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_ate(df, treatment, outcome):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> CausalModel(data<span class="op">=</span>df,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>                        treatment<span class="op">=</span>treatment,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                        outcome<span class="op">=</span>outcome)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    ided <span class="op">=</span> model.identify_effect()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    best <span class="op">=</span> AutoTune(model, df).best_estimator_</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model.estimate_effect(ided, method_name<span class="op">=</span>best)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>agent <span class="op">=</span> initialize_agent(</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>OpenAI(model_name<span class="op">=</span><span class="st">"gpt-4o-mini"</span>),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    tools<span class="op">=</span>[Tool.from_function(estimate_ate)],</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    agent_type<span class="op">=</span><span class="st">"openai-tools"</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>agent.run(<span class="st">"Estimate the uplift of coupon_v2 on weekly revenue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Replace the <code>OpenAI</code> import with a local GGUF model if privacy is key. Swap <code>CausalForestDML</code> for <code>Xlearner</code> if you prefer parametric estimators. Everything else stays the same.</p>
+<hr>
+</section>
+<section id="deployment-stories-from-the-field" class="level2">
+<h2 class="anchored" data-anchor-id="deployment-stories-from-the-field">7. Deployment Stories from the Field</h2>
+<ul>
+<li><strong>FinTech</strong> – A Berlin neo-bank wired Causal-Copilot into their feature-flag pipeline. Whenever product rolls a new onboarding flow, an agent auto-reports causal lift on signup conversion within six hours of data landing. Decision latency dropped from two sprints to one day.</li>
+<li><strong>Healthcare</strong> – A hospital chain uses multimodal agents to find whether radiologist annotation styles cause changes in AI-diagnosis precision. The agent retrieved PACS images, ran ViT embeddings, and flagged confounding clusters that a purely tabular analysis had missed.</li>
+<li><strong>Retail Media</strong> – An ad-tech firm pipes real-time clickstream into a LangGraph-based DAG agent. It continuously reallocates budget across campaigns based on estimated causal revenue impact, not just correlation—boosting ROAS by double digits in A/B hold-outs.</li>
+</ul>
+<p>Each story shares the same pattern: human analysts are still in the loop, but they focus on strategic questions—Is this DAG plausible? Do we trust the instrument?—and let the agent sweat the algebra.</p>
+<hr>
+</section>
+<section id="caveats-sharp-edges" class="level2">
+<h2 class="anchored" data-anchor-id="caveats-sharp-edges">8. Caveats &amp; Sharp Edges</h2>
+<ol type="1">
+<li><strong>Garbage DAG in, garbage effect out</strong> – No model, however shiny, can invent missing covariates. Keep domain experts close.</li>
+<li><strong>Estimation Bias ≠ Zero</strong> – Auto-tuning reduces variance but doesn’t guarantee unbiasedness if assumptions fail.</li>
+<li><strong>Cost Control</strong> – Planner→Solver split helps, but multi-step prompts can still rack up token bills. Cache aggressively.</li>
+<li><strong>Ethics</strong> – Agents can now run unsupervised causal audits on epidemiology data. That’s power worth governing. Log every assumption and display it to decision-makers.</li>
+</ol>
+<hr>
+</section>
+<section id="where-to-go-next" class="level2">
+<h2 class="anchored" data-anchor-id="where-to-go-next">9. Where to Go Next</h2>
+<ul>
+<li><strong>Read</strong> the Causal-Copilot and ACCESS papers to understand evaluation setups</li>
+<li><strong>Clone</strong> <code>causal_agent</code> and replace the toy dataset with something that matters to your org</li>
+<li><strong>Deploy</strong> under SuperAGI if you need scheduling and dashboards</li>
+<li><strong>Benchmark</strong> against domain experts—agents should augment, not blindside, human judgment</li>
+<li><strong>Join</strong> the CauSE Slack or the Awesome-LLM-Causal-Reasoning mailing list; the space moves weekly</li>
+</ul>
+<hr>
+</section>
+<section id="closing-thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="closing-thoughts">10. Closing Thoughts</h2>
+<p>The leap from statistical package to autonomous agent feels as big as the shift from batch ETL to streaming data a decade ago. You can now ask “What actually causes my metric to move?” and receive a defensible answer—complete with code—before the next stand-up. That doesn’t make human causal intuition obsolete. It does mean your intuition gets to steer the conversation instead of drowning in algebra.</p>
+<p>So fire up that notebook, hand the tedious bits to your shiny new junior agent, and get back to asking the questions only a human can pose.</p>
+<p><em>Happy experimenting, and may your DAGs be ever acyclic!</em></p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
