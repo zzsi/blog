@@ -6,9 +6,9 @@ categories: [code, generative ai, retrieval]
 # image: "image.jpg"
 ---
 
-To overcome the token limit of large language models, one important recipe is retrieval augmentation.
+To reduce hallucination and overcome the token limit of large language models, one important recipe is retrieval augmentation.
 
-The augmentation can generally happen at 3 places:
+The retrieval augmentation can generally happen at 3 places:
 
 - Prompts (inputs)
 - Generated tokens (outputs)
