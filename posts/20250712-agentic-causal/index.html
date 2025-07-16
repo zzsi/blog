@@ -21,6 +21,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -144,22 +178,54 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+<!--
+  TODO: add illustrations and visualizaitons for overall architecture, and challenges.
+-->
 <section id="backdrop-machine-age-of-science" class="level2">
 <h2 class="anchored" data-anchor-id="backdrop-machine-age-of-science">Backdrop: Machine Age of Science</h2>
 <p>Historians may one day mark the 2020s as the dawn of the machine age of science. Language models now draft proofs and experimental protocols; diffusion models fold proteins and sketch molecules before a chemist even picks up a pipette. Yet prediction is only half the story; scientists and businesses still need to answer the deeper question: <strong>why</strong>.</p>
 </section>
 <section id="causal-inference-and-llms" class="level2">
 <h2 class="anchored" data-anchor-id="causal-inference-and-llms">Causal Inference and LLMs</h2>
-<p>I am glad to see the recent projects combining LLMs and causal inference. Causal inference is such an important decision making tool in life and in business. However, to be an expert in this field takes years of mathematical and statistical training.</p>
+<p>Causal inference is such an important decision making tool in life and in business. However, to be an expert in this field takes years of mathematical and statistical training. LLMs on the other hand are easy to use, but they lack rigor when reasoning about causality.</p>
 <p>Integrating causality into LLM agents addresses limitations on both sides:</p>
 <ul>
 <li><strong>Pure causal methods</strong> demand strict assumptions and expert guidance.</li>
-<li><strong>LLMs</strong> overflow with knowledge yet often mistake correlation for causation..</li>
+<li><strong>LLMs</strong> overflow with knowledge yet often mistake correlation for causation.</li>
 </ul>
-<p>By wiring LLM‑based agents to specialized causal inference libraries, we can automate discovery, estimation, and validation. The result is a new class of <strong>general‑purpose causal AI systems</strong> that parse tabular, time-series—even multimodal—data with human-like intuition and statistical rigor.</p>
-<p>How it works on a high level: let an LLM act as a <em>meta‑expert</em>: it interprets a user’s causal question, plans a step‑by‑step analysis, and invokes external tools (or other agents) to execute those steps. After getting the results from tools, the agent then translates the math heavy results into a more narrative format, to make it easier to communicate with stakeholders.</p>
-<p>Let’s look at some interesting papers and open source projects.</p>
+<p>By wiring LLM‑based agents to specialized causal inference libraries, we can automate the causal workflow: <strong>discovery -&gt; identification -&gt; estimation -&gt; refutation</strong>. The result is a new class of general‑purpose causal AI systems that parse tabular, time-series—even multimodal—data with human-like intuition and statistical rigor.</p>
+<p>Practically, that means the agent:</p>
+<ol type="1">
+<li><p>Thinks (via an LLM) about what causal graph should link your variables</p></li>
+<li><p>Acts by writing Python: drawing DAGs, running ID algorithms, calling estimators, using libraries like <code>dowhy</code>, <code>econml</code>, <code>causaltune</code>, etc.</p></li>
+<li><p>Reflects on the results, prompting itself with “Do my assumptions still hold?”</p></li>
+<li><p>Iterates until a relevant answer surfaces, or it asks you for help.</p></li>
+</ol>
+<p>If that sounds suspiciously like a junior data scientist with infinite patience, you’ve got the gist.</p>
+<section id="lines-of-code-for-your-first-causal-inference-agent" class="level4">
+<h4 class="anchored" data-anchor-id="lines-of-code-for-your-first-causal-inference-agent">10 lines of code for your first causal inference agent</h4>
+<p>To illustrate the idea, here is a minimal snippet to estimate the effect of a new coupon on revenue. This may actually be sufficient to get you a quick answer, if (a big if) the data is ready.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.agents <span class="im">import</span> initialize_agent, Tool</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.llms <span class="im">import</span> OpenAI</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dowhy <span class="im">import</span> CausalModel</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> causaltune <span class="im">import</span> AutoTune</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> estimate_ate(df, treatment, outcome):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> CausalModel(data<span class="op">=</span>df, treatment<span class="op">=</span>treatment, outcome<span class="op">=</span>outcome)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ided <span class="op">=</span> model.identify_effect()</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    best <span class="op">=</span> AutoTune(model, df).best_estimator_</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model.estimate_effect(ided, method_name<span class="op">=</span>best)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>agent <span class="op">=</span> initialize_agent(</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    llm<span class="op">=</span>OpenAI(model_name<span class="op">=</span><span class="st">"gpt-4o-mini"</span>),</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    tools<span class="op">=</span>[Tool.from_function(estimate_ate)],</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    agent_type<span class="op">=</span><span class="st">"openai-tools"</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>agent.run(<span class="st">"Estimate the uplift of coupon_v2 on weekly revenue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Time to look at some interesting papers and open source projects:</p>
 <hr>
+</section>
 <section id="toolaugmented-causal-inference-agents" class="level3">
 <h3 class="anchored" data-anchor-id="toolaugmented-causal-inference-agents">Tool‑Augmented Causal Inference Agents</h3>
 <p><a href="https://arxiv.org/pdf/2408.06849"><strong>Causal&nbsp;Agent</strong></a> framework&nbsp;(2024):</p>
@@ -176,26 +242,40 @@ ul.task-list li input[type="checkbox"] {
 </ol>
 <p>The framework’s hierarchical breakdown—variable‑level, edge‑level, graph‑level, effect‑level—has produced expert‑level accuracy on a testing dataset with 1.3k questions, all while providing interpretable explanations.</p>
 </section>
+<section id="autonomous-end-to-end-pipelines" class="level3">
+<h3 class="anchored" data-anchor-id="autonomous-end-to-end-pipelines">Autonomous End-to-End Pipelines</h3>
+<ul>
+<li><strong><a href="https://arxiv.org/abs/2504.13263">Causal-Copilot (2025)</a></strong>
+<ul>
+<li>The agent chains <strong>20 + causal tools</strong>, from discovery to hyper-parameter tuning, inside a single LLM loop.<br>
+</li>
+<li>Works on both tabular and time-series data: prompts the user for a question, auto-selects the right discovery algorithm (e.g., NOTEARS, PC), tunes an estimator (DoubleML, CausalForest, IV), runs refuters, and returns an English report with effect size + CI.</li>
+<li>Achieves state-of-the-art graph accuracy and effect-estimation error across five public benchmarks, edging out both classic SCD baselines and earlier LLM agents.</li>
+</ul></li>
+<li><strong><a href="https://arxiv.org/abs/2505.10936">Chain-of-Collaboration Prompting (2025)</a></strong> shows that giving sub-agents explicit roles (planner, verifier, critic) and letting them share scratch pads improves causal reasoning accuracy on CLADDER and Causal-Copilot QA tasks, cutting hallucinated edges by 35 % vs.&nbsp;single-prompt ReAct.</li>
+</ul>
+</section>
 <section id="debating-multiagent-systems-for-causal-discovery" class="level3">
 <h3 class="anchored" data-anchor-id="debating-multiagent-systems-for-causal-discovery">Debating Multi‑Agent Systems for Causal Discovery</h3>
 <p>Single agents sometimes hallucinate; multi‑agent approaches aim to reduce errors through <strong>debate and consensus</strong>.</p>
 <ul>
 <li><a href="https://arxiv.org/abs/2407.15073"><strong>Multi‑Agent Causal Discovery Using LLMs</strong></a>&nbsp;(2024) assigns dedicated LLM roles:
 <ul>
-<li><em>Debaters</em> argue about possible parent‑child relations.</li>
-<li><em>Judges</em> evaluate arguments and pick the most plausible edges.</li>
+<li><em>Affirmative Debaters</em> proposes a DAG using temporal cues and domain priors.</li>
+<li><em>Negative Debaters</em> attacks the proposal by surfacing hidden confounders, incorrect temporal orderings, or omitted variables.</li>
+<li><em>Judges</em> evaluate arguments and pick the most plausible structure.</li>
+<li><em>Coders</em> materializes the agreed-upon algorithm, reruns it on the entire dataset, and emits the refined graph.</li>
 </ul></li>
-<li>A hybrid “coding” agent writes and runs causal discovery algorithms (PC,&nbsp;LiNGAM), then merges results with narrative debates.</li>
 </ul>
-<p>Experiments show these debating agents outperform both classical algorithms and single‑LLM prompts on datasets like <em>Auto MPG</em> and climate records—demonstrating that multiple specialized minds can yield more reliable causal graphs.</p>
+<p>Experiments show these debating agents outperform both classical algorithms and single‑LLM prompts on datasets like <a href="https://www.kaggle.com/datasets/uciml/autompg-dataset">Auto MPG</a>, demonstrating that multiple specialized minds can yield more reliable causal graphs.</p>
 </section>
 <section id="automated-causal-inference-pipelines-automl-for-causality" class="level3">
 <h3 class="anchored" data-anchor-id="automated-causal-inference-pipelines-automl-for-causality">Automated Causal Inference Pipelines (AutoML&nbsp;for&nbsp;Causality)</h3>
 <p>Parallel to LLM research, we also see <strong>AutoML‑style causal platforms</strong> that automate model selection, tuning, and robustness checks.</p>
 <ul>
-<li><strong>AutoCausality</strong> – part of the <a href="https://www.pywhy.org/"><strong>PyWhy</strong></a> ecosystem, using hyper‑parameter search and ensembling to choose the best estimator for a dataset.</li>
-<li><a href="https://www.amazon.science/publications/opportunityfinder-a-framework-for-automated-causal-inference"><strong>OpportunityFinder</strong></a>&nbsp;(Amazon&nbsp;2023) offers code‑less causal studies for panel data—cleaning, cohorting, and computing effects (plus sensitivity) end‑to‑end.</li>
-<li><a href="https://opensource.salesforce.com/causalai/latest/index.html"><strong>Salesforce CausalAI Library</strong></a> consolidates discovery &amp; inference methods, synthetic data generators, and a no‑code GUI—scaling to larger problems via optimized multiprocessing.</li>
+<li><strong>AutoCausality</strong>: part of the <a href="https://www.pywhy.org/"><strong>PyWhy</strong></a> ecosystem, using hyper‑parameter search and ensembling to choose the best estimator for a dataset.</li>
+<li><a href="https://www.amazon.science/publications/opportunityfinder-a-framework-for-automated-causal-inference"><strong>OpportunityFinder</strong></a>&nbsp;(Amazon&nbsp;2023) offers code‑less causal studies for panel data cleaning, cohorting, and computing effects (plus sensitivity) end‑to‑end.</li>
+<li><a href="https://opensource.salesforce.com/causalai/latest/index.html"><strong>Salesforce CausalAI Library</strong></a> consolidates discovery and inference methods, synthetic data generators, and a no‑code GUI, scaling to larger problems via optimized multiprocessing.</li>
 </ul>
 <p>These toolkits enrich agentic workflows: an LLM planner can mix‑and‑match discovery, estimation, and AutoML selection modules without human intervention.</p>
 <hr>
@@ -213,17 +293,41 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="challenges-and-mitigations" class="level2">
 <h2 class="anchored" data-anchor-id="challenges-and-mitigations">Challenges and Mitigations</h2>
-<p>### Data Quality and the Missing Confounders</p>
-<p>Observational datasets rarely contain every variable that shapes a treatment–outcome relationship, so even a state‑of‑the‑art estimator can inherit hidden bias. Modern agentic workflows insert a human‑review checkpoint right after the agent proposes its first causal graph: domain experts eyeball edges and nominate missing covariates. The software then launches automatic robustness probes—placebo tests, synthetic‑confounder injections, and other refutation modules shipped with DoWhy—to quantify how fragile the estimate is. Crucially, if any refutation fails, the planner LLM must stop, annotate the failure, and either revise the graph or escalate to a human reviewer; surfacing a shaky result as “tentative” is better than silently proceeding. Some teams also run a “data‑profiling agent” that scans fresh tables for covariate drift or sparsity and warns the planner before analysis starts.</p>
-<p>### Hallucinations and Over‑Confidence in Planner LLMs</p>
-<p>Because a planner LLM explains results in natural language, stakeholders may over‑trust its story—even when the underlying graph is wrong. Multi‑agent debate is the go‑to antidote: a second LLM plays devil’s advocate, challenging every edge and demanding citations. If the critic discovers a weak link—say, a p‑value above a threshold or a confidence interval crossing zero—the system either re‑runs discovery with stricter assumptions or flags the edge for human adjudication. Every numeric claim must be backed by the raw output of CausalLearn, EconML, or an equivalent statistical tool, including confidence intervals and sensitivity ranges, so decision‑makers can see the uncertainty.</p>
-<p>### Model‑Selection Over‑Fit and Cross‑Estimator Disagreement</p>
-<p>Auto‑tuning libraries can explore dozens of learners and hyper‑parameters, sometimes over‑fitting small causal datasets—especially with flexible models like causal forests. Mitigations start with nested cross‑validation inside AutoCausality or causaltune, coupled with parsimony priors that penalize needless complexity. Equally important is cross‑estimator consensus: the agent should run at least two conceptually different estimators—e.g., a back‑door regression and an instrumental‑variable model—and flag any large divergence in effect size as a red‑flag for human review.</p>
-<p>### Computation&nbsp;Cost vs.&nbsp;Real‑Time Ambitions</p>
-<p>A planner–solver split can still burn thousands of tokens and heavy compute if the planner explores many what‑if branches. Production dashboards cache discovery and refutation outputs keyed by a DAG hash; if the graph hasn’t changed, the agent re‑uses prior results. Distilling a heavy GPT‑4 planner into a fine‑tuned local model covers day‑to‑day traffic, while the costly cloud model handles weekly deep dives. When latency tolerates delay, queries batch during off‑peak hours.</p>
-<p>### Privacy and Governance</p>
-<p>Sensitive data—medical records, customer logs—cannot always leave a private cluster. Hybrid deployments solve this: an on‑prem LLM handles data‑aware steps, while a redacted summary (no PII) is sent to a cloud model for high‑level planning. All explanations pass through a redaction layer before logging, and every causal report carries an audit trail plus role‑based access controls.</p>
+<p>Going beyond the happy path to production is often not a smooth ride. Here are some of common challenges in my experience:</p>
+<section id="data-quality-and-the-missing-confounders" class="level3">
+<h3 class="anchored" data-anchor-id="data-quality-and-the-missing-confounders">Data Quality and the Missing Confounders</h3>
+<p>Observational datasets rarely contain every variable that shapes a treatment–outcome relationship, so even a state‑of‑the‑art estimator can inherit hidden bias.</p>
+<p>To mitigate, insert a human‑review checkpoint right after the agent proposes its first causal graph: domain experts eyeball edges and nominate missing covariates. The software then launches automatic robustness probes such as placebo tests, synthetic confounder injections, and other refutation modules shipped with DoWhy, to quantify how fragile the estimate is. Crucially, if any refutation fails, the planner LLM must stop, annotate the failure, and either revise the graph or escalate to a human reviewer; surfacing a shaky result as “tentative” is better than silently proceeding. Some teams also run a “data‑profiling agent” that scans fresh tables for covariate drift or sparsity and warns the planner before analysis starts.</p>
+</section>
+<section id="hallucinations-and-overconfidence-in-planner-llms" class="level3">
+<h3 class="anchored" data-anchor-id="hallucinations-and-overconfidence-in-planner-llms">Hallucinations and Over‑Confidence in Planner LLMs</h3>
+<p>LLM planners are persuasive storytellers; a well phrased chain‑of‑thought can make a shaky causal graph feel ironclad.</p>
+<p>Multi‑agent debate is a good recipe to reduce hallucination: a second LLM plays devil’s advocate, and challenges the assumptions that make an estimate causal:</p>
+<ul>
+<li><p>Placebo‑treatment test: replace the real treatment with a fake; any non‑zero effect flags hidden bias.</p></li>
+<li><p>Synthetic‑confounder injection: add a random common cause and observe the ATE shift; big swings imply unmeasured confounding.</p></li>
+<li><p>Overlap / positivity audit: verify that propensity scores span both arms; poor overlap triggers trimming or doubly robust methods.</p></li>
+<li><p>Cross‑estimator consensus: pit a back‑door learner against an IV or front‑door estimator; disagreement above a threshold routes to human review.</p></li>
+<li><p>Multi‑agent debate: affirmative and negative debaters contest every edge, a judge scores coherence.</p></li>
+</ul>
+<p>If any probe fails, the planner either tightens assumptions and reruns discovery or clearly labels the conclusion “inconclusive, additional data needed.” Final reports must surface the point estimate plus confidence intervals, sensitivity ranges, and a pass/fail tally for each refuter, so stakeholders see magnitude and robustness.</p>
+</section>
+<section id="modelselection-overfit-and-crossestimator-disagreement" class="level3">
+<h3 class="anchored" data-anchor-id="modelselection-overfit-and-crossestimator-disagreement">Model‑Selection Over‑Fit and Cross‑Estimator Disagreement</h3>
+<p>Auto‑tuning libraries can explore dozens of learners and hyper‑parameters, sometimes over‑fitting small causal datasets, especially with flexible models like causal forests. In this case, AutoML learns noise instead of real signal.</p>
+<p>Mitigations include nested cross‑validation inside AutoCausality or causaltune, and parsimony priors that penalize needless complexity. If resource allows, the agent should run at least two conceptually different estimators, e.g., a back‑door regression and an instrumental‑variable model, and flag any large divergence in effect size as a red‑flag for human review.</p>
+</section>
+<section id="computation-cost-vs.-realtime-ambitions" class="level3">
+<h3 class="anchored" data-anchor-id="computation-cost-vs.-realtime-ambitions">Computation&nbsp;Cost vs.&nbsp;Real‑Time Ambitions</h3>
+<p>A planner–solver split can still burn thousands of tokens and heavy compute if the planner explores many what‑if branches.</p>
+<p>Production dashboards cache discovery and refutation outputs keyed by a DAG hash; if the graph hasn’t changed, the agent re‑uses prior results. Another recipe is distilling a heavy LLM planner into a small fine‑tuned local model covers day‑to‑day traffic, while the costly cloud model handles weekly deep dives.</p>
+</section>
+<section id="privacy-and-governance" class="level3">
+<h3 class="anchored" data-anchor-id="privacy-and-governance">Privacy and Governance</h3>
+<p>Sensitive data such as medical records, customer logs usually cannot leave a private cluster.</p>
+<p>Hybrid deployments solve this: an on‑prem LLM handles data‑aware steps, while a redacted summary (no PII) is sent to a cloud model for high‑level planning. All explanations pass through a redaction layer before logging, and every causal report carries an audit trail plus role‑based access controls.</p>
 <hr>
+</section>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
