@@ -187,9 +187,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!--
   TODO: add illustrations and visualizaitons for overall architecture, and challenges.
 -->
-<section id="backdrop-machine-age-of-science" class="level2">
-<h2 class="anchored" data-anchor-id="backdrop-machine-age-of-science">Backdrop: Machine Age of Science</h2>
-<p>Historians may one day mark the 2020s as the dawn of the machine age of science. Language models now draft proofs and experimental protocols; diffusion models fold proteins and sketch molecules before a chemist even picks up a pipette. Yet prediction is only half the story; scientists and businesses still need to answer the deeper question: <strong>why</strong>.</p>
+<section id="backdrop-machine-age-of-sciences" class="level2">
+<h2 class="anchored" data-anchor-id="backdrop-machine-age-of-sciences">Backdrop: Machine Age of Sciences</h2>
+<p>Historians may one day mark the 2020s as the dawn of the machine age of sciences. Language models now draft proofs and experimental protocols; diffusion models fold proteins and sketch molecules before a chemist even picks up a pipette. Yet prediction is only half the story; scientists and businesses still need to answer the deeper question: <strong>why</strong>.</p>
+<p>The plural on sciences is intentional. I want to emphasize the range of disciplines: physics, chemistry, biology, economics, sociology, computer science, data science, you name it. The focus of this post is on causal inference.</p>
 </section>
 <section id="causal-inference-and-llms" class="level2">
 <h2 class="anchored" data-anchor-id="causal-inference-and-llms">Causal Inference and LLMs</h2>
@@ -204,15 +205,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Pure causal methods</strong> demand strict assumptions and expert guidance.</li>
 <li><strong>LLMs</strong> overflow with knowledge yet often mistake correlation for causation.</li>
 </ul>
-<p>By wiring LLM‑based agents to specialized causal inference libraries, we can automate the causal workflow: <strong>discovery -&gt; identification -&gt; estimation -&gt; refutation</strong>. The result is a new class of general‑purpose causal AI systems that parse tabular, time-series—even multimodal—data with human-like intuition and statistical rigor.</p>
+<p>By wiring LLM‑based agents to specialized causal inference libraries, we can automate the causal workflow: <strong>discovery -&gt; identification -&gt; estimation -&gt; refutation</strong>. The result is a new class of general‑purpose causal AI systems that parse tabular, time-series, and even multimodal data with human-like intuition and mathematical rigor.</p>
 <p>Practically, that means the agent:</p>
 <ol type="1">
-<li><p>Thinks (via an LLM) about what causal graph should link your variables</p></li>
-<li><p>Acts by writing Python: drawing DAGs, running ID algorithms, calling estimators, using libraries like <code>dowhy</code>, <code>econml</code>, <code>causaltune</code>, etc.</p></li>
-<li><p>Reflects on the results, prompting itself with “Do my assumptions still hold?”</p></li>
-<li><p>Iterates until a relevant answer surfaces, or it asks you for help.</p></li>
+<li><p><strong>Thinks</strong> (via an LLM) about what causal graph should link your variables</p></li>
+<li><p><strong>Acts</strong> by writing Python: drawing DAGs, running ID algorithms, calling estimators, using libraries like <code>dowhy</code>, <code>econml</code>, <code>causaltune</code>, etc.</p></li>
+<li><p><strong>Reflects</strong> on the results, prompting itself with “Do my assumptions still hold?”</p></li>
+<li><p><strong>Iterates</strong> until a relevant answer surfaces, or it asks you for help.</p></li>
 </ol>
-<p>If that sounds suspiciously like a junior data scientist with infinite patience, you’ve got the gist.</p>
+<p>If that sounds suspiciously like a data scientist teamate with infinite patience, you’ve got the gist.</p>
 <section id="lines-of-code-for-your-first-causal-inference-agent" class="level4">
 <h4 class="anchored" data-anchor-id="lines-of-code-for-your-first-causal-inference-agent">10 lines of code for your first causal inference agent</h4>
 <p>To illustrate the idea, here is a minimal snippet to estimate the effect of a new coupon on revenue. This may actually be sufficient to get you a quick answer, if (a big if) the data is ready.</p>
@@ -251,7 +252,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 <li>Each step is backed by library outputs that the LLM interprets before deciding its next move.</li>
 </ol>
-<p>The framework’s hierarchical breakdown—variable‑level, edge‑level, graph‑level, effect‑level—has produced expert‑level accuracy on a testing dataset with 1.3k questions, all while providing interpretable explanations.</p>
+<p>The framework’s hierarchical breakdown (variable‑level, edge‑level, graph‑level, effect‑level) has produced expert‑level accuracy on a testing dataset with 1.3k questions, all while providing interpretable explanations.</p>
 </section>
 <section id="autonomous-end-to-end-pipelines" class="level3">
 <h3 class="anchored" data-anchor-id="autonomous-end-to-end-pipelines">Autonomous End-to-End Pipelines</h3>
