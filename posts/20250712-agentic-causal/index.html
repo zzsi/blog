@@ -238,8 +238,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Time to look at some interesting papers and open source projects:</p>
 <hr>
 </section>
-<section id="toolaugmented-causal-inference-agents" class="level3">
-<h3 class="anchored" data-anchor-id="toolaugmented-causal-inference-agents">Tool‑Augmented Causal Inference Agents</h3>
+<section id="singleagent-autonomous-pipelines" class="level3">
+<h3 class="anchored" data-anchor-id="singleagent-autonomous-pipelines">Single‑Agent Autonomous Pipelines</h3>
 <p><a href="https://arxiv.org/pdf/2408.06849"><strong>Causal&nbsp;Agent</strong></a> framework&nbsp;(2024):</p>
 <ol type="1">
 <li>An LLM operates in a ReAct‑style loop with a suite of causal tools—e.g.&nbsp;<a href="https://github.com/py-why/causallearn"><strong>CausalLearn</strong></a> for graph discovery and <a href="https://github.com/microsoft/EconML"><strong>EconML</strong></a> for effect estimation.</li>
@@ -253,9 +253,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Each step is backed by library outputs that the LLM interprets before deciding its next move.</li>
 </ol>
 <p>The framework’s hierarchical breakdown (variable‑level, edge‑level, graph‑level, effect‑level) has produced expert‑level accuracy on a testing dataset with 1.3k questions, all while providing interpretable explanations.</p>
-</section>
-<section id="autonomous-end-to-end-pipelines" class="level3">
-<h3 class="anchored" data-anchor-id="autonomous-end-to-end-pipelines">Autonomous End-to-End Pipelines</h3>
 <ul>
 <li><strong><a href="https://arxiv.org/abs/2504.13263">Causal-Copilot (2025)</a></strong>
 <ul>
@@ -264,7 +261,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Works on both tabular and time-series data: prompts the user for a question, auto-selects the right discovery algorithm (e.g., NOTEARS, PC), tunes an estimator (DoubleML, CausalForest, IV), runs refuters, and returns an English report with effect size + CI.</li>
 <li>Achieves state-of-the-art graph accuracy and effect-estimation error across five public benchmarks, edging out both classic SCD baselines and earlier LLM agents.</li>
 </ul></li>
-<li><strong><a href="https://arxiv.org/abs/2505.10936">Chain-of-Collaboration Prompting (2025)</a></strong> shows that giving sub-agents explicit roles (planner, verifier, critic) and letting them share scratch pads improves causal reasoning accuracy on CLADDER and Causal-Copilot QA tasks, cutting hallucinated edges by 35 % vs.&nbsp;single-prompt ReAct.</li>
 </ul>
 </section>
 <section id="debating-multiagent-systems-for-causal-discovery" class="level3">
@@ -280,9 +276,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 </ul>
 <p>Experiments show these debating agents outperform both classical algorithms and single‑LLM prompts on datasets like <a href="https://www.kaggle.com/datasets/uciml/autompg-dataset">Auto MPG</a>, demonstrating that multiple specialized minds can yield more reliable causal graphs.</p>
+<ul>
+<li><strong><a href="https://arxiv.org/abs/2505.10936">Chain-of-Collaboration Prompting (2025)</a></strong> shows that giving sub-agents explicit roles (planner, verifier, critic) and letting them share scratch pads improves causal reasoning accuracy on CLADDER and Causal-Copilot QA tasks, cutting hallucinated edges by 35 % vs.&nbsp;single-prompt ReAct.</li>
+</ul>
 </section>
-<section id="automated-causal-inference-pipelines-automl-for-causality" class="level3">
-<h3 class="anchored" data-anchor-id="automated-causal-inference-pipelines-automl-for-causality">Automated Causal Inference Pipelines (AutoML&nbsp;for&nbsp;Causality)</h3>
+<section id="toolbox-layer-automl-nocode-platforms" class="level3">
+<h3 class="anchored" data-anchor-id="toolbox-layer-automl-nocode-platforms">Toolbox Layer (AutoML &amp; No‑Code Platforms)</h3>
 <p>Parallel to LLM research, we also see <strong>AutoML‑style causal platforms</strong> that automate model selection, tuning, and robustness checks.</p>
 <ul>
 <li><strong>AutoCausality</strong>: part of the <a href="https://www.pywhy.org/"><strong>PyWhy</strong></a> ecosystem, using hyper‑parameter search and ensembling to choose the best estimator for a dataset.</li>
