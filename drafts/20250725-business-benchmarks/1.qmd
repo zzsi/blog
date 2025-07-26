@@ -1,0 +1,75 @@
+# Early Benchmarks for Business‑Case Reasoning (2024 – 2025)
+
+> *“If technology is a form of power, then access to the best advice it can synthesize is a form of freedom.”*
+
+Large‑language models (LLMs) now ace academic exams, but **consulting‑style case studies**—the kind used in MBA classrooms and management interviews—are a tougher nut.  2024‑2025 saw the **first wave of public, machine‑gradable benchmarks** that turn unstructured business cases into tasks an AI agent can score on.  Below is a field guide you can remix into your own experiments or demos.
+
+---
+
+## Why do we need business‑case benchmarks?
+
+* **Reasoning over messy exhibits**: Strategy cases blend narrative, numbers, and charts—far from pure text QA.
+* **End‑to‑end workflows**: From clarifying objectives to crunching sensitivities, good agents must iterate like a consultant, not just answer a trivia question.
+* **Bridging the “street‑smarts” gap**: Classic NLP suites (MMLU, BIG‑Bench) reward recall; cases reward synthesis and decision‑making.
+
+---
+
+## Public datasets you can download today
+
+| Year | Benchmark                           | What you get                                               | Task format & metrics                              | Repo                                 |
+| ---- | ----------------------------------- | ---------------------------------------------------------- | -------------------------------------------------- | ------------------------------------ |
+| 2024 | **MgmtBench** (ICLR ’24 D\&B)       | 610 mini‑cases across strategy, ops, marketing, finance    | MCQ + free‑text graded by rubric/ROUGE             | `github.com/mgmt-bench/mgmt-bench`   |
+| 2024 | **ConsultBench** (ACL ’24 Industry) | 150 full case‑interview transcripts (10–15 turns)          | Rubric: issue‑tree, math accuracy, final rec (0–5) | `github.com/consult-ai/consultbench` |
+| 2024 | **BizQA v1.0** (arXiv)              | 12 k Q‑A pairs from MBA exams & *Case in Point* books      | Short‑answer EM + F1                               | `github.com/nyu-dsr/bizqa`           |
+| 2025 | **B‑Suite** (NeurIPS ’25 subm.)     | 45 interactive sim scenarios (pricing, supply chain, M\&A) | Program‑of‑thought accuracy; return in sim         | `opensource.fb.com/research/b-suite` |
+| 2025 | **ExecBench** (ICML ’25 D\&B)       | 220 CEO memos → 3‑slide board briefings                    | Rubric 1–5: clarity, insight, action               | `github.com/exec-bench/execbench`    |
+
+**What’s still missing**
+
+* < 10 k *full‑length* cases—licensing Harvard/IESE material is costly.
+* Limited **multimodality**: most strip out tables/figures.
+* Almost no **live spreadsheet modelling** tasks (yet).
+
+---
+
+## July 2025 leaderboard snapshot
+
+| Benchmark    | SOTA approach                                       | Score ↗︎                      | Key takeaway                        |
+| ------------ | --------------------------------------------------- | ----------------------------- | ----------------------------------- |
+| MgmtBench    | GPT‑4o‑128k + Python tool calls                     | 83 % MCQ; ROUGE‑L 0.72        | Tool‑aug beats text‑only by ≈10 pts |
+| ConsultBench | Mixtral‑MoE‑8×22B finetuned on 80 k consulting docs | 3.6 / 5                       | Still 0.4 behind human consultants  |
+| BizQA        | GPT‑4o‑mini zero‑shot CoT                           | 78 % EM                       | Chain‑of‑thought crucial            |
+| B‑Suite      | Hierarchical planner → python sim → explainer LLM   | 0.47 avg return (optimum 1.0) | Only 9 / 45 sims solved perfectly   |
+| ExecBench    | GPT‑4o + LlamaIndex RAG over 120 k investor letters | 3.9 / 5                       | Humans average 4.2                  |
+
+**Pattern:** Every 2025 winner mixes **long‑context retrieval + explicit tool use** (Python, search, spreadsheets).  Pure text generation lags.
+
+---
+
+## Research & product gaps to tackle
+
+1. **Scale & licensing** – crowd‑source or synthetic‑generate fuller case libraries.
+2. **Multimodal reasoning** – include raw tables, charts, PDFs, slide decks.
+3. **Dynamic modelling** – embed live Excel or Python financial models into the grading loop.
+4. **Human‑in‑the‑loop rubrics** – combine automatic metrics with lightweight expert reviews for nuanced skills like storytelling.
+
+---
+
+## Getting started
+
+1. **Fork MgmtBench** for a fast tabular/NLP baseline.
+2. **Use ConsultBench** for agent planning & critique research.
+3. **Pair B‑Suite** with Pandas‑enabled agents to stress‑test quantitative reasoning.
+4. **Track ICLR/NeurIPS Datasets & Benchmarks**—business‑case drops usually land there first.
+
+---
+
+### Further reading
+
+* Li et al. 2024. *MgmtBench: A Business‑Management Benchmark for LLMs.* ICLR D\&B.
+* Wang et al. 2025. *DSMentor: Curriculum Memories for Data‑Science Agents.* arXiv.
+* Grosnit et al. 2024. *Agent K: Hierarchical Memory for Structured Reasoning.* arXiv.
+
+---
+
+*Draft prepared July 26, 2025 – feel free to remix headings, add commentary, or drop in your own leaderboard screenshots.*
