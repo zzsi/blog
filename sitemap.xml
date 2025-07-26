@@ -2,74 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://zzsi.github.io/blog/posts/20240825-sustainable-future/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.413Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.608Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.529Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.725Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20240915-soccer-tracking/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.466Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.661Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20250720-right-to-ai/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.409Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20230629-rag/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.409Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20250625-sports-photos/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.409Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/post-with-code/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20250725-business-benchmarks/1.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/about.html</loc>
-    <lastmod>2025-07-26T01:00:27.409Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20250725-business-benchmarks/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/welcome/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20250723-ml-agents-kaggle/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/presentation0/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.410Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/drafts/20250623-some-eeg-demos/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.409Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.606Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/drafts/20250630-state-of-efficient-video-gen/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.409Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250623-some-eeg-demos/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.603Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/presentation0/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250625-sports-photos/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250724-imo-gold-by-ai/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/welcome/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250725-business-benchmarks/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/about.html</loc>
+    <lastmod>2025-07-26T01:43:15.603Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250725-business-benchmarks/1.html</loc>
+    <lastmod>2025-07-26T01:43:15.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/post-with-code/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250723-ml-agents-kaggle/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250730-advice-for-young-graduates/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.605Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20230629-rag/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.603Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250720-right-to-ai/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.604Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/drafts/20250629-doc-ai-vlm/index.html</loc>
+    <lastmod>2025-07-26T01:43:15.604Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20250712-agentic-causal/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.533Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.729Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
-    <lastmod>2025-07-26T01:00:27.411Z</lastmod>
+    <lastmod>2025-07-26T01:43:15.606Z</lastmod>
   </url>
 </urlset>

@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-07-30">
 
-<title>quarto-input4d6376f26172e3dd – Blog</title>
+<title>Beating the Odds: A Luck‑Friendly Career Game‑Plan for Fresh CS/Eng/Math Grads – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,6 +68,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -117,174 +147,323 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Beating the Odds: A Luck‑Friendly Career Game‑Plan for Fresh CS/Eng/Math Grads</h1>
+</div>
 
 
 
-<section id="early-benchmarks-for-businesscase-reasoning-2024-2025" class="level1">
-<h1>Early Benchmarks for Business‑Case Reasoning (2024 – 2025)</h1>
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">July 30, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="beating-the-odds-a-luckfriendly-career-gameplan-for-fresh-csengmath-grads" class="level1">
+<h1>Beating the Odds: A <strong>Luck‑Friendly</strong> Career Game‑Plan for Fresh CS/Eng/Math Grads</h1>
+<p><em>Because AI isn’t going to stop for your résumé — so let’s stack the deck instead.</em></p>
 <blockquote class="blockquote">
-<p><em>“If technology is a form of power, then access to the best advice it can synthesize is a form of freedom.”</em></p>
+<p>❓ <strong>Who is this for?</strong> Anyone finishing (or just finished) a degree in Computer&nbsp;Science, Engineering, Mathematics, or a neighboring field who keeps hearing <em>“entry‑level is dead”</em> and wants a battle‑tested road‑map—rooted in data, not doomscroll‑feels.</p>
 </blockquote>
-<p>Large‑language models (LLMs) now ace academic exams, but <strong>consulting‑style case studies</strong>—the kind used in MBA classrooms and management interviews—are a tougher nut. 2024‑2025 saw the <strong>first wave of public, machine‑gradable benchmarks</strong> that turn unstructured business cases into tasks an AI agent can score on. Below is a field guide you can remix into your own experiments or demos.</p>
 <hr>
-<section id="why-do-we-need-businesscase-benchmarks" class="level2">
-<h2 class="anchored" data-anchor-id="why-do-we-need-businesscase-benchmarks">Why do we need business‑case benchmarks?</h2>
+<section id="why-this-post-exists" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-post-exists">Why This Post Exists 🌍➡️👩‍💻</h2>
+<p>Job boards look like ghost towns, internships list <em>10 000</em> applicants, and every third headline screams <strong>“AI will eat junior jobs!”</strong> Yes, automation moved the goalposts—but that doesn’t mean the stadium is closed.</p>
+<p>Back in 2018 a surprisingly fun physics paper—<strong>“Talent&nbsp;vs&nbsp;Luck: The Role of Randomness in Success and Failure”</strong> (<a href="https://arxiv.org/abs/1802.07068">Pluchino&nbsp;et&nbsp;al.,&nbsp;arXiv:1802.07068</a>)—ran 40‑year career simulations and concluded:</p>
+<blockquote class="blockquote">
+<p><em>Moderately talented folks who collide with lots of lucky breaks often out‑earn hyper‑geniuses who never roll a six.</em></p>
+</blockquote>
+<p>Translation: you can’t bend probability at will, <strong>but you can:</strong></p>
 <ul>
-<li><strong>Reasoning over messy exhibits</strong>: Strategy cases blend narrative, numbers, and charts—far from pure text QA.</li>
-<li><strong>End‑to‑end workflows</strong>: From clarifying objectives to crunching sensitivities, good agents must iterate like a consultant, not just answer a trivia question.</li>
-<li><strong>Bridging the “street‑smarts” gap</strong>: Classic NLP suites (MMLU, BIG‑Bench) reward recall; cases reward synthesis and decision‑making.</li>
+<li><strong>(a) Upgrade the talent multiplier</strong>—the skills and habits that <em>convert</em> lucky breaks into tangible wins; and</li>
+<li><strong>(b) Widen the funnel</strong>—increase “collision points” where random positives can strike.</li>
 </ul>
+<p>Everything below is a <em>working‑class</em> playbook for doing exactly that—even if you didn’t graduate from MIT, can’t move to SF tomorrow, and still solve life’s budget constraints in Excel.</p>
 <hr>
 </section>
-<section id="public-datasets-you-can-download-today" class="level2">
-<h2 class="anchored" data-anchor-id="public-datasets-you-can-download-today">Public datasets you can download today</h2>
+<section id="max-out-the-talent-multiplier" class="level2">
+<h2 class="anchored" data-anchor-id="max-out-the-talent-multiplier">1&nbsp;&nbsp;Max&nbsp;Out&nbsp;the <strong>Talent Multiplier</strong> 🎓⚡️</h2>
+<p>In the simulation a lucky event only <em>doubles</em> your career capital if your talent score <span class="math inline">\(T\)</span> exceeds a random threshold <span class="math inline">\(R\)</span>. Better skills ⇢ higher chance <span class="math inline">\(T&gt;R\)</span>.</p>
+<section id="learn-in-public-the-buildshare-cycle" class="level3">
+<h3 class="anchored" data-anchor-id="learn-in-public-the-buildshare-cycle">1.1 Learn in&nbsp;Public (The Build‑Share Cycle)</h3>
+<ul>
+<li><strong>Projects&nbsp;&gt; certs.</strong> Recruiters Google your GitHub more than your GPA.</li>
+<li><strong>Cycle cadence:</strong> pick <em>one</em> micro‑project every month → push the code → write a 400‑word “what I learned” gist or Twitter/X thread.</li>
+<li><strong>Proof it works:</strong> a friend forked an obscure math‑to‑LaTeX converter; two weeks later a remote CTO DMed him → paid maintenance gig.</li>
+</ul>
+</section>
+<section id="stack-metaskills" class="level3">
+<h3 class="anchored" data-anchor-id="stack-metaskills">1.2 Stack <em>Meta‑Skills</em></h3>
+<p><em>Communication, product sense &amp; storytelling</em> beat raw LeetCode once you’re inside.</p>
+<ul>
+<li><strong>Lightning‑talk rule:</strong> volunteer to demo <em>anything</em> once a quarter—meet‑ups, Toastmasters, Zoom brown‑bags.</li>
+<li><strong>Explain like I’m five:</strong> blogging technical topics for non‑experts forces clarity.</li>
+</ul>
+</section>
+<section id="reskill-faster-than-ai-upskills" class="level3">
+<h3 class="anchored" data-anchor-id="reskill-faster-than-ai-upskills">1.3 Re‑Skill Faster Than AI Up‑Skills</h3>
+<p>Large models improve weekly—so should you.</p>
+<ul>
+<li><strong>30‑day micro‑sprints:</strong> choose a theme (“Rust‑WASM”, “LangChain Agents”), build a weekend toy, document aggressively.</li>
+<li><strong>Tool stack rotation:</strong> each quarter swap one familiar tool for a trending one—Docker⇢Nix, matplotlib⇢Plotly, REST⇢gRPC.</li>
+</ul>
+</section>
+<section id="stay-physically-mentally-fit" class="level3">
+<h3 class="anchored" data-anchor-id="stay-physically-mentally-fit">1.4 Stay Physically &amp; Mentally Fit</h3>
+<p>Burn‑out kills option value.</p>
+<ul>
+<li><strong>Pomodoro walks:</strong> 25&nbsp;min code&nbsp;→ 5&nbsp;min outdoor stroll.</li>
+<li><strong>Cheap ergonomics:</strong> used standing desk frame + Ikea top (~$120).</li>
+<li><strong>BYO lunch:</strong> saves $250+/mo—fuel for courses/hackathons.</li>
+</ul>
+<blockquote class="blockquote">
+<p><strong>Pro&nbsp;tip:</strong> Treat skills like an <em>options portfolio</em>—low premium today, huge upside tomorrow.</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="expand-your-luck-surface-area" class="level2">
+<h2 class="anchored" data-anchor-id="expand-your-luck-surface-area">2&nbsp;&nbsp;Expand Your <strong>Luck Surface Area</strong> 🌐✨</h2>
+<p>More <em>positive random events</em> around you ⇢ higher odds one lands.</p>
+<section id="geography-digital-hubs" class="level3">
+<h3 class="anchored" data-anchor-id="geography-digital-hubs">2.1 Geography&nbsp;&amp; Digital&nbsp;Hubs</h3>
+<ul>
+<li><strong>Move—or virtually embed—into opportunity‑dense ecosystems</strong> (startup accelerators, research labs, OSS orgs).</li>
+<li>Live outside big hubs? Turn Discord/Slack into your “city.” Ex: AI&nbsp;Coffee&nbsp;Break, ML&nbsp;GDE, Paper&nbsp;Club voice‑rooms drop leads daily.</li>
+</ul>
+</section>
+<section id="network-without-the-cringe-factor" class="level3">
+<h3 class="anchored" data-anchor-id="network-without-the-cringe-factor">2.2 Network Without the Cringe Factor</h3>
+<ul>
+<li><strong>Low‑stakes collab&nbsp;&gt; cold DMs.</strong> Merge a doc typo, answer a forum thread, build a meme CLI that scratches someone’s itch.</li>
+<li><strong>Become a bridge</strong> between disjoint tribes—say, math‑olympiad Discord ✕ indie‑game dev Slack. Bridges receive <em>twice</em> the info flow.</li>
+</ul>
+</section>
+<section id="show-your-work-so-luck-can-find-you" class="level3">
+<h3 class="anchored" data-anchor-id="show-your-work-so-luck-can-find-you">2.3 Show Your Work (So Luck&nbsp;Can&nbsp;Find&nbsp;You)</h3>
+<ul>
+<li><strong>Blog posts</strong>&nbsp;→ Google juice&nbsp;→ recruiter DM.</li>
+<li><strong>Build&nbsp;Week streams</strong> on Twitch/YouTube. Even five viewers beats zero.</li>
+<li><strong>Open problems lists:</strong> publish a Notion page of bugs/data gaps you <em>want</em> help on; collaborators self‑select.</li>
+</ul>
+</section>
+<section id="join-serendipity-infrastructure" class="level3">
+<h3 class="anchored" data-anchor-id="join-serendipity-infrastructure">2.4 Join <em>Serendipity Infrastructure</em></h3>
+<p>Platforms designed to collide talent &amp; randomness:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 2%">
-<col style="width: 19%">
-<col style="width: 31%">
-<col style="width: 27%">
-<col style="width: 19%">
+<col style="width: 14%">
+<col style="width: 45%">
+<col style="width: 41%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Year</th>
-<th>Benchmark</th>
-<th>What you get</th>
-<th>Task format &amp; metrics</th>
-<th>Repo</th>
+<th>Platform</th>
+<th>What to Do</th>
+<th>Payoff</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>2024</td>
-<td><strong>MgmtBench</strong> (ICLR&nbsp;’24 D&amp;B)</td>
-<td>610 mini‑cases across strategy, ops, marketing, finance</td>
-<td>MCQ&nbsp;+ free‑text graded by rubric/ROUGE</td>
-<td><code>github.com/mgmt-bench/mgmt-bench</code></td>
+<td><strong>buildspace</strong></td>
+<td>Ship an AI app in 6&nbsp;weeks with cohort support</td>
+<td>Alumni portal packed with recruiters</td>
 </tr>
 <tr class="even">
-<td>2024</td>
-<td><strong>ConsultBench</strong> (ACL&nbsp;’24 Industry)</td>
-<td>150 full case‑interview transcripts (10–15 turns)</td>
-<td>Rubric: issue‑tree, math accuracy, final rec (0–5)</td>
-<td><code>github.com/consult-ai/consultbench</code></td>
+<td><strong>Kaggle</strong></td>
+<td>Enter niche comp with small prize pool</td>
+<td>Top&nbsp;10 badge shows up on Google forever</td>
 </tr>
 <tr class="odd">
-<td>2024</td>
-<td><strong>BizQA&nbsp;v1.0</strong> (arXiv)</td>
-<td>12 k Q‑A pairs from MBA exams &amp; <em>Case in Point</em> books</td>
-<td>Short‑answer EM&nbsp;+&nbsp;F1</td>
-<td><code>github.com/nyu-dsr/bizqa</code></td>
-</tr>
-<tr class="even">
-<td>2025</td>
-<td><strong>B‑Suite</strong> (NeurIPS&nbsp;’25&nbsp;subm.)</td>
-<td>45 interactive sim scenarios (pricing, supply chain, M&amp;A)</td>
-<td>Program‑of‑thought accuracy; return in sim</td>
-<td><code>opensource.fb.com/research/b-suite</code></td>
-</tr>
-<tr class="odd">
-<td>2025</td>
-<td><strong>ExecBench</strong> (ICML&nbsp;’25 D&amp;B)</td>
-<td>220 CEO memos → 3‑slide board briefings</td>
-<td>Rubric 1–5: clarity, insight, action</td>
-<td><code>github.com/exec-bench/execbench</code></td>
+<td><strong>MLH</strong></td>
+<td>Weekend hackathons w/&nbsp;swag + sponsor intros</td>
+<td>Real‑world coding under chaotic deadlines</td>
 </tr>
 </tbody>
 </table>
-<p><strong>What’s still missing</strong></p>
+<hr>
+</section>
+</section>
+<section id="portfolio-thinking-many-small-bets" class="level2">
+<h2 class="anchored" data-anchor-id="portfolio-thinking-many-small-bets">3&nbsp;&nbsp;Portfolio Thinking: <strong>Many Small Bets</strong> 🎲🎲🎲</h2>
+<p>Pluchino&nbsp;et&nbsp;al.&nbsp;rewarded frequent, diversified shots. Here’s how to translate that.</p>
+<section id="sideproject-roulette" class="level3">
+<h3 class="anchored" data-anchor-id="sideproject-roulette">3.1 Side‑Project Roulette</h3>
+<p>Each mini‑project is a lottery ticket; any one can pop. Keep them <strong>tiny</strong> (one‑to‑four weekends) so failure costs pocket change.</p>
+</section>
+<section id="microgigs-for-fun-revenue" class="level3">
+<h3 class="anchored" data-anchor-id="microgigs-for-fun-revenue">3.2 Micro‑Gigs for Fun&nbsp;&amp; Revenue</h3>
 <ul>
-<li>&lt; 10 k <em>full‑length</em> cases—licensing Harvard/IESE material is costly.</li>
-<li>Limited <strong>multimodality</strong>: most strip out tables/figures.</li>
-<li>Almost no <strong>live spreadsheet modelling</strong> tasks (yet).</li>
+<li>Freelance bug&nbsp;fix ($50) → testimonial → bigger contract.</li>
+<li>Write docs for an OSS repo → become <em>de&nbsp;facto</em> maintainer.</li>
+</ul>
+</section>
+<section id="hackathon-tourism" class="level3">
+<h3 class="anchored" data-anchor-id="hackathon-tourism">3.3 Hackathon Tourism</h3>
+<p><em>Use hackathons as cheap seed rounds.</em> Travel light (sleeping bag, instant noodles), chase themes that scare you—edge compute, bio‑AI, robotics.</p>
+<blockquote class="blockquote">
+<p><strong>Rule of Thumb ✏️</strong>: Keep <em>three</em> active bets—one learning, one earning, one purely absurd fun (virality factor).</p>
+</blockquote>
+<hr>
+</section>
+</section>
+<section id="choose-or-create-egalitarian-environments" class="level2">
+<h2 class="anchored" data-anchor-id="choose-or-create-egalitarian-environments">4&nbsp;&nbsp;Choose (or Create) <strong>Egalitarian Environments</strong> 🪴</h2>
+<p>The study found random/equal funding surfaces hidden talent better than winner‑takes‑all. Hunt orgs that:</p>
+<ul>
+<li>Rotate juniors through <em>production</em> code, not bug backlogs.</li>
+<li>Host internal hack&nbsp;funds or “20 % time.”</li>
+<li>Celebrate post‑mortems as loud as launch parties.</li>
+</ul>
+<section id="if-you-cant-find-onebuild-one" class="level3">
+<h3 class="anchored" data-anchor-id="if-you-cant-find-onebuild-one">4.1 If You Can’t Find One—Build One</h3>
+<ul>
+<li>Recruit 3‑4 peers, share a Notion roadmap, hold monthly demo&nbsp;days.</li>
+<li>Pool $20 each for DigitalOcean credits; rotate project leads.</li>
+<li>That group&nbsp;≠ hobby club—call it a <em>co‑lab</em> on your résumé.</li>
 </ul>
 <hr>
 </section>
-<section id="july-2025-leaderboard-snapshot" class="level2">
-<h2 class="anchored" data-anchor-id="july-2025-leaderboard-snapshot">July&nbsp;2025 leaderboard snapshot</h2>
+</section>
+<section id="crashproof-your-finances-mindset" class="level2">
+<h2 class="anchored" data-anchor-id="crashproof-your-finances-mindset">5&nbsp;&nbsp;Crash‑Proof Your <strong>Finances &amp; Mindset</strong> 💰🧠</h2>
+<p>Staying in the game longer&nbsp;⇒ more rolls of dice.</p>
+<section id="runway-math" class="level3">
+<h3 class="anchored" data-anchor-id="runway-math">5.1 Runway Math</h3>
+<ul>
+<li>Spreadsheet your burn rate.</li>
+<li>Apply <em>50‑30‑20</em> rule adjusted for ramen budgets (50&nbsp;% needs, 30&nbsp;% learning/tools, 20&nbsp;% play).</li>
+</ul>
+</section>
+<section id="emergency-aesthetic-upgrades" class="level3">
+<h3 class="anchored" data-anchor-id="emergency-aesthetic-upgrades">5.2 Emergency &gt; Aesthetic Upgrades</h3>
+<p>Six months of survival juice buys time to wait for good luck instead of grabbing the first cubicle.</p>
+</section>
+<section id="detach-ego-from-first-salary" class="level3">
+<h3 class="anchored" data-anchor-id="detach-ego-from-first-salary">5.3 Detach Ego From First Salary</h3>
+<p>Contract gig at $25/hr might beat “AI&nbsp;Engineer&nbsp;I” title if it grows network 10× faster.</p>
+</section>
+<section id="mental-resilience-kit" class="level3">
+<h3 class="anchored" data-anchor-id="mental-resilience-kit">5.4 Mental Resilience Kit</h3>
+<ul>
+<li><strong>Daily stoic journal</strong>—separate what you <em>control</em> vs <em>can’t</em>.</li>
+<li><strong>Digital sabbath</strong> once a week; randomness also needs incubation.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="rituals-to-keep-rolling-the-dice" class="level2">
+<h2 class="anchored" data-anchor-id="rituals-to-keep-rolling-the-dice">6&nbsp;&nbsp;Rituals to Keep <strong>Rolling the Dice</strong> 🔁</h2>
+<ol type="1">
+<li><strong>Weekly Reflection (30&nbsp;min):</strong> Did I create/spot at least <em>one</em> optionality event?</li>
+<li><strong>Monthly Collisions Log:</strong> Write down every unexpected DM/PR/email → analyze patterns.</li>
+<li><strong>Quarterly Luck Audit:</strong> Double‑down on high‑yield channels, sunset dead ones.</li>
+<li><strong>Annual Skill Draft:</strong> Like fantasy sports but for courses/books you pledge to finish. Draft publicly on X or LinkedIn for accountability.</li>
+</ol>
+<hr>
+</section>
+<section id="play-the-ultralong-game" class="level2">
+<h2 class="anchored" data-anchor-id="play-the-ultralong-game">7&nbsp;&nbsp;Play the <strong>Ultra‑Long Game</strong> 🏗️⏳</h2>
+<section id="compound-reputational-capital" class="level3">
+<h3 class="anchored" data-anchor-id="compound-reputational-capital">7.1 Compound Reputational Capital</h3>
+<p>Every tiny win (bug fix, conference note, blog post) is a Lego brick. Stack diligently and in five years you look like an overnight success.</p>
+</section>
+<section id="bet-on-antifragile-domains" class="level3">
+<h3 class="anchored" data-anchor-id="bet-on-antifragile-domains">7.2 Bet on Anti‑Fragile Domains</h3>
+<p>Areas that <em>benefit</em> from chaos—security, distributed systems, explainable AI—age well and keep spawning lucky breaks.</p>
+</section>
+<section id="mentor-backward-early" class="level3">
+<h3 class="anchored" data-anchor-id="mentor-backward-early">7.3 Mentor Backward Early</h3>
+<p>Teaching freshmen/boot‑campers sharpens mastery and builds a reputation loop: mentees often graduate into colleagues who remember you.</p>
+<hr>
+</section>
+</section>
+<section id="tldr-cheat-sheet" class="level2">
+<h2 class="anchored" data-anchor-id="tldr-cheat-sheet">TL;DR Cheat Sheet 🥡</h2>
+<ul>
+<li><strong>Talent&nbsp;= readiness × range.</strong> Keep learning, broaden skill graph.</li>
+<li><strong>Luck loves movement.</strong> Be discoverable, share loudly.</li>
+<li><strong>Diversify bets.</strong> Portfolio outperforms passion‑tunnel.</li>
+<li><strong>Seek luck‑dense ecosystems.</strong> Or craft micro‑ones.</li>
+<li><strong>Maintain runway &amp; humility.</strong> Time on field beats perfect first play.</li>
+</ul>
+<hr>
+</section>
+<section id="further-reading-link-pack" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading-link-pack">Further Reading &amp; Link Pack 🔗</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 9%">
-<col style="width: 40%">
-<col style="width: 22%">
-<col style="width: 27%">
+<col style="width: 15%">
+<col style="width: 50%">
+<col style="width: 34%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Benchmark</th>
-<th>SOTA approach</th>
-<th>Score&nbsp;↗︎</th>
-<th>Key takeaway</th>
+<th>Category</th>
+<th>Source</th>
+<th>Why It’s Useful</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>MgmtBench</td>
-<td>GPT‑4o‑128k + Python tool calls</td>
-<td>83 % MCQ; ROUGE‑L&nbsp;0.72</td>
-<td>Tool‑aug beats text‑only by ≈10 pts</td>
+<td>Research</td>
+<td><em>Talent&nbsp;vs&nbsp;Luck</em> paper</td>
+<td>Core simulation insight</td>
 </tr>
 <tr class="even">
-<td>ConsultBench</td>
-<td>Mixtral‑MoE‑8×22B finetuned on 80 k consulting docs</td>
-<td>3.6 / 5</td>
-<td>Still 0.4 behind human consultants</td>
+<td>Career Craft</td>
+<td>Cal Newport, <em>So Good They Can’t Ignore You</em></td>
+<td>Career‑capital mindset</td>
 </tr>
 <tr class="odd">
-<td>BizQA</td>
-<td>GPT‑4o‑mini zero‑shot CoT</td>
-<td>78 % EM</td>
-<td>Chain‑of‑thought crucial</td>
+<td>Indie‑Hacking</td>
+<td>Patrick&nbsp;McKenzie, “Bring the Donuts”</td>
+<td>Compounding tiny wins</td>
 </tr>
 <tr class="even">
-<td>B‑Suite</td>
-<td>Hierarchical planner → python sim → explainer LLM</td>
-<td>0.47 avg return (optimum&nbsp;1.0)</td>
-<td>Only 9 / 45 sims solved perfectly</td>
+<td>Cohort‑Based</td>
+<td>Buildspace</td>
+<td>Ship projects with peers</td>
 </tr>
 <tr class="odd">
-<td>ExecBench</td>
-<td>GPT‑4o + LlamaIndex RAG over 120 k investor letters</td>
-<td>3.9 / 5</td>
-<td>Humans average 4.2</td>
+<td>Communities</td>
+<td>Adacamp Discord</td>
+<td>Inclusive tech mentorship</td>
+</tr>
+<tr class="even">
+<td>Philosophy</td>
+<td><em>The Almanack of Naval Ravikant</em></td>
+<td>Leverage &amp; luck mental models</td>
+</tr>
+<tr class="odd">
+<td>Habits</td>
+<td><em>Atomic Habits</em> by James&nbsp;Clear</td>
+<td>System‑building over willpower</td>
+</tr>
+<tr class="even">
+<td>Finance Basics</td>
+<td><em>I&nbsp;Will Teach You to Be Rich</em></td>
+<td>Runway &amp; conscious spending</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Pattern:</strong> Every 2025 winner mixes <strong>long‑context retrieval + explicit tool use</strong> (Python, search, spreadsheets). Pure text generation lags.</p>
 <hr>
-</section>
-<section id="research-product-gaps-to-tackle" class="level2">
-<h2 class="anchored" data-anchor-id="research-product-gaps-to-tackle">Research &amp; product gaps to tackle</h2>
-<ol type="1">
-<li><strong>Scale &amp; licensing</strong>&nbsp;– crowd‑source or synthetic‑generate fuller case libraries.</li>
-<li><strong>Multimodal reasoning</strong>&nbsp;– include raw tables, charts, PDFs, slide decks.</li>
-<li><strong>Dynamic modelling</strong>&nbsp;– embed live Excel or Python financial models into the grading loop.</li>
-<li><strong>Human‑in‑the‑loop rubrics</strong>&nbsp;– combine automatic metrics with lightweight expert reviews for nuanced skills like storytelling.</li>
-</ol>
-<hr>
-</section>
-<section id="getting-started" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
-<ol type="1">
-<li><strong>Fork MgmtBench</strong> for a fast tabular/NLP baseline.</li>
-<li><strong>Use ConsultBench</strong> for agent planning &amp; critique research.</li>
-<li><strong>Pair B‑Suite</strong> with Pandas‑enabled agents to stress‑test quantitative reasoning.</li>
-<li><strong>Track ICLR/NeurIPS Datasets&nbsp;&amp;&nbsp;Benchmarks</strong>—business‑case drops usually land there first.</li>
-</ol>
-<hr>
-<section id="further-reading" class="level3">
-<h3 class="anchored" data-anchor-id="further-reading">Further reading</h3>
-<ul>
-<li>Li&nbsp;et al.&nbsp;2024. <em>MgmtBench: A Business‑Management Benchmark for LLMs.</em> ICLR&nbsp;D&amp;B.</li>
-<li>Wang&nbsp;et al.&nbsp;2025. <em>DSMentor: Curriculum Memories for Data‑Science Agents.</em> arXiv.</li>
-<li>Grosnit&nbsp;et al.&nbsp;2024. <em>Agent&nbsp;K: Hierarchical Memory for Structured Reasoning.</em> arXiv.</li>
-</ul>
-<hr>
-<p><em>Draft prepared July&nbsp;26,&nbsp;2025 – feel free to remix headings, add commentary, or drop in your own leaderboard screenshots.</em></p>
+<p><em>Got a question or a story about rolling the dice in your early career? Drop a comment—or ping me on Twitter/X—randomness approves.</em></p>
 
 
-</section>
 </section>
 </section>
 

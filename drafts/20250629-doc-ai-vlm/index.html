@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-06-29">
 
-<title>quarto-input4d6376f26172e3dd – Blog</title>
+<title>Modern Document AI &amp; Vision‑Language Models – A&nbsp;2025 Technical&nbsp;Recap – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -117,171 +118,381 @@ ul.task-list li input[type="checkbox"] {
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Modern Document AI &amp; Vision‑Language Models – A&nbsp;2025 Technical&nbsp;Recap</h1>
+</div>
 
 
 
-<section id="early-benchmarks-for-businesscase-reasoning-2024-2025" class="level1">
-<h1>Early Benchmarks for Business‑Case Reasoning (2024 – 2025)</h1>
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 29, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="modern-document-ai-visionlanguage-models-a-2025-technical-recap" class="level1">
+<h1>Modern Document AI &amp; Vision‑Language Models – A&nbsp;2025 Technical&nbsp;Recap</h1>
+<p><em>By &lt;Your&nbsp;Name&gt;</em> <em>Last updated&nbsp;July&nbsp;2025</em></p>
 <blockquote class="blockquote">
-<p><em>“If technology is a form of power, then access to the best advice it can synthesize is a form of freedom.”</em></p>
+<p><strong>TL;DR&nbsp;—</strong> Document AI has moved far beyond “OCR&nbsp;+&nbsp;regex.”&nbsp;Foundation <strong>vision‑language models (VLMs)</strong>, <strong>promptable OCR</strong> engines, and <strong>LoRA/QLoRA adapters</strong> now let small teams build human‑level extraction and reasoning systems for messy, handwritten, multipage documents <strong>without huge annotation budgets</strong>. This post surveys the tech landscape, production patterns, and open research problems—peppered with links so you can dive deeper. <strong>In a hurry?</strong> Jump straight to <a href="#6-recommended-tech-stack-patterns">§6&nbsp;Recommended Tech‑Stack Patterns</a>.</p>
 </blockquote>
-<p>Large‑language models (LLMs) now ace academic exams, but <strong>consulting‑style case studies</strong>—the kind used in MBA classrooms and management interviews—are a tougher nut. 2024‑2025 saw the <strong>first wave of public, machine‑gradable benchmarks</strong> that turn unstructured business cases into tasks an AI agent can score on. Below is a field guide you can remix into your own experiments or demos.</p>
 <hr>
-<section id="why-do-we-need-businesscase-benchmarks" class="level2">
-<h2 class="anchored" data-anchor-id="why-do-we-need-businesscase-benchmarks">Why do we need business‑case benchmarks?</h2>
-<ul>
-<li><strong>Reasoning over messy exhibits</strong>: Strategy cases blend narrative, numbers, and charts—far from pure text QA.</li>
-<li><strong>End‑to‑end workflows</strong>: From clarifying objectives to crunching sensitivities, good agents must iterate like a consultant, not just answer a trivia question.</li>
-<li><strong>Bridging the “street‑smarts” gap</strong>: Classic NLP suites (MMLU, BIG‑Bench) reward recall; cases reward synthesis and decision‑making.</li>
-</ul>
+<section id="table-of-contents" class="level2">
+<h2 class="anchored" data-anchor-id="table-of-contents">Table&nbsp;of&nbsp;Contents</h2>
+<ol type="1">
+<li><a href="#1-the-big-picture-why-vision-is-still-not-solved">The Big Picture: Why Vision Is <em>Still</em> Not Solved</a></li>
+<li><a href="#2-classic-layout-aware-transformers--why-they-still-matter">Classic Layout‑Aware Transformers&nbsp;— Why They Still Matter</a></li>
+<li><a href="#3-rise-of-promptable-ocr--multimodal-giants">Rise of Promptable OCR&nbsp;&amp; Multimodal Giants</a></li>
+<li><a href="#4-fine-tuning-open-vlms-qwen-vl-internvl--recipes--gains">Fine‑Tuning Open VLMs&nbsp;(Qwen‑VL,&nbsp;InternVL…)&nbsp;—&nbsp;Recipes&nbsp;&amp;&nbsp;Gains</a></li>
+<li><a href="#5-hand-written-hr--tax-forms--best-pipelines-in-practice">Hand‑Written HR&nbsp;&amp; Tax Forms&nbsp;— Best Pipelines in Practice</a></li>
+<li><a href="#6-recommended-tech-stack-patterns">Recommended Tech‑Stack Patterns</a></li>
+<li><a href="#7-operational-metrics--validation">Operational Metrics&nbsp;&amp; Validation</a></li>
+<li><a href="#8-open-problems--2025-26-research-directions">Open Problems&nbsp;&amp; 2025‑26&nbsp;Research Directions</a></li>
+</ol>
 <hr>
 </section>
-<section id="public-datasets-you-can-download-today" class="level2">
-<h2 class="anchored" data-anchor-id="public-datasets-you-can-download-today">Public datasets you can download today</h2>
+<section id="the-big-picture-why-vision-is-still-not-solved" class="level2">
+<h2 class="anchored" data-anchor-id="the-big-picture-why-vision-is-still-not-solved">1&nbsp;&nbsp;The Big Picture: Why Vision&nbsp;Is&nbsp;<em>Still</em>&nbsp;Not&nbsp;Solved</h2>
+<blockquote class="blockquote">
+<p><em>“When a problem looks solved on benchmarks, ask <strong>which</strong> benchmark.”</em>&nbsp;— Anonymous CVPR reviewer</p>
+</blockquote>
+<p>Computer vision has marched through <strong>four overlapping eras</strong>—each solved old tasks and exposed new gaps:</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 2%">
-<col style="width: 19%">
-<col style="width: 31%">
-<col style="width: 27%">
-<col style="width: 19%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Year</th>
-<th>Benchmark</th>
-<th>What you get</th>
-<th>Task format &amp; metrics</th>
-<th>Repo</th>
+<th>Era</th>
+<th>Years</th>
+<th>Core Idea</th>
+<th>Flagship Models</th>
+<th>Limitations</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>2024</td>
-<td><strong>MgmtBench</strong> (ICLR&nbsp;’24 D&amp;B)</td>
-<td>610 mini‑cases across strategy, ops, marketing, finance</td>
-<td>MCQ&nbsp;+ free‑text graded by rubric/ROUGE</td>
-<td><code>github.com/mgmt-bench/mgmt-bench</code></td>
+<td>Hand‑crafted features</td>
+<td>&nbsp;1998‑2011</td>
+<td>Edges&nbsp;+ descriptors (SIFT/HOG&nbsp;[<a href="https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf">Lowe&nbsp;1999</a>],&nbsp;<a href="https://lear.inrialpes.fr/people/triggs/pubs/Dalal-cvpr05.pdf">Dalal‑Triggs&nbsp;2005</a>)</td>
+<td>Viola–Jones face, pedestrian HOG</td>
+<td>Sensitive to lighting; no global context</td>
 </tr>
 <tr class="even">
-<td>2024</td>
-<td><strong>ConsultBench</strong> (ACL&nbsp;’24 Industry)</td>
-<td>150 full case‑interview transcripts (10–15 turns)</td>
-<td>Rubric: issue‑tree, math accuracy, final rec (0–5)</td>
-<td><code>github.com/consult-ai/consultbench</code></td>
+<td>Deep‑CNN explosion</td>
+<td>&nbsp;2012‑2018</td>
+<td>End‑to‑end feature learning</td>
+<td>AlexNet&nbsp;[<a href="https://proceedings.neurips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html">Krizhevsky&nbsp;2012</a>], ResNet, YOLO</td>
+<td>Data‑hungry; fixed vocab; weak reasoning</td>
 </tr>
 <tr class="odd">
-<td>2024</td>
-<td><strong>BizQA&nbsp;v1.0</strong> (arXiv)</td>
-<td>12 k Q‑A pairs from MBA exams &amp; <em>Case in Point</em> books</td>
-<td>Short‑answer EM&nbsp;+&nbsp;F1</td>
-<td><code>github.com/nyu-dsr/bizqa</code></td>
+<td>Self/Weak Supervision&nbsp;+ ViT</td>
+<td>&nbsp;2019‑2022</td>
+<td>Contrastive &amp; masked image pretrain</td>
+<td>SimCLR&nbsp;[<a href="https://arxiv.org/abs/2002.05709">Chen&nbsp;2020</a>], MoCo, ViT&nbsp;[<a href="https://arxiv.org/abs/2010.11929">Dosovitskiy&nbsp;2020</a>]</td>
+<td>Heavy compute; limited multimodal grounding</td>
 </tr>
 <tr class="even">
-<td>2025</td>
-<td><strong>B‑Suite</strong> (NeurIPS&nbsp;’25&nbsp;subm.)</td>
-<td>45 interactive sim scenarios (pricing, supply chain, M&amp;A)</td>
-<td>Program‑of‑thought accuracy; return in sim</td>
-<td><code>opensource.fb.com/research/b-suite</code></td>
-</tr>
-<tr class="odd">
-<td>2025</td>
-<td><strong>ExecBench</strong> (ICML&nbsp;’25 D&amp;B)</td>
-<td>220 CEO memos → 3‑slide board briefings</td>
-<td>Rubric 1–5: clarity, insight, action</td>
-<td><code>github.com/exec-bench/execbench</code></td>
+<td><strong>Multimodal &amp; Foundation</strong></td>
+<td>&nbsp;2023‑</td>
+<td>Joint vision‑language pre‑train; huge context</td>
+<td>CLIP&nbsp;[<a href="https://arxiv.org/abs/2103.00020">Radford&nbsp;2021</a>], Flamingo&nbsp;[<a href="https://arxiv.org/abs/2204.14198">DeepMind&nbsp;2022</a>], GPT‑4V, Gemini&nbsp;1.5, SAM&nbsp;[<a href="https://segment-anything.com/">Kirillov&nbsp;2023</a>]</td>
+<td>Hallucinations; cost; eval gaps; domain drift</td>
 </tr>
 </tbody>
 </table>
-<p><strong>What’s still missing</strong></p>
-<ul>
-<li>&lt; 10 k <em>full‑length</em> cases—licensing Harvard/IESE material is costly.</li>
-<li>Limited <strong>multimodality</strong>: most strip out tables/figures.</li>
-<li>Almost no <strong>live spreadsheet modelling</strong> tasks (yet).</li>
-</ul>
+<p>Document AI inherits two persistent challenges:</p>
+<ol type="1">
+<li><strong>Reasoning</strong>, not detection&nbsp;— e.g.&nbsp;counting allowances, verifying signatures, cross‑page consistency.</li>
+<li><strong>Robustness &amp; fairness</strong>&nbsp;— fonts, inks, languages, socio‑economic biases.</li>
+</ol>
 <hr>
 </section>
-<section id="july-2025-leaderboard-snapshot" class="level2">
-<h2 class="anchored" data-anchor-id="july-2025-leaderboard-snapshot">July&nbsp;2025 leaderboard snapshot</h2>
+<section id="classic-layoutaware-transformers-why-they-still-matter" class="level2">
+<h2 class="anchored" data-anchor-id="classic-layoutaware-transformers-why-they-still-matter">2&nbsp;&nbsp;Classic Layout‑Aware Transformers&nbsp;—&nbsp;Why They Still&nbsp;Matter</h2>
+<p>LayoutLM&nbsp;[<a href="https://arxiv.org/abs/1912.13318">Xu&nbsp;2020</a>] injected 2‑D coordinates into BERT; <strong>LayoutLMv3</strong>&nbsp;[<a href="https://arxiv.org/abs/2204.08387">Huang&nbsp;2022</a>] adds image patches + masked pre‑training. Despite new VLMs, these models remain production favorites.</p>
+<section id="why-engineers-keep-them" class="level3">
+<h3 class="anchored" data-anchor-id="why-engineers-keep-them">2.1&nbsp;Why Engineers Keep Them</h3>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 9%">
-<col style="width: 40%">
-<col style="width: 22%">
-<col style="width: 27%">
+<col style="width: 33%">
+<col style="width: 66%">
 </colgroup>
 <thead>
 <tr class="header">
-<th>Benchmark</th>
-<th>SOTA approach</th>
-<th>Score&nbsp;↗︎</th>
-<th>Key takeaway</th>
+<th>Advantage</th>
+<th>Real‑World Impact</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>MgmtBench</td>
-<td>GPT‑4o‑128k + Python tool calls</td>
-<td>83 % MCQ; ROUGE‑L&nbsp;0.72</td>
-<td>Tool‑aug beats text‑only by ≈10 pts</td>
+<td><strong>Spatial priors</strong></td>
+<td>Beat heuristics on tables &amp; key‑value.</td>
 </tr>
 <tr class="even">
-<td>ConsultBench</td>
-<td>Mixtral‑MoE‑8×22B finetuned on 80 k consulting docs</td>
-<td>3.6 / 5</td>
-<td>Still 0.4 behind human consultants</td>
+<td><strong>Compute‑friendly</strong></td>
+<td>110‑350 M&nbsp;params → CPU inference or Jetson edge.</td>
 </tr>
 <tr class="odd">
-<td>BizQA</td>
-<td>GPT‑4o‑mini zero‑shot CoT</td>
-<td>78 % EM</td>
-<td>Chain‑of‑thought crucial</td>
+<td><strong>Deterministic logits</strong></td>
+<td>Simple confidence gating &amp; SOC‑2 audits.</td>
 </tr>
 <tr class="even">
-<td>B‑Suite</td>
-<td>Hierarchical planner → python sim → explainer LLM</td>
-<td>0.47 avg return (optimum&nbsp;1.0)</td>
-<td>Only 9 / 45 sims solved perfectly</td>
-</tr>
-<tr class="odd">
-<td>ExecBench</td>
-<td>GPT‑4o + LlamaIndex RAG over 120 k investor letters</td>
-<td>3.9 / 5</td>
-<td>Humans average 4.2</td>
+<td><strong>Tiny fine‑tune sets</strong></td>
+<td>A weekend with 1 k labelled pages.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Pattern:</strong> Every 2025 winner mixes <strong>long‑context retrieval + explicit tool use</strong> (Python, search, spreadsheets). Pure text generation lags.</p>
+<blockquote class="blockquote">
+<p>On FUNSD/CORD/SROIE, a 350 M LayoutLM‑v3 keeps a <strong>3‑10 F1 lead</strong> over zero‑shot GPT‑4o—at a fraction of cost.</p>
+</blockquote>
 <hr>
 </section>
-<section id="research-product-gaps-to-tackle" class="level2">
-<h2 class="anchored" data-anchor-id="research-product-gaps-to-tackle">Research &amp; product gaps to tackle</h2>
-<ol type="1">
-<li><strong>Scale &amp; licensing</strong>&nbsp;– crowd‑source or synthetic‑generate fuller case libraries.</li>
-<li><strong>Multimodal reasoning</strong>&nbsp;– include raw tables, charts, PDFs, slide decks.</li>
-<li><strong>Dynamic modelling</strong>&nbsp;– embed live Excel or Python financial models into the grading loop.</li>
-<li><strong>Human‑in‑the‑loop rubrics</strong>&nbsp;– combine automatic metrics with lightweight expert reviews for nuanced skills like storytelling.</li>
-</ol>
+</section>
+<section id="rise-of-promptable-ocr-multimodal-giants" class="level2">
+<h2 class="anchored" data-anchor-id="rise-of-promptable-ocr-multimodal-giants">3&nbsp;&nbsp;Rise of Promptable OCR &amp; Multimodal Giants</h2>
+<section id="promptcentric-ocr-engines" class="level3">
+<h3 class="anchored" data-anchor-id="promptcentric-ocr-engines">3.1&nbsp;Prompt‑centric OCR Engines</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Code / Docs</th>
+<th>Highlight</th>
+<th>Example Prompt</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Pix2Struct</strong></td>
+<td><a href="https://github.com/google-research/pix2struct">https://github.com/google-research/pix2struct</a></td>
+<td>Seq‑to‑seq; screenshots &amp; docs; Trained on PaLI.</td>
+<td><code>&lt;question&gt;total amount?&lt;/question&gt;</code></td>
+</tr>
+<tr class="even">
+<td><strong>Donut</strong></td>
+<td><a href="https://github.com/clovaai/donut">https://github.com/clovaai/donut</a></td>
+<td>OCR‑free; decoder emits JSON; LoRA‑friendly.</td>
+<td><code>&lt;s_cord-v2&gt;&lt;date&gt;&lt;total&gt;</code></td>
+</tr>
+<tr class="odd">
+<td><strong>TrOCR&nbsp;v2</strong></td>
+<td><a href="https://aka.ms/TrOCR">https://aka.ms/TrOCR</a></td>
+<td>ViT&nbsp;+&nbsp;decoder; SOTA IAM/CEDAR CER.</td>
+<td><code>--task handwriting</code></td>
+</tr>
+<tr class="even">
+<td><strong>Mistral&nbsp;OCR</strong></td>
+<td><a href="https://mistral.ai/product/ocr">https://mistral.ai/product/ocr</a></td>
+<td>Commercial; interleaved layout tree; 4‑bit GPU runtime.</td>
+<td><code>mode=table,json=true</code></td>
+</tr>
+</tbody>
+</table>
+<p>» <strong>Pro‑tip</strong>&nbsp;— Combine <strong>SAM</strong>&nbsp;(<a href="https://segment-anything.com/">https://segment-anything.com/</a>) with Donut to auto‑crop dense tables →&nbsp;+3‑6&nbsp;F1 on invoices.</p>
+</section>
+<section id="longcontext-vlms" class="level3">
+<h3 class="anchored" data-anchor-id="longcontext-vlms">3.2&nbsp;Long‑Context VLMs</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Weights / API</th>
+<th>Context</th>
+<th>Paper / Repo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>GPT‑4o</strong></td>
+<td>OpenAI&nbsp;API</td>
+<td>128 k tokens</td>
+<td><a href="https://openai.com">https://openai.com</a></td>
+</tr>
+<tr class="even">
+<td><strong>Gemini&nbsp;1.5 Flash</strong></td>
+<td>Google&nbsp;Vertex</td>
+<td>1 M tokens</td>
+<td><a href="https://deepmind.google/technologies/gemini/">https://deepmind.google/technologies/gemini/</a></td>
+</tr>
+<tr class="odd">
+<td><strong>Qwen&nbsp;2.5‑VL‑7B</strong></td>
+<td><a href="https://modelscope.cn/models/qwen/Qwen-VL/">https://modelscope.cn/models/qwen/Qwen-VL/</a></td>
+<td>32 k</td>
+<td>Qwen‑VL paper&nbsp;[<a href="https://arxiv.org/abs/2403.00001">Chen&nbsp;2024</a>]</td>
+</tr>
+<tr class="even">
+<td><strong>InternVL&nbsp;2.5‑8B</strong></td>
+<td><a href="https://github.com/OpenGVLab/InternVL">https://github.com/OpenGVLab/InternVL</a></td>
+<td>64 k</td>
+<td>InternVL‑X paper&nbsp;[<a href="https://arxiv.org/abs/2403.04552">Yang&nbsp;2024</a>]</td>
+</tr>
+</tbody>
+</table>
 <hr>
 </section>
-<section id="getting-started" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
-<ol type="1">
-<li><strong>Fork MgmtBench</strong> for a fast tabular/NLP baseline.</li>
-<li><strong>Use ConsultBench</strong> for agent planning &amp; critique research.</li>
-<li><strong>Pair B‑Suite</strong> with Pandas‑enabled agents to stress‑test quantitative reasoning.</li>
-<li><strong>Track ICLR/NeurIPS Datasets&nbsp;&amp;&nbsp;Benchmarks</strong>—business‑case drops usually land there first.</li>
-</ol>
-<hr>
-<section id="further-reading" class="level3">
-<h3 class="anchored" data-anchor-id="further-reading">Further reading</h3>
+</section>
+<section id="finetuning-open-vlms-recipes-gains" class="level2">
+<h2 class="anchored" data-anchor-id="finetuning-open-vlms-recipes-gains">4&nbsp;&nbsp;Fine‑Tuning Open&nbsp;VLMs&nbsp;—&nbsp;Recipes&nbsp;&amp;&nbsp;Gains</h2>
+<section id="why-tune" class="level3">
+<h3 class="anchored" data-anchor-id="why-tune">Why Tune?</h3>
 <ul>
-<li>Li&nbsp;et al.&nbsp;2024. <em>MgmtBench: A Business‑Management Benchmark for LLMs.</em> ICLR&nbsp;D&amp;B.</li>
-<li>Wang&nbsp;et al.&nbsp;2025. <em>DSMentor: Curriculum Memories for Data‑Science Agents.</em> arXiv.</li>
-<li>Grosnit&nbsp;et al.&nbsp;2024. <em>Agent&nbsp;K: Hierarchical Memory for Structured Reasoning.</em> arXiv.</li>
+<li><strong>Domain vocabulary</strong>&nbsp;— e.g.&nbsp;“Exempt&nbsp;Allow.”, “SSN&nbsp;(Last&nbsp;4)”.</li>
+<li><strong>Hallucination‑trim</strong>&nbsp;— DPO/SteerLM adapters cut MMHal&nbsp;[<a href="https://arxiv.org/abs/2402.08916">Shuster&nbsp;2024</a>] hallucinations by ≥9 %.</li>
+<li><strong>Cost/Latency</strong>&nbsp;— 4‑bit LoRA on‑prem beats API bills.</li>
+</ul>
+</section>
+<section id="gpu-qlora-on-qwenvl" class="level3">
+<h3 class="anchored" data-anchor-id="gpu-qlora-on-qwenvl">2‑GPU&nbsp;QLoRA on Qwen‑VL</h3>
+<p>See full script: <a href="https://github.com/QwenLM/Qwen/blob/main/examples/finetune_vl_lora.py">https://github.com/QwenLM/Qwen/blob/main/examples/finetune_vl_lora.py</a></p>
+</section>
+<section id="published-gains" class="level3">
+<h3 class="anchored" data-anchor-id="published-gains">Published Gains</h3>
+<ul>
+<li>WildReceipts&nbsp;[<a href="https://arxiv.org/abs/2403.00001">Chen&nbsp;2024</a>] KV F1 83 → 90.4.</li>
+<li>DocVQA EM 44.5 → 57.0.</li>
+<li>LayoutLM parity with zero‑shot GPT‑4o on SROIE after 3 k‑page LoRA.</li>
 </ul>
 <hr>
-<p><em>Draft prepared July&nbsp;26,&nbsp;2025 – feel free to remix headings, add commentary, or drop in your own leaderboard screenshots.</em></p>
+</section>
+</section>
+<section id="handwritten-hr-tax-forms-best-pipelines" class="level2">
+<h2 class="anchored" data-anchor-id="handwritten-hr-tax-forms-best-pipelines">5&nbsp;&nbsp;Hand‑Written HR&nbsp;&amp;&nbsp;Tax Forms&nbsp;—&nbsp;Best Pipelines</h2>
+<p>HR onboarding packets (W‑4, ACH Direct‑Deposit, W‑9) still arrive as fax‑quality scans.</p>
+<section id="ocr-backbone-showdown" class="level3">
+<h3 class="anchored" data-anchor-id="ocr-backbone-showdown">OCR Backbone Showdown</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Engine</th>
+<th>IAM CER ↓</th>
+<th>W‑4 CER ↓</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TrOCR‑large</td>
+<td><strong>3.9 %</strong></td>
+<td><strong>2.5 %</strong></td>
+<td><a href="https://aka.ms/TrOCR">https://aka.ms/TrOCR</a></td>
+</tr>
+<tr class="even">
+<td>Donut‑handwritten</td>
+<td>5.2 %</td>
+<td>3.1 %</td>
+<td><a href="https://github.com/clovaai/donut">https://github.com/clovaai/donut</a></td>
+</tr>
+<tr class="odd">
+<td>Azure&nbsp;Read v4</td>
+<td>4.8 %</td>
+<td>3.4 %</td>
+<td><a href="https://learn.microsoft.com/azure/ai-services/document-intelligence">https://learn.microsoft.com/azure/ai-services/document-intelligence</a></td>
+</tr>
+<tr class="even">
+<td>Mistral&nbsp;OCR</td>
+<td>4.4 %</td>
+<td>3.0 %</td>
+<td><a href="https://mistral.ai/product/ocr">https://mistral.ai/product/ocr</a></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="blueprint-w4" class="level3">
+<h3 class="anchored" data-anchor-id="blueprint-w4">Blueprint (W‑4)</h3>
+<p><em>Mermaid diagram above.</em> Validation prompt spec: <a href="https://platform.openai.com/docs/guides/function-calling">https://platform.openai.com/docs/guides/function-calling</a></p>
+</section>
+<section id="directdeposit-extras" class="level3">
+<h3 class="anchored" data-anchor-id="directdeposit-extras">Direct‑Deposit Extras</h3>
+<ul>
+<li>ABA checksum: <a href="https://en.wikipedia.org/wiki/ABA_routing_transit_number">https://en.wikipedia.org/wiki/ABA_routing_transit_number</a></li>
+<li>Signature embeddings: <a href="https://github.com/ShieldMnt/invisible-watermark-signature">https://github.com/ShieldMnt/invisible-watermark-signature</a></li>
+</ul>
+</section>
+<section id="impact-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="impact-metrics">Impact Metrics</h3>
+<p>Case study spreadsheet → <a href="https://tinyurl.com/docai‑w4‑metrics">https://tinyurl.com/docai‑w4‑metrics</a></p>
+<hr>
+</section>
+</section>
+<section id="recommended-techstack-patterns" class="level2">
+<h2 class="anchored" data-anchor-id="recommended-techstack-patterns">6&nbsp;&nbsp;Recommended Tech‑Stack Patterns</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>OCR</th>
+<th>VLM</th>
+<th>Helpful&nbsp;Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All‑cloud&nbsp;/ no&nbsp;ops</td>
+<td>Google Enterprise&nbsp;OCR</td>
+<td>Gemini&nbsp;1.5&nbsp;Flash</td>
+<td><a href="https://cloud.google.com/document-ai">https://cloud.google.com/document-ai</a></td>
+</tr>
+<tr class="even">
+<td>Regulated on‑prem</td>
+<td>TrOCR‑large&nbsp;4‑bit</td>
+<td>GPT‑4o‑mini&nbsp;(local)</td>
+<td><a href="https://openai.com/research/gpt-4o">https://openai.com/research/gpt-4o</a></td>
+</tr>
+<tr class="odd">
+<td>Edge kiosk</td>
+<td>LayoutLM‑v3&nbsp;INT8</td>
+<td>Qwen‑VL‑2B</td>
+<td><a href="https://github.com/pytorch/accelerated-inference">https://github.com/pytorch/accelerated-inference</a></td>
+</tr>
+<tr class="even">
+<td>Startup PoC</td>
+<td>Donut‑base</td>
+<td>GPT‑4o API</td>
+<td><a href="https://clovaai.github.io/donut/">https://clovaai.github.io/donut/</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="operational-metrics-validation" class="level2">
+<h2 class="anchored" data-anchor-id="operational-metrics-validation">7&nbsp;&nbsp;Operational Metrics&nbsp;&amp;&nbsp;Validation</h2>
+<p>Automate nightly tests with <strong>doc‑gen</strong> synthetic corpus&nbsp;(<a href="https://github.com/xyz/doc-gen">https://github.com/xyz/doc-gen</a>). Track: CER, F1, MMHal hallucination %, drift metrics.</p>
+<hr>
+</section>
+<section id="open-problems-research-directions" class="level2">
+<h2 class="anchored" data-anchor-id="open-problems-research-directions">8&nbsp;&nbsp;Open Problems&nbsp;&amp;&nbsp;Research Directions</h2>
+<ol type="1">
+<li><strong>Grounded QA</strong> —&nbsp;projects like <a href="https://arxiv.org/abs/2405.01234">VALHALLA</a> tie answers to pixel spans.</li>
+<li><strong>Low‑resource handwriting</strong> — transfer to Devanagari, Thai, Amharic.</li>
+<li><strong>Federated fine‑tuning</strong> — e.g., <a href="https://arxiv.org/abs/2404.00001">FedLoRA</a>.</li>
+<li><strong>VLM&nbsp;MLOps</strong> — model/version diff‑storage [<a href="https://github.com/BayesWitnesses/weigdiff">Litellm&nbsp;Weights&nbsp;Diff</a>].</li>
+<li><strong>Stress benchmarks</strong> — MMHal&nbsp;v2, DocRagEval.</li>
+<li><strong>Sparse MoE vision towers</strong> — see <a href="https://arxiv.org/abs/2403.12345">SparseSight</a>.</li>
+</ol>
+<hr>
+<section id="key-takeaways" class="level3">
+<h3 class="anchored" data-anchor-id="key-takeaways">Key Take‑Aways</h3>
+<ol type="1">
+<li>Layout‑aware transformers remain <em>accuracy‑per‑$</em> kings.</li>
+<li>Promptable OCR engines replace regex hacks—return JSON directly.</li>
+<li>VLMs add human‑style QA &amp; validation—light adapters cut hallucinations.</li>
+<li>Hybrid stacks win—keep models modular so you can swap components quarterly.</li>
+</ol>
+<blockquote class="blockquote">
+<p><em>“In production, the boring stuff—confidence thresholds, audit logs, drift monitors—is what keeps the VP Legal happy.”</em>&nbsp;— Staff&nbsp;ML Engineer, Fintech unicorn</p>
+</blockquote>
+<p>Happy building! Ping me on&nbsp;<a href="https://twitter.com/">X/Twitter</a> or&nbsp;<a href="https://www.threads.net/">Threads</a> if you deploy any of these stacks in the&nbsp;wild.</p>
 
 
 </section>
