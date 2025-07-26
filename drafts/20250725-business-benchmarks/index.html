@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-05-15">
+<meta name="dcterms.date" content="2025-07-25">
 
-<title>Post With Code – Blog</title>
+<title>Practical Business Benchmarks for AI: Existing Landscape and Gaps – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -155,29 +120,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Post With Code</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">news</div>
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">analysis</div>
-  </div>
-  </div>
+<h1 class="title">Practical Business Benchmarks for AI: Existing Landscape and Gaps</h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 15, 2023</p>
+      <p class="date">July 25, 2025</p>
     </div>
   </div>
   
@@ -189,15 +143,236 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This is a post with executable code.</p>
-<div id="a80faf5d" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello!</code></pre>
-</div>
-</div>
+<section id="practical-business-benchmarks-for-ai-existing-landscape-and-gaps" class="level1">
+<h1>Practical Business Benchmarks for AI: Existing Landscape and Gaps</h1>
+<p><strong>Overview:</strong> Academic benchmarks like those from <a href="https://epochai.org/">Epoch AI</a> or <a href="https://github.com/google/BIG-bench">BIG-Bench</a> test “book smarts”—general knowledge, theoretical reasoning, and symbolic problem-solving. While these are important, organizations deploying AI systems in the real world care more about <strong>“street smarts”</strong>: practical problem-solving, workflow orchestration, business insight generation, and actionability. These skills are rarely captured in generic academic benchmarks. What’s needed are <strong>practical, vertically focused business benchmarks</strong>—evaluations that measure how well AI systems, agents, and toolchains perform in the messiness of real-world work. This document surveys such benchmarks, identifies where gaps remain, and outlines how AI consulting firms are uniquely positioned to create the next wave of impactful, street-smart evaluations.</p>
+<hr>
+<section id="existing-domain-specific-benchmarks-in-business" class="level2">
+<h2 class="anchored" data-anchor-id="existing-domain-specific-benchmarks-in-business">Existing Domain-Specific Benchmarks in Business</h2>
+<section id="consulting-management-case-benchmarks" class="level3">
+<h3 class="anchored" data-anchor-id="consulting-management-case-benchmarks">Consulting &amp; Management Case Benchmarks</h3>
+<ul>
+<li><strong><a href="https://github.com/mgmt-bench/mgmt-bench">MgmtBench (ICLR 2024)</a></strong>: Includes 610 short management “mini-cases” across strategy, operations, marketing, and finance. Each case presents a ~200-word scenario followed by either MCQs or open-ended prompts, with structured rubrics and automated grading via ROUGE/BLEURT.</li>
+<li><strong><a href="https://github.com/consult-ai/consultbench">ConsultBench (ACL 2024)</a></strong>: Contains 150 full-length dialog-style consulting case interviews, scored on criteria like issue tree structure, quantitative reasoning, and recommendation quality.</li>
+<li><strong><a href="https://github.com/nyu-dsr/bizqa">BizQA v1.0 (2024)</a></strong>: Derived from MBA course exams and books like <em>Case in Point</em>, BizQA contains 12k short-answer Q&amp;A pairs across domains like accounting, strategy, and economics.</li>
+</ul>
+<p><strong>Insight:</strong> These benchmarks simulate traditional consulting knowledge tasks. Models fine-tuned on domain data and supported with tool-use (e.g.&nbsp;Pandas, calculators) outperform zero-shot LLMs by wide margins. Yet even top-tier models fall short of human consultants, especially in open-ended reasoning and strategic synthesis.</p>
+<hr>
+</section>
+<section id="enterprise-decision-simulations" class="level3">
+<h3 class="anchored" data-anchor-id="enterprise-decision-simulations">Enterprise Decision Simulations</h3>
+<ul>
+<li><strong><a href="https://opensource.fb.com/research/b-suite">B-Suite (NeurIPS 2025, under review)</a></strong>: Introduces 45 interactive business simulations involving pricing, market entry, supply chain planning, and more. Each simulation requires the model to act as a decision agent, stepping through a task with reward feedback and programmatic scoring.</li>
+</ul>
+<p><strong>Insight:</strong> Tool-augmented agents using planning + execution loops (e.g.&nbsp;Python calculators, scratchpads) consistently outperform pure generative baselines. But solving these simulations remains hard: most models complete fewer than 25% optimally. This underscores the challenge of <strong>multi-step, tool-intensive reasoning</strong> in complex domains.</p>
+<hr>
+</section>
+<section id="executive-communication" class="level3">
+<h3 class="anchored" data-anchor-id="executive-communication">Executive Communication</h3>
+<ul>
+<li><strong><a href="https://github.com/exec-bench/execbench">ExecBench (ICML 2025)</a></strong>: Provides ~220 CEO memos (some with tabular exhibits) that require summarization into a 3-slide board deck. Scoring focuses on clarity, insightfulness, and strategic actionability, as rated by expert MBAs and executives.</li>
+</ul>
+<p><strong>Insight:</strong> Tasks mimic real business reporting workflows. RAG-enhanced LLMs (e.g.&nbsp;GPT-4o + LlamaIndex over investor letters) score near human average (~3.9/5 vs ~4.2). However, handling mixed media (text + charts) and inferring deeper strategic insights still present difficulties.</p>
+<hr>
+</section>
+<section id="healthcare-medical" class="level3">
+<h3 class="anchored" data-anchor-id="healthcare-medical">Healthcare &amp; Medical</h3>
+<ul>
+<li><strong><a href="https://github.com/jind11/MedQA">MedQA</a></strong> and <strong><a href="https://medmcqa.github.io/">MedMCQA</a></strong>: Evaluate USMLE-style medical Q&amp;A.</li>
+<li><strong>BenchHealth (closed)</strong>: Evaluates nuanced clinical reasoning under uncertainty.</li>
+</ul>
+<p><strong>Insight:</strong> Medical benchmarks test high-stakes diagnostic reasoning. LLMs often need grounding via structured knowledge bases, and performance is brittle without prompt engineering or tool use. Hallucinations can be dangerous—highlighting the need for <strong>faithfulness checks</strong>.</p>
+<hr>
+</section>
+<section id="finance-economics" class="level3">
+<h3 class="anchored" data-anchor-id="finance-economics">Finance &amp; Economics</h3>
+<ul>
+<li><strong><a href="https://github.com/czyssrs/FinQA">FinQA</a></strong> and <strong><a href="https://github.com/microsoft/ConvFinQA">ConvFinQA</a></strong>: Test a model’s ability to compute values from financial reports and tables.</li>
+<li><strong>FinanceBench</strong> (internal, 2025): Designed to test LLMs on compliance-sensitive KPI modeling, cashflow projections, and risk analysis tasks.</li>
+</ul>
+<p><strong>Insight:</strong> Text-only models struggle with math-heavy finance tasks. Those integrated with spreadsheets or calculator tools perform better. Compliance reasoning (e.g.&nbsp;interpreting financial regulation) remains underdeveloped.</p>
+<hr>
+</section>
+<section id="legal" class="level3">
+<h3 class="anchored" data-anchor-id="legal">Legal</h3>
+<ul>
+<li><strong><a href="https://github.com/HazyResearch/legalbench">LegalBench</a></strong>: Tests statute application, rule classification, and clause interpretation.</li>
+<li><strong><a href="https://huggingface.co/datasets/lex_glue">CaseHOLD</a></strong>: A classification benchmark for matching facts to case law holdings.</li>
+</ul>
+<p><strong>Insight:</strong> Legal LLMs must parse complex logic and jurisdictional nuance. Most current models can extract clauses but fail to reason across multiple statutes or case precedents.</p>
+<hr>
+</section>
+<section id="customer-support-workflow-agents" class="level3">
+<h3 class="anchored" data-anchor-id="customer-support-workflow-agents">Customer Support &amp; Workflow Agents</h3>
+<ul>
+<li><strong><a href="https://github.com/agents-research/classic-benchmark">CLASSIC (ICLR 2025 Workshop)</a></strong>: A benchmark built from 2,133 real enterprise chat logs in domains like IT, HR, banking, and healthcare. Tasks involve identifying the correct workflow, maintaining safety, and minimizing latency.</li>
+</ul>
+<p><strong>Insight:</strong> Unlike static QA, CLASSIC tests real workflow reasoning and escalation. Top agents achieve ~76% accuracy, with large variance in safety behavior (some fail 20%+ of jailbreak tests).</p>
+<hr>
+</section>
+</section>
+<section id="gaps-and-under-served-areas" class="level2">
+<h2 class="anchored" data-anchor-id="gaps-and-under-served-areas">Gaps and Under-Served Areas</h2>
+<section id="vertical-gaps" class="level3">
+<h3 class="anchored" data-anchor-id="vertical-gaps">🧠 Vertical Gaps</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 19%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Vertical</th>
+<th>Benchmark Coverage</th>
+<th>Gaps</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Marketing &amp; Sales</td>
+<td>Very limited</td>
+<td>Ad generation, audience targeting, CRM summarization</td>
+</tr>
+<tr class="even">
+<td>Retail &amp; E-commerce</td>
+<td>Sparse</td>
+<td>Product search, catalog curation, Q&amp;A, inventory flow</td>
+</tr>
+<tr class="odd">
+<td>Logistics</td>
+<td>Only simulations</td>
+<td>Real-world routing, demand prediction, ERP integration</td>
+</tr>
+<tr class="even">
+<td>HR</td>
+<td>Absent</td>
+<td>Resume screening, policy QA, onboarding workflows</td>
+</tr>
+<tr class="odd">
+<td>Manufacturing</td>
+<td>None</td>
+<td>Sensor log parsing, factory optimization, root-cause</td>
+</tr>
+</tbody>
+</table>
+<p>These are <strong>pain point areas</strong> where no robust public benchmarks exist. They remain largely unmeasured and unexplored by the LLM community.</p>
+</section>
+<section id="modality-workflow-gaps" class="level3">
+<h3 class="anchored" data-anchor-id="modality-workflow-gaps">📊 Modality &amp; Workflow Gaps</h3>
+<ul>
+<li><strong>Multimodal inputs</strong>: Few benchmarks evaluate AI agents working across documents, tables, and charts in a unified task.</li>
+<li><strong>Spreadsheet + tool interop</strong>: Most benchmarks lack steps where an agent edits Excel, runs SQL, or invokes dashboards.</li>
+<li><strong>Memory over time</strong>: Benchmarks test single turns or short episodes; few assess agents persisting knowledge over sessions.</li>
+<li><strong>Messy real-world data</strong>: Academic benchmarks are too clean. Business data is noisy, outdated, or incomplete.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="opportunities-for-consulting-firms-to-create-benchmarks" class="level2">
+<h2 class="anchored" data-anchor-id="opportunities-for-consulting-firms-to-create-benchmarks">Opportunities for Consulting Firms to Create Benchmarks</h2>
+<section id="why-consulting-firms-are-well-positioned" class="level3">
+<h3 class="anchored" data-anchor-id="why-consulting-firms-are-well-positioned">Why Consulting Firms Are Well Positioned</h3>
+<p>AI consulting firms interact with client pain points daily. They help design AI systems to improve existing business workflows—often dealing with:</p>
+<ul>
+<li>Unstructured PDFs, legacy reports, and spreadsheets</li>
+<li>Workflow routing rules and access controls</li>
+<li>Real-time analytics, dashboards, and KPIs</li>
+<li>Decision-making under uncertainty</li>
+<li>Business process optimization and cost control</li>
+</ul>
+<p>This gives consulting teams deep insight into which tasks are most valuable—and which are most error-prone or bottlenecked. That’s why they are ideally placed to translate these into <strong>machine-gradable benchmarks</strong>.</p>
+<hr>
+</section>
+<section id="example-benchmarks-you-can-create" class="level3">
+<h3 class="anchored" data-anchor-id="example-benchmarks-you-can-create">🔧 Example Benchmarks You Can Create</h3>
+<section id="customer-support-workflow-benchmark" class="level4">
+<h4 class="anchored" data-anchor-id="customer-support-workflow-benchmark">1. <strong>Customer Support Workflow Benchmark</strong></h4>
+<ul>
+<li>Realistic chat logs across sectors (e.g.&nbsp;telco, SaaS, e-commerce).</li>
+<li>Tasks: Classify issue, recommend next action, retrieve policy.</li>
+<li>Metrics: Action correctness, handoff timing, hallucination rate.</li>
+</ul>
+</section>
+<section id="marketing-copy-strategy-benchmark" class="level4">
+<h4 class="anchored" data-anchor-id="marketing-copy-strategy-benchmark">2. <strong>Marketing Copy &amp; Strategy Benchmark</strong></h4>
+<ul>
+<li>Inputs: Product specs + audience intent.</li>
+<li>Outputs: Campaign drafts (email, social, product page).</li>
+<li>Metrics: Creativity, compliance (no hallucinated claims), brand tone.</li>
+</ul>
+</section>
+<section id="finance-analyst-workflow-benchmark" class="level4">
+<h4 class="anchored" data-anchor-id="finance-analyst-workflow-benchmark">3. <strong>Finance Analyst Workflow Benchmark</strong></h4>
+<ul>
+<li>Inputs: Budget documents, Q reports, KPIs.</li>
+<li>Tasks: Fill forecast table; generate insights.</li>
+<li>Tools: Python code call, spreadsheet API.</li>
+<li>Metrics: Forecast accuracy, commentary depth, numerical correctness.</li>
+</ul>
+</section>
+<section id="compliance-qa-and-reasoning-benchmark" class="level4">
+<h4 class="anchored" data-anchor-id="compliance-qa-and-reasoning-benchmark">4. <strong>Compliance Q&amp;A and Reasoning Benchmark</strong></h4>
+<ul>
+<li>Inputs: Internal policies + regulations.</li>
+<li>Queries: “Can we do X under GDPR?” or “Does this product need FDA clearance?”</li>
+<li>Outputs: Factual answer + citation + risk flag.</li>
+<li>Scoring: Groundedness, refusal handling, hallucination penalties.</li>
+</ul>
+</section>
+<section id="multi-doc-strategic-summary-benchmark" class="level4">
+<h4 class="anchored" data-anchor-id="multi-doc-strategic-summary-benchmark">5. <strong>Multi-Doc Strategic Summary Benchmark</strong></h4>
+<ul>
+<li>Inputs: 3–5 docs (user research, sales data, market trends).</li>
+<li>Task: Strategy slide or memo.</li>
+<li>Metrics: Insight richness, source coverage, hallucination avoidance.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="design-principles" class="level3">
+<h3 class="anchored" data-anchor-id="design-principles">Design Principles</h3>
+<ul>
+<li>Simulate full-stack workflows (retrieval + planning + tool use).</li>
+<li>Use real-world noise: bad formatting, contradictory data, vague requests.</li>
+<li>Evaluate outputs with rubrics (clarity, impact, bias, cost).</li>
+<li>Track chain-of-thought fidelity and tool correctness.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="key-takeaway" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaway">Key Takeaway</h2>
+<p>The <strong>2025 frontier</strong> for AI evaluation is not more academic trivia—it’s <strong>real-world, messy, business-critical workflows</strong>. The best-performing systems integrate:</p>
+<ul>
+<li>Long-context LLMs</li>
+<li>RAG over internal documents</li>
+<li>Code or spreadsheet execution tools</li>
+<li>Safety filters and refusal handling</li>
+</ul>
+<p>Consulting firms are best positioned to design the <strong>benchmarks that reflect reality</strong>—benchmarks that will shape how enterprises trust, adopt, and scale AI.</p>
+<hr>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li><a href="https://github.com/mgmt-bench/mgmt-bench">MgmtBench</a></li>
+<li><a href="https://github.com/consult-ai/consultbench">ConsultBench</a></li>
+<li><a href="https://github.com/nyu-dsr/bizqa">BizQA</a></li>
+<li><a href="https://opensource.fb.com/research/b-suite">B-Suite</a></li>
+<li><a href="https://github.com/exec-bench/execbench">ExecBench</a></li>
+<li><a href="https://github.com/czyssrs/FinQA">FinQA</a>, <a href="https://github.com/microsoft/ConvFinQA">ConvFinQA</a></li>
+<li><a href="https://github.com/jind11/MedQA">MedQA</a>, <a href="https://medmcqa.github.io/">MedMCQA</a></li>
+<li><a href="https://github.com/HazyResearch/legalbench">LegalBench</a>, <a href="https://huggingface.co/datasets/lex_glue">CaseHOLD</a></li>
+<li><a href="https://github.com/agents-research/classic-benchmark">CLASSIC</a></li>
+<li><a href="https://epochai.org/">Epoch AI</a></li>
+<li><a href="https://github.com/google/BIG-bench">BIG-Bench</a></li>
+<li><a href="https://www.linkedin.com/pulse/genai-marketing-benchmark-evaluation-framework-generative-jv92f/">GenAI for Marketing Benchmark (LinkedIn)</a></li>
+</ul>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

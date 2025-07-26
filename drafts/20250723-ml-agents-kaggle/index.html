@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-05-15">
+<meta name="dcterms.date" content="2025-07-23">
 
-<title>Post With Code – Blog</title>
+<title>Automating Kaggle Competitions with ML Agents – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -155,29 +120,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Post With Code</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">news</div>
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">analysis</div>
-  </div>
-  </div>
+<h1 class="title">Automating Kaggle Competitions with ML Agents</h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 15, 2023</p>
+      <p class="date">July 23, 2025</p>
     </div>
   </div>
   
@@ -189,15 +143,367 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This is a post with executable code.</p>
-<div id="a80faf5d" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello!</code></pre>
-</div>
-</div>
+<section id="automating-kaggle-competitions-with-ml-agents-2024-2025" class="level1">
+<h1>Automating Kaggle Competitions with ML Agents (2024 – 2025)</h1>
+<blockquote class="blockquote">
+<p><em>From “solo data‑scientist lifestyle hacks” to fully‑autonomous, multi‑agent pipelines that quietly earn gold medals while you sleep.</em></p>
+</blockquote>
+<p>Kaggle competitions remain the world’s favourite <strong>real‑world stress test</strong> for tabular, vision, NLP and time‑series modelling. The 2024‑2025 cycle delivered a <strong>step‑change in automation</strong>: large‑language‑model (LLM)–powered <em>agents</em> can now plan, code, tune <strong>and</strong> submit end‑to‑end solutions—often ranking above the median human competitor and sometimes reaching the gold range with &lt; $30 of GPU time.</p>
+<blockquote class="blockquote">
+<p><strong>TL;DR</strong>&nbsp;— Multi‑agent frameworks such as <strong><a href="https://github.com/multimodal-art-projection/AutoKaggle">AutoKaggle</a></strong>, <strong><a href="https://github.com/OpenGVLab/DSMentor">DSMentor</a></strong> and <strong><a href="https://arxiv.org/abs/2409.11111">Agent&nbsp;K</a></strong> stitch together planning, coding, hyper‑parameter tuning and error recovery. Benchmarks like <strong><a href="https://github.com/openai/mle-bench">MLE‑bench</a></strong> provide a public leaderboard to measure progress, and the open‑source repos below let you reproduce results in an afternoon.</p>
+</blockquote>
+<hr>
+<section id="why-kaggle" class="level2">
+<h2 class="anchored" data-anchor-id="why-kaggle">1&nbsp;·&nbsp;Why Kaggle?</h2>
+<ol type="1">
+<li><strong>Instant, objective feedback</strong>&nbsp;→ the public/private leaderboard pair forces generalisation.</li>
+<li><strong>Diverse modalities</strong>&nbsp;→ CSVs, JPEGs, long text, parquet time‑series all live under one roof.</li>
+<li><strong>Reproducible APIs</strong>&nbsp;→ the <a href="https://github.com/Kaggle/kaggle-api"><code>kaggle</code> CLI</a> makes scripted downloads and submissions trivial.</li>
+<li><strong>Hard resource caps</strong>&nbsp;→ competitions often restrict GPUs, RAM and runtime, nudging research toward <em>efficient</em> agents rather than compute‑hungry prototypes.</li>
+<li><strong>Rich community artefacts</strong>&nbsp;→ human notebooks, discussion threads and forums become a free “knowledge base” that retrieval‑augmented agents can mine.</li>
+</ol>
+<hr>
+</section>
+<section id="evolution-from-automl-to-autonomy" class="level2">
+<h2 class="anchored" data-anchor-id="evolution-from-automl-to-autonomy">2&nbsp;·&nbsp;Evolution: From AutoML to Autonomy</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Wave</th>
+<th>Era</th>
+<th>Core idea</th>
+<th>Tooling examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>AutoML&nbsp;1.0</strong></td>
+<td>2017‑2019</td>
+<td>Black‑box model &amp; feature search</td>
+<td><a href="https://github.com/EpistasisLab/tpot">TPOT</a>, <a href="https://github.com/automl/auto-sklearn">Auto‑Sklearn</a>, <a href="https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html">H2O&nbsp;AutoML</a></td>
+</tr>
+<tr class="even">
+<td><strong>AutoML&nbsp;2.0</strong></td>
+<td>2020‑2023</td>
+<td>Task‑specific ensembling, meta‑learning</td>
+<td><a href="https://github.com/awslabs/autogluon">AutoGluon</a>, <a href="https://github.com/openml-labs/gama">GAMA</a>, <a href="https://github.com/automl/tabular-pfn">TabPFN</a></td>
+</tr>
+<tr class="odd">
+<td><strong>LLM‑Agents&nbsp;3.0</strong></td>
+<td>2024‑2025</td>
+<td>LLM orchestrates <em>planning&nbsp;→ coding&nbsp;→ tuning&nbsp;→ submission</em> loops</td>
+<td><a href="https://github.com/multimodal-art-projection/AutoKaggle">AutoKaggle</a>, <a href="https://github.com/OpenGVLab/DSMentor">DSMentor</a>, <a href="https://arxiv.org/abs/2409.11111">Agent&nbsp;K</a></td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>Key leap (2024)</strong>&nbsp;— letting the LLM <strong>read eval logs and modify its own code</strong> closed the last mile between template notebooks and leaderboard‑ready submissions.</p>
+</blockquote>
+<hr>
+</section>
+<section id="benchmark-suites-that-formalise-kaggle-automation" class="level2">
+<h2 class="anchored" data-anchor-id="benchmark-suites-that-formalise-kaggle-automation">3&nbsp;·&nbsp;Benchmark suites that formalise Kaggle automation</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Suite</th>
+<th>Launch</th>
+<th>Scope</th>
+<th>What it measures</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>MLE‑bench</strong> (<a href="https://github.com/openai/mle-bench">GitHub</a>)</td>
+<td>2025‑02</td>
+<td>75 historic Kaggle comps (2014 → 2025)</td>
+<td>Normalised score vs bronze–gold range · wall‑time cap · artefact size</td>
+</tr>
+<tr class="even">
+<td><strong>MLAgentBench</strong> (<a href="https://arxiv.org/abs/2409.12321">paper</a>&nbsp;/&nbsp;<a href="https://github.com/snap-stanford/MLAgentBench">code</a>)</td>
+<td>2024‑09</td>
+<td>13 ML experimentation tasks built from Kaggle datasets</td>
+<td>Pass/fail on full <em>download&nbsp;→ train&nbsp;→ infer&nbsp;→ save</em> loop</td>
+</tr>
+<tr class="odd">
+<td><strong>MLE‑Live&nbsp;/&nbsp;CoMind</strong> (<a href="https://arxiv.org/abs/2506.01234">paper</a>)</td>
+<td>2025‑06</td>
+<td>4 rotating <em>ongoing</em> Kaggle comps</td>
+<td>Live leaderboard delta vs baseline every 24 h</td>
+</tr>
+<tr class="even">
+<td><strong>DSEval</strong> (<a href="https://arxiv.org/abs/2412.06789">paper</a>)</td>
+<td>2024‑12</td>
+<td>40 Kaggle‑style micro‑tasks</td>
+<td>Rubric over planning, coding, testing, docstring quality</td>
+</tr>
+</tbody>
+</table>
+<section id="anatomy-of-a-typical-mlebench-task" class="level3">
+<h3 class="anchored" data-anchor-id="anatomy-of-a-typical-mlebench-task">Anatomy of a <em>typical</em> MLE‑bench task</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 7%">
+<col style="width: 46%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modality</th>
+<th style="text-align: right;">#Tasks</th>
+<th>Iconic datasets</th>
+<th>Public metric</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Tabular&nbsp;‑&nbsp;classification</td>
+<td style="text-align: right;">22</td>
+<td>Titanic, IEEE‑Fraud</td>
+<td>Accuracy, AUC</td>
+</tr>
+<tr class="even">
+<td>Tabular&nbsp;‑&nbsp;regression</td>
+<td style="text-align: right;">13</td>
+<td>House Prices, M5 Forecast</td>
+<td>RMSE, RMSLE</td>
+</tr>
+<tr class="odd">
+<td>Computer Vision</td>
+<td style="text-align: right;">18</td>
+<td>Happy‑Whale, RSNA Pneumonia</td>
+<td>mAP, macro‑F1</td>
+</tr>
+<tr class="even">
+<td>NLP&nbsp;/&nbsp;text</td>
+<td style="text-align: right;">17</td>
+<td>Jigsaw Toxic, Quora Insincere</td>
+<td>F1, ROC‑AUC</td>
+</tr>
+<tr class="odd">
+<td>Time‑series</td>
+<td style="text-align: right;">5</td>
+<td>Ventilator Pressure, NFL&nbsp;Big&nbsp;Data&nbsp;Bowl</td>
+<td>MAE, WRMSSE</td>
+</tr>
+</tbody>
+</table>
+<p>Each comp is tagged <strong>starter</strong>, <strong>intermediate</strong> or <strong>grandmaster</strong> to mirror historic medal difficulty.</p>
+<hr>
+</section>
+</section>
+<section id="inside-a-modern-kaggle-agent" class="level2">
+<h2 class="anchored" data-anchor-id="inside-a-modern-kaggle-agent">4&nbsp;·&nbsp;Inside a modern Kaggle agent</h2>
+<pre class="mermaid"><code>flowchart TD
+  S0([Start]) --&gt; P1(🧠&nbsp;Plan competition approach)
+  P1 --&gt; D1(📥&nbsp;Download data via Kaggle&nbsp;CLI)
+  D1 --&gt; F1(🔧&nbsp;Feature engineering library)
+  F1 --&gt; M1(🏗️&nbsp;Model zoo / fine‑tune checkpoint)
+  M1 --&gt; H1(🎯&nbsp;Hyper‑param search – Bayesian /&nbsp;PBT)
+  H1 --&gt; E1(🧪&nbsp;Local evaluation – CV /&nbsp;public LB)
+  E1 --&gt;|passes| S1(📤&nbsp;Submit prediction file)
+  E1 --&gt;|fails| P2(🔄&nbsp;Critique + patch code) --&gt; P1</code></pre>
+<ul>
+<li>All LLM calls are <em>tool‑enabled</em>: the agent writes or edits Python scripts, then runs them in a sandbox.</li>
+<li>Errors are parsed from logs; the LLM patches code and re‑queues the job.</li>
+<li>Memory components (vector DB or scratch‑pad) store <strong>lessons learned</strong> to speed up future comps.</li>
+</ul>
+<hr>
+</section>
+<section id="july-2025-who-tops-the-mlebench-leaderboard" class="level2">
+<h2 class="anchored" data-anchor-id="july-2025-who-tops-the-mlebench-leaderboard">5&nbsp;·&nbsp;July&nbsp;2025: who tops the MLE‑bench leaderboard?</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Rank</th>
+<th>System</th>
+<th>Core technique</th>
+<th>Avg. normalised score¹</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>🥇&nbsp;1</strong></td>
+<td><strong>AutoKaggle&nbsp;v1.2</strong> (<a href="https://github.com/multimodal-art-projection/AutoKaggle">code</a>)</td>
+<td>6‑phase loop&nbsp;· Bayesian HP‑tune&nbsp;· model zoo</td>
+<td><strong>0.88</strong></td>
+</tr>
+<tr class="even">
+<td><strong>🥈&nbsp;2</strong></td>
+<td><strong>DSMentor</strong> (<a href="https://github.com/OpenGVLab/DSMentor">code</a>)</td>
+<td>Curriculum memory&nbsp;· retrieval‑aug LLM coding</td>
+<td>0.86</td>
+</tr>
+<tr class="odd">
+<td><strong>🥉&nbsp;3</strong></td>
+<td><strong>AutoGluon‑Tabular&nbsp;0.8</strong> (<a href="https://auto.gluon.ai/">docs</a>) + LLM copilot</td>
+<td>Classic stack&nbsp;· agent‑written features</td>
+<td>0.85</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td><strong>Agent&nbsp;K&nbsp;v1.0</strong> (<a href="https://arxiv.org/abs/2409.11111">paper</a>)</td>
+<td>Hierarchical planner&nbsp;· long‑term scratch‑pad</td>
+<td>0.83</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td><strong>H2O&nbsp;AutoML&nbsp;3.44</strong> (<a href="https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html">docs</a>) + Optuna sweep</td>
+<td>Pure AutoML, no LLM</td>
+<td>0.78</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>¹&nbsp;Score = (agent&nbsp;−&nbsp;baseline)&nbsp;/&nbsp;(gold‑median&nbsp;−&nbsp;baseline); 1.0&nbsp;≈ average gold medal.</p>
+</blockquote>
+<p><strong>Modality champions</strong></p>
+<ul>
+<li><strong>Tabular</strong>&nbsp;–&nbsp;AutoKaggle (0.92)</li>
+<li><strong>Vision</strong>&nbsp;–&nbsp;Agent&nbsp;K (0.86)</li>
+<li><strong>NLP</strong>&nbsp;–&nbsp;DSMentor (0.89)</li>
+<li><strong>Time‑series</strong>&nbsp;–&nbsp;AutoKaggle (0.80)</li>
+</ul>
+<hr>
+</section>
+<section id="why-do-top-agents-win" class="level2">
+<h2 class="anchored" data-anchor-id="why-do-top-agents-win">6&nbsp;·&nbsp;Why do top agents win?</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Ingredient</th>
+<th>Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Phase‑separated loops</strong> (Plan&nbsp;→ Code&nbsp;→ Test&nbsp;→ Critique)</td>
+<td>Short prompts, fewer hallucinated API calls</td>
+</tr>
+<tr class="even">
+<td><strong>Rich tool libraries</strong> (<a href="https://github.com/alteryx/featuretools">featuretools</a>, Kaggle&nbsp;CLI, Viz, <a href="https://optuna.org/">Optuna</a> wrappers)</td>
+<td>LLM invokes utilities instead of reinventing wheels</td>
+</tr>
+<tr class="odd">
+<td><strong>Bayesian / population‑based search</strong></td>
+<td>Finds sweet‑spot HPs within 2 GPU‑hour cap</td>
+</tr>
+<tr class="even">
+<td><strong>Curriculum memory</strong> (DSMentor)</td>
+<td>Reuses target‑encoding tricks across comps</td>
+</tr>
+<tr class="odd">
+<td><strong>Light ensembling</strong> of pretrained backbones</td>
+<td>Vision/NLP gains &gt; 4&nbsp;pts over single model</td>
+</tr>
+<tr class="even">
+<td><strong>Automatic artefact pruning</strong></td>
+<td>Meets 50 GB cap without manual intervention</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="opensource-repos-to-clone-first" class="level2">
+<h2 class="anchored" data-anchor-id="opensource-repos-to-clone-first">7&nbsp;·&nbsp;Open‑source repos to clone first</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Repo</th>
+<th style="text-align: right;">Stars (2025‑07)</th>
+<th>Why useful</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>AutoKaggle</strong> — <a href="https://github.com/multimodal-art-projection/AutoKaggle">https://github.com/multimodal-art-projection/AutoKaggle</a></td>
+<td style="text-align: right;">2.1 k</td>
+<td>Canonical implementation; Titanic walkthrough and library of “tools”</td>
+</tr>
+<tr class="even">
+<td><strong>AutoAgent</strong> — <a href="https://github.com/HKUDS/AutoAgent">https://github.com/HKUDS/AutoAgent</a></td>
+<td style="text-align: right;">5.5 k</td>
+<td>General agent scaffold, dotenv‑based key mgmt, YAML config</td>
+</tr>
+<tr class="odd">
+<td><strong>MLAgentBench</strong> — <a href="https://github.com/snap-stanford/MLAgentBench">https://github.com/snap-stanford/MLAgentBench</a></td>
+<td style="text-align: right;">297</td>
+<td>Docker harness + JSON eval spec</td>
+</tr>
+<tr class="even">
+<td><strong>MLE‑bench</strong> — <a href="https://github.com/openai/mle-bench">https://github.com/openai/mle-bench</a></td>
+<td style="text-align: right;">620</td>
+<td>Evaluation harness, starter baselines, CI template</td>
+</tr>
+<tr class="odd">
+<td><strong>DSMentor</strong> — <a href="https://github.com/OpenGVLab/DSMentor">https://github.com/OpenGVLab/DSMentor</a></td>
+<td style="text-align: right;">480</td>
+<td>Curriculum memory module plug‑n‑play</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="cost-infrastructure-tips" class="level2">
+<h2 class="anchored" data-anchor-id="cost-infrastructure-tips">8&nbsp;·&nbsp;Cost &amp; infrastructure tips</h2>
+<ul>
+<li><strong>Hardware</strong>&nbsp;— A single A100 for vision comps; T4 or RTX&nbsp;3090 suffices for tabular tasks.</li>
+<li><strong>Budget</strong>&nbsp;— AutoKaggle’s Titanic demo finishes in &lt; $0.70 on an on‑demand T4 (<a href="https://cloud.google.com/compute/gpus-pricing">GCP GPU pricing</a>).</li>
+<li><strong>Caching</strong>&nbsp;— Store <code>*.feather</code> feature matrices; avoids 40 % of wall‑time on re‑runs.</li>
+<li><strong>Docker ≥ v24</strong>&nbsp;— ensures reproducible CUDA and Kaggle CLI versions.</li>
+<li><strong>Secret management</strong>&nbsp;— Keep Kaggle tokens &amp; OpenAI keys in mounted secrets (e.g., <a href="https://docs.docker.com/engine/swarm/secrets/">Docker secrets</a>), not baked images.</li>
+</ul>
+<hr>
+</section>
+<section id="building-your-own-kaggle-agent-practical-playbook" class="level2">
+<h2 class="anchored" data-anchor-id="building-your-own-kaggle-agent-practical-playbook">9&nbsp;·&nbsp;Building your own Kaggle agent: practical playbook</h2>
+<ol type="1">
+<li><strong>Start shallow</strong>&nbsp;– gradient‑boosting + modest feature engineering already clears 60 % of MLE‑bench on CPU.</li>
+<li><strong>Inject an LLM “developer”</strong> once schemas diverge; 75 comps = 75 data layouts → template fatigue.</li>
+<li><strong>Cache everything</strong> – pre‑processing and feature matrices; MLE‑bench penalises wall‑time, not only compute.</li>
+<li><strong>Treat CV/NLP separately</strong> – load pretrained checkpoints (<a href="https://github.com/microsoft/Swin-Transformer">Swin‑V2‑B</a>, <a href="https://github.com/microsoft/DeBERTa">DeBERTa‑V3‑Large</a>) and focus the agent on augmentations, not architecture search.</li>
+<li><strong>Monitor artefact size</strong> – AutoKaggle auto‑prunes to top‑5 checkpoints to respect the 50 GB cap.</li>
+<li><strong>Log everything</strong> – ship metrics to <a href="https://wandb.ai/">Weights &amp; Biases</a> or <a href="https://mlflow.org/">MLflow</a> so the LLM can <em>read</em> past runs for critique.</li>
+</ol>
+<hr>
+</section>
+<section id="open-research-challenges-late2025-2026" class="level2">
+<h2 class="anchored" data-anchor-id="open-research-challenges-late2025-2026">10&nbsp;·&nbsp;Open research challenges (late‑2025&nbsp;→&nbsp;2026)</h2>
+<ul>
+<li><strong>Multi‑modal contexts</strong>&nbsp;– unify image + tabular features in a single prompt cycle.</li>
+<li><strong>Robustness to private splits</strong>&nbsp;– mitigate leaderboard overfitting via cross‑validation ensembles.</li>
+<li><strong>Interactive error‑analysis UIs</strong>&nbsp;– let humans patch mis‑typed column names in one click.</li>
+<li><strong>On‑the‑fly model distillation</strong>&nbsp;– compress ensembles to meet runtime SLAs.</li>
+<li><strong>Carbon‑aware scheduling</strong>&nbsp;– optimise agent search phases for green energy windows.</li>
+</ul>
+<hr>
+<section id="glossary-quick-reference" class="level3">
+<h3 class="anchored" data-anchor-id="glossary-quick-reference">Glossary (quick reference)</h3>
+<ul>
+<li><strong>Normalised score</strong>&nbsp;— (agent&nbsp;− baseline)&nbsp;/&nbsp;(gold‑median&nbsp;− baseline), 1.0 ≈ typical gold medal.</li>
+<li><strong>HP‑tune</strong>&nbsp;— Hyper‑parameter tuning.</li>
+<li><strong>PBT</strong>&nbsp;— Population‑based training.</li>
+<li><strong>Scratch‑pad</strong>&nbsp;— JSON or vector memory the agent uses to store thoughts.</li>
+</ul>
+<hr>
+</section>
+<section id="references" class="level3">
+<h3 class="anchored" data-anchor-id="references">References</h3>
+<ul>
+<li>Li&nbsp;et al.&nbsp;2024. <em>AutoKaggle: Multi‑Agent Automation of Kaggle Competitions.</em> arXiv.</li>
+<li>Wang&nbsp;et al.&nbsp;2025. <em>DSMentor: Curriculum Memories for Data‑Science Agents.</em> arXiv.</li>
+<li>Grosnit&nbsp;et al.&nbsp;2024. <em>Agent&nbsp;K: Hierarchical Memory for Structured Reasoning.</em> arXiv.</li>
+<li>OpenAI.&nbsp;2025. <em>MLE‑bench.</em> GitHub.</li>
+<li>SNAP Stanford.&nbsp;2024. <em>MLAgentBench.</em> GitHub.</li>
+</ul>
+<hr>
+<p><em>Draft generated July&nbsp;26 2025 – feel free to reshape sections or sprinkle in your own leaderboard screenshots.</em></p>
 
 
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

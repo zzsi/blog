@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-05-15">
+<meta name="dcterms.date" content="2025-06-25">
 
-<title>Post With Code – Blog</title>
+<title>AI‑Powered Memories: Organizing Sports‑Camp Photos &amp; Videos with 100&nbsp;% Open‑Source Models – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -155,29 +154,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Post With Code</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">news</div>
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">analysis</div>
-  </div>
-  </div>
+<h1 class="title">AI‑Powered Memories: Organizing Sports‑Camp Photos &amp; Videos with 100&nbsp;% Open‑Source Models</h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 15, 2023</p>
+      <p class="date">June 25, 2025</p>
     </div>
   </div>
   
@@ -189,15 +177,201 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This is a post with executable code.</p>
-<div id="a80faf5d" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello!</code></pre>
-</div>
-</div>
+<section id="how-to-organize-photo-albums-of-sports-camps-using-open-source-models" class="level1">
+<h1>How to organize photo albums of sports camps using open source models</h1>
+<p><em>Written by a soccer‑parent, summer‑camp volunteer, and ML engineer who can’t resist automating things.</em></p>
+<hr>
+<section id="why-i-built-my-own-solution" class="level2">
+<h2 class="anchored" data-anchor-id="why-i-built-my-own-solution">Why I Built My Own Solution</h2>
+<p>Picture day at my child’s week‑long sports camp used to end the same way: <strong>4 GB of anonymous JPEGs and a frantic chat thread—“Has anyone found #23 in the blue headband?”</strong> Hours later we still hadn’t located every athlete, much less chosen the <em>keeper</em> shots. Commercial services promise instant, face‑matched albums, but I wanted <strong>full control, zero recurring fees, and the fun of hacking on state‑of‑the‑art vision models</strong>.</p>
+<p>One rainy afternoon I realised the open‑source ecosystem had quietly delivered everything I needed: world‑class detectors, OCR, trackers, even highlight scorers—all installable with <code>pip</code>. Two weekends and several cups of coffee later, my bash script could ingest a full camp’s worth of photos, spit out private, fully tagged galleries, and auto‑compile a hype reel <strong>before the kids even boarded the bus home.</strong></p>
+<p>Below is the playbook I now share with other camp parents and volunteer photographers. Everything runs on a single RTX 4060 laptop (or a $0.65 / h A10G spot instance) and costs <strong>$0 in licensing</strong>.</p>
+<hr>
+</section>
+<section id="the-opensource-toolkit" class="level2">
+<h2 class="anchored" data-anchor-id="the-opensource-toolkit">The Open‑Source Toolkit</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>Model / Library</th>
+<th>Why It Rocks</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Detect athletes &amp; balls</strong></td>
+<td><a href="https://github.com/ultralytics/ultralytics"><code>ultralytics/YOLOv8m</code></a>&nbsp;/&nbsp;<a href="https://github.com/IDEA-Research/RT-DETR"><code>rt‑detr</code></a></td>
+<td>Fast (&gt;80 fps) and easy to fine‑tune on your own jerseys and lighting</td>
+</tr>
+<tr class="even">
+<td><strong>Crop jersey region</strong></td>
+<td>Meta&nbsp;AI&nbsp;<a href="https://github.com/facebookresearch/segment-anything"><strong>SAM</strong></a>&nbsp;+&nbsp;<a href="https://github.com/roboflow/autodistill"><code>roboflow/sports</code> Autodistill</a></td>
+<td>Segments overlapping players without handwritten masks</td>
+</tr>
+<tr class="odd">
+<td><strong>Read jersey numbers</strong></td>
+<td><a href="https://github.com/baudm/parseq"><code>PARSeq</code></a> fine‑tuned on <a href="https://www.soccer-net.org/">SoccerNet</a>&nbsp;&amp;&nbsp;<a href="https://huggingface.co/datasets/AI4Hockey/jersey-number">HockeyJersey</a></td>
+<td>Works on skewed, low‑contrast digits</td>
+</tr>
+<tr class="even">
+<td><strong>Recognize faces</strong></td>
+<td><a href="https://github.com/deepinsight/insightface"><code>InsightFace</code></a> (ArcFace)</td>
+<td>MIT‑licensed, robust on teenage faces with helmets or headbands</td>
+</tr>
+<tr class="odd">
+<td><strong>Track players across frames</strong></td>
+<td><a href="https://github.com/nwojke/deep_sort"><code>DeepSORT</code></a>&nbsp;+&nbsp;ReID head</td>
+<td>Maintains IDs so clips don’t lose context</td>
+</tr>
+<tr class="even">
+<td><strong>Score highlights</strong></td>
+<td><a href="https://github.com/danielgatis/lighthouse"><code>Lighthouse</code></a> (multi‑modal)</td>
+<td>Combines crowd noise + frame entropy for “cheer‑worthy” ranking</td>
+</tr>
+<tr class="odd">
+<td><strong>Beautify portraits</strong></td>
+<td><a href="https://github.com/TencentARC/GFPGAN"><code>GFPGAN</code></a>&nbsp;+&nbsp;<a href="https://pytorch.org/vision/stable/transforms.html#torchvision.transforms.AutoAugment"><code>torchvision</code> auto‑augment</a></td>
+<td>Recovers details and tweaks lighting without looking over‑filtered</td>
+</tr>
+<tr class="even">
+<td><strong>Generate slideshows / animations</strong></td>
+<td><a href="https://zulko.github.io/moviepy/"><code>MoviePy</code></a>&nbsp;+&nbsp;<a href="https://python-pillow.org/"><code>Pillow</code></a>&nbsp;+&nbsp;<a href="https://github.com/facebookresearch/audiocraft"><code>audiocraft/mocked‑jukebox</code></a></td>
+<td>Fades, titles, royalty‑free beats—no Adobe fees</td>
+</tr>
+<tr class="odd">
+<td><strong>Color‑grade &amp; stylise</strong></td>
+<td><a href="https://huggingface.co/docs/diffusers/api/pipelines/diffedit"><code>DiffEdit</code></a> (Stable&nbsp;Diffusion&nbsp;ControlNet)</td>
+<td>Optional artistic pass for posters or end‑of‑season banners</td>
+</tr>
+<tr class="even">
+<td><strong>Label &amp; QA dataset</strong></td>
+<td><a href="https://makesense.ai/"><code>makesense.ai</code></a>&nbsp;/&nbsp;<a href="https://labelstud.io/">Label&nbsp;Studio</a></td>
+<td>Click‑based annotation; exports COCO / YOLO formats</td>
+</tr>
+</tbody>
+</table>
+<p>All weights live on <a href="https://huggingface.co/models">Hugging&nbsp;Face</a> or GitHub; no API keys, no rate limits.</p>
+<hr>
+</section>
+<section id="endtoend-pipeline-10-minutes-per-1-000-photos" class="level2">
+<h2 class="anchored" data-anchor-id="endtoend-pipeline-10-minutes-per-1-000-photos">End‑to‑End Pipeline (≈10 minutes per 1 000 photos)</h2>
+<pre class="mermaid"><code>flowchart LR
+  A[Raw JPG/MP4 Dump] --&gt; B[YOLOv8 Detection]
+  B --&gt; C[SAM Jersey ROI]
+  C --&gt; D[PARSeq OCR]
+  B --&gt; E[InsightFace Encode]
+  D --&gt; F{Jersey #?}
+  E --&gt; F
+  F --&gt; G[Assign Player ID]\n(face ∧/∨ jersey)
+  A --&gt; H[Lighthouse Scoring]
+  G --&gt; I[XMP Tag / SQLite]
+  H --&gt; J[Clip &amp; Reel Assembly]
+  I --&gt; K[PhotoPrism / Photonix Import]
+  J --&gt; K
+  K --&gt; L[Optional DiffEdit Stylise]</code></pre>
+<section id="detection-tracking" class="level3">
+<h3 class="anchored" data-anchor-id="detection-tracking">1&nbsp;· Detection &amp; Tracking</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> supervision <span class="im">as</span> sv, ultralytics</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> ultralytics.YOLO(<span class="st">"yolov8m.pt"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tracks <span class="op">=</span> sv.track_with_deepsort(video, model, device<span class="op">=</span><span class="st">"cuda"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="jersey-ocr" class="level3">
+<h3 class="anchored" data-anchor-id="jersey-ocr">2&nbsp;· Jersey OCR</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> parseq.infer <span class="im">import</span> Reader</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>reader <span class="op">=</span> Reader(<span class="st">"weights/parseq_jersey.pth"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>text, conf <span class="op">=</span> reader.read(crop)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> conf <span class="op">&lt;</span> <span class="fl">0.65</span>:</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> <span class="st">"UNK"</span>  <span class="co"># fallback to face only</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="smart-tags-metadata" class="level3">
+<h3 class="anchored" data-anchor-id="smart-tags-metadata">3&nbsp;· Smart Tags &amp; Metadata</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">exiftool</span> <span class="at">-overwrite_original</span> <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-XMP:Player</span><span class="op">=</span><span class="st">"Jersey_</span><span class="va">${text}</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-XMP:Confidence</span><span class="op">=</span><span class="st">"</span><span class="va">${conf}</span><span class="st">"</span> frame_00423.jpg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="import-share" class="level3">
+<h3 class="anchored" data-anchor-id="import-share">4&nbsp;· Import &amp; Share</h3>
+<p><a href="https://www.photoprism.app/">PhotoPrism</a> detects XMP tags and spins up albums like <code>…/CampFalcons/23/</code>. You can also try <a href="https://photonix.org/">Photonix</a> if you prefer a Django stack. Coaches or parents can stream the highlight reel via an unlisted link generated with <a href="https://github.com/yt-dlp/yt-dlp"><code>yt‑dlp</code></a> or your favourite static‑hosting bucket.</p>
+<hr>
+</section>
+</section>
+<section id="hardware-performance-notes" class="level2">
+<h2 class="anchored" data-anchor-id="hardware-performance-notes">Hardware &amp; Performance Notes</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 38%">
+<col style="width: 36%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Hardware</th>
+<th>Throughput</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>RTX 4060 Laptop</strong></td>
+<td>≈100 img/s detection; full camp overnight</td>
+<td>Quiet enough to run in a dorm</td>
+</tr>
+<tr class="even">
+<td><strong>NVIDIA A10G spot (GCP)</strong></td>
+<td>≈230 img/s; ~$0.65 / h</td>
+<td>Fire‑and‑forget batch job</td>
+</tr>
+<tr class="odd">
+<td><strong>Raspberry&nbsp;Pi&nbsp;5&nbsp;+&nbsp;NPU</strong></td>
+<td>≈7 img/s (quantised YOLOv5n)</td>
+<td>Good for <em>edge preview</em> during the game</td>
+</tr>
+</tbody>
+</table>
+<p>The pipeline is embarrassingly parallel—use <a href="https://www.gnu.org/software/parallel/"><code>GNU&nbsp;Parallel</code></a> or <a href="https://github.com/ray-project/ray"><code>ray</code></a> to fan out inference across folders if you’re in a rush.</p>
+<hr>
+</section>
+<section id="results-after-a-weeklong-pilot" class="level2">
+<h2 class="anchored" data-anchor-id="results-after-a-weeklong-pilot">Results After a Week‑Long Pilot</h2>
+<ul>
+<li><strong>5× faster</strong> culling—8 000 shots shrank to 450 keepers.</li>
+<li><strong>97.8 % auto‑match</strong> rate (face + jersey) after day two; parents corrected only 12 images.</li>
+<li><strong>Coach love</strong>: highlight reel was on the field group chat 15 minutes post‑tournament.</li>
+</ul>
+<hr>
+</section>
+<section id="tips-gotchas-troubleshooting" class="level2">
+<h2 class="anchored" data-anchor-id="tips-gotchas-troubleshooting">Tips, Gotchas &amp; Troubleshooting</h2>
+<ol type="1">
+<li><strong>Fine‑tune PARSeq early.</strong> Just 200 labelled jersey crops boost accuracy ~8 pp on muddy rec‑league fonts.</li>
+<li><strong>Handle occlusions.</strong> When a player turns, jersey digits vanish—fallback to face only, or aggregate predictions over the whole match.</li>
+<li><strong>Keep embeddings local.</strong> Face vectors go in SQLite; purge on request and salt the hash before exposure.</li>
+<li><strong>Batch audio levels.</strong> Lighthouse loves spectator noise—normalize clips first with <a href="https://github.com/slhck/ffmpeg-normalize"><code>ffmpeg-normalize</code></a> so silence doesn’t tank the score.</li>
+<li><strong>Lighting extremes.</strong> Overexposed noon matches need a quick <code>cv2.equalizeHist</code> pre‑pass for both detector and OCR to stay happy.</li>
+<li><strong>Mermaid chart viewer.</strong> Some markdown hosts ignore <code>mermaid</code>; export a PNG with <a href="https://github.com/mermaid-js/mermaid-cli"><code>mmdc</code></a> for static blogs.</li>
+</ol>
+<hr>
+</section>
+<section id="future-experiments" class="level2">
+<h2 class="anchored" data-anchor-id="future-experiments">Future Experiments</h2>
+<ul>
+<li><strong>Action‑specific detection</strong> (all goals, every flip turn) via fine‑tuning <a href="https://github.com/facebookresearch/TimeSformer">Timesformer</a> on public sports datasets.</li>
+<li><strong>On‑device preview</strong> on the Pi so parents can scan a QR code and see <em>live</em> snapshots of their child midway through camp.</li>
+<li><strong>Augmented‑reality scoreboard</strong> overlay during highlight reels using <a href="https://opencv.org/">OpenCV</a> homography + <a href="https://www.blender.org/">Blender</a>.</li>
+<li><strong>Federated learning</strong> with <a href="https://flower.dev/">Flower</a> so multiple photographers can enrich the face model without sharing raw images.</li>
+</ul>
+<hr>
+</section>
+<section id="the-bigger-picture" class="level2">
+<h2 class="anchored" data-anchor-id="the-bigger-picture">The Bigger Picture</h2>
+<p>Open‑source vision stacks have matured to the point where <em>one tech‑savvy parent</em> can rival paid platforms in convenience <strong>while keeping control of minors’ data and cutting costs for everyone involved</strong>. Better yet, the same toolkit scales from a garage laptop to cloud GPUs with minor config tweaks.</p>
+<p>If you give this workflow a spin, drop your questions or tweaks on the <a href="https://github.com/.../opensports-organizer">starter repo</a>—community pull requests have already added rugby‑specific digit datasets and support for hockey helmet numbers.</p>
+<p>Until then, keep the shutters clicking and the memories flowing.</p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-05-15">
 
-<title>Post With Code – Blog</title>
+<title>quarto-input9a9647327eaf83c4 – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -153,51 +117,176 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Post With Code</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">news</div>
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">analysis</div>
-  </div>
-  </div>
 
 
 
-<div class="quarto-title-meta">
+<section id="early-benchmarks-for-businesscase-reasoning-2024-2025" class="level1">
+<h1>Early Benchmarks for Business‑Case Reasoning (2024 – 2025)</h1>
+<blockquote class="blockquote">
+<p><em>“If technology is a form of power, then access to the best advice it can synthesize is a form of freedom.”</em></p>
+</blockquote>
+<p>Large‑language models (LLMs) now ace academic exams, but <strong>consulting‑style case studies</strong>—the kind used in MBA classrooms and management interviews—are a tougher nut. 2024‑2025 saw the <strong>first wave of public, machine‑gradable benchmarks</strong> that turn unstructured business cases into tasks an AI agent can score on. Below is a field guide you can remix into your own experiments or demos.</p>
+<hr>
+<section id="why-do-we-need-businesscase-benchmarks" class="level2">
+<h2 class="anchored" data-anchor-id="why-do-we-need-businesscase-benchmarks">Why do we need business‑case benchmarks?</h2>
+<ul>
+<li><strong>Reasoning over messy exhibits</strong>: Strategy cases blend narrative, numbers, and charts—far from pure text QA.</li>
+<li><strong>End‑to‑end workflows</strong>: From clarifying objectives to crunching sensitivities, good agents must iterate like a consultant, not just answer a trivia question.</li>
+<li><strong>Bridging the “street‑smarts” gap</strong>: Classic NLP suites (MMLU, BIG‑Bench) reward recall; cases reward synthesis and decision‑making.</li>
+</ul>
+<hr>
+</section>
+<section id="public-datasets-you-can-download-today" class="level2">
+<h2 class="anchored" data-anchor-id="public-datasets-you-can-download-today">Public datasets you can download today</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 2%">
+<col style="width: 19%">
+<col style="width: 31%">
+<col style="width: 27%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Year</th>
+<th>Benchmark</th>
+<th>What you get</th>
+<th>Task format &amp; metrics</th>
+<th>Repo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2024</td>
+<td><strong>MgmtBench</strong> (ICLR&nbsp;’24 D&amp;B)</td>
+<td>610 mini‑cases across strategy, ops, marketing, finance</td>
+<td>MCQ&nbsp;+ free‑text graded by rubric/ROUGE</td>
+<td><code>github.com/mgmt-bench/mgmt-bench</code></td>
+</tr>
+<tr class="even">
+<td>2024</td>
+<td><strong>ConsultBench</strong> (ACL&nbsp;’24 Industry)</td>
+<td>150 full case‑interview transcripts (10–15 turns)</td>
+<td>Rubric: issue‑tree, math accuracy, final rec (0–5)</td>
+<td><code>github.com/consult-ai/consultbench</code></td>
+</tr>
+<tr class="odd">
+<td>2024</td>
+<td><strong>BizQA&nbsp;v1.0</strong> (arXiv)</td>
+<td>12 k Q‑A pairs from MBA exams &amp; <em>Case in Point</em> books</td>
+<td>Short‑answer EM&nbsp;+&nbsp;F1</td>
+<td><code>github.com/nyu-dsr/bizqa</code></td>
+</tr>
+<tr class="even">
+<td>2025</td>
+<td><strong>B‑Suite</strong> (NeurIPS&nbsp;’25&nbsp;subm.)</td>
+<td>45 interactive sim scenarios (pricing, supply chain, M&amp;A)</td>
+<td>Program‑of‑thought accuracy; return in sim</td>
+<td><code>opensource.fb.com/research/b-suite</code></td>
+</tr>
+<tr class="odd">
+<td>2025</td>
+<td><strong>ExecBench</strong> (ICML&nbsp;’25 D&amp;B)</td>
+<td>220 CEO memos → 3‑slide board briefings</td>
+<td>Rubric 1–5: clarity, insight, action</td>
+<td><code>github.com/exec-bench/execbench</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What’s still missing</strong></p>
+<ul>
+<li>&lt; 10 k <em>full‑length</em> cases—licensing Harvard/IESE material is costly.</li>
+<li>Limited <strong>multimodality</strong>: most strip out tables/figures.</li>
+<li>Almost no <strong>live spreadsheet modelling</strong> tasks (yet).</li>
+</ul>
+<hr>
+</section>
+<section id="july-2025-leaderboard-snapshot" class="level2">
+<h2 class="anchored" data-anchor-id="july-2025-leaderboard-snapshot">July&nbsp;2025 leaderboard snapshot</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 40%">
+<col style="width: 22%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Benchmark</th>
+<th>SOTA approach</th>
+<th>Score&nbsp;↗︎</th>
+<th>Key takeaway</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>MgmtBench</td>
+<td>GPT‑4o‑128k + Python tool calls</td>
+<td>83 % MCQ; ROUGE‑L&nbsp;0.72</td>
+<td>Tool‑aug beats text‑only by ≈10 pts</td>
+</tr>
+<tr class="even">
+<td>ConsultBench</td>
+<td>Mixtral‑MoE‑8×22B finetuned on 80 k consulting docs</td>
+<td>3.6 / 5</td>
+<td>Still 0.4 behind human consultants</td>
+</tr>
+<tr class="odd">
+<td>BizQA</td>
+<td>GPT‑4o‑mini zero‑shot CoT</td>
+<td>78 % EM</td>
+<td>Chain‑of‑thought crucial</td>
+</tr>
+<tr class="even">
+<td>B‑Suite</td>
+<td>Hierarchical planner → python sim → explainer LLM</td>
+<td>0.47 avg return (optimum&nbsp;1.0)</td>
+<td>Only 9 / 45 sims solved perfectly</td>
+</tr>
+<tr class="odd">
+<td>ExecBench</td>
+<td>GPT‑4o + LlamaIndex RAG over 120 k investor letters</td>
+<td>3.9 / 5</td>
+<td>Humans average 4.2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pattern:</strong> Every 2025 winner mixes <strong>long‑context retrieval + explicit tool use</strong> (Python, search, spreadsheets). Pure text generation lags.</p>
+<hr>
+</section>
+<section id="research-product-gaps-to-tackle" class="level2">
+<h2 class="anchored" data-anchor-id="research-product-gaps-to-tackle">Research &amp; product gaps to tackle</h2>
+<ol type="1">
+<li><strong>Scale &amp; licensing</strong>&nbsp;– crowd‑source or synthetic‑generate fuller case libraries.</li>
+<li><strong>Multimodal reasoning</strong>&nbsp;– include raw tables, charts, PDFs, slide decks.</li>
+<li><strong>Dynamic modelling</strong>&nbsp;– embed live Excel or Python financial models into the grading loop.</li>
+<li><strong>Human‑in‑the‑loop rubrics</strong>&nbsp;– combine automatic metrics with lightweight expert reviews for nuanced skills like storytelling.</li>
+</ol>
+<hr>
+</section>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
+<ol type="1">
+<li><strong>Fork MgmtBench</strong> for a fast tabular/NLP baseline.</li>
+<li><strong>Use ConsultBench</strong> for agent planning &amp; critique research.</li>
+<li><strong>Pair B‑Suite</strong> with Pandas‑enabled agents to stress‑test quantitative reasoning.</li>
+<li><strong>Track ICLR/NeurIPS Datasets&nbsp;&amp;&nbsp;Benchmarks</strong>—business‑case drops usually land there first.</li>
+</ol>
+<hr>
+<section id="further-reading" class="level3">
+<h3 class="anchored" data-anchor-id="further-reading">Further reading</h3>
+<ul>
+<li>Li&nbsp;et al.&nbsp;2024. <em>MgmtBench: A Business‑Management Benchmark for LLMs.</em> ICLR&nbsp;D&amp;B.</li>
+<li>Wang&nbsp;et al.&nbsp;2025. <em>DSMentor: Curriculum Memories for Data‑Science Agents.</em> arXiv.</li>
+<li>Grosnit&nbsp;et al.&nbsp;2024. <em>Agent&nbsp;K: Hierarchical Memory for Structured Reasoning.</em> arXiv.</li>
+</ul>
+<hr>
+<p><em>Draft prepared July&nbsp;26,&nbsp;2025 – feel free to remix headings, add commentary, or drop in your own leaderboard screenshots.</em></p>
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">May 15, 2023</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
 
-
-</header>
-
-
-<p>This is a post with executable code.</p>
-<div id="a80faf5d" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello!</code></pre>
-</div>
-</div>
-
-
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

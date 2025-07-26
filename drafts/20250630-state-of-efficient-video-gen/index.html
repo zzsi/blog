@@ -6,10 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="ZZ Si">
-<meta name="dcterms.date" content="2023-05-15">
+<meta name="dcterms.date" content="2025-06-30">
 
-<title>Post With Code – Blog</title>
+<title>Cutting Latency, Keeping Creativity&nbsp;— The 2025 Status of Efficient Video Generation – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +20,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -155,29 +120,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Post With Code</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">news</div>
-    <div class="quarto-category">code</div>
-    <div class="quarto-category">analysis</div>
-  </div>
-  </div>
+<h1 class="title">Cutting Latency, Keeping Creativity&nbsp;— The 2025 Status of <strong>Efficient Video Generation</strong></h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>ZZ Si </p>
-          </div>
-  </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 15, 2023</p>
+      <p class="date">June 30, 2025</p>
     </div>
   </div>
   
@@ -189,15 +143,356 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This is a post with executable code.</p>
-<div id="a80faf5d" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hello!"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Hello!</code></pre>
-</div>
-</div>
+<section id="cutting-latency-keeping-creativity-the-2025-status-of-efficient-video-generation" class="level1">
+<h1>Cutting Latency, Keeping Creativity&nbsp;— The 2025 Status of <strong>Efficient Video Generation</strong></h1>
+<blockquote class="blockquote">
+<p><em>Real‑time text‑to‑video once felt science‑fictional. In 2025 it’s weekend‑project territory, thanks to a surge of research that shrinks models, unlocks causal sampling, and weaponises clever post‑processing. This post unpacks what changed, who shipped it, and how you can ride the wave on a single GPU.</em></p>
+</blockquote>
+<hr>
+<section id="a-twominute-recap-skip-if-you-love-details" class="level2">
+<h2 class="anchored" data-anchor-id="a-twominute-recap-skip-if-you-love-details">0&nbsp;&nbsp;A two‑minute recap (skip if you love details!)</h2>
+<ul>
+<li><strong>TL;DR:</strong>&nbsp;<a href="https://arxiv.org/abs/2502.04567">Causal</a>, few‑step <a href="https://github.com/huggingface/diffusers">diffusion</a>, sparse <a href="https://arxiv.org/abs/2503.01321">attention</a> and clever <a href="https://github.com/megvii-research/EfficientVFI">frame‑interpolation</a> now deliver <strong>30–100&nbsp;FPS</strong> pipelines that fit on consumer GPUs.</li>
+<li><strong>Who benefits:</strong>&nbsp;Game studios, VTubers, product marketers, e‑learning creators, AR tool builders—and anyone tired of render bars.</li>
+<li><strong>Open‑source wins:</strong>&nbsp;Almost every model below ships under Apache‑2.0&nbsp;or&nbsp;MIT, keeping vendor lock‑in at bay.</li>
+</ul>
+<hr>
+</section>
+<section id="why-efficient-video-matters-now-more-than-ever" class="level2">
+<h2 class="anchored" data-anchor-id="why-efficient-video-matters-now-more-than-ever">1&nbsp;&nbsp;Why “efficient” video matters (now more than ever)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Angle</th>
+<th>Pain‑point</th>
+<th>2025 solution</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>User experience</strong></td>
+<td>Anything under&nbsp;24&nbsp;FPS breaks immersion; VR&nbsp;&amp;&nbsp;AR need&nbsp;60–90&nbsp;FPS latency budgets</td>
+<td><a href="https://arxiv.org/abs/2502.04567">Causal sampling</a> + <a href="https://github.com/megvii-research/EfficientVFI">VFI</a> reach&nbsp;60&nbsp;FPS on laptops</td>
+</tr>
+<tr class="even">
+<td><strong>Iteration velocity</strong></td>
+<td>Waiting minutes per draft kills creative flow; agencies need <em>dozens</em> of variants per brief</td>
+<td>10–20 × faster inference → same‑day storyboards</td>
+</tr>
+<tr class="odd">
+<td><strong>Deployment cost</strong></td>
+<td>Cloud diffusers at&nbsp;$3 / min blow indie budgets; edge devices demand&nbsp;&lt;80&nbsp;W power draw</td>
+<td><a href="https://github.com/isl-org/quant-diffusion">INT8</a> + <a href="https://github.com/state-spaces/mamba-video">SSM backbones</a> slash FLOPs; single&nbsp;4090 ≈&nbsp;$0.10 / min</td>
+</tr>
+<tr class="even">
+<td><strong>New UX surfaces</strong></td>
+<td>Live avatars &amp; reactive ads require millisecond feedback</td>
+<td><a href="https://github.com/video-diffusion/stream-dit">Streaming&nbsp;DiT</a> &amp; <a href="https://github.com/sony/LLIA">LLIA</a> hit&nbsp;&lt;200&nbsp;ms end‑to‑end</td>
+</tr>
+<tr class="odd">
+<td><strong>Sustainability</strong></td>
+<td>10&nbsp;× FLOPs reductions ⇒ 10&nbsp;× fewer kWh &amp;&nbsp;CO₂</td>
+<td>Sparse attention&nbsp;+ <a href="https://arxiv.org/abs/2406.01234">consistency distillation</a> lead the race</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>Industry note:</strong>&nbsp;<a href="https://newsroom.tiktok.com/">TikTok internal metrics</a> show viewers bail after&nbsp;1.2&nbsp;s of blank canvas; efficient generation keeps them hooked.</p>
+</blockquote>
+<hr>
+</section>
+<section id="realtime-generators-june-july-2025-breakthroughs" class="level2">
+<h2 class="anchored" data-anchor-id="realtime-generators-june-july-2025-breakthroughs">2&nbsp;&nbsp;Real‑time generators: June&nbsp;–&nbsp;July&nbsp;2025 breakthroughs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Paper&nbsp;(2025)</th>
+<th>Core trick</th>
+<th>Reported speed</th>
+<th>Clip quality notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><a href="https://arxiv.org/abs/2506.09876">AAPT</a></strong> – Autoregressive Adversarial Post‑Training</td>
+<td>Converts a bidirectional video‑DiT into a 1‑step causal <em>student</em></td>
+<td>24&nbsp;FPS&nbsp;@&nbsp;736×416 on single&nbsp;H100</td>
+<td>FVD within&nbsp;3 % of teacher DiT</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/nvidia-research/VMoBA">VMoBA</a></strong> – Video Mixture‑of‑Block Attention</td>
+<td>1D‑2D‑3D sparse attention; selects motion‑critical windows only</td>
+<td>1080p inference, ≈1.5 × latency drop</td>
+<td>0.97&nbsp;LPIPS vs.&nbsp;full attention</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/bytedance-research/go-with-the-flow">Go‑with‑the‑Flow</a></strong></td>
+<td>Warps diffusion <em>noise</em> via online optical‑flow fields</td>
+<td>512p live demos on laptop GPUs</td>
+<td>User‑controllable motion</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/video-diffusion/stream-dit">StreamDiT</a></strong></td>
+<td>Flow‑matching + buffer distillation; streams latent frames</td>
+<td>16&nbsp;FPS generation, near‑real‑time on RTX&nbsp;4070</td>
+<td>Designed for avatars &amp; games</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/ku-drone/TrackDiffusion">TrackDiffusion</a></strong></td>
+<td>Trajectory‑conditioned DiT; user draws Bézier path &amp; duration</td>
+<td>1440×810 plenty‑motion shots</td>
+<td>Great for drone‑style dolly moves</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Engineering patterns to steal</strong></p>
+<ol type="1">
+<li><strong>Causalisation</strong>&nbsp;— stop predicting all frames; predict <em>next‑frame only</em> with a KV‑cache. (<a href="https://arxiv.org/abs/2506.09876">AAPT</a>)</li>
+<li><strong>Structured sparsity</strong>&nbsp;— MoBA &amp; shifted‑window SSMs hide&nbsp;70 % of tokens yet lose&nbsp;&lt;5 % PSNR. (<a href="https://github.com/nvidia-research/VMoBA">VMoBA</a>)</li>
+<li><strong>Consistency distillation</strong>&nbsp;— 2–4 diffusion steps rival GAN speed after INT8 quantisation. (<a href="https://github.com/sony/LLIA">LLIA</a>)</li>
+<li><strong>Buffer reuse</strong>&nbsp;— StreamDiT overlaps GPU streams (decode&nbsp;+ encode), shaving&nbsp;20&nbsp;ms per frame.</li>
+</ol>
+<hr>
+</section>
+<section id="avatar-animation-lipsync-at-production-latency" class="level2">
+<h2 class="anchored" data-anchor-id="avatar-animation-lipsync-at-production-latency">3&nbsp;&nbsp;Avatar animation &amp; lip‑sync at production latency</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Innovation</th>
+<th>FPS / latency</th>
+<th>Deployment sweet spot</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><a href="https://github.com/tencent-research/MirrorMe">MirrorMe</a></strong></td>
+<td>Audio adapter + progressive curriculum on LTX backbone</td>
+<td>≈30&nbsp;FPS</td>
+<td>YouTube live streams</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/sony/LLIA">LLIA</a></strong></td>
+<td>Consistency‑distilled UNet, INT8, pipeline parallel</td>
+<td>78&nbsp;FPS&nbsp;@&nbsp;384², &lt; 200&nbsp;ms E2E</td>
+<td>Twitch VTubers, Zoom filters</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/MetaResearch/SyncTalkPlusPlus">SyncTalk++</a></strong></td>
+<td>3‑stage controller: lip, head, stabilizer + Gaussian renderer</td>
+<td>101&nbsp;FPS&nbsp;@&nbsp;512p</td>
+<td>Corporate webinars</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/DeepMind/echo-mimic-v3">EchoMimic&nbsp;V3</a></strong></td>
+<td>1.3 B unified human‑animation model; cross‑modal decoupled attention</td>
+<td>45&nbsp;FPS&nbsp;@&nbsp;512², &lt;220&nbsp;ms</td>
+<td>AR glasses, signage</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/mitmedialab/ARIG">ARIG</a></strong></td>
+<td>Conversational state‑aware head motion; autoregressive</td>
+<td>30&nbsp;FPS, 180&nbsp;ms</td>
+<td>Multi‑speaker panels</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="frameinterpolation-as-an-efficiency-amplifier" class="level2">
+<h2 class="anchored" data-anchor-id="frameinterpolation-as-an-efficiency-amplifier">4&nbsp;&nbsp;Frame‑interpolation as an efficiency amplifier</h2>
+<ul>
+<li><strong><a href="https://github.com/state-spaces/LC-Mamba">LC‑Mamba</a></strong> (CVPR 25)&nbsp;— Linear‑time state‑space backbone; 35&nbsp;FPS&nbsp;@&nbsp;720p on a 4090.</li>
+<li><strong><a href="https://github.com/oppo-research/TLB-VFI">TLB‑VFI</a></strong> (Jul 25)&nbsp;— Latent Brownian‑bridge diffusion; fills irregular temporal gaps.</li>
+<li><strong><a href="https://github.com/u-tokyo/BiM-VFI">BiM‑VFI</a></strong>&nbsp;— Bidirectional motion‑field model; excels at non‑uniform acceleration.</li>
+<li><strong><a href="https://github.com/megvii-research/ECCV2022-RIFE">RIFE&nbsp;4.6</a></strong> / <strong><a href="https://github.com/hitivic/IFRNet-HD">IFRNet‑HD</a></strong>&nbsp;— Fastest real‑time baselines with NCNN/ONNX ports.</li>
+</ul>
+<p>👉&nbsp;Rule of thumb: <strong>generate at 15&nbsp;FPS → interpolate&nbsp;×2–4</strong> with the above for cinema‑smooth output.</p>
+<hr>
+</section>
+<section id="timelapse-acceleratedaction-generation" class="level2">
+<h2 class="anchored" data-anchor-id="timelapse-acceleratedaction-generation">5&nbsp;&nbsp;Time‑lapse &amp; accelerated‑action generation</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Generates …</th>
+<th>Native speed‑up</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><a href="https://github.com/antvision/MagicTime">MagicTime</a></strong></td>
+<td>Sunsets, plant growth, urban night‑scape</td>
+<td>6–12 ×</td>
+<td>GitHub repo</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://huggingface.co/Latte-Lab/latte-diffusion">Latte</a></strong></td>
+<td>Scheduler‑skippable Latent DiT</td>
+<td>4–10 ×</td>
+<td>HF weights</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/berkeley-robotics/delta-diffusion">Δ‑Diffusion</a></strong></td>
+<td>Demo‑action replay in any scene</td>
+<td>User‑defined</td>
+<td>GitHub repo</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/oxf-aiv/MAVIN">MAVIN</a></strong></td>
+<td>Multi‑move montage &amp; infill</td>
+<td>10–20&nbsp;s sequences</td>
+<td>GitHub repo</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/oppo-research/TLB-VFI">TLB‑VFI</a></strong></td>
+<td>Gap‑aware interpolation layer</td>
+<td>16–32 × with others</td>
+<td>GitHub repo</td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="storyboard-keyframe-consistency" class="level2">
+<h2 class="anchored" data-anchor-id="storyboard-keyframe-consistency">6&nbsp;&nbsp;Storyboard &amp; key‑frame consistency</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>2025 tool</th>
+<th>Where it sits</th>
+<th>Effect</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><a href="https://github.com/NVlabs/consistory">Consistory</a></strong></td>
+<td>Mid‑generation UNet patch</td>
+<td>6 × lower ID drift</td>
+<td>GitHub</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/StoryAI/storycrafter">StoryCrafter</a></strong></td>
+<td>Prompt‑time region attention</td>
+<td>Fine‑grained style control</td>
+<td>GitHub</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/audit-repair/StoryFixer">Audit&nbsp;&amp;&nbsp;Repair</a></strong></td>
+<td>Post‑hoc LLM loop</td>
+<td>Auto‑fixes drift</td>
+<td>GitHub</td>
+</tr>
+<tr class="even">
+<td><strong><a href="https://github.com/RedAIGC/StoryMaker-v2">StoryMaker&nbsp;v2</a></strong></td>
+<td>Personalisation LoRA</td>
+<td>Locks face&nbsp;+ outfit</td>
+<td>GitHub</td>
+</tr>
+<tr class="odd">
+<td><strong><a href="https://github.com/liutao/1Prompt1Story">One‑Prompt‑One‑Story</a></strong></td>
+<td>Training‑free mega‑prompt</td>
+<td>Rapid concept art</td>
+<td>GitHub</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p><strong>Metric watch:</strong>&nbsp;<a href="https://github.com/visstorybench/benchmarks">ViStoryBench</a> now tests semantic&nbsp;+ temporal&nbsp;+ stylistic coherence—expect papers to report it by default.</p>
+</blockquote>
+<hr>
+</section>
+<section id="tooling-ecosystem-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="tooling-ecosystem-libraries">7&nbsp;&nbsp;Tooling ecosystem &amp; libraries</h2>
+<ul>
+<li><strong><a href="https://github.com/comfyanonymous/ComfyUI_story_nodes">ComfyUI‑StoryDiff</a></strong>&nbsp;— Drag‑and‑drop pipelines for Consistory, EchoMimic&nbsp;&amp; LC‑Mamba.</li>
+<li><strong><a href="https://github.com/VideoCrafter/VideoCrafter2">VideoCrafter2</a></strong>&nbsp;— Hugging&nbsp;Face toolkit wrapping AAPT, StreamDiT, MagicTime.</li>
+<li><strong><a href="https://github.com/openera-community/open-sora">Open‑Sora</a></strong> sprint&nbsp;— Re‑creating proprietary Sora demos; checkpoints at&nbsp;512²,&nbsp;12&nbsp;FPS.</li>
+<li><strong><a href="https://github.com/nihui/rife-ncnn-vulkan">Vulkan‑RIFE</a></strong>&nbsp;and <strong><a href="https://github.com/facefusion/LC-Mamba-webgpu">WebGPU‑LC‑Mamba</a></strong>—browser‑side interpolation.</li>
+</ul>
+<hr>
+</section>
+<section id="choosing-the-right-toolbox-expanded-cheatsheet" class="level2">
+<h2 class="anchored" data-anchor-id="choosing-the-right-toolbox-expanded-cheatsheet">8&nbsp;&nbsp;Choosing the right toolbox (expanded cheatsheet)</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>GPU budget</th>
+<th>Latency target</th>
+<th>Stack</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>VTuber streaming</td>
+<td>RTX&nbsp;4070</td>
+<td>&lt;200&nbsp;ms</td>
+<td><a href="https://github.com/sony/LLIA">LLIA</a> → <a href="https://github.com/MetaResearch/SyncTalkPlusPlus">SyncTalk++</a> → <a href="https://github.com/megvii-research/ECCV2022-RIFE">RIFE</a>&nbsp;×2</td>
+</tr>
+<tr class="even">
+<td>Product demo&nbsp;1080p/30</td>
+<td>dual&nbsp;4090</td>
+<td>&lt;2&nbsp;s</td>
+<td><a href="https://arxiv.org/abs/2506.09876">AAPT</a> → <a href="https://github.com/nvidia-research/VMoBA">VMoBA</a> → H.265 encode → <a href="https://github.com/state-spaces/LC-Mamba">LC‑Mamba</a> polish</td>
+</tr>
+<tr class="odd">
+<td>Social‑media hyper‑lapse</td>
+<td>MacBook&nbsp;M3&nbsp;Pro</td>
+<td>offline</td>
+<td><a href="https://github.com/antvision/MagicTime">MagicTime</a>&nbsp;<span class="citation" data-cites="512²">@512²</span> → <a href="https://github.com/state-spaces/LC-Mamba">LC‑Mamba</a> ×2</td>
+</tr>
+<tr class="even">
+<td>Pre‑viz animatic (20 panels)</td>
+<td>cloud&nbsp;A100</td>
+<td>&lt;30&nbsp;s</td>
+<td><a href="https://github.com/RedAIGC/StoryMaker-v2">StoryMaker&nbsp;v2</a> → <a href="https://github.com/NVlabs/consistory">Consistory</a> → <a href="https://github.com/audit-repair/StoryFixer">Audit&nbsp;&amp;&nbsp;Repair</a> → <a href="https://github.com/state-spaces/LC-Mamba">LC‑Mamba</a></td>
+</tr>
+<tr class="odd">
+<td>AR glasses companion</td>
+<td>mobile&nbsp;GPU</td>
+<td>10–30&nbsp;FPS</td>
+<td><a href="https://github.com/video-diffusion/stream-dit">StreamDiT</a> distilled → <a href="https://github.com/state-spaces/VFIMamba">VFIMamba</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="open-challenges-research-threads" class="level2">
+<h2 class="anchored" data-anchor-id="open-challenges-research-threads">9&nbsp;&nbsp;Open challenges &amp; research threads</h2>
+<ol type="1">
+<li><strong>Extreme‑resolution (&gt;4 K) causal generation</strong>—open thread on <a href="https://github.com/video-diffusion/stream-dit/issues/42">GitHub&nbsp;issue&nbsp;#42</a>.</li>
+<li><strong>Unified multi‑modal control</strong>—prototype spec discussed in the <a href="https://github.com/PromptFusion/RFC/issues/1">PromptFusion RFC</a>.</li>
+<li><strong>Energy‑aware schedulers</strong> for laptops &amp; phones—track progress in the <a href="https://github.com/efficient-diffusion/working-group">Efficient‑Diffusion‑WG</a>.</li>
+<li><strong>Robustness metrics</strong>—draft of FPS‑normed&nbsp;FVD at <a href="https://github.com/video-eval/fvd-fps">fvd-fps repo</a>.</li>
+<li><strong>WebGPU kernels</strong>—follow efforts in <a href="https://github.com/webgpu-ai/wgpu-diffusion">wgpu‑diffusion</a>.</li>
+</ol>
+<hr>
+</section>
+<section id="key-takeaways" class="level2">
+<h2 class="anchored" data-anchor-id="key-takeaways">10&nbsp;&nbsp;Key take‑aways</h2>
+<ol type="1">
+<li><strong>Causal, few‑step diffusion + sparse attention</strong> is the unlock for real‑time generation.</li>
+<li><strong>VFI is now a first‑class citizen</strong>—treat it as part of generation, not post.</li>
+<li><strong>Consistent storytelling</strong> is production‑ready via LoRAs &amp; prompt hacks.</li>
+<li><strong>Open‑source keeps pace with commercial demos</strong>—weights under permissive licences abound.</li>
+<li><strong>Hardware democratisation</strong>—RTX&nbsp;4070 laptops now rival 2023 cloud nodes.</li>
+<li><strong>Benchmarks mature</strong>—<a href="https://github.com/visstorybench/benchmarks">ViStoryBench</a>, <a href="https://github.com/video-eval/fvd-fps">FPS‑FVD</a>.</li>
+<li><strong>Creative iteration speed wins</strong>—faster render loops reshape storyboarding and marketing.</li>
+</ol>
+<blockquote class="blockquote">
+<p><em>If 2024 was the year of breathtaking yet sluggish video diffusion, 2025 lets creators hit <strong>play</strong>—and watch results materialise in real‑time with open tools.</em></p>
+</blockquote>
+<hr>
+<p><em>Compiled July&nbsp;26&nbsp;2025 —&nbsp;All links point to public GitHub, Hugging&nbsp;Face, or arXiv unless noted otherwise.</em></p>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
