@@ -16,19 +16,15 @@ Day to day, most of us still reach for slim coding agents that sit on top of git
 
 To find out, I dusted off the classic [Spooky Author Identification](https://kaggle.com/competitions/spooky-author-identification) playground competition: classify short horror passages by Edgar Allan Poe, Mary Shelley, or H. P. Lovecraft. The metric is multiclass log loss, which punishes overconfident mistakes and rewards calibrated probabilities, a sweet spot for data science automation.
 
-<!-- TODO: Add hero image - maybe a spooky git repo visualization or agent comparison diagram -->
-
 ## What I learned
 
 Running four different coding agents (Codex, Composer, Claude, and Gemini) on the same Kaggle challenge revealed three clear patterns:
 
-**Lightweight setups work.** Minimal prompting plus three helper scripts (`setup_env.sh`, `prompt.sh`, `run_iterations.sh`) was enough for modern coding agents to beat the Kaggle median and approach bronze-tier scores. Codex landed a **0.35897** log-loss, comfortably above the **0.41879** median threshold.
+**Lightweight setups work.** Minimal prompting plus three helper scripts (`setup_env.sh`, `prompt.sh`, `run_iterations.sh`) was enough for modern coding agents to beat the Kaggle median and approach bronze-tier scores. Codex landed a **0.35897** log-loss, comfortably above the **0.4188** median threshold.
 
 **Automation moves fast but leaves a mess.** All four agents sprawled dozens of experiment entries, cached matrices, and partially refactored modules. They ship improvements, yet still force a human to reconcile redundant scripts, prune dead notebooks, and audit for data leakage before anything is production-ready. I spent as much time cleaning up as I did setting up experiments.
 
 **The last mile remains human.** Claude pushed CV log loss down to **0.3447** with a TF-IDF + MLP ensemble, better than the others but still far from heavyweight systems like MLE-Star or aira-dojo. Lightweight agents democratize experimentation, but careful curation, leak checks, and recipe tuning still demand deliberate data science work. The agent can't tell you if its clever trick is actually data leakage.
-
-<!-- TODO: Add diagram showing the automation vs cleanup tradeoff -->
 
 ## Lightweight vs heavyweight agents
 
@@ -68,8 +64,6 @@ Log loss is a "lower is better" metric. The Kaggle leaderboard median sits at **
 
 *† Gemini ran on `gemini-flash-2.5` because my `gemini-pro-2.5` quota was exhausted.*
 
-<!-- TODO: Add visualization comparing agent performance over time/iterations -->
-
 Does this mean lightweight agents are ready for production? Not quite. With one task and one run per agent, these deltas are easily within noise. No overall champion crowned. But three of four agents beat the Kaggle median on their first serious attempt, which suggests the orchestration pattern itself is sound.
 
 What struck me was how differently each agent approached the problem. Codex went wide with multi-seed ensembles. Claude pushed harder on model architecture (adding MLPs). Composer methodically swept hyperparameters. Gemini stumbled early with over-regularization but corrected course. Each strategy reflects the underlying model's tendencies, but all converged on TF-IDF as the feature foundation.
@@ -97,9 +91,7 @@ The messy bits are the code paths, not the telemetry. Before shipping any of thi
 - **Normalize experiment logging** – ensure `experiments.csv` retains consistent schemas so future analysis can reason about which parameters actually mattered.
 - **Refit cleanly** – the best-performing ensemble in Codex is still expressed as a scratch script; it needs a single entry point that trains on the full dataset and regenerates predictions deterministically.
 
-I estimate I spent 40% of my time cleaning up after the agents. That's still a net win (they generated hypotheses and ran experiments faster than I could manually), but it's not "press button, get solution."
-
-<!-- TODO: Add screenshot of messy repo structure vs. cleaned up version -->
+Cleanup took a significant portion of my time. That's still a net win (they generated hypotheses and ran experiments faster than I could manually), but it's not "press button, get solution."
 
 <details>
 <summary><strong>Field notes from the logs (expand for detailed iteration-by-iteration findings)</strong></summary>
