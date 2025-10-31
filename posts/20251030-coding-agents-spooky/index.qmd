@@ -37,7 +37,7 @@ The classic [Spooky Author Identification](https://kaggle.com/competitions/spook
 
 ## What I learned
 
-I ran four different coding agents (Codex, Composer, Claude, and Gemini) on the Spooky Author Identification task. Each agent is allowed to run 10 iterations. Each agent ended up spending somewhere from 2.5 hours to 13 hours having fun on my mac mini. Here's what I learned:
+I ran four different coding agents (Codex, Claude, Gemini and Cursor[^composer-model]) on the Spooky Author Identification task. Each agent is allowed to run 10 iterations. Each agent ended up spending somewhere from 2.5 hours to 13 hours having fun on my mac mini. Here's what I learned:
 
 **Coding agents are quite capable and trained a strong baseline model.** I expected the agents to struggle because I didn't provide specific instructions or tools. Author attribution from short text snippets can be tricky, requiring models to pick up on stylistic tics and long-tail vocabulary patterns. But watching them work, I realized they figure out quite a few things on their own, helping me discover good ingredients I didn't think of. All of the agents matched or beat the Kaggle median (and Kaggle participants know a thing or two about data science), some comfortably above the median. None of them have reached the bronze cutoff (top 10%) yet. But, there are lot of room for improving how I use them. My prompt is probably far from optimal. The number of iterations may not be enough. And the coding agent was not on the strongest LLM yet.
 
@@ -135,5 +135,7 @@ All code, experiment artifacts, and raw stream-json transcripts are public:
 - **Composer**: [Status](https://github.com/zzsi/spooky-author-identification-composer/blob/main/agent_status.md) · [Early session](https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_211120.log) · [Final session](https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_221518.log)
 - **Claude**: [Status](https://github.com/zzsi/spooky-author-identification-claude/blob/main/agent_status.md) · [Session log](https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log)
 - **Gemini**: [Status](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/agent_status.md) · [Session log](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/logs/20251030_165930.log)
+
+[^composer-model]: Cursor with the new composer-1 model.
 
 [^benchmark-performance]: MLE-bench is a benchmark comprising 75 Kaggle competitions for evaluating ML agents ([GitHub repo](https://github.com/openai/mle-bench)). MLE-bench lite is a curated subset of 22 tasks. Both MLE-STAR and AIRA-dojo use bespoke multi-agent frameworks: MLE-STAR combines web search for model discovery with targeted refinement guided by ablation studies ([Nam et al., 2025](https://arxiv.org/abs/2506.15692)), achieving medals in 64% of MLE-bench lite competitions. AIRA-dojo provides specialized operators and multiple search policies (greedy, MCTS, evolutionary) to explore solution spaces ([research paper](https://arxiv.org/html/2507.02554v1)), achieving 47.7% medal rate on MLE-bench lite.
