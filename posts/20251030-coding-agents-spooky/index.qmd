@@ -1,7 +1,7 @@
 ---
-title: "Ghost in the Repo: Lightweight Coding Agents on Kaggle's Spooky Challenge"
+title: "Coding Agents and a Spooky Kaggle Challenge: Benchmarking Lightweight ML Automation"
 date: 2025-10-30
-categories: [ai, data science, coding agents]
+categories: [ai, data science, coding agents, nlp, llm]
 format:
   html:
     toc: true
@@ -10,147 +10,113 @@ format:
 
 ## Why revisit spooky authors in 2025
 
-Agentic ML tooling is having a moment. Heavyweights like DeepMind's **MLE-Star** and Meta's **aira-dojo** now headline benchmarks with purpose-built planners, tool graphs, and curated playbooks for data science automation. They are powerful but heavy. Standing them up requires GPUs, bespoke infra, and a willingness to live inside someone else's workflow.
+Agentic ML tooling is having a moment. State-of-the-art systems like DeepMind's [**MLE-STAR**](https://research.google/blog/mle-star-a-state-of-the-art-machine-learning-engineering-agents/) and Meta's [**AIRA-dojo**](https://github.com/facebookresearch/aira-dojo) frequently place in the top 10% of Kaggle competitions on [MLE-bench](https://github.com/openai/mle-bench).[^benchmark-performance] They're powerful but heavy.
 
-Day to day, most of us still reach for slim coding agents that sit on top of git, shell scripts, and a prompt file. I wanted to test how far that lightweight stack can go.
+Day to day, I mainly use coding agents with a detailed text file for prompting and some shell scripts to set things up. Many of you probably do the same. I wanted to test how far that lightweight stack can go.
 
-To find out, I dusted off the classic [Spooky Author Identification](https://kaggle.com/competitions/spooky-author-identification) playground competition: classify short horror passages by Edgar Allan Poe, Mary Shelley, or H. P. Lovecraft. The metric is multiclass log loss, which punishes overconfident mistakes and rewards calibrated probabilities, a sweet spot for data science automation.
+To find out, I implemented a "Memento"-style outer loop, where I encourage the coding agent to pass messages to its "future self" (the next invocation of the agent) in an organized way.
 
-## What I learned
+### A tiny orchestration rig
 
-Running four different coding agents (Codex, Composer, Claude, and Gemini) on the same Kaggle challenge revealed three clear patterns:
+See my [template repo](https://github.com/zzsi/spooky-author-identification-agentic-template) for the set up.
+Surprisingly, you don't need much special tooling for it to work well. There is zero Python code at the start, instead just a few boilerplate files:
 
-**Lightweight setups work.** Minimal prompting plus three helper scripts (`setup_env.sh`, `prompt.sh`, `run_iterations.sh`) was enough for modern coding agents to beat the Kaggle median and approach bronze-tier scores. Codex landed a **0.35897** log-loss, comfortably above the **0.4188** median threshold.
-
-**Automation moves fast but leaves a mess.** All four agents sprawled dozens of experiment entries, cached matrices, and partially refactored modules. They ship improvements, yet still force a human to reconcile redundant scripts, prune dead notebooks, and audit for data leakage before anything is production-ready. I spent as much time cleaning up as I did setting up experiments.
-
-**The last mile remains human.** Claude pushed CV log loss down to **0.3447** with a TF-IDF + MLP ensemble, better than the others but still far from heavyweight systems like MLE-Star or aira-dojo. Lightweight agents democratize experimentation, but careful curation, leak checks, and recipe tuning still demand deliberate data science work. The agent can't tell you if its clever trick is actually data leakage.
-
-## Lightweight vs heavyweight agents
-
-Why bother with coding agents when MLE-Star and aira-dojo exist? Because those systems come with significant weight:
-
-- **MLE-Star (DeepMind)** stitches together planners, verifiers, and domain-specific tooling to deliver near push-button benchmarks. Impressive, but each deployment assumes a curated environment, specialized hardware, and a dataset config pipeline.
-- **aira-dojo (Meta)** provides a dojo of scripted data science routines and reinforcement-learned policies. Powerful for internal benchmarks, yet not something you spin up on your MacBook before lunch.
-
-Lightweight coding agents trade raw performance for accessibility. They inherit your repo, follow your version control, and let you stay close to the code. In exchange, you own the cleanup and the decision to productionize.
-
-For most teams, that's a fair trade: let the agent generate a strong baseline quickly, then have humans tighten the screws. The question isn't whether heavyweight systems are better (they obviously are, when you have the resources). The question is whether lightweight agents are *good enough* to change how we work. Based on this experiment, I think they are.
-
-## A tiny orchestration rig
-
-Here's what surprised me most: you don't need any special infrastructure. All four agent repos share the same skeleton:
-
-1. **`user_prompt.txt`** – a one-page spec that forces the agent into a disciplined loop: load context, declare a budget, run 2–3 experiments, journal, and update status files.
+1. **`user_prompt.txt`** – a one-page spec that instructs the agent to perform a disciplined "outer" loop (because the agent already handles the inner loop): load context, declare a budget, run 2–3 experiments, journal what worked and what didn't, plan next steps, update the status, and save the best results.
 2. **`setup_env.sh`** – stands up a virtualenv, installs pinned deps, and even pre-downloads NLTK packages so the agent never has to ask for credentials.
 3. **`prompt.sh` & `run_iterations.sh`** – thin wrappers that activate the venv, launch the chosen CLI (`claude`, `gemini`, `codex`, `cursor`), and optionally auto-commit after each loop.
 
-That's it: no bespoke backend, no orchestration server. The agent sees the repo exactly like a junior data scientist would: git history, prior experiments, and a scratchpad of ideas. This "minimal stack" was enough for Codex to discover multi-seed ensembles and for Composer to run 60 experiments in under a day.
+That's it. The agent sees the repo exactly like a data scientist would: git history, prior experiments, and a scratchpad of ideas. This "minimal stack" was enough for your coding agent to discover multi-seed ensembles and run 60 experiments in under a day.
 
-The simplicity is both a strength and a weakness. It's easy to start, but the lack of guardrails means agents will happily create duplicate pipelines, conflicting experiment IDs, and scripts that assume files exist in the wrong places.
+Feel free to use this [agentic template](https://github.com/zzsi/spooky-author-identification-agentic-template). Instructions are there for trying it out yourself.
 
-## How the agents performed
+### The test bed
 
-I expected the agents to struggle with a task this nuanced. Author attribution from short text snippets is subtle work, requiring the model to pick up on stylistic tics and vocabulary patterns. But watching them work revealed something surprising.
+The classic [Spooky Author Identification](https://kaggle.com/competitions/spooky-author-identification) playground competition. The task is to classify short horror passages by Edgar Allan Poe, Mary Shelley, or H. P. Lovecraft. For example, which author wrote the following passage?
 
-Log loss is a "lower is better" metric. The Kaggle leaderboard median sits at **0.4188**, and the bronze cutoff (top 10%) is **0.2938**. The table below shows each agent's score compared to that median: negative percentages mean the agent beat the median.
+*"My host was now leading the way down cellar to his actual studio, and I braced myself for some hellish effects among the unfinished canvases."*
+
+## What I learned
+
+I ran four different coding agents (Codex, Composer, Claude, and Gemini) on the Spooky Author Identification task. Each agent is allowed to run 10 iterations. Each agent ended up spending somewhere from 2.5 hours to 13 hours having fun on my mac mini. Here's what I learned:
+
+**Coding agents are quite capable and trained a strong baseline model.** I expected the agents to struggle because I didn't provide specific instructions or tools. Author attribution from short text snippets can be tricky, requiring models to pick up on stylistic tics and long-tail vocabulary patterns. But watching them work, I realized they figure out quite a few things on their own, helping me discover good ingredients I didn't think of. All of the agents matched or beat the Kaggle median (and Kaggle participants know a thing or two about data science), some comfortably above the median. None of them have reached the bronze cutoff (top 10%) yet. But, there are lot of room for improving how I use them. My prompt is probably far from optimal. The number of iterations may not be enough. And the coding agent was not on the strongest LLM yet.
+
+**Automation moves fast but leaves a mess.** All four agents sprawled dozens of experiment entries, cached matrices, and partially refactored modules. They ship improvements, yet still requires a human expert to reconcile redundant scripts, prune dead notebooks, and audit for data leakage before anything is production ready. I expect cleanup will take significant time.
+
+**The last mile remains human.** Claude pushed CV log loss down to **0.3447** with a TF-IDF + MLP ensemble, better than the others but still a hike away from the bronze cutoff (top 10%). Agentic ML tools democratize experimentation, but careful experiment design, data quality checks, and smart engineering still demand deliberate expertise. I do not see myself and fellow folks out of job any time soon, and I am confident we can all adapt, adopt, and super-charge ourselves.
+
+## How the agents actually performed
+
+The main metric is log loss (lower is better). The Kaggle leaderboard median sits at **0.4188**, and the bronze cutoff (top 10%) is **0.2938**. The table below shows each agent's score compared to that median: negative numbers mean the agent beat the median.
 
 | Agent | Log Loss | vs. Kaggle Median | Summary |
 | --- | --- | --- | --- |
-| **Claude** | 0.37222 | **-4.7%** | 3-seed TF-IDF + MLP blend. Stacking meta-learner backfired. |
-| **Codex** | 0.35897 | **-6.0%** | Multi-seed TF-IDF + logistic ensemble. Still needs full-train refit. |
-| **Composer** | 0.38715 | **-3.2%** | TF-IDF + logistic with sublinear scaling. Exploring vocab tuning. |
-| **Gemini**† | 0.42398 | **+0.5%** | Word+char features. Over-regularized at first (C=0.1 → 0.696). |
+| **Claude** | 0.37222 (reached 0.3447 but regressed) | **-0.047** | 3-seed TF-IDF + MLP blend. Stacking meta-learner backfired. |
+| **Codex** | 0.35897  | **-0.060** | Multi-seed TF-IDF + logistic ensemble. |
+| **Composer** | 0.38715 | **-0.032** | TF-IDF + logistic with sublinear scaling. Exploring vocab tuning. |
+| **Gemini**† | 0.42398 | **+0.005** | Word+char features. Over-regularized at first (C=0.1 → 0.696). |
 
-*† Gemini ran on `gemini-flash-2.5` because my `gemini-pro-2.5` quota was exhausted.*
+*† Gemini ran on `gemini-flash-2.5` because my `gemini-pro-2.5` quota was exhausted. Sorry Gemini! Will give the pro version a try another time.*
 
-Does this mean lightweight agents are ready for production? Not quite. With one task and one run per agent, these deltas are easily within noise. No overall champion crowned. But three of four agents beat the Kaggle median on their first serious attempt, which suggests the orchestration pattern itself is sound.
+Is there a clear winner among the four agents? Not quite. With one task and one run per agent, these deltas are easily within noise. No overall champion crowned. But three of four agents beat the Kaggle median on their first serious attempt, which suggests the orchestration pattern itself is sound.
 
-What struck me was how differently each agent approached the problem. Codex went wide with multi-seed ensembles. Claude pushed harder on model architecture (adding MLPs). Composer methodically swept hyperparameters. Gemini stumbled early with over-regularization but corrected course. Each strategy reflects the underlying model's tendencies, but all converged on TF-IDF as the feature foundation.
+What struck me was how differently each agent approached the problem. Codex went wide with multi-seed ensembles. Claude pushed harder on model architecture (adding MLPs). Composer methodically swept hyperparameters. Gemini (2.5-flash) stumbled early with over-regularization but corrected course. Each strategy reflects the underlying model's tendencies, but all converged on TF-IDF as the feature foundation.
 
 <details>
 <summary><strong>Representative session logs (expand for highlights from each agent's run)</strong></summary>
 
 - [Codex full sweep](https://github.com/zzsi/spooky-author-identification-codex/blob/main/logs/20251029_145652.log): five-model ensemble where stylometric probabilities took 50% of the final weight
 - [Composer mid-run](https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_211120.log): Oct 29 session documented a 4.4% log-loss drop after raising `max_features` to 25k
-- [Claude iteration 10](https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log): stacking meta-learner chewed 138 minutes only to land 10.4% worse than simple blend
+- [Claude iteration](https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log): stacking meta-learner chewed 138 minutes only to land 10.4% worse than simple blend
+- [Gemini early run](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/logs/20251030_165930.log): over-regularization with C=0.1 spiked to 0.696 log loss before correcting course
 
 </details>
 
 ## What the agents leave behind
 
-The hardest part wasn't the setup or the experimentation. It was the cleanup.
+Looking at the work products, I realize the hardest part is not the setup or the experimentation. It is the cleanup.
 
 Automation litters the repo. Codex's run now tracks **five** variants of the same logistic pipeline, complete with separate OOF dumps, weight search scripts, and registry YAMLs. Composer's `train.py` mixes LightGBM, logistic regression, handcrafted features, and a sentence-transformer branch inside a single file that keeps toggling `SKIP_EXISTING_EXPERIMENTS`. The agents do not delete anything; they prototype, leave artifacts behind, and move on.
 
-Not every artifact is junk. The streaming JSON logs double as a lab notebook: one Codex session diagnosed short texts (21–81 characters) as the chief failure mode (**76.8% accuracy and 0.566 log loss vs. 93.7% / 0.204 for long passages**) and immediately reprioritized feature work around that gap. That's valuable signal buried in transcript.
+There is valuable signal inside the noise. The streaming JSON logs and the journal files double as a lab notebook: one Codex session diagnosed short texts (21–81 characters) as the chief failure mode (**76.8% accuracy and 0.566 log loss vs. 93.7% / 0.204 for long passages**) and immediately reprioritized feature work around that gap. That's valuable signal buried in transcript.
 
-The messy bits are the code paths, not the telemetry. Before shipping any of this to production, you must:
+The messy bits are the code paths, not the telemetry. Before shipping any of this to production, you need to:
 
-- **Audit data usage** – repeated calls to `RepeatedStratifiedKFold` with the same seed should not leak across iterations; make sure cached matrices respect fold boundaries.
+- **Restore clean, reproducible code** – to make your life easier.
+- **Audit data usage** – to be sure the metrics are real, check if there is data leakage, faulty experiental design, and stress test the model on a hold out dataset.
 - **Normalize experiment logging** – ensure `experiments.csv` retains consistent schemas so future analysis can reason about which parameters actually mattered.
-- **Refit cleanly** – the best-performing ensemble in Codex is still expressed as a scratch script; it needs a single entry point that trains on the full dataset and regenerates predictions deterministically.
 
-Cleanup took a significant portion of my time. That's still a net win (they generated hypotheses and ran experiments faster than I could manually), but it's not "press button, get solution."
 
-<details>
-<summary><strong>Field notes from the logs (expand for detailed iteration-by-iteration findings)</strong></summary>
-
-### Codex
-- The very first iteration slashed log loss from 0.4660 to 0.3875 and surfaced author-specific tokens (Poe's "of the/upon", Lovecraft's "though/west", Shelley's character cues), validating the word+char TF-IDF baseline. [Journal entry](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_150648.md)
-- A follow-on run built out OOF persistence, averaged three min_df=2 seeds plus a min_df=3 variant, and pushed the ensemble to 0.37643 log loss without touching the test set. [Journal entry](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_165608.md)
-- Diagnostics logged the LightGBM collapse (≥0.49 log loss) and the HPL→EAP confusion hotspot (585 errors), motivating Lovecraft-specific features rather than yet another booster. [Journal entry](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_184500.md)
-- Not every bet landed: 256-component SVD exploded to 0.59 log loss, and repeated CV runs confirmed the 0.3819 hero score was partly optimistic variance. [Journal entries](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_154953.md)
-- Approximate wall-clock: ~4 h 52 m between the first and last Codex logs (idle gaps included).
-
-### Composer
-- Sentence-transformer embeddings bombed at 0.6715 log loss, underscoring that semantics alone can't beat stylistic n-grams for authorship. [Journal entry](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_001240.md)
-- Joint tuning of `C` and vocabulary width marched the logistic baseline from 0.452 to 0.427, with most of the lift coming from expanding `max_features` to 10k and 25k. [Journal entry](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_021104.md)
-- The final lap combined word bigrams, 30k features, `sublinear_tf=True`, and `C=4.5` to reach 0.3943 log loss and ship the current submission. [Journal entry](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031939.md)
-- Along the way, a "stylometric booster" actually cratered performance to 0.680 and the agent tripped a docstring syntax error (both logged, both fixed within the same session). [Session log](https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_191300.log)
-- Approximate wall-clock: ~6 h 59 m from the earliest to latest Composer logs on 2025-10-29.
-
-### Claude
-- Early error analysis quantified the short-text tax (24.7% error under 10 words) and the dominant confusions (MWS→EAP 10.7%, HPL→EAP 10.1%), guiding later work toward richer features. [Journal entry](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_235246.md)
-- Learning-rate tuning dropped the MLP to 0.3519 log loss, and blending it 30/70 with the logistic model yielded the 0.3495 ensemble before multi-seed averaging took over. [Journal entry](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_102859.md)
-- Stretching to five seeds or inserting batch norm both backfired (2.72% and 36% worse respectively), highlighting how easily variance can explode in sparse TF-IDF space. [Journal entry](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_150739.md)
-- The stream logs even capture the stacking meta-learner grinding for 2.3 hours, overshooting the 90-minute budget, and still finishing 10.4% worse than the simple blend. [Session log](https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log)
-- Approximate wall-clock: ~13 h 55 m for the Claude run (stacking iterations account for much of it).
-
-### Gemini
-- Baseline TF-IDF + logistic regression hovered around 0.43 log loss; an overly strong regularization run (C=0.1) erupted to 0.696 before the agent marched back down by loosening `C` and adding text-length features. [Journal entry](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_165930.md)
-- Approximate wall-clock: ~2 h 50 m for the opening Gemini sweep (run on `gemini-flash-2.5`).
-
-</details>
+Even if cleanup requires a lot of time, I still view agentic ML as a net win (they generated hypotheses and ran experiments faster than I could manually), but it's not as simple as pressing button to get the solution.
 
 <details>
-<summary><strong>Experiment timelines (expand for iteration-by-iteration progression)</strong></summary>
+<summary><strong>Detailed experiment progression (expand for iteration-by-iteration findings)</strong></summary>
 
 ### Codex
-- *Iteration 1:* Word+char TF-IDF logistic dropped CV log loss from 0.4660 to 0.3875 and exposed author-specific tokens. [Journal](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_150648.md)
-- *Iterations 2–4:* Cross-seed checks and char-vocabulary diagnostics showed the modest 0.3819 gain was variance-prone and that `max_df=0.9` pruning removed almost nothing. [Journal 1](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_154953.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_155931.md)
-- *Iteration 5:* Added OOF persistence and equal-weighted min_df ensembles, trimming log loss to 0.3764 while keeping training strictly on folds. [Journal](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_165608.md)
-- *Iteration 6:* Catalogued LightGBM's 0.49+ collapse and quantified Lovecraft-heavy confusions, steering future work toward targeted features over new boosters. [Journal](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_184500.md)
-- *Iterations 7–9:* Documented further C tuning, repeated-CV variance, and Lovecraft token whitelists, concluding that remaining gains require smarter feature curation rather than more seeds. [Journal 1](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_203500.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251030_154500.md)
-- *Clock time:* ~4 h 52 m between first and last Codex logs.
+- *Iteration 1:* Word+char TF-IDF logistic slashed log loss from 0.4660 to 0.3875 and surfaced author-specific tokens (Poe's "of the/upon", Lovecraft's "though/west", Shelley's character cues), validating the baseline. [Journal](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_150648.md)
+- *Iterations 2–4:* Cross-seed checks and char-vocabulary diagnostics showed the 0.3819 gain was variance-prone. Not every bet landed: 256-component SVD exploded to 0.59 log loss. [Journal 1](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_154953.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_155931.md)
+- *Iteration 5:* Built out OOF persistence, averaged three min_df=2 seeds plus a min_df=3 variant, trimming log loss to 0.3764 while keeping training strictly on folds. [Journal](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_165608.md)
+- *Iteration 6:* Diagnostics catalogued LightGBM's collapse (≥0.49 log loss) and the HPL→EAP confusion hotspot (585 errors), steering work toward Lovecraft-specific features. [Journal](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_184500.md)
+- *Iterations 7–9:* Further C tuning, repeated-CV variance checks, and Lovecraft token whitelists, concluding remaining gains require smarter feature curation rather than more seeds. [Journal 1](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_203500.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251030_154500.md)
+- *Clock time:* ~4 h 52 m between first and last logs (idle gaps included).
 
 ### Composer
 - *Kickoff:* TF-IDF + logistic regression established a 0.4811 baseline; LightGBM and quick ensembles underperformed, proving the task is mostly linear. [Journal](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251029_202025.md)
-- *Early experiments:* Sentence-transformer embeddings cratered at 0.6715 while logistic tuning (C≈5) slashed log loss to 0.4522. [Journal 1](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_001240.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_011020.md)
-- *Mid-run:* Increasing `max_features` to 10k and then 25k delivered the biggest gains, dropping to 0.4275. [Journal](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_021104.md)
-- *Late game:* Coordinated tuning of C, n-gram ranges, and vocabulary size landed at 0.3984; adding `sublinear_tf=True` with `C=4.5` finished at 0.3943 and generated the current submission. [Journal 1](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031500.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031939.md)
+- *Early experiments:* Sentence-transformer embeddings bombed at 0.6715, underscoring that semantics alone can't beat stylistic n-grams for authorship. Logistic tuning (C≈5) slashed log loss to 0.4522. [Journal 1](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_001240.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_011020.md)
+- *Mid-run:* Joint tuning of `C` and vocabulary width delivered the biggest gains, with most lift from expanding `max_features` to 10k and 25k, dropping to 0.4275. [Journal](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_021104.md)
+- *Late game:* Coordinated tuning of C, n-gram ranges, and vocabulary size landed at 0.3984; adding `sublinear_tf=True` with `C=4.5` finished at 0.3943 and shipped the submission. Along the way, a "stylometric booster" cratered performance to 0.680. [Journal 1](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031500.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031939.md)
 - *Clock time:* ~6 h 59 m across Composer's logged iterations.
 
 ### Claude
-- *Baseline:* Logistic regression beat LightGBM (0.43 vs 0.59) out of the gate, confirming sparse TF-IDF prefers linear models. [Journal](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_232600.md)
-- *Early tuning:* Lower regularization (C≈10) tightened CV log loss to 0.3814 and reiterated that short texts drive most mistakes. [Journal 1](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_000100.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_235246.md)
-- *Breakthrough:* A modest MLP (256→128) hit 0.3656; blending it 30/70 with the logistic model yielded a robust 0.3495. [Journal 1](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_013624.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_102859.md)
+- *Baseline:* Logistic regression beat LightGBM (0.43 vs 0.59) out of the gate, confirming sparse TF-IDF prefers linear models. Early error analysis quantified the short-text tax (24.7% error under 10 words). [Journal](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_232600.md)
+- *Early tuning:* Lower regularization (C≈10) tightened CV log loss to 0.3814, revealing dominant confusions (MWS→EAP 10.7%, HPL→EAP 10.1%). [Journal 1](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_000100.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_235246.md)
+- *Breakthrough:* A modest MLP (256→128) hit 0.3656. Learning-rate tuning dropped it to 0.3519, and blending it 30/70 with logistic yielded a robust 0.3495. [Journal 1](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_013624.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_102859.md)
 - *Peak:* Averaging three seeds for each model produced the 0.3447 best-in-class ensemble without destabilizing variance. [Journal](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_124415.md)
-- *Cautionary tail:* Stacking and five-seed experiments consumed hours yet degraded performance by 10% and 2.7%; batch norm on sparse TF-IDF was catastrophic (+36% log loss). [Journal 1](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_132403.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_150739.md)
-- *Clock time:* ~13 h 55 m between Claude's earliest and latest logs.
+- *Cautionary tail:* Stacking meta-learner ground for 2.3 hours, overshooting budget, yet finished 10.4% worse than the simple blend. Five seeds and batch norm also backfired (2.72% and 36% worse). [Journal 1](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_132403.md) · [Journal 2](https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_150739.md)
+- *Clock time:* ~13 h 55 m between Claude's earliest and latest logs (stacking iterations account for much of it).
 
 ### Gemini (2025-10-30)
-- *Baseline:* Initial TF-IDF logistic run clocked 0.557 log loss, giving the agent a concrete hill to climb. [Journal](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_141848.md)
+- *Baseline:* Initial TF-IDF logistic run clocked 0.557 log loss, giving the agent a concrete hill to climb. An overly strong regularization run (C=0.1) erupted to 0.696 before the agent corrected course. [Journal](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_141848.md)
 - *Feature mix:* Adding char n-grams and text-length features while relaxing `C` dropped CV log loss into the 0.43 range. [Journal](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_165930.md)
 - *Current best:* Tuning character `sublinear_tf`/`use_idf` combinations landed at 0.4299 CV and 0.42398 on the grader, still above the Kaggle median but short of medal territory. [Journal](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_170206.md)
 - *Clock time:* ~2 h 50 m for the logged Gemini run (on `gemini-flash-2.5`).
@@ -158,20 +124,6 @@ Cleanup took a significant portion of my time. That's still a net win (they gene
 *Run-time estimates derive from file modification times of the earliest and latest `logs/*.log` entries; they include idle gaps between iterations.*
 
 </details>
-
-## What I learned about each agent
-
-Running this experiment taught me that lightweight agents aren't just cheaper versions of heavyweight systems. They're a different tool entirely, and each revealed its own personality:
-
-**Codex** favors breadth over depth. It discovered multi-seed ensembles naturally, averaging across parameter variations rather than optimizing a single model. The weakness: variance estimation. Its best score might be luck, and it left behind five competing pipelines without a clear consolidation path.
-
-**Composer** is methodical. It marched through feature space systematically, from 10k to 25k vocabulary size, documenting every gain. The payoff was steady improvement (0.452 → 0.394), but it could use more architectural ambition beyond linear models.
-
-**Claude** took calculated risks. Adding a small MLP on top of TF-IDF paid off (best CV score: 0.3447), but its 138-minute stacking experiment backfired spectacularly. It taught me that simple blends often beat complex meta-learners, at least in sparse feature spaces.
-
-**Gemini** stumbled early. Over-regularization (C=0.1) exploded to 0.696 log loss before it corrected course. Running on the lighter `gemini-flash-2.5` model may have limited its ceiling, but it still landed near the median on its first serious attempt.
-
-Meanwhile, I'll keep an eye on the heavy hitters. When MLE-Star or aira-dojo become easier to adopt in a local workflow, they will likely leap past these handcrafted setups. Until then, a simple prompt file, a few shell scripts, and a patient coding agent already unlock a lot of Kaggle-style experimentation, so long as a human data scientist is ready to polish the results.
 
 ---
 
@@ -182,4 +134,6 @@ All code, experiment artifacts, and raw stream-json transcripts are public:
 - **Codex**: [Status](https://github.com/zzsi/spooky-author-identification-codex/blob/main/agent_status.md) · [Setup script](https://github.com/zzsi/spooky-author-identification-codex/blob/main/setup_env.sh) · [Session log](https://github.com/zzsi/spooky-author-identification-codex/blob/main/logs/20251029_145652.log)
 - **Composer**: [Status](https://github.com/zzsi/spooky-author-identification-composer/blob/main/agent_status.md) · [Early session](https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_211120.log) · [Final session](https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_221518.log)
 - **Claude**: [Status](https://github.com/zzsi/spooky-author-identification-claude/blob/main/agent_status.md) · [Session log](https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log)
-- **Gemini**: [Status](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/agent_status.md)
+- **Gemini**: [Status](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/agent_status.md) · [Session log](https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/logs/20251030_165930.log)
+
+[^benchmark-performance]: MLE-bench is a benchmark comprising 75 Kaggle competitions for evaluating ML agents ([GitHub repo](https://github.com/openai/mle-bench)). MLE-bench lite is a curated subset of 22 tasks. Both MLE-STAR and AIRA-dojo use bespoke multi-agent frameworks: MLE-STAR combines web search for model discovery with targeted refinement guided by ablation studies ([Nam et al., 2025](https://arxiv.org/abs/2506.15692)), achieving medals in 64% of MLE-bench lite competitions. AIRA-dojo provides specialized operators and multiple search policies (greedy, MCTS, evolutionary) to explore solution spaces ([research paper](https://arxiv.org/html/2507.02554v1)), achieving 47.7% medal rate on MLE-bench lite.
