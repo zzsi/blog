@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2025-10-30">
+
+<title>Ghost in the Repo: Lightweight Coding Agents on Kaggle’s Spooky Challenge – Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About this blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/zzsi"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/zhangzhangsi/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Ghost in the Repo: Lightweight Coding Agents on Kaggle’s Spooky Challenge</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">ai</div>
+                <div class="quarto-category">data science</div>
+                <div class="quarto-category">coding agents</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 30, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#why-revisit-spooky-authors-in-2025" id="toc-why-revisit-spooky-authors-in-2025" class="nav-link active" data-scroll-target="#why-revisit-spooky-authors-in-2025">Why revisit spooky authors in 2025</a></li>
+  <li><a href="#what-i-learned" id="toc-what-i-learned" class="nav-link" data-scroll-target="#what-i-learned">What I learned</a></li>
+  <li><a href="#lightweight-vs-heavyweight-agents" id="toc-lightweight-vs-heavyweight-agents" class="nav-link" data-scroll-target="#lightweight-vs-heavyweight-agents">Lightweight vs heavyweight agents</a></li>
+  <li><a href="#a-tiny-orchestration-rig" id="toc-a-tiny-orchestration-rig" class="nav-link" data-scroll-target="#a-tiny-orchestration-rig">A tiny orchestration rig</a></li>
+  <li><a href="#how-the-agents-performed" id="toc-how-the-agents-performed" class="nav-link" data-scroll-target="#how-the-agents-performed">How the agents performed</a></li>
+  <li><a href="#what-the-agents-leave-behind" id="toc-what-the-agents-leave-behind" class="nav-link" data-scroll-target="#what-the-agents-leave-behind">What the agents leave behind</a></li>
+  <li><a href="#what-i-learned-about-each-agent" id="toc-what-i-learned-about-each-agent" class="nav-link" data-scroll-target="#what-i-learned-about-each-agent">What I learned about each agent</a></li>
+  <li><a href="#appendix-full-repository-links" id="toc-appendix-full-repository-links" class="nav-link" data-scroll-target="#appendix-full-repository-links">Appendix: Full repository links</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="why-revisit-spooky-authors-in-2025" class="level2">
+<h2 class="anchored" data-anchor-id="why-revisit-spooky-authors-in-2025">Why revisit spooky authors in 2025</h2>
+<p>Agentic ML tooling is having a moment. Heavyweights like DeepMind’s <strong>MLE-Star</strong> and Meta’s <strong>aira-dojo</strong> now headline benchmarks with purpose-built planners, tool graphs, and curated playbooks for data science automation. They are powerful but heavy. Standing them up requires GPUs, bespoke infra, and a willingness to live inside someone else’s workflow.</p>
+<p>Day to day, most of us still reach for slim coding agents that sit on top of git, shell scripts, and a prompt file. I wanted to test how far that lightweight stack can go.</p>
+<p>To find out, I dusted off the classic <a href="https://kaggle.com/competitions/spooky-author-identification">Spooky Author Identification</a> playground competition: classify short horror passages by Edgar Allan Poe, Mary Shelley, or H. P. Lovecraft. The metric is multiclass log loss, which punishes overconfident mistakes and rewards calibrated probabilities, a sweet spot for data science automation.</p>
+<!-- TODO: Add hero image - maybe a spooky git repo visualization or agent comparison diagram -->
+</section>
+<section id="what-i-learned" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-learned">What I learned</h2>
+<p>Running four different coding agents (Codex, Composer, Claude, and Gemini) on the same Kaggle challenge revealed three clear patterns:</p>
+<p><strong>Lightweight setups work.</strong> Minimal prompting plus three helper scripts (<code>setup_env.sh</code>, <code>prompt.sh</code>, <code>run_iterations.sh</code>) was enough for modern coding agents to beat the Kaggle median and approach bronze-tier scores. Codex landed a <strong>0.35897</strong> log-loss, comfortably above the <strong>0.41879</strong> median threshold.</p>
+<p><strong>Automation moves fast but leaves a mess.</strong> All four agents sprawled dozens of experiment entries, cached matrices, and partially refactored modules. They ship improvements, yet still force a human to reconcile redundant scripts, prune dead notebooks, and audit for data leakage before anything is production-ready. I spent as much time cleaning up as I did setting up experiments.</p>
+<p><strong>The last mile remains human.</strong> Claude pushed CV log loss down to <strong>0.3447</strong> with a TF-IDF + MLP ensemble, better than the others but still far from heavyweight systems like MLE-Star or aira-dojo. Lightweight agents democratize experimentation, but careful curation, leak checks, and recipe tuning still demand deliberate data science work. The agent can’t tell you if its clever trick is actually data leakage.</p>
+<!-- TODO: Add diagram showing the automation vs cleanup tradeoff -->
+</section>
+<section id="lightweight-vs-heavyweight-agents" class="level2">
+<h2 class="anchored" data-anchor-id="lightweight-vs-heavyweight-agents">Lightweight vs heavyweight agents</h2>
+<p>Why bother with coding agents when MLE-Star and aira-dojo exist? Because those systems come with significant weight:</p>
+<ul>
+<li><strong>MLE-Star (DeepMind)</strong> stitches together planners, verifiers, and domain-specific tooling to deliver near push-button benchmarks. Impressive, but each deployment assumes a curated environment, specialized hardware, and a dataset config pipeline.</li>
+<li><strong>aira-dojo (Meta)</strong> provides a dojo of scripted data science routines and reinforcement-learned policies. Powerful for internal benchmarks, yet not something you spin up on your MacBook before lunch.</li>
+</ul>
+<p>Lightweight coding agents trade raw performance for accessibility. They inherit your repo, follow your version control, and let you stay close to the code. In exchange, you own the cleanup and the decision to productionize.</p>
+<p>For most teams, that’s a fair trade: let the agent generate a strong baseline quickly, then have humans tighten the screws. The question isn’t whether heavyweight systems are better (they obviously are, when you have the resources). The question is whether lightweight agents are <em>good enough</em> to change how we work. Based on this experiment, I think they are.</p>
+</section>
+<section id="a-tiny-orchestration-rig" class="level2">
+<h2 class="anchored" data-anchor-id="a-tiny-orchestration-rig">A tiny orchestration rig</h2>
+<p>Here’s what surprised me most: you don’t need any special infrastructure. All four agent repos share the same skeleton:</p>
+<ol type="1">
+<li><strong><code>user_prompt.txt</code></strong> – a one-page spec that forces the agent into a disciplined loop: load context, declare a budget, run 2–3 experiments, journal, and update status files.</li>
+<li><strong><code>setup_env.sh</code></strong> – stands up a virtualenv, installs pinned deps, and even pre-downloads NLTK packages so the agent never has to ask for credentials.</li>
+<li><strong><code>prompt.sh</code> &amp; <code>run_iterations.sh</code></strong> – thin wrappers that activate the venv, launch the chosen CLI (<code>claude</code>, <code>gemini</code>, <code>codex</code>, <code>cursor</code>), and optionally auto-commit after each loop.</li>
+</ol>
+<p>That’s it: no bespoke backend, no orchestration server. The agent sees the repo exactly like a junior data scientist would: git history, prior experiments, and a scratchpad of ideas. This “minimal stack” was enough for Codex to discover multi-seed ensembles and for Composer to run 60 experiments in under a day.</p>
+<p>The simplicity is both a strength and a weakness. It’s easy to start, but the lack of guardrails means agents will happily create duplicate pipelines, conflicting experiment IDs, and scripts that assume files exist in the wrong places.</p>
+</section>
+<section id="how-the-agents-performed" class="level2">
+<h2 class="anchored" data-anchor-id="how-the-agents-performed">How the agents performed</h2>
+<p>I expected the agents to struggle with a task this nuanced. Author attribution from short text snippets is subtle work, requiring the model to pick up on stylistic tics and vocabulary patterns. But watching them work revealed something surprising.</p>
+<p>Log loss is a “lower is better” metric. The Kaggle leaderboard median sits at <strong>0.4188</strong>, and the bronze cutoff (top 10%) is <strong>0.2938</strong>. The table below shows each agent’s score compared to that median: negative percentages mean the agent beat the median.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Agent</th>
+<th>Log Loss</th>
+<th>vs.&nbsp;Kaggle Median</th>
+<th>Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Claude</strong></td>
+<td>0.37222</td>
+<td><strong>-4.7%</strong></td>
+<td>3-seed TF-IDF + MLP blend. Stacking meta-learner backfired.</td>
+</tr>
+<tr class="even">
+<td><strong>Codex</strong></td>
+<td>0.35897</td>
+<td><strong>-6.0%</strong></td>
+<td>Multi-seed TF-IDF + logistic ensemble. Still needs full-train refit.</td>
+</tr>
+<tr class="odd">
+<td><strong>Composer</strong></td>
+<td>0.38715</td>
+<td><strong>-3.2%</strong></td>
+<td>TF-IDF + logistic with sublinear scaling. Exploring vocab tuning.</td>
+</tr>
+<tr class="even">
+<td><strong>Gemini</strong>†</td>
+<td>0.42398</td>
+<td><strong>+0.5%</strong></td>
+<td>Word+char features. Over-regularized at first (C=0.1 → 0.696).</td>
+</tr>
+</tbody>
+</table>
+<p><em>† Gemini ran on <code>gemini-flash-2.5</code> because my <code>gemini-pro-2.5</code> quota was exhausted.</em></p>
+<!-- TODO: Add visualization comparing agent performance over time/iterations -->
+<p>Does this mean lightweight agents are ready for production? Not quite. With one task and one run per agent, these deltas are easily within noise. No overall champion crowned. But three of four agents beat the Kaggle median on their first serious attempt, which suggests the orchestration pattern itself is sound.</p>
+<p>What struck me was how differently each agent approached the problem. Codex went wide with multi-seed ensembles. Claude pushed harder on model architecture (adding MLPs). Composer methodically swept hyperparameters. Gemini stumbled early with over-regularization but corrected course. Each strategy reflects the underlying model’s tendencies, but all converged on TF-IDF as the feature foundation.</p>
+<details>
+<summary>
+<strong>Representative session logs (expand for highlights from each agent’s run)</strong>
+</summary>
+<ul>
+<li><a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/logs/20251029_145652.log">Codex full sweep</a>: five-model ensemble where stylometric probabilities took 50% of the final weight</li>
+<li><a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_211120.log">Composer mid-run</a>: Oct 29 session documented a 4.4% log-loss drop after raising <code>max_features</code> to 25k</li>
+<li><a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log">Claude iteration 10</a>: stacking meta-learner chewed 138 minutes only to land 10.4% worse than simple blend</li>
+</ul>
+</details>
+</section>
+<section id="what-the-agents-leave-behind" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-agents-leave-behind">What the agents leave behind</h2>
+<p>The hardest part wasn’t the setup or the experimentation. It was the cleanup.</p>
+<p>Automation litters the repo. Codex’s run now tracks <strong>five</strong> variants of the same logistic pipeline, complete with separate OOF dumps, weight search scripts, and registry YAMLs. Composer’s <code>train.py</code> mixes LightGBM, logistic regression, handcrafted features, and a sentence-transformer branch inside a single file that keeps toggling <code>SKIP_EXISTING_EXPERIMENTS</code>. The agents do not delete anything; they prototype, leave artifacts behind, and move on.</p>
+<p>Not every artifact is junk. The streaming JSON logs double as a lab notebook: one Codex session diagnosed short texts (21–81 characters) as the chief failure mode (<strong>76.8% accuracy and 0.566 log loss vs.&nbsp;93.7% / 0.204 for long passages</strong>) and immediately reprioritized feature work around that gap. That’s valuable signal buried in transcript.</p>
+<p>The messy bits are the code paths, not the telemetry. Before shipping any of this to production, you must:</p>
+<ul>
+<li><strong>Audit data usage</strong> – repeated calls to <code>RepeatedStratifiedKFold</code> with the same seed should not leak across iterations; make sure cached matrices respect fold boundaries.</li>
+<li><strong>Normalize experiment logging</strong> – ensure <code>experiments.csv</code> retains consistent schemas so future analysis can reason about which parameters actually mattered.</li>
+<li><strong>Refit cleanly</strong> – the best-performing ensemble in Codex is still expressed as a scratch script; it needs a single entry point that trains on the full dataset and regenerates predictions deterministically.</li>
+</ul>
+<p>I estimate I spent 40% of my time cleaning up after the agents. That’s still a net win (they generated hypotheses and ran experiments faster than I could manually), but it’s not “press button, get solution.”</p>
+<!-- TODO: Add screenshot of messy repo structure vs. cleaned up version -->
+<details>
+<summary>
+<strong>Field notes from the logs (expand for detailed iteration-by-iteration findings)</strong>
+</summary>
+<section id="codex" class="level3">
+<h3 class="anchored" data-anchor-id="codex">Codex</h3>
+<ul>
+<li>The very first iteration slashed log loss from 0.4660 to 0.3875 and surfaced author-specific tokens (Poe’s “of the/upon”, Lovecraft’s “though/west”, Shelley’s character cues), validating the word+char TF-IDF baseline. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_150648.md">Journal entry</a></li>
+<li>A follow-on run built out OOF persistence, averaged three min_df=2 seeds plus a min_df=3 variant, and pushed the ensemble to 0.37643 log loss without touching the test set. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_165608.md">Journal entry</a></li>
+<li>Diagnostics logged the LightGBM collapse (≥0.49 log loss) and the HPL→EAP confusion hotspot (585 errors), motivating Lovecraft-specific features rather than yet another booster. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_184500.md">Journal entry</a></li>
+<li>Not every bet landed: 256-component SVD exploded to 0.59 log loss, and repeated CV runs confirmed the 0.3819 hero score was partly optimistic variance. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_154953.md">Journal entries</a></li>
+<li>Approximate wall-clock: ~4 h 52 m between the first and last Codex logs (idle gaps included).</li>
+</ul>
+</section>
+<section id="composer" class="level3">
+<h3 class="anchored" data-anchor-id="composer">Composer</h3>
+<ul>
+<li>Sentence-transformer embeddings bombed at 0.6715 log loss, underscoring that semantics alone can’t beat stylistic n-grams for authorship. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_001240.md">Journal entry</a></li>
+<li>Joint tuning of <code>C</code> and vocabulary width marched the logistic baseline from 0.452 to 0.427, with most of the lift coming from expanding <code>max_features</code> to 10k and 25k. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_021104.md">Journal entry</a></li>
+<li>The final lap combined word bigrams, 30k features, <code>sublinear_tf=True</code>, and <code>C=4.5</code> to reach 0.3943 log loss and ship the current submission. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031939.md">Journal entry</a></li>
+<li>Along the way, a “stylometric booster” actually cratered performance to 0.680 and the agent tripped a docstring syntax error (both logged, both fixed within the same session). <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_191300.log">Session log</a></li>
+<li>Approximate wall-clock: ~6 h 59 m from the earliest to latest Composer logs on 2025-10-29.</li>
+</ul>
+</section>
+<section id="claude" class="level3">
+<h3 class="anchored" data-anchor-id="claude">Claude</h3>
+<ul>
+<li>Early error analysis quantified the short-text tax (24.7% error under 10 words) and the dominant confusions (MWS→EAP 10.7%, HPL→EAP 10.1%), guiding later work toward richer features. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_235246.md">Journal entry</a></li>
+<li>Learning-rate tuning dropped the MLP to 0.3519 log loss, and blending it 30/70 with the logistic model yielded the 0.3495 ensemble before multi-seed averaging took over. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_102859.md">Journal entry</a></li>
+<li>Stretching to five seeds or inserting batch norm both backfired (2.72% and 36% worse respectively), highlighting how easily variance can explode in sparse TF-IDF space. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_150739.md">Journal entry</a></li>
+<li>The stream logs even capture the stacking meta-learner grinding for 2.3 hours, overshooting the 90-minute budget, and still finishing 10.4% worse than the simple blend. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log">Session log</a></li>
+<li>Approximate wall-clock: ~13 h 55 m for the Claude run (stacking iterations account for much of it).</li>
+</ul>
+</section>
+<section id="gemini" class="level3">
+<h3 class="anchored" data-anchor-id="gemini">Gemini</h3>
+<ul>
+<li>Baseline TF-IDF + logistic regression hovered around 0.43 log loss; an overly strong regularization run (C=0.1) erupted to 0.696 before the agent marched back down by loosening <code>C</code> and adding text-length features. <a href="https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_165930.md">Journal entry</a></li>
+<li>Approximate wall-clock: ~2 h 50 m for the opening Gemini sweep (run on <code>gemini-flash-2.5</code>).</li>
+</ul>
+</section></details>
+<details>
+<summary>
+<strong>Experiment timelines (expand for iteration-by-iteration progression)</strong>
+</summary>
+</details></section>
+<section id="codex-1" class="level3">
+<h3 class="anchored" data-anchor-id="codex-1">Codex</h3>
+<ul>
+<li><em>Iteration 1:</em> Word+char TF-IDF logistic dropped CV log loss from 0.4660 to 0.3875 and exposed author-specific tokens. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_150648.md">Journal</a></li>
+<li><em>Iterations 2–4:</em> Cross-seed checks and char-vocabulary diagnostics showed the modest 0.3819 gain was variance-prone and that <code>max_df=0.9</code> pruning removed almost nothing. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_154953.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_155931.md">Journal 2</a></li>
+<li><em>Iteration 5:</em> Added OOF persistence and equal-weighted min_df ensembles, trimming log loss to 0.3764 while keeping training strictly on folds. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_165608.md">Journal</a></li>
+<li><em>Iteration 6:</em> Catalogued LightGBM’s 0.49+ collapse and quantified Lovecraft-heavy confusions, steering future work toward targeted features over new boosters. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_184500.md">Journal</a></li>
+<li><em>Iterations 7–9:</em> Documented further C tuning, repeated-CV variance, and Lovecraft token whitelists, concluding that remaining gains require smarter feature curation rather than more seeds. <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251029_203500.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/journal/journal_20251030_154500.md">Journal 2</a></li>
+<li><em>Clock time:</em> ~4 h 52 m between first and last Codex logs.</li>
+</ul>
+</section>
+<section id="composer-1" class="level3">
+<h3 class="anchored" data-anchor-id="composer-1">Composer</h3>
+<ul>
+<li><em>Kickoff:</em> TF-IDF + logistic regression established a 0.4811 baseline; LightGBM and quick ensembles underperformed, proving the task is mostly linear. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251029_202025.md">Journal</a></li>
+<li><em>Early experiments:</em> Sentence-transformer embeddings cratered at 0.6715 while logistic tuning (C≈5) slashed log loss to 0.4522. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_001240.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_011020.md">Journal 2</a></li>
+<li><em>Mid-run:</em> Increasing <code>max_features</code> to 10k and then 25k delivered the biggest gains, dropping to 0.4275. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_021104.md">Journal</a></li>
+<li><em>Late game:</em> Coordinated tuning of C, n-gram ranges, and vocabulary size landed at 0.3984; adding <code>sublinear_tf=True</code> with <code>C=4.5</code> finished at 0.3943 and generated the current submission. <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031500.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/journal/journal_20251030_031939.md">Journal 2</a></li>
+<li><em>Clock time:</em> ~6 h 59 m across Composer’s logged iterations.</li>
+</ul>
+</section>
+<section id="claude-1" class="level3">
+<h3 class="anchored" data-anchor-id="claude-1">Claude</h3>
+<ul>
+<li><em>Baseline:</em> Logistic regression beat LightGBM (0.43 vs 0.59) out of the gate, confirming sparse TF-IDF prefers linear models. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_232600.md">Journal</a></li>
+<li><em>Early tuning:</em> Lower regularization (C≈10) tightened CV log loss to 0.3814 and reiterated that short texts drive most mistakes. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_000100.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251029_235246.md">Journal 2</a></li>
+<li><em>Breakthrough:</em> A modest MLP (256→128) hit 0.3656; blending it 30/70 with the logistic model yielded a robust 0.3495. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_013624.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_102859.md">Journal 2</a></li>
+<li><em>Peak:</em> Averaging three seeds for each model produced the 0.3447 best-in-class ensemble without destabilizing variance. <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_124415.md">Journal</a></li>
+<li><em>Cautionary tail:</em> Stacking and five-seed experiments consumed hours yet degraded performance by 10% and 2.7%; batch norm on sparse TF-IDF was catastrophic (+36% log loss). <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_132403.md">Journal 1</a> · <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/journal/journal_20251030_150739.md">Journal 2</a></li>
+<li><em>Clock time:</em> ~13 h 55 m between Claude’s earliest and latest logs.</li>
+</ul>
+</section>
+<section id="gemini-2025-10-30" class="level3">
+<h3 class="anchored" data-anchor-id="gemini-2025-10-30">Gemini (2025-10-30)</h3>
+<ul>
+<li><em>Baseline:</em> Initial TF-IDF logistic run clocked 0.557 log loss, giving the agent a concrete hill to climb. <a href="https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_141848.md">Journal</a></li>
+<li><em>Feature mix:</em> Adding char n-grams and text-length features while relaxing <code>C</code> dropped CV log loss into the 0.43 range. <a href="https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_165930.md">Journal</a></li>
+<li><em>Current best:</em> Tuning character <code>sublinear_tf</code>/<code>use_idf</code> combinations landed at 0.4299 CV and 0.42398 on the grader, still above the Kaggle median but short of medal territory. <a href="https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/journal/journal_20251030_170206.md">Journal</a></li>
+<li><em>Clock time:</em> ~2 h 50 m for the logged Gemini run (on <code>gemini-flash-2.5</code>).</li>
+</ul>
+<p><em>Run-time estimates derive from file modification times of the earliest and latest <code>logs/*.log</code> entries; they include idle gaps between iterations.</em></p>
+
+</section>
+
+<section id="what-i-learned-about-each-agent" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-learned-about-each-agent">What I learned about each agent</h2>
+<p>Running this experiment taught me that lightweight agents aren’t just cheaper versions of heavyweight systems. They’re a different tool entirely, and each revealed its own personality:</p>
+<p><strong>Codex</strong> favors breadth over depth. It discovered multi-seed ensembles naturally, averaging across parameter variations rather than optimizing a single model. The weakness: variance estimation. Its best score might be luck, and it left behind five competing pipelines without a clear consolidation path.</p>
+<p><strong>Composer</strong> is methodical. It marched through feature space systematically, from 10k to 25k vocabulary size, documenting every gain. The payoff was steady improvement (0.452 → 0.394), but it could use more architectural ambition beyond linear models.</p>
+<p><strong>Claude</strong> took calculated risks. Adding a small MLP on top of TF-IDF paid off (best CV score: 0.3447), but its 138-minute stacking experiment backfired spectacularly. It taught me that simple blends often beat complex meta-learners, at least in sparse feature spaces.</p>
+<p><strong>Gemini</strong> stumbled early. Over-regularization (C=0.1) exploded to 0.696 log loss before it corrected course. Running on the lighter <code>gemini-flash-2.5</code> model may have limited its ceiling, but it still landed near the median on its first serious attempt.</p>
+<p>Meanwhile, I’ll keep an eye on the heavy hitters. When MLE-Star or aira-dojo become easier to adopt in a local workflow, they will likely leap past these handcrafted setups. Until then, a simple prompt file, a few shell scripts, and a patient coding agent already unlock a lot of Kaggle-style experimentation, so long as a human data scientist is ready to polish the results.</p>
+<hr>
+</section>
+<section id="appendix-full-repository-links" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-full-repository-links">Appendix: Full repository links</h2>
+<p>All code, experiment artifacts, and raw stream-json transcripts are public:</p>
+<ul>
+<li><strong>Codex</strong>: <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/agent_status.md">Status</a> · <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/setup_env.sh">Setup script</a> · <a href="https://github.com/zzsi/spooky-author-identification-codex/blob/main/logs/20251029_145652.log">Session log</a></li>
+<li><strong>Composer</strong>: <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/agent_status.md">Status</a> · <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_211120.log">Early session</a> · <a href="https://github.com/zzsi/spooky-author-identification-composer/blob/main/logs/20251029_221518.log">Final session</a></li>
+<li><strong>Claude</strong>: <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/agent_status.md">Status</a> · <a href="https://github.com/zzsi/spooky-author-identification-claude/blob/main/logs/20251030_100951.log">Session log</a></li>
+<li><strong>Gemini</strong>: <a href="https://github.com/zzsi/spooky-author-identification-gemini-20251030/blob/main/agent_status.md">Status</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/zzsi\.github\.io\/blog\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
