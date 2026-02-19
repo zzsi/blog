@@ -1,0 +1,38 @@
+services:
+  control-plane:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MCP_PORT: "3003"
+      AUTH_MODE: jwt
+      AUTH_PROVIDER: shared_secret
+      JWT_SECRET: demo-secret
+      BRIDGE_AGENT_TOKEN: bridge-agent-demo-token
+      JOB_SIGNING_SECRET: job-signing-demo-secret
+      CONTROL_PLANE_URL: http://control-plane:3003
+    ports:
+      - "3003:3003"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3003/healthz >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+  bridge-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MCP_PORT: "3003"
+      AUTH_MODE: jwt
+      AUTH_PROVIDER: shared_secret
+      JWT_SECRET: demo-secret
+      BRIDGE_AGENT_TOKEN: bridge-agent-demo-token
+      JOB_SIGNING_SECRET: job-signing-demo-secret
+      CONTROL_PLANE_URL: http://control-plane:3003
+      BRIDGE_POLL_INTERVAL_MS: "1000"
+    command: ["npm", "run", "start:bridge-agent"]
+    depends_on:
+      control-plane:
+        condition: service_healthy

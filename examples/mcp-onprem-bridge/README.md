@@ -59,6 +59,25 @@ npm run dev:control-plane
 npm run dev:bridge-agent -- --once
 ```
 
+## One-command startup (Docker Compose)
+
+Run both control-plane and bridge-agent:
+
+```bash
+docker compose up --build
+```
+
+What to expect:
+
+- `control-plane` starts on `http://localhost:3003`.
+- `bridge-agent` starts polling automatically and processes queued jobs.
+
+Stop the demo:
+
+```bash
+docker compose down
+```
+
 ## Simple walkthrough
 
 In a separate terminal, run this client script to queue and fetch results:
@@ -112,8 +131,8 @@ Expected behavior:
 
 - `query_customer_data` returns `queued_for_bridge` and a `requestId`.
 - repeating the same `idempotencyKey` returns `duplicate_request_reused` and the same job/request IDs.
-- first result check usually returns `queued` or `processing`.
-- after running bridge agent once, result check returns `completed` with minimized data payload.
+- with `docker compose up`, first result check may already be `completed` because the bridge agent is always running.
+- with manual local mode, first result check usually returns `queued` or `processing`, and after running bridge agent once it returns `completed`.
 
 Optional stats check:
 
