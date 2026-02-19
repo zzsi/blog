@@ -27,6 +27,7 @@ npm install
 
 ```bash
 export AUTH_MODE=jwt
+export AUTH_PROVIDER=shared_secret
 export JWT_SECRET='replace_with_long_random_secret'
 export MCP_PORT=3001
 ```
@@ -45,6 +46,7 @@ Server endpoint: `http://localhost:3001/mcp`
 
 ```bash
 export AUTH_MODE=jwt
+export AUTH_PROVIDER=shared_secret
 export JWT_SECRET='demo-secret'
 export MCP_PORT=3001
 npm run dev:http
@@ -98,6 +100,26 @@ EOF
 - `list_tenant_open_invoices` returns invoices with `"tenant_id": "t1"` only.
 - cross-tenant `get_tenant_invoice` returns error content with `forbidden: cross-tenant access`.
 - server stderr includes structured `authz_decision` logs.
+
+## Hardened mode (OIDC/JWKS)
+
+Use your IdP keys and strict issuer/audience checks:
+
+```bash
+export AUTH_MODE=jwt
+export AUTH_PROVIDER=oidc_jwks
+export OIDC_JWKS_URI='https://your-idp.example.com/.well-known/jwks.json'
+export JWT_ISSUER='https://your-idp.example.com/'
+export JWT_AUDIENCE='your-mcp-api-audience'
+export MCP_PORT=3001
+npm run dev:http
+```
+
+Expected behavior:
+
+- Tokens are verified via remote JWKS.
+- `tenant_id` (or `tid`) claim is still required.
+- Tenant and scope checks are unchanged (`invoices:read`, cross-tenant denied).
 
 ## Notes
 

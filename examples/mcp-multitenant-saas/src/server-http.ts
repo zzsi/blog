@@ -8,12 +8,22 @@ import { createServer } from "./server.js";
 const config = loadConfig();
 const app = createMcpExpressApp();
 
-const jwtMiddleware = requireBearerAuth({
-  verifier: createJwtVerifier({
-    secret: config.jwtSecret,
+const verifier = config.authProvider === "oidc_jwks"
+  ? createJwtVerifier({
+    mode: "oidc_jwks",
+    jwksUri: config.oidcJwksUri!,
+    issuer: config.jwtIssuer!,
+    audience: config.jwtAudience!,
+  })
+  : createJwtVerifier({
+    mode: "shared_secret",
+    secret: config.jwtSecret!,
     issuer: config.jwtIssuer,
     audience: config.jwtAudience,
-  }),
+  });
+
+const jwtMiddleware = requireBearerAuth({
+  verifier,
   requiredScopes: [],
 });
 

@@ -76,6 +76,7 @@ EOF
 
 ```bash
 export AUTH_MODE=jwt
+export AUTH_PROVIDER=shared_secret
 export JWT_SECRET='replace_with_long_random_secret'
 # optional
 export JWT_ISSUER='demo-issuer'
@@ -94,6 +95,25 @@ JWTs must include `scope` containing `invoices:read`.
 
 - With scope `invoices:read`, tool calls succeed.
 - Without that scope, tool calls fail and the server logs `"decision":"deny"` with `missing scope invoices:read`.
+
+## Hardened mode (OIDC/JWKS)
+
+For a more realistic production setup, switch token verification from shared secret to OIDC JWKS:
+
+```bash
+export AUTH_MODE=jwt
+export AUTH_PROVIDER=oidc_jwks
+export OIDC_JWKS_URI='https://your-idp.example.com/.well-known/jwks.json'
+export JWT_ISSUER='https://your-idp.example.com/'
+export JWT_AUDIENCE='your-mcp-api-audience'
+npm run dev:http
+```
+
+Expected behavior:
+
+- Tokens are validated against your IdP JWKS keys.
+- `iss` and `aud` must match `JWT_ISSUER` and `JWT_AUDIENCE`.
+- Scope enforcement stays the same (`invoices:read`).
 
 ## Notes
 

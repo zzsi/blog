@@ -37,12 +37,22 @@ const postHandler = async (req: any, res: any) => {
 };
 
 if (config.authMode === "jwt") {
-  const jwtMiddleware = requireBearerAuth({
-    verifier: createJwtVerifier({
+  const verifier = config.authProvider === "oidc_jwks"
+    ? createJwtVerifier({
+      mode: "oidc_jwks",
+      jwksUri: config.oidcJwksUri!,
+      issuer: config.jwtIssuer!,
+      audience: config.jwtAudience!,
+    })
+    : createJwtVerifier({
+      mode: "shared_secret",
       secret: config.jwtSecret!,
       issuer: config.jwtIssuer,
       audience: config.jwtAudience,
-    }),
+    });
+
+  const jwtMiddleware = requireBearerAuth({
+    verifier,
     requiredScopes: [],
   });
 
