@@ -1,0 +1,185 @@
+---
+title: "How to Build and Deploy MCP for Proprietary Data"
+date: 2026-02-19
+categories: [ai, mcp, architecture, security, deployment]
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+---
+
+If you are building AI software for enterprise clients, the model is usually not the bottleneck. Data access is.
+
+The real challenge is getting the model to interact with proprietary systems without turning your stack into a giant security and operations liability. Model Context Protocol (MCP) is a strong interface standard for this, but the hard part is not the protocol itself. The hard part is production design.
+
+In this post, I will walk through five practical MCP deployment patterns, when to use each one, and how to organize code so examples stay runnable instead of becoming blog-only snippets.
+
+## What You Are Actually Building
+
+When teams say "we are deploying an MCP server," what they usually need is a small platform:
+
+1. MCP server interfaces (tools and resources)
+2. Connectors into internal systems (DBs, APIs, files, search)
+3. Identity and authorization (OAuth, scopes, service accounts)
+4. Runtime controls (validation, allowlists, isolation)
+5. Observability and governance (audit logs, quotas, alerts)
+
+The architecture matters because MCP introduces delegated power. The model can ask for actions. Your job is to make sure those actions stay inside explicit and enforceable boundaries.
+
+## Code Organization: Keep Posts and Runnable Code Separate
+
+I recommend this structure in this repo:
+
+```txt
+posts/
+  <post-slug>/
+    index.qmd
+    assets/
+
+examples/
+  mcp-readonly-starter/
+  mcp-multitenant-saas/
+  mcp-write-with-approval/
+  mcp-onprem-bridge/
+  mcp-compliance-audit/
+```
+
+This avoids mixing Quarto content with runtime dependencies.
+
+- `posts/...` is for prose, diagrams, and lightweight assets.
+- `examples/...` is for runnable code, tests, infra manifests, and scripts.
+
+For this article, each pattern maps to one folder in `examples/` so readers can move from concept to implementation immediately.
+
+## Pattern 1: Single-Tenant Read-Only MCP
+
+**When to use**: first production deployment, retrieval-heavy workloads, low ops budget.
+
+**Example folder**: [`examples/mcp-readonly-starter`](../../examples/mcp-readonly-starter)
+
+```txt
+mcp-readonly-starter/
+  src/
+    auth/scope_guard.ts
+    tools/get_invoice_status.ts
+    observability/audit_log.ts
+  tests/security/input_validation.test.ts
+```
+
+This should be the default starting point for most teams. A narrow read-only surface with strict input schemas gets you real value quickly and keeps the blast radius small.
+
+## Pattern 2: Multi-Tenant SaaS MCP
+
+**When to use**: one control plane serving multiple customers with strict isolation guarantees.
+
+**Example folder**: [`examples/mcp-multitenant-saas`](../../examples/mcp-multitenant-saas)
+
+```txt
+mcp-multitenant-saas/
+  src/
+    middleware/tenant_context.ts
+    middleware/authz.ts
+    data/tenant_router.ts
+  tests/authz/cross_tenant_access.test.ts
+```
+
+The non-negotiable rule here is centralized tenant enforcement. If tenant checks are scattered per tool, drift is almost guaranteed over time.
+
+## Pattern 3: Write-Capable MCP with Approval Gates
+
+**When to use**: tools can trigger financial, operational, or irreversible side effects.
+
+**Example folder**: [`examples/mcp-write-with-approval`](../../examples/mcp-write-with-approval)
+
+```txt
+mcp-write-with-approval/
+  src/
+    tools/create_refund_request.ts
+    tools/execute_refund.ts
+    policy/risk_rules.ts
+  tests/security/scope_escalation.test.ts
+```
+
+The key design decision is splitting intent from execution. A model can create a request, but execution should pass through explicit policy and approval gates.
+
+## Pattern 4: On-Prem Bridge MCP
+
+**When to use**: customer data must remain in customer-controlled infrastructure.
+
+**Example folder**: [`examples/mcp-onprem-bridge`](../../examples/mcp-onprem-bridge)
+
+```txt
+mcp-onprem-bridge/
+  bridge-agent/src/pull_jobs.ts
+  bridge-agent/src/push_results.ts
+  control-plane/src/tools/query_customer_data.ts
+```
+
+A pull-based bridge agent is usually easier to deploy in enterprise networks than inbound callbacks. It also simplifies security review by reducing exposed inbound surface.
+
+## Pattern 5: High-Compliance MCP
+
+**When to use**: regulated environments with strict audit and policy requirements.
+
+**Example folder**: [`examples/mcp-compliance-audit`](../../examples/mcp-compliance-audit)
+
+```txt
+mcp-compliance-audit/
+  src/
+    policy/deny_by_default.ts
+    observability/redaction.ts
+  tests/audit/pii_redaction.test.ts
+```
+
+This pattern is policy-first: deny by default, enforce scoped authorization everywhere, and make logs useful without leaking secrets.
+
+## Security Baseline Across All Patterns
+
+Security guidance is often presented as a long checklist. In practice, these seven controls give you a strong default-secure baseline:
+
+1. OAuth 2.1 + PKCE for remote transports, with strict scope checks on every tool call
+2. Narrow tools with allowlists for paths, domains, and command options
+3. Strict schema validation with unknown-field rejection
+4. Centralized secrets handling with short-lived credentials and rotation
+5. Sandboxing for any write or execute path
+6. Structured redacted audit logs for every invocation
+7. Rate limits, quotas, and anomaly alerts per identity
+
+These controls are especially important for MCP because prompt injection and tool abuse are expected failure modes, not edge cases.
+
+## A Minimal Code Slice
+
+The core mechanics are simple.
+
+```ts
+export function requireScope(scopes: string[], required: string) {
+  if (!scopes.includes(required)) {
+    throw new Error(`forbidden: missing scope ${required}`);
+  }
+}
+```
+
+```ts
+import { z } from "zod";
+
+const Input = z.object({
+  invoiceId: z.string().regex(/^inv_[a-zA-Z0-9]+$/),
+}).strict();
+```
+
+```ts
+const ALLOWED_HOSTS = new Set(["api.internal.example.com"]);
+
+export function enforceHost(url: string) {
+  const host = new URL(url).hostname;
+  if (!ALLOWED_HOSTS.has(host)) throw new Error("host_not_allowed");
+}
+```
+
+## Closing Thoughts
+
+MCP is one of the most practical ways to make proprietary data useful in AI products. But production success has less to do with flashy demos and more to do with capability design, isolation, and operational discipline.
+
+Start with the read-only pattern, keep the tool surface narrow, and instrument everything. Add multi-tenant routing, approval workflows, and on-prem bridging when product requirements are concrete.
+
+That path is slower than shipping a generic "super tool" on day one, but it is much faster than recovering from the first incident.
