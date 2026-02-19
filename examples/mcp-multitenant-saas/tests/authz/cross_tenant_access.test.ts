@@ -5,8 +5,8 @@ describe("tenant isolation", () => {
   it("denies cross-tenant access", () => {
     expect(() =>
       requireTenantScope(
-        { tenantId: "t1", subject: "user-1", scopes: ["docs:read"] },
-        "docs:read",
+        { tenantId: "t1", subject: "user-1", scopes: ["invoices:read"] },
+        "invoices:read",
         "t2",
       ),
     ).toThrow();
