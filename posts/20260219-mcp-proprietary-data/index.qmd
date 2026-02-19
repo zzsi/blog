@@ -14,6 +14,25 @@ The real challenge is getting the model to interact with proprietary systems wit
 
 In this post, I will walk through five practical MCP deployment patterns, when to use each one, and how to organize code so examples stay runnable instead of becoming blog-only snippets.
 
+The framing comes from a pattern I keep seeing in enterprise AI programs:
+
+- quarter 1: teams ship a promising MCP prototype
+- quarter 2: security and platform reviews surface hidden design debt
+- quarter 3: the team either hardens successfully or stalls in exceptions and rework
+
+The difference is usually not model quality. It is architecture choices made in the first few weeks.
+
+## Executive Summary
+
+If you need one recommendation: start with read-only MCP, prove value in weeks, then add write paths and on-prem bridge patterns only when business requirements justify the added controls.
+
+What executives should optimize for:
+
+1. Time to first production value (not architectural completeness)
+2. Controlled blast radius as capabilities expand
+3. Auditability from day one (so compliance does not block scale)
+4. A migration path from pilot design to enterprise-grade operations
+
 ## What You Are Actually Building
 
 When teams say "we are deploying an MCP server," what they usually need is a small platform:
@@ -51,6 +70,18 @@ This avoids mixing Quarto content with runtime dependencies.
 
 For this article, each pattern maps to one folder in `examples/` so readers can move from concept to implementation immediately.
 
+## Pattern Selection Matrix
+
+Use this to choose a starting point fast:
+
+| Pattern | Best for | Time to value | Operational risk | Compliance posture |
+|---|---|---|---|---|
+| Single-tenant read-only | First deployment, retrieval use cases | Fast | Low | Basic-to-moderate |
+| Multi-tenant SaaS | Shared control plane across customers | Medium | Medium | Moderate |
+| Write with approval | Side-effecting workflows | Medium | Medium-high | Moderate-high |
+| On-prem bridge | Customer-controlled infrastructure | Medium-slow | Medium | High |
+| Compliance-first | Regulated sectors, audit-heavy buyers | Slowest | Lowest long-term | Highest |
+
 ## Pattern 1: Single-Tenant Read-Only MCP
 
 **When to use**: first production deployment, retrieval-heavy workloads, low ops budget.
@@ -66,7 +97,11 @@ mcp-readonly-starter/
   tests/security/input_validation.test.ts
 ```
 
-This should be the default starting point for most teams. A narrow read-only surface with strict input schemas gets you real value quickly and keeps the blast radius small.
+Most teams should start here. In practice, this is the pattern that gets through security review fastest and still creates visible business value.
+
+A narrow read-only surface with strict input schemas gets you real usage data without opening side-effect risk on day one.
+
+**Tradeoff**: fastest path to production and lowest incident risk, but limited automation upside.
 
 ## Pattern 2: Multi-Tenant SaaS MCP
 
@@ -83,7 +118,11 @@ mcp-multitenant-saas/
   tests/authz/cross_tenant_access.test.ts
 ```
 
-The non-negotiable rule here is centralized tenant enforcement. If tenant checks are scattered per tool, drift is almost guaranteed over time.
+Teams usually move to this pattern after the first customer asks for isolation guarantees, or after the second customer makes ad hoc tenant logic unmaintainable.
+
+The non-negotiable rule is centralized tenant enforcement. If tenant checks are scattered per tool, drift is almost guaranteed over time.
+
+**Tradeoff**: better infrastructure efficiency and faster customer onboarding, but more identity and policy complexity.
 
 ## Pattern 3: Write-Capable MCP with Approval Gates
 
@@ -100,7 +139,11 @@ mcp-write-with-approval/
   tests/security/scope_escalation.test.ts
 ```
 
+This is where many programs either mature or accumulate operational risk.
+
 The key design decision is splitting intent from execution. A model can create a request, but execution should pass through explicit policy and approval gates.
+
+**Tradeoff**: safer automation for high-impact actions, at the cost of additional workflow latency.
 
 ## Pattern 4: On-Prem Bridge MCP
 
@@ -110,12 +153,19 @@ The key design decision is splitting intent from execution. A model can create a
 
 ```txt
 mcp-onprem-bridge/
-  bridge-agent/src/pull_jobs.ts
-  bridge-agent/src/push_results.ts
-  control-plane/src/tools/query_customer_data.ts
+  src/
+    control-plane-server.ts
+    bridge-agent.ts
+    bridge/http_handlers.ts
+    workflows/job_store.ts
+  scripts/demo.sh
 ```
 
+This pattern becomes necessary when customers say yes to AI features but no to data egress.
+
 A pull-based bridge agent is usually easier to deploy in enterprise networks than inbound callbacks. It also simplifies security review by reducing exposed inbound surface.
+
+**Tradeoff**: strongest data residency story, but highest integration and support burden.
 
 ## Pattern 5: High-Compliance MCP
 
@@ -126,16 +176,36 @@ A pull-based bridge agent is usually easier to deploy in enterprise networks tha
 ```txt
 mcp-compliance-audit/
   src/
+    server-http.ts
+    tools/list_audit_events.ts
+    tools/get_control_status.ts
     policy/deny_by_default.ts
     observability/redaction.ts
   tests/audit/pii_redaction.test.ts
+  scripts/demo.sh
 ```
+
+Some teams start here because their buyers require it. Others arrive here after the first audit questionnaire exposes gaps.
 
 This pattern is policy-first: deny by default, enforce scoped authorization everywhere, and make logs useful without leaking secrets.
 
+**Tradeoff**: strongest procurement and audit posture, but slower initial delivery.
+
 ## Security Baseline Across All Patterns
 
-Security guidance is often presented as a long checklist. In practice, these seven controls give you a strong default-secure baseline:
+Security guidance is often presented as one long checklist. In practice, sequencing matters more than volume.
+
+The mistake I see most often is trying to implement every control at once and shipping none. A phased rollout keeps momentum while still moving toward a defensible production posture.
+
+## Security Rollout by Phase
+
+| Phase | Controls to implement |
+|---|---|
+| Pilot (must-have) | OAuth + scopes, strict input schemas, redacted audit logs |
+| Pre-production | Secrets manager + rotation, allowlists, rate limits |
+| Production hardening | Sandboxing for write/execute paths, anomaly detection, governance approvals for tool changes |
+
+Across phases, these seven controls remain the baseline:
 
 1. OAuth 2.1 + PKCE for remote transports, with strict scope checks on every tool call
 2. Narrow tools with allowlists for paths, domains, and command options
@@ -178,8 +248,10 @@ export function enforceHost(url: string) {
 
 ## Closing Thoughts
 
-MCP is one of the most practical ways to make proprietary data useful in AI products. But production success has less to do with flashy demos and more to do with capability design, isolation, and operational discipline.
+MCP is one of the most practical ways to make proprietary data useful in AI products. Production success has less to do with flashy demos and more to do with controlled capability rollout, isolation, and operating discipline.
 
-Start with the read-only pattern, keep the tool surface narrow, and instrument everything. Add multi-tenant routing, approval workflows, and on-prem bridging when product requirements are concrete.
+If you want a durable rollout path, treat MCP like a product line, not a one-off integration: start with read-only value, then add power in layers as requirements become explicit.
+
+Start with the read-only pattern, keep the tool surface narrow, and instrument everything. Add multi-tenant routing, approval workflows, on-prem bridging, and compliance-first controls only when business requirements are concrete.
 
 That path is slower than shipping a generic "super tool" on day one, but it is much faster than recovering from the first incident.
