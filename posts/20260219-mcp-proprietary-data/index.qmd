@@ -55,7 +55,7 @@ For this article, each pattern maps to one folder in `examples/` so readers can 
 
 **When to use**: first production deployment, retrieval-heavy workloads, low ops budget.
 
-**Example folder**: [`examples/mcp-readonly-starter`](../../examples/mcp-readonly-starter)
+**Example folder**: [`examples/mcp-readonly-starter`](https://github.com/zzsi/blog/tree/main/examples/mcp-readonly-starter)
 
 ```txt
 mcp-readonly-starter/
@@ -72,7 +72,7 @@ This should be the default starting point for most teams. A narrow read-only sur
 
 **When to use**: one control plane serving multiple customers with strict isolation guarantees.
 
-**Example folder**: [`examples/mcp-multitenant-saas`](../../examples/mcp-multitenant-saas)
+**Example folder**: [`examples/mcp-multitenant-saas`](https://github.com/zzsi/blog/tree/main/examples/mcp-multitenant-saas)
 
 ```txt
 mcp-multitenant-saas/
@@ -89,7 +89,7 @@ The non-negotiable rule here is centralized tenant enforcement. If tenant checks
 
 **When to use**: tools can trigger financial, operational, or irreversible side effects.
 
-**Example folder**: [`examples/mcp-write-with-approval`](../../examples/mcp-write-with-approval)
+**Example folder**: [`examples/mcp-write-with-approval`](https://github.com/zzsi/blog/tree/main/examples/mcp-write-with-approval)
 
 ```txt
 mcp-write-with-approval/
@@ -106,7 +106,7 @@ The key design decision is splitting intent from execution. A model can create a
 
 **When to use**: customer data must remain in customer-controlled infrastructure.
 
-**Example folder**: [`examples/mcp-onprem-bridge`](../../examples/mcp-onprem-bridge)
+**Example folder**: [`examples/mcp-onprem-bridge`](https://github.com/zzsi/blog/tree/main/examples/mcp-onprem-bridge)
 
 ```txt
 mcp-onprem-bridge/
@@ -121,7 +121,7 @@ A pull-based bridge agent is usually easier to deploy in enterprise networks tha
 
 **When to use**: regulated environments with strict audit and policy requirements.
 
-**Example folder**: [`examples/mcp-compliance-audit`](../../examples/mcp-compliance-audit)
+**Example folder**: [`examples/mcp-compliance-audit`](https://github.com/zzsi/blog/tree/main/examples/mcp-compliance-audit)
 
 ```txt
 mcp-compliance-audit/
