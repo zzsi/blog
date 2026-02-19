@@ -36,6 +36,14 @@ The server runs on `http://localhost:3000/mcp` by default.
 npm run dev:stdio
 ```
 
+## Exec demo script
+
+Run a deterministic end-to-end demo:
+
+```bash
+./scripts/demo.sh
+```
+
 ## Simple walkthrough (no auth)
 
 1. Start server:

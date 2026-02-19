@@ -59,6 +59,14 @@ npm run dev:control-plane
 npm run dev:bridge-agent -- --once
 ```
 
+## Exec demo script
+
+Run a deterministic end-to-end demo:
+
+```bash
+./scripts/demo.sh
+```
+
 ## One-command startup (Docker Compose)
 
 Run both control-plane and bridge-agent:
