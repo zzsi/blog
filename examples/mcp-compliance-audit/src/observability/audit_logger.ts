@@ -1,5 +1,5 @@
-import { redact } from "./redaction";
+import { redact } from "./redaction.js";
 
 export function writeAuditLog(entry: Record<string, unknown>) {
-  console.log(JSON.stringify({ event: "audit", ...redact(entry) }));
+  process.stderr.write(`${JSON.stringify({ event: "audit", ...redact(entry) })}\n`);
 }

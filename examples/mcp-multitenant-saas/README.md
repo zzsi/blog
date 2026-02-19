@@ -40,6 +40,14 @@ npm run dev:http
 
 Server endpoint: `http://localhost:3001/mcp`
 
+## Exec demo script
+
+Run a deterministic end-to-end demo:
+
+```bash
+./scripts/demo.sh
+```
+
 ## Simple walkthrough
 
 1. Start server:
