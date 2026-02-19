@@ -1,3 +1,3 @@
 export function runApprovalWorker() {
-  return { running: true };
+  return { running: true, mode: "in-memory-demo" as const };
 }

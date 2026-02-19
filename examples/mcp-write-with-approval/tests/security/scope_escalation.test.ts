@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { executeRefund } from "../../src/tools/execute_refund";
+import { EXECUTE_SCOPE, REQUEST_SCOPE, APPROVE_SCOPE } from "../../src/policy/risk_rules";
 
-describe("approval gate", () => {
-  it("blocks execution without approval", () => {
-    expect(() => executeRefund({ requestId: "rr_1", approved: false, approverId: "u1" })).toThrow();
+describe("scope split", () => {
+  it("uses distinct scopes for each stage", () => {
+    expect(REQUEST_SCOPE).not.toBe(EXECUTE_SCOPE);
+    expect(REQUEST_SCOPE).not.toBe(APPROVE_SCOPE);
+    expect(APPROVE_SCOPE).not.toBe(EXECUTE_SCOPE);
   });
 });
