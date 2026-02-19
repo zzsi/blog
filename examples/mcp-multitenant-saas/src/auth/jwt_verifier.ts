@@ -1,11 +1,21 @@
-import { jwtVerify } from "jose";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import type { OAuthTokenVerifier } from "@modelcontextprotocol/sdk/server/auth/provider.js";
 
-export type JwtVerifierOptions = {
+type SharedSecretOptions = {
+  mode: "shared_secret";
   secret: string;
   issuer?: string;
   audience?: string;
 };
+
+type OidcJwksOptions = {
+  mode: "oidc_jwks";
+  jwksUri: string;
+  issuer: string;
+  audience: string;
+};
+
+export type JwtVerifierOptions = SharedSecretOptions | OidcJwksOptions;
 
 function parseScopes(payload: Record<string, unknown>): string[] {
   if (typeof payload.scope === "string") {
@@ -26,15 +36,19 @@ function parseTenantId(payload: Record<string, unknown>): string | undefined {
 }
 
 export function createJwtVerifier(options: JwtVerifierOptions): OAuthTokenVerifier {
-  const key = new TextEncoder().encode(options.secret);
-
   return {
     async verifyAccessToken(token: string) {
-      const { payload } = await jwtVerify(token, key, {
-        algorithms: ["HS256"],
-        issuer: options.issuer || undefined,
-        audience: options.audience || undefined,
-      });
+      const payload = options.mode === "shared_secret"
+        ? (await jwtVerify(token, new TextEncoder().encode(options.secret), {
+          algorithms: ["HS256"],
+          issuer: options.issuer || undefined,
+          audience: options.audience || undefined,
+        })).payload
+        : (await jwtVerify(token, createRemoteJWKSet(new URL(options.jwksUri)), {
+          algorithms: ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512"],
+          issuer: options.issuer || undefined,
+          audience: options.audience || undefined,
+        })).payload;
 
       const raw = payload as Record<string, unknown>;
       const subject = typeof raw.sub === "string" ? raw.sub : "unknown";
