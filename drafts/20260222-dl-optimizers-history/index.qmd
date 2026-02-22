@@ -1,5 +1,5 @@
 ---
-title: "From Momentum to Muon: How Deep Learning Optimizers Evolved"
+title: "A Tour of Deep Learning Optimizers"
 date: 2026-02-22
 categories: [ai, deep learning, optimization, llm]
 format:
@@ -10,7 +10,7 @@ format:
 
 Optimizers are easy to under-appreciate. We spend a lot of energy on architecture, data, and compute budgets, but the optimizer is the control policy that decides how noisy gradients become actual parameter updates.
 
-Looking back from 2025, optimizer progress did not follow a single clean line. It came in waves: acceleration, adaptivity, regularization corrections, systems scaling, and now geometry-aware updates.
+Looking back through early 2026, optimizer progress did not follow a single clean line. It came in waves: acceleration, adaptivity, regularization corrections, systems scaling, and now geometry-aware updates.
 
 In this post, I summarize that history and the practical defaults that emerged.
 
@@ -100,6 +100,20 @@ Muon and related orthogonalization ideas reframed the problem around gradient in
 
 The appeal is that the geometric story is relatively crisp while still being practical enough for large-scale trials. By the end of 2025, adoption looked promising but not universal; AdamW still dominated as the documented baseline in most public frontier recipes.
 
+## Late-2025 to early-2026: conditioning-based wave
+
+After Muon-style methods gained attention, a broader conditioning-focused wave emerged.
+
+- NorMuon explored neuron-wise normalization for better scaling behavior ([NorMuon, 2025](https://arxiv.org/abs/2510.05491)).
+- MARS-M combined variance-reduction ideas with matrix conditioning ([MARS-M, 2025](https://arxiv.org/abs/2510.21800)).
+- Hyperparameter-transfer studies reported that matrix-preconditioned methods can keep gains across scales when tuning protocols are controlled ([Hyperparameter Transfer, 2025](https://arxiv.org/abs/2512.05620)).
+- TEON pushed tensorized orthonormalization beyond purely layer-wise approaches ([TEON, 2026](https://arxiv.org/abs/2601.23261)).
+- ARO framed adaptive rotated-coordinate optimization as another practical conditioning route ([ARO, 2026](https://arxiv.org/abs/2602.09006)).
+
+The key shift is that conditioning is no longer only an optimizer-internals detail. It is becoming a central design axis for stability and scaling.
+
+Community writeups and reproductions are useful for early signal, but should remain secondary evidence compared to controlled papers (for example: [HF community reproduction notes](https://huggingface.co/blog/bird-of-paradise/reproducing-and-validating-distributed-muon)).
+
 ## What actually won by 2025
 
 Across model families, the defaults converged:
@@ -121,22 +135,30 @@ Three forces repeatedly interacted:
 
 The strongest methods usually survive all three filters: coherent intuition, robust benchmarks, and practical systems fit.
 
-## Practical recipes (2025-ish)
+## Practical recipes (2025 to early-2026)
 
-If I want stable baselines fast:
+Established defaults (production-first):
 
 - LLM/VLM pretraining: AdamW with warmup, LR decay, clipping, and selective weight decay.
 - Vision CNN: SGD + momentum + tuned schedule.
 - ViT or diffusion: AdamW (EMA if needed for generation quality).
 
-When to branch from defaults:
+Emerging bets (experimental):
 
 - Muon: when scaling or stability friction dominates and you can afford experimentation.
+- Matrix/tensor conditioning variants (NorMuon, TEON, ARO): when optimization interference appears to be the limiting factor and you can run controlled comparisons.
 - LARS/LAMB: when throughput targets force very large batch regimes.
 - Adafactor or low-precision states: when optimizer memory is the bottleneck.
+
+For fair comparisons, keep the protocol strict:
+
+1. Same model and tokenizer.
+2. Same token budget and data order.
+3. Matched hyperparameter tuning budget.
+4. Report wall-clock, token efficiency, and failure rate across seeds.
 
 ## Closing thoughts
 
 From heavy-ball momentum to modern orthogonalization methods, optimizer history is a story of recurring constraints in new forms: curvature, noise, scale, and hardware budgets.
 
-By 2025, AdamW remained the center of gravity for large language and multimodal models, but geometry-aware methods suggest the next wave may come from better directional control rather than only better scalar learning-rate heuristics.
+By early 2026, AdamW remained the center of gravity for large language and multimodal models, but geometry-aware methods suggest the next wave may come from better directional control rather than only better scalar learning-rate heuristics.
