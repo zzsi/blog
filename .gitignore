@@ -4,3 +4,8 @@
 /.vscode/
 # Mac OS files
 .DS_Store
+
+# Node/TS build/runtime artifacts
+**/node_modules/
+**/dist/
+**/.demo-data/
