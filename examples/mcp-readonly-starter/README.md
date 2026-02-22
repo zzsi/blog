@@ -25,6 +25,7 @@ npm install
 2. Run Streamable HTTP server (recommended):
 
 ```bash
+npm run seed
 npm run dev:http
 ```
 
@@ -77,6 +78,7 @@ EOF
 
 - `structuredContent` contains invoice metadata for `inv_10002`.
 - Server stderr includes an audit log entry with `"decision":"allow"`.
+- with `STORAGE_MODE=file`, invoice data comes from seeded JSON for deterministic demos.
 
 ## JWT mode for HTTP
 
@@ -127,3 +129,4 @@ Expected behavior:
 
 - Streamable HTTP is the production-recommended transport for remote MCP servers.
 - stdio is useful for local process-spawned integrations.
+- Demo durability mode uses file-backed seeded data via `STORAGE_MODE=file`.

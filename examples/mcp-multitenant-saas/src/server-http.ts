@@ -4,9 +4,13 @@ import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middlew
 import { createJwtVerifier } from "./auth/jwt_verifier.js";
 import { loadConfig } from "./config.js";
 import { createServer } from "./server.js";
+import { loadInvoices, loadInvoicesFromFile } from "./data/invoices.js";
 
 const config = loadConfig();
 const app = createMcpExpressApp();
+const invoices = config.storageMode === "file"
+  ? loadInvoicesFromFile(config.invoicesFile)
+  : loadInvoices();
 
 const verifier = config.authProvider === "oidc_jwks"
   ? createJwtVerifier({
@@ -28,7 +32,7 @@ const jwtMiddleware = requireBearerAuth({
 });
 
 app.post("/mcp", jwtMiddleware, async (req: any, res: any) => {
-  const server = createServer();
+  const server = createServer(invoices);
 
   try {
     const transport = new StreamableHTTPServerTransport({
@@ -78,6 +82,6 @@ app.listen(config.mcpPort, (error?: Error) => {
   }
 
   process.stderr.write(
-    `MCP multitenant Streamable HTTP server listening on http://localhost:${config.mcpPort}/mcp\n`,
+    `MCP multitenant Streamable HTTP server listening on http://localhost:${config.mcpPort}/mcp (storage=${config.storageMode})\n`,
   );
 });

@@ -12,6 +12,8 @@ export type AppConfig = {
   jobSigningSecret: string;
   controlPlaneUrl: string;
   bridgePollIntervalMs: number;
+  storageMode: "memory" | "file";
+  stateFile: string;
 };
 
 export function loadConfig(): AppConfig {
@@ -39,6 +41,10 @@ export function loadConfig(): AppConfig {
   const jobSigningSecret = process.env.JOB_SIGNING_SECRET ?? "";
   if (!bridgeAgentToken) throw new Error("BRIDGE_AGENT_TOKEN is required");
   if (!jobSigningSecret) throw new Error("JOB_SIGNING_SECRET is required");
+  const storageMode = (process.env.STORAGE_MODE ?? "memory") as "memory" | "file";
+  if (!["memory", "file"].includes(storageMode)) {
+    throw new Error(`Invalid STORAGE_MODE: ${storageMode}`);
+  }
 
   return {
     mcpPort,
@@ -52,5 +58,7 @@ export function loadConfig(): AppConfig {
     jobSigningSecret,
     controlPlaneUrl: process.env.CONTROL_PLANE_URL ?? `http://localhost:${mcpPort}`,
     bridgePollIntervalMs: Number.parseInt(process.env.BRIDGE_POLL_INTERVAL_MS ?? "2000", 10),
+    storageMode,
+    stateFile: process.env.BRIDGE_STATE_FILE ?? ".demo-data/bridge_jobs.json",
   };
 }

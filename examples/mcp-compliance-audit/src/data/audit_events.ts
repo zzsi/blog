@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 export type ComplianceEvent = {
   eventId: string;
   at: string;
@@ -50,4 +52,39 @@ const EVENTS: ComplianceEvent[] = [
 
 export function loadComplianceEvents(): ComplianceEvent[] {
   return EVENTS;
+}
+
+function parseEvents(input: unknown): ComplianceEvent[] {
+  if (!Array.isArray(input)) return [];
+  const out: ComplianceEvent[] = [];
+  for (const row of input) {
+    if (!row || typeof row !== "object") continue;
+    const e = row as Partial<ComplianceEvent>;
+    if (typeof e.eventId !== "string") continue;
+    if (typeof e.at !== "string") continue;
+    if (typeof e.actor !== "string") continue;
+    if (typeof e.tool !== "string") continue;
+    if (e.decision !== "allow" && e.decision !== "deny") continue;
+    if (typeof e.tenantId !== "string") continue;
+    if (!e.metadata || typeof e.metadata !== "object") continue;
+    out.push({
+      eventId: e.eventId,
+      at: e.at,
+      actor: e.actor,
+      tool: e.tool,
+      decision: e.decision,
+      tenantId: e.tenantId,
+      metadata: e.metadata as Record<string, unknown>,
+    });
+  }
+  return out;
+}
+
+export function loadComplianceEventsFromFile(eventsFile: string): ComplianceEvent[] {
+  try {
+    const text = readFileSync(eventsFile, "utf8");
+    return parseEvents(JSON.parse(text));
+  } catch {
+    return [];
+  }
 }

@@ -4,8 +4,7 @@ import { loadComplianceEvents } from "./data/audit_events.js";
 import { getControlStatusTool } from "./tools/get_control_status.js";
 import { listAuditEventsTool } from "./tools/list_audit_events.js";
 
-export function createServer(authMode: "none" | "jwt") {
-  const events = loadComplianceEvents();
+export function createServer(authMode: "none" | "jwt", events = loadComplianceEvents()) {
 
   const server = new McpServer(
     {

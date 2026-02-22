@@ -8,6 +8,10 @@ export AUTH_MODE=jwt
 export AUTH_PROVIDER=shared_secret
 export JWT_SECRET="${JWT_SECRET:-demo-secret}"
 export MCP_PORT="${MCP_PORT:-3000}"
+export STORAGE_MODE="${STORAGE_MODE:-file}"
+export INVOICES_FILE="${INVOICES_FILE:-.demo-data/invoices.json}"
+
+npm run seed >/tmp/mcp-readonly-seed.log 2>&1
 
 npm run dev:http >/tmp/mcp-readonly-demo.log 2>&1 &
 SERVER_PID=$!

@@ -8,6 +8,10 @@ export AUTH_MODE=jwt
 export AUTH_PROVIDER=shared_secret
 export JWT_SECRET="${JWT_SECRET:-demo-secret}"
 export MCP_PORT="${MCP_PORT:-3005}"
+export STORAGE_MODE="${STORAGE_MODE:-file}"
+export COMPLIANCE_EVENTS_FILE="${COMPLIANCE_EVENTS_FILE:-.demo-data/compliance_events.json}"
+
+npm run seed >/tmp/mcp-compliance-seed.log 2>&1
 
 npm run dev:http >/tmp/mcp-compliance-demo.log 2>&1 &
 SERVER_PID=$!

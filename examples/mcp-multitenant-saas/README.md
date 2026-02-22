@@ -30,11 +30,14 @@ export AUTH_MODE=jwt
 export AUTH_PROVIDER=shared_secret
 export JWT_SECRET='replace_with_long_random_secret'
 export MCP_PORT=3001
+export STORAGE_MODE=file
+export INVOICES_FILE='.demo-data/invoices_multitenant.json'
 ```
 
 3. Run server:
 
 ```bash
+npm run seed
 npm run dev:http
 ```
 
@@ -108,6 +111,7 @@ EOF
 - `list_tenant_open_invoices` returns invoices with `"tenant_id": "t1"` only.
 - cross-tenant `get_tenant_invoice` returns error content with `forbidden: cross-tenant access`.
 - server stderr includes structured `authz_decision` logs.
+- seeded tenant-scoped invoice data persists across restarts when `STORAGE_MODE=file`.
 
 ## Hardened mode (OIDC/JWKS)
 
@@ -133,3 +137,4 @@ Expected behavior:
 
 - Streamable HTTP is the production-recommended transport for remote MCP servers.
 - This demo keeps tenant identity in JWT claims for clarity; production systems should align claims with your IdP standards.
+- Demo durability mode uses file-backed seeded data via `STORAGE_MODE=file`.

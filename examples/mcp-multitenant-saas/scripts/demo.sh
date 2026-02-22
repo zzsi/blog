@@ -8,6 +8,10 @@ export AUTH_MODE=jwt
 export AUTH_PROVIDER=shared_secret
 export JWT_SECRET="${JWT_SECRET:-demo-secret}"
 export MCP_PORT="${MCP_PORT:-3001}"
+export STORAGE_MODE="${STORAGE_MODE:-file}"
+export INVOICES_FILE="${INVOICES_FILE:-.demo-data/invoices_multitenant.json}"
+
+npm run seed >/tmp/mcp-multitenant-seed.log 2>&1
 
 npm run dev:http >/tmp/mcp-multitenant-demo.log 2>&1 &
 SERVER_PID=$!

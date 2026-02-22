@@ -4,8 +4,7 @@ import { loadInvoices } from "./data/invoices.js";
 import { getInvoiceStatusTool } from "./tools/get_invoice_status.js";
 import { listOpenInvoicesTool } from "./tools/list_open_invoices.js";
 
-export function createServer(authMode: "none" | "jwt") {
-  const invoices = loadInvoices();
+export function createServer(authMode: "none" | "jwt", invoices = loadInvoices()) {
 
   const server = new McpServer(
     {

@@ -1,3 +1,5 @@
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import type { OnPremResource } from "../data/mock_onprem_data.js";
 
 export type BridgeJob = {
@@ -9,12 +11,25 @@ export type BridgeJob = {
   createdAt: string;
   updatedAt: string;
   result?: unknown;
+  idempotencyKey?: string;
 };
 
 export class BridgeJobStore {
   private jobs = new Map<string, BridgeJob>();
   private requestToJob = new Map<string, string>();
   private idempotencyToJob = new Map<string, string>();
+  private readonly onChange?: (jobs: BridgeJob[]) => void;
+
+  constructor(initial: BridgeJob[] = [], onChange?: (jobs: BridgeJob[]) => void) {
+    for (const job of initial) {
+      this.jobs.set(job.jobId, job);
+      this.requestToJob.set(job.requestId, job.jobId);
+      if (job.idempotencyKey) {
+        this.idempotencyToJob.set(job.idempotencyKey, job.jobId);
+      }
+    }
+    this.onChange = onChange;
+  }
 
   create(input: { customerId: string; resource: OnPremResource }): BridgeJob {
     return this.createOrReuse(input).job;
@@ -43,6 +58,7 @@ export class BridgeJobStore {
       status: "queued",
       createdAt: now,
       updatedAt: now,
+      idempotencyKey: input.idempotencyKey,
     };
 
     this.jobs.set(jobId, job);
@@ -50,6 +66,7 @@ export class BridgeJobStore {
     if (input.idempotencyKey) {
       this.idempotencyToJob.set(input.idempotencyKey, jobId);
     }
+    this.persist();
     return { job, reused: false };
   }
 
@@ -58,6 +75,7 @@ export class BridgeJobStore {
       if (job.status === "queued") {
         const updated: BridgeJob = { ...job, status: "processing", updatedAt: new Date().toISOString() };
         this.jobs.set(job.jobId, updated);
+        this.persist();
         return updated;
       }
     }
@@ -74,6 +92,7 @@ export class BridgeJobStore {
       updatedAt: new Date().toISOString(),
     };
     this.jobs.set(jobId, updated);
+    this.persist();
     return updated;
   }
 
@@ -115,4 +134,50 @@ export class BridgeJobStore {
       oldestQueuedAgeMs,
     };
   }
+
+  private persist() {
+    this.onChange?.(Array.from(this.jobs.values()));
+  }
+}
+
+function parseJobs(input: unknown): BridgeJob[] {
+  if (!Array.isArray(input)) return [];
+  const out: BridgeJob[] = [];
+  for (const row of input) {
+    if (!row || typeof row !== "object") continue;
+    const job = row as Partial<BridgeJob>;
+    if (typeof job.jobId !== "string") continue;
+    if (typeof job.requestId !== "string") continue;
+    if (typeof job.customerId !== "string") continue;
+    if (job.resource !== "invoice" && job.resource !== "contract") continue;
+    if (job.status !== "queued" && job.status !== "processing" && job.status !== "completed") continue;
+    if (typeof job.createdAt !== "string" || typeof job.updatedAt !== "string") continue;
+    out.push({
+      jobId: job.jobId,
+      requestId: job.requestId,
+      customerId: job.customerId,
+      resource: job.resource,
+      status: job.status,
+      createdAt: job.createdAt,
+      updatedAt: job.updatedAt,
+      result: job.result,
+      idempotencyKey: job.idempotencyKey,
+    });
+  }
+  return out;
+}
+
+export function createFileBackedBridgeJobStore(stateFile: string): BridgeJobStore {
+  let initial: BridgeJob[] = [];
+  try {
+    const text = readFileSync(stateFile, "utf8");
+    initial = parseJobs(JSON.parse(text));
+  } catch {
+    initial = [];
+  }
+
+  return new BridgeJobStore(initial, (jobs) => {
+    mkdirSync(dirname(stateFile), { recursive: true });
+    writeFileSync(stateFile, `${JSON.stringify(jobs, null, 2)}\n`, "utf8");
+  });
 }

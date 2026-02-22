@@ -5,13 +5,15 @@ import * as z from "zod/v4";
 import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js";
 import { loadConfig } from "./config/index.js";
 import { createJwtVerifier } from "./auth/jwt_verifier.js";
-import { BridgeJobStore } from "./workflows/job_store.js";
+import { BridgeJobStore, createFileBackedBridgeJobStore } from "./workflows/job_store.js";
 import { createBridgeHandlers, requireBridgeAgentToken } from "./bridge/http_handlers.js";
 import { getBridgeResultTool, queryCustomerDataTool } from "./mcp/tools.js";
 
 const config = loadConfig();
 const app = createMcpExpressApp();
-const store = new BridgeJobStore();
+const store = config.storageMode === "file"
+  ? createFileBackedBridgeJobStore(config.stateFile)
+  : new BridgeJobStore();
 
 const verifier = config.authProvider === "oidc_jwks"
   ? createJwtVerifier({ mode: "oidc_jwks", jwksUri: config.oidcJwksUri!, issuer: config.jwtIssuer!, audience: config.jwtAudience! })
@@ -96,5 +98,5 @@ app.listen(config.mcpPort, (error?: Error) => {
     process.stderr.write(`Failed to start control-plane: ${error.message}\n`);
     process.exit(1);
   }
-  process.stderr.write(`Control-plane listening on http://localhost:${config.mcpPort} (mcp=/mcp, bridge=/bridge/*)\n`);
+  process.stderr.write(`Control-plane listening on http://localhost:${config.mcpPort} (mcp=/mcp, bridge=/bridge/*, storage=${config.storageMode})\n`);
 });
