@@ -336,3 +336,102 @@ Useful for specific extreme large-batch settings, but not dominant defaults in m
 - Diffusion/flow matching: Adam/AdamW with EMA often used.
 - Try Muon when stability and scaling friction dominate.
 - Try LARS/LAMB in extreme throughput-driven large-batch training.
+
+## 15) Late-2025 to early-2026: conditioning-based wave
+
+This section tracks the newest conditioning/preconditioning-heavy optimizer work after the 2025 baseline snapshot.
+
+### 15.1 Matrix and tensor conditioning milestones
+
+- Muon is Scalable for LLM Training (2025-02-24): practical scaling evidence for Muon-family conditioning.
+  - Link: https://arxiv.org/abs/2502.16982
+  - Evidence tags: `1B+`, `open-source impl`
+
+- PolarGrad: matrix-gradient optimizers from a unifying preconditioning perspective (2025-05-27, revised 2026-02-05).
+  - Link: https://arxiv.org/abs/2505.21799
+  - Evidence tags: `theory`, `small-scale`
+
+- NorMuon: neuron-wise normalized Muon, improving conditioning balance (2025-10-07).
+  - Link: https://arxiv.org/abs/2510.05491
+  - Evidence tags: `1B+`, `open-source impl`
+
+- MARS-M: variance reduction plus matrix conditioning (2025-10-20).
+  - Link: https://arxiv.org/abs/2510.21800
+  - Evidence tags: `theory`, `small-scale`, `open-source impl`
+
+- Hyperparameter Transfer Enables Consistent Gains of Matrix-Preconditioned Optimizers Across Scales (2025-12-05).
+  - Link: https://arxiv.org/abs/2512.05620
+  - Evidence tags: `1B+`, `scaling-law`, `protocol`
+
+- Muon is Provably Faster with Momentum Variance Reduction (2025-12-18).
+  - Link: https://arxiv.org/abs/2512.16598
+  - Evidence tags: `theory`
+
+- TEON: Tensorized Orthonormalization Beyond Layer-Wise Muon (2026-01-30).
+  - Link: https://arxiv.org/abs/2601.23261
+  - Evidence tags: `theory`, `1B-range`
+
+- PRISM: adaptive computation of matrix functions for optimizer primitives (2026-01-29).
+  - Link: https://arxiv.org/abs/2601.22137
+  - Evidence tags: `systems`, `optimizer-primitive`
+
+- MSign: stable-rank restoration for training stability (2026-02-02).
+  - Link: https://arxiv.org/abs/2602.01734
+  - Evidence tags: `stability`, `up-to-3B`
+
+- ARO: Adaptively Rotated Optimization (2026-02-09).
+  - Link: https://arxiv.org/abs/2602.09006
+  - Evidence tags: `1B+`, `protocol`, `conditioning`
+
+### 15.2 Conditioning taxonomy (for writing clarity)
+
+- Layer-wise orthogonalization:
+  Muon, NorMuon.
+
+- Tensorized or cross-layer orthogonalization:
+  TEON.
+
+- Rotated-coordinate conditioning:
+  ARO.
+
+- Matrix preconditioners with scaling transfer:
+  Shampoo/SOAP/Muon transfer rules (2512.05620).
+
+- Conditioning + variance reduction hybrids:
+  MARS-M, MVR-style Muon variants.
+
+- Conditioning for stability restoration:
+  MSign.
+
+### 15.3 Evidence quality rubric (use this in comparisons)
+
+When citing any new optimizer, label each claim with:
+
+- `theory`: convergence or complexity result.
+- `small-scale`: validated below ~1B parameters.
+- `1B+`: demonstrated at >= 1B parameters.
+- `open-source impl`: usable code exists.
+- `independent replication`: separate team replication exists.
+- `protocol`: paper provides controlled optimizer-comparison protocol.
+
+### 15.4 Benchmark protocol for fair optimizer claims
+
+For any benchmark table in the blog draft, require:
+
+1. Same model architecture and tokenizer.
+2. Same token budget and data ordering.
+3. Same batch-size regime and precision setup.
+4. Matched hyperparameter tuning budget per optimizer.
+5. Report both wall-clock and token/FLOP efficiency to target loss.
+6. Report instability/failure rate across seeds.
+
+Rationale: recent 2025-2026 work shows many optimizer gains vanish under poor scaling transfer or unfair tuning budgets.
+
+### 15.5 Community reports (non-peer-reviewed, separate from papers)
+
+- Muon vs MuonClip vs Muon+AdamW (HF community, 2025-12-09):
+  https://huggingface.co/blog/KingNish/optimizer-part1
+- Reproducing and Validating Distributed Muon (HF community, 2025-12-12):
+  https://huggingface.co/blog/bird-of-paradise/reproducing-and-validating-distributed-muon
+- Scaling Is Not Plug-and-Play (HF community, 2026-01-04):
+  https://huggingface.co/blog/bird-of-paradise/scaling-is-not-plug-and-play
