@@ -1,0 +1,142 @@
+---
+title: "From Momentum to Muon: How Deep Learning Optimizers Evolved"
+date: 2026-02-22
+categories: [ai, deep learning, optimization, llm]
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+Optimizers are easy to under-appreciate. We spend a lot of energy on architecture, data, and compute budgets, but the optimizer is the control policy that decides how noisy gradients become actual parameter updates.
+
+Looking back from 2025, optimizer progress did not follow a single clean line. It came in waves: acceleration, adaptivity, regularization corrections, systems scaling, and now geometry-aware updates.
+
+In this post, I summarize that history and the practical defaults that emerged.
+
+## A useful mental model
+
+At training step `t`, we transform a stochastic gradient `g_t` into update `delta_theta_t`.
+
+That update policy has four jobs:
+
+- Direction control: which way to move.
+- Step-size control: how far to move.
+- Stability control: avoid exploding/vanishing behavior under noise and curvature.
+- Resource control: keep memory, compute, and communication affordable.
+
+Most optimizer innovations are one (or more) of these:
+
+1. Acceleration (`momentum`, `Nesterov`).
+2. Preconditioning (`AdaGrad`, `RMSProp`, `Adam`).
+3. Regularization-correct updates (`AdamW`).
+4. Large-scale stabilization (`LARS`, `LAMB`).
+5. Generalization-aware updates (`SAM`).
+6. Systems-aware efficiency (`Adafactor`, 8-bit states, communication compression).
+7. Geometry-aware updates (natural-gradient lineage, orthogonalization methods such as Muon).
+
+## 1960s to 2000s: the foundations
+
+The big ideas existed long before modern LLMs.
+
+- Polyak momentum (heavy ball) addressed zig-zagging in narrow valleys ([Polyak, 1964](https://doi.org/10.1016/0041-5553(64)90137-5)).
+- Nesterov acceleration introduced look-ahead correction ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)).
+- Natural gradient reframed optimization with information geometry rather than Euclidean steps ([Amari, 1998](https://doi.org/10.1162/089976698300017746)).
+
+These ideas established the blueprint: smooth noisy gradients over time, respect curvature, and make updates less fragile to parameterization.
+
+## 2010 to 2014: getting deep nets to train reliably
+
+Early deep-learning practice leaned heavily on SGD + momentum. It was cheap and scalable, but hyperparameter-sensitive ([Sutskever et al., 2013](https://proceedings.mlr.press/v28/sutskever13.html)).
+
+Adaptive methods arrived quickly:
+
+- AdaGrad (2011): strong for sparse coordinates, but step sizes can decay too aggressively ([Duchi et al., 2011](https://jmlr.org/papers/v12/duchi11a.html)).
+- RMSProp (2012): moving-average second moments fixed AdaGrad's monotonic decay issue ([Hinton lecture notes, 2012](https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)).
+- AdaDelta (2012): reduced sensitivity to fixed global learning rates ([Zeiler, 2012](https://arxiv.org/abs/1212.5701)).
+
+By the end of this period, the community had a clear direction: blend momentum-like smoothing with per-parameter scaling.
+
+## 2014 to 2019: Adam wins, then AdamW fixes a key bug
+
+Adam became the default because it lowered tuning friction and worked well across many workloads ([Kingma and Ba, 2014](https://arxiv.org/abs/1412.6980)).
+
+But one subtle issue mattered a lot in practice: in adaptive optimizers, adding L2 penalty into the gradient is not equivalent to true weight decay.
+
+Another active thread in the same era was convergence behavior of Adam-family methods, with AMSGrad as a representative fix ([Reddi et al., 2018](https://openreview.net/forum?id=ryQu7f-RZ)).
+
+AdamW's decoupled weight decay fixed this mismatch ([Loshchilov and Hutter, 2017](https://arxiv.org/abs/1711.05101)). That correction, simple on paper, became foundational for Transformer-era training recipes.
+
+## 2017 to 2020: large-batch scaling pressure
+
+As teams pushed larger global batch sizes, optimizer behavior changed.
+
+- LARS stabilized layer-wise relative updates for huge-batch CNN training ([You et al., 2017](https://arxiv.org/abs/1708.03888)).
+- LAMB carried layer-wise trust-ratio intuition into Adam-like moments for BERT-era large-batch pretraining ([You et al., 2019](https://arxiv.org/abs/1904.00962)).
+
+These methods solved real throughput bottlenecks, even if AdamW remained the broader long-term default.
+
+## 2018 to 2023: memory and systems constraints become first-class
+
+At Transformer scale, optimizer states are expensive.
+
+- Adafactor reduced second-moment memory via factorization ([Shazeer and Stern, 2018](https://arxiv.org/abs/1804.04235)).
+- 8-bit optimizer states made finetuning and larger experiments more feasible ([Dettmers et al., 2021](https://arxiv.org/abs/2110.02861)).
+- Communication-aware variants (such as 1-bit approaches) targeted distributed bandwidth constraints ([Tang et al., 2021](https://arxiv.org/abs/2102.02888)).
+
+The message was clear: the best optimizer is not just mathematically elegant; it has to fit hardware constraints.
+
+## 2020 to 2023: generalization-aware and tweak-heavy phase
+
+SAM introduced a clean objective-level idea: bias updates toward flatter neighborhoods to improve generalization ([Foret et al., 2020](https://arxiv.org/abs/2010.01412)).
+
+At the same time, many incremental variants (Lookahead, RAdam, AdaBelief, AdaBound, and others) explored warmup behavior and update coupling ([Lookahead](https://arxiv.org/abs/1907.08610), [RAdam](https://arxiv.org/abs/1908.03265), [AdaBelief](https://arxiv.org/abs/2010.07468), [AdaBound](https://arxiv.org/abs/1902.09843)). Some were useful, but few displaced AdamW or SGD defaults across domains.
+
+Lion showed another path: machine-discovered update rules can be competitive, reframing optimizer design as a search problem ([Chen et al., 2023](https://arxiv.org/abs/2302.06675)).
+
+## 2024 to 2025: geometry-aware updates re-emerge
+
+Muon and related orthogonalization ideas reframed the problem around gradient interference and directional coupling ([Muon implementation](https://github.com/KellerJordan/Muon), [modular-duality framing](https://arxiv.org/abs/2410.21265)).
+
+The appeal is that the geometric story is relatively crisp while still being practical enough for large-scale trials. By the end of 2025, adoption looked promising but not universal; AdamW still dominated as the documented baseline in most public frontier recipes.
+
+## What actually won by 2025
+
+Across model families, the defaults converged:
+
+- Frontier LLMs/VLMs: AdamW + warmup + decay schedule + clipping + careful weight decay exclusions.
+- ViTs: AdamW.
+- CNNs: SGD + momentum still strong.
+- Diffusion/flow matching: Adam or AdamW, often with EMA.
+
+LARS/LAMB remained valuable for specific extreme large-batch regimes rather than general defaults.
+
+## Why optimizer innovation happens
+
+Three forces repeatedly interacted:
+
+- Theory-driven ideas: Nesterov, natural-gradient lineage (e.g., [K-FAC](https://arxiv.org/abs/1503.05671), [Shampoo](https://arxiv.org/abs/1802.09568)), AdamW correction, SAM, Muon framing.
+- Empiricism-driven ideas: RMSProp and Adam adoption patterns, many tweak-based variants, search-found rules.
+- Systems-driven ideas: LARS/LAMB, Adafactor, quantized states, communication-efficient updates.
+
+The strongest methods usually survive all three filters: coherent intuition, robust benchmarks, and practical systems fit.
+
+## Practical recipes (2025-ish)
+
+If I want stable baselines fast:
+
+- LLM/VLM pretraining: AdamW with warmup, LR decay, clipping, and selective weight decay.
+- Vision CNN: SGD + momentum + tuned schedule.
+- ViT or diffusion: AdamW (EMA if needed for generation quality).
+
+When to branch from defaults:
+
+- Muon: when scaling or stability friction dominates and you can afford experimentation.
+- LARS/LAMB: when throughput targets force very large batch regimes.
+- Adafactor or low-precision states: when optimizer memory is the bottleneck.
+
+## Closing thoughts
+
+From heavy-ball momentum to modern orthogonalization methods, optimizer history is a story of recurring constraints in new forms: curvature, noise, scale, and hardware budgets.
+
+By 2025, AdamW remained the center of gravity for large language and multimodal models, but geometry-aware methods suggest the next wave may come from better directional control rather than only better scalar learning-rate heuristics.
