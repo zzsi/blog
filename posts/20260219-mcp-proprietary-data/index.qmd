@@ -67,6 +67,7 @@ This avoids mixing Quarto content with runtime dependencies.
 
 - `posts/...` is for prose, diagrams, and lightweight assets.
 - `examples/...` is for runnable code, tests, infra manifests, and scripts.
+- each runnable example now includes `scripts/seed.ts` and supports `STORAGE_MODE=file` for restart-safe demo state.
 
 For this article, each pattern maps to one folder in `examples/` so readers can move from concept to implementation immediately.
 
@@ -94,6 +95,7 @@ mcp-readonly-starter/
     auth/scope_guard.ts
     tools/get_invoice_status.ts
     observability/audit_log.ts
+  scripts/seed.ts
   tests/security/input_validation.test.ts
 ```
 
@@ -115,6 +117,7 @@ mcp-multitenant-saas/
     middleware/tenant_context.ts
     middleware/authz.ts
     data/tenant_router.ts
+  scripts/seed.ts
   tests/authz/cross_tenant_access.test.ts
 ```
 
@@ -136,6 +139,7 @@ mcp-write-with-approval/
     tools/create_refund_request.ts
     tools/execute_refund.ts
     policy/risk_rules.ts
+  scripts/seed.ts
   tests/security/scope_escalation.test.ts
 ```
 
@@ -158,6 +162,7 @@ mcp-onprem-bridge/
     bridge-agent.ts
     bridge/http_handlers.ts
     workflows/job_store.ts
+  scripts/seed.ts
   scripts/demo.sh
 ```
 
@@ -182,6 +187,7 @@ mcp-compliance-audit/
     policy/deny_by_default.ts
     observability/redaction.ts
   tests/audit/pii_redaction.test.ts
+  scripts/seed.ts
   scripts/demo.sh
 ```
 
