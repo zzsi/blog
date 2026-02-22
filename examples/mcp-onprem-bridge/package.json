@@ -7,6 +7,7 @@
   "scripts": {
     "dev:control-plane": "tsx src/control-plane-server.ts",
     "dev:bridge-agent": "tsx src/bridge-agent.ts",
+    "seed": "tsx scripts/seed.ts",
     "build": "tsc -p tsconfig.json",
     "start:control-plane": "node dist/control-plane-server.js",
     "start:bridge-agent": "node dist/bridge-agent.js",

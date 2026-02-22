@@ -38,3 +38,14 @@ export function loadInvoices(): Invoice[] {
 
   return rows;
 }
+
+export function loadInvoicesFromFile(invoicesFile: string): Invoice[] {
+  try {
+    const text = readFileSync(invoicesFile, "utf8");
+    const parsed = JSON.parse(text);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((row) => InvoiceRow.parse(row));
+  } catch {
+    return [];
+  }
+}

@@ -11,6 +11,10 @@ export JWT_SECRET="${JWT_SECRET:-demo-secret}"
 export BRIDGE_AGENT_TOKEN="${BRIDGE_AGENT_TOKEN:-bridge-agent-demo-token}"
 export JOB_SIGNING_SECRET="${JOB_SIGNING_SECRET:-job-signing-demo-secret}"
 export CONTROL_PLANE_URL="${CONTROL_PLANE_URL:-http://localhost:${MCP_PORT}}"
+export STORAGE_MODE="${STORAGE_MODE:-file}"
+export BRIDGE_STATE_FILE="${BRIDGE_STATE_FILE:-.demo-data/bridge_jobs.json}"
+
+npm run seed >/tmp/mcp-onprem-seed.log 2>&1
 
 REQUEST_ID_FILE="$(mktemp /tmp/mcp-onprem-request-id.XXXXXX)"
 export REQUEST_ID_FILE

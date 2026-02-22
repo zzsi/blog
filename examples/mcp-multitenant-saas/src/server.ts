@@ -4,8 +4,7 @@ import { loadInvoices } from "./data/invoices.js";
 import { getTenantInvoiceTool } from "./tools/get_tenant_invoice.js";
 import { listTenantOpenInvoicesTool } from "./tools/list_tenant_open_invoices.js";
 
-export function createServer() {
-  const invoices = loadInvoices();
+export function createServer(invoices = loadInvoices()) {
 
   const server = new McpServer(
     {

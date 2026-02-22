@@ -4,11 +4,13 @@ import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middlew
 import { createJwtVerifier } from "./auth/jwt_verifier.js";
 import { loadConfig } from "./config.js";
 import { createServer } from "./server.js";
-import { RefundStore } from "./workflows/approval_queue.js";
+import { RefundStore, createFileBackedRefundStore } from "./workflows/approval_queue.js";
 
 const config = loadConfig();
 const app = createMcpExpressApp();
-const store = new RefundStore();
+const store = config.storageMode === "file"
+  ? createFileBackedRefundStore(config.stateFile)
+  : new RefundStore();
 
 const verifier = config.authProvider === "oidc_jwks"
   ? createJwtVerifier({
@@ -80,6 +82,6 @@ app.listen(config.mcpPort, (error?: Error) => {
   }
 
   process.stderr.write(
-    `MCP write workflow server listening on http://localhost:${config.mcpPort}/mcp\n`,
+    `MCP write workflow server listening on http://localhost:${config.mcpPort}/mcp (storage=${config.storageMode})\n`,
   );
 });

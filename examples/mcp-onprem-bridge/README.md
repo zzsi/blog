@@ -45,11 +45,14 @@ export JWT_SECRET='demo-secret'
 export BRIDGE_AGENT_TOKEN='bridge-agent-demo-token'
 export JOB_SIGNING_SECRET='job-signing-demo-secret'
 export CONTROL_PLANE_URL='http://localhost:3003'
+export STORAGE_MODE=file
+export BRIDGE_STATE_FILE='.demo-data/bridge_jobs.json'
 ```
 
 3. Start control-plane:
 
 ```bash
+npm run seed
 npm run dev:control-plane
 ```
 
@@ -141,6 +144,7 @@ Expected behavior:
 - repeating the same `idempotencyKey` returns `duplicate_request_reused` and the same job/request IDs.
 - with `docker compose up`, first result check may already be `completed` because the bridge agent is always running.
 - with manual local mode, first result check usually returns `queued` or `processing`, and after running bridge agent once it returns `completed`.
+- job state persists across restarts when `STORAGE_MODE=file`.
 
 Optional stats check:
 
@@ -162,5 +166,5 @@ npm run dev:control-plane
 
 ## Notes
 
-- This demo uses in-memory stores; production should use durable queues/stores.
+- This demo supports file-backed durable state for demos via `STORAGE_MODE=file`.
 - Bridge agent uses mock data (`src/data/mock_onprem_data.ts`) to emulate customer-local systems.

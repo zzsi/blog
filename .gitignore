@@ -8,3 +8,4 @@
 # Node/TS build/runtime artifacts
 **/node_modules/
 **/dist/
+**/.demo-data/

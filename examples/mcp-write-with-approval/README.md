@@ -30,11 +30,14 @@ export AUTH_MODE=jwt
 export AUTH_PROVIDER=shared_secret
 export JWT_SECRET='demo-secret'
 export MCP_PORT=3002
+export STORAGE_MODE=file
+export REFUND_STATE_FILE='.demo-data/refund_requests.json'
 ```
 
 3. Run server:
 
 ```bash
+npm run seed
 npm run dev:http
 ```
 
@@ -123,6 +126,7 @@ EOF2
 - `approve_refund_request` moves request to `approved`.
 - `execute_refund` succeeds only after approval.
 - server stderr logs each workflow event as `refund_workflow`.
+- refund requests persist across restarts when `STORAGE_MODE=file`.
 
 ## Hardened mode (OIDC/JWKS)
 
@@ -138,5 +142,5 @@ npm run dev:http
 
 ## Notes
 
-- This demo uses in-memory state for clarity; replace with a durable store in production.
+- This demo supports file-backed durable state for demos via `STORAGE_MODE=file`.
 - Keep scope separation strict in production to reduce blast radius.

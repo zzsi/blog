@@ -9,6 +9,8 @@ export type AppConfig = {
   jwtIssuer?: string;
   jwtAudience?: string;
   oidcJwksUri?: string;
+  storageMode: "memory" | "file";
+  eventsFile: string;
 };
 
 export function loadConfig(): AppConfig {
@@ -41,6 +43,11 @@ export function loadConfig(): AppConfig {
     }
   }
 
+  const storageMode = (process.env.STORAGE_MODE ?? "memory") as "memory" | "file";
+  if (!["memory", "file"].includes(storageMode)) {
+    throw new Error(`Invalid STORAGE_MODE: ${storageMode}`);
+  }
+
   return {
     mcpPort,
     authMode,
@@ -49,5 +56,7 @@ export function loadConfig(): AppConfig {
     jwtIssuer: process.env.JWT_ISSUER,
     jwtAudience: process.env.JWT_AUDIENCE,
     oidcJwksUri: process.env.OIDC_JWKS_URI,
+    storageMode,
+    eventsFile: process.env.COMPLIANCE_EVENTS_FILE ?? ".demo-data/compliance_events.json",
   };
 }

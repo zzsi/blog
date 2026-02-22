@@ -34,11 +34,14 @@ export MCP_PORT=3005
 export AUTH_MODE=jwt
 export AUTH_PROVIDER=shared_secret
 export JWT_SECRET='demo-secret'
+export STORAGE_MODE=file
+export COMPLIANCE_EVENTS_FILE='.demo-data/compliance_events.json'
 ```
 
 3. Start server:
 
 ```bash
+npm run seed
 npm run dev:http
 ```
 
@@ -101,6 +104,7 @@ Expected behavior:
 - `list_audit_events` returns events with secret fields redacted (e.g., token, authorization).
 - `get_control_status` returns control status and a secret reference, not secret values.
 - server stderr logs structured `event:"audit"` entries for each tool call.
+- seeded compliance events persist across restarts when `STORAGE_MODE=file`.
 
 ## Hardened mode (OIDC/JWKS)
 
@@ -115,5 +119,5 @@ npm run dev:http
 
 ## Notes
 
-- This demo uses synthetic in-memory audit events for deterministic outputs.
+- This demo supports file-backed seeded events for deterministic, restart-safe demos via `STORAGE_MODE=file`.
 - It demonstrates compliance controls; production should add durable storage and retention workflows.

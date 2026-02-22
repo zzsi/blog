@@ -4,12 +4,16 @@ import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middlew
 import { createServer } from "./server.js";
 import { loadConfig } from "./config.js";
 import { createJwtVerifier } from "./auth/jwt_verifier.js";
+import { loadComplianceEvents, loadComplianceEventsFromFile } from "./data/audit_events.js";
 
 const config = loadConfig();
 const app = createMcpExpressApp();
+const events = config.storageMode === "file"
+  ? loadComplianceEventsFromFile(config.eventsFile)
+  : loadComplianceEvents();
 
 const postHandler = async (req: any, res: any) => {
-  const server = createServer(config.authMode);
+  const server = createServer(config.authMode, events);
 
   try {
     const transport = new StreamableHTTPServerTransport({
@@ -88,6 +92,6 @@ app.listen(config.mcpPort, (error?: Error) => {
   }
 
   process.stderr.write(
-    `MCP compliance server listening on http://localhost:${config.mcpPort}/mcp (auth=${config.authMode})\n`,
+    `MCP compliance server listening on http://localhost:${config.mcpPort}/mcp (auth=${config.authMode}, storage=${config.storageMode})\n`,
   );
 });
