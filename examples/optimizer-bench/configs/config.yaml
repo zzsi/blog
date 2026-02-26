@@ -1,0 +1,15 @@
+defaults:
+  - task: cifar10
+  - optimizer: adamw
+  - _self_
+
+seed: 42
+device: auto
+output_dir: outputs
+
+run:
+  max_steps: 200
+  eval_every: 50
+  log_every: 10
+  batch_size: 64
+  num_workers: 2

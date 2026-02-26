@@ -1,0 +1,7 @@
+name: sam
+lr: 0.05
+weight_decay: 0.0001
+rho: 0.05
+base_optimizer: sgd_momentum
+momentum: 0.9
+nesterov: true

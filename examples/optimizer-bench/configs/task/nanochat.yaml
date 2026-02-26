@@ -1,0 +1,17 @@
+name: nanogpt_bin
+# Path to a NanoGPT-style prepared dataset directory that contains:
+# - train.bin
+# - val.bin
+# - optional meta.pkl
+# Example:
+#   data_dir: /tmp/cvl/nanogpt/data/shakespeare
+data_dir: /tmp/cvl/nanogpt/data/shakespeare
+block_size: 128
+vocab_size: auto
+train_examples: 2000
+val_examples: 400
+model_dim: 256
+num_layers: 4
+num_heads: 4
+ffn_dim: 1024
+dropout: 0.1
