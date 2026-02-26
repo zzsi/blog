@@ -1,12 +1,15 @@
-name: nanochat
-hf_dataset: nanochat/nanochat
-train_split: train
-val_split: validation
-text_field: auto
+name: nanogpt_bin
+# Path to a NanoGPT-style prepared dataset directory that contains:
+# - train.bin
+# - val.bin
+# - optional meta.pkl
+# Example:
+#   data_dir: /tmp/cvl/nanogpt/data/shakespeare
+data_dir: /tmp/cvl/nanogpt/data/shakespeare
 block_size: 128
-vocab_size: 50257
-train_subset: 2000
-val_subset: 400
+vocab_size: auto
+train_examples: 2000
+val_examples: 400
 model_dim: 256
 num_layers: 4
 num_heads: 4

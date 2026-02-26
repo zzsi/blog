@@ -9,3 +9,9 @@
 **/node_modules/
 **/dist/
 **/.demo-data/
+
+# Python artifacts
+**/__pycache__/
+*.pyc
+*.pyo
+.venv/
