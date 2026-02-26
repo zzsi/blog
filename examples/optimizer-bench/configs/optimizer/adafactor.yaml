@@ -1,0 +1,6 @@
+name: adafactor
+lr: 0.001
+weight_decay: 0.0
+relative_step: false
+scale_parameter: false
+warmup_init: false
