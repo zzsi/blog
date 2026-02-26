@@ -1,0 +1,14 @@
+name: nanochat
+hf_dataset: nanochat/nanochat
+train_split: train
+val_split: validation
+text_field: auto
+block_size: 128
+vocab_size: 50257
+train_subset: 2000
+val_subset: 400
+model_dim: 256
+num_layers: 4
+num_heads: 4
+ffn_dim: 1024
+dropout: 0.1
