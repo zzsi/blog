@@ -1,0 +1,5 @@
+name: muon
+lr: 0.01
+weight_decay: 0.0
+momentum: 0.95
+eps: 1.0e-8

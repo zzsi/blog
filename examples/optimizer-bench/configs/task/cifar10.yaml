@@ -1,0 +1,5 @@
+name: cifar10
+num_classes: 10
+image_size: 32
+train_subset: 5000
+val_subset: 1000
