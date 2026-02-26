@@ -1,3 +1,7 @@
+---
+listing: false
+---
+
 # Optimizer Benchmarks for This Post
 
 This file tracks practical benchmark choices for comparing deep learning optimizers in a way that is both credible and runnable.
