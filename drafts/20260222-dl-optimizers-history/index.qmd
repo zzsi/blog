@@ -14,6 +14,15 @@ Looking back through early 2026, optimizer progress came in waves: acceleration,
 
 This post is a practical historical tour: what changed, why it changed, and what still works as a default.
 
+::: {.callout-note appearance="simple"}
+## TL;DR
+
+- **AdamW is still the default** for most deep learning training in early 2026 — LLMs, vision transformers, diffusion models.
+- **SGD + momentum** remains competitive for convolutional architectures with well-tuned schedules.
+- **Conditioning-based methods** (Muon, NorMuon, TEON, ARO) are the most active research frontier, showing promising gains at 1B+ scale but not yet displacing AdamW in documented production recipes.
+- **Choosing the wrong optimizer — or misconfiguring the right one — can waste 10-30% of a training run's compute budget.** The payoff for getting this right scales with your training spend.
+:::
+
 ## A practical mental model
 
 At step `t`, we convert stochastic gradient `g_t` into update `delta_theta_t`.
@@ -61,10 +70,10 @@ By the end of this period, the design direction was clear: momentum-like smoothi
 
 Adam became the default because it reduced tuning friction across workloads ([Kingma and Ba, 2014](https://arxiv.org/abs/1412.6980)).
 
-Two important caveats followed:
+Two important caveats emerged:
 
-- Convergence pathologies in some regimes (e.g., AMSGrad lineage) ([Reddi et al., 2018](https://openreview.net/forum?id=ryQu7f-RZ)).
-- L2-in-gradient is not true weight decay under adaptive preconditioning.
+- Adam showed convergence pathologies in certain settings, which the AMSGrad fix addressed by tracking max second moments ([Reddi et al., 2018](https://openreview.net/forum?id=ryQu7f-RZ)).
+- Adding L2 regularization to the gradient (standard "weight decay" in Adam) is not equivalent to true weight decay under adaptive preconditioning.
 
 AdamW fixed the second issue by decoupling weight decay ([Loshchilov and Hutter, 2017](https://arxiv.org/abs/1711.05101)). This was a small implementation change with outsized practical impact.
 
@@ -76,6 +85,15 @@ As batch sizes grew, optimization dynamics changed:
 - LAMB brought trust-ratio ideas to Adam moments for large-batch language pretraining ([You et al., 2019](https://arxiv.org/abs/1904.00962)).
 
 These methods solved throughput bottlenecks, even though AdamW remained the broad default.
+
+## 2015 to 2023: curvature approximation at scale
+
+Full second-order methods (computing the Hessian) are too expensive for large models. Two lines of work made curvature information practical:
+
+- K-FAC approximated the Fisher information matrix with Kronecker-factored blocks, giving stronger preconditioning than Adam at modest extra cost ([Martens and Grosse, 2015](https://arxiv.org/abs/1503.05671)).
+- Shampoo extended this to per-block matrix preconditioners with scalable update rules ([Gupta et al., 2018](https://arxiv.org/abs/1802.09568)).
+
+Neither became a broad default — the implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that structured preconditioning could outperform diagonal methods, and they are direct intellectual ancestors of the 2024-2026 conditioning wave.
 
 ## 2018 to 2023: memory and systems become first-class
 
@@ -97,32 +115,45 @@ Lion added a search-discovered optimizer angle ([Chen et al., 2023](https://arxi
 
 ## 2024 to 2025: geometry returns
 
-Muon-style methods reframed the problem around directional interference and orthogonalization ([Muon implementation](https://github.com/KellerJordan/Muon), [modular-duality framing](https://arxiv.org/abs/2410.21265)).
+Muon-style methods reframed the problem: instead of scaling each parameter independently (as Adam does), they orthogonalize the gradient update to reduce interference across dominant directions in weight matrices ([Muon implementation](https://github.com/KellerJordan/Muon), [modular-duality framing](https://arxiv.org/abs/2410.21265)).
+
+The key insight is that diagonal preconditioning (Adam-family) ignores correlations between parameters within a layer. Structured preconditioning addresses this directly. Early results showed Muon scaling competitively to 1B+ parameters ([Jordan et al., 2025](https://arxiv.org/abs/2502.16982)), with a simpler implementation surface than K-FAC or Shampoo.
 
 By end-2025, this looked promising but not universal. AdamW still dominated documented frontier recipes.
 
 ## Late-2025 to early-2026: conditioning wave
 
-A broader conditioning-focused wave followed:
+A broader conditioning-focused wave followed, with several distinct approaches:
 
-- NorMuon ([2025](https://arxiv.org/abs/2510.05491))
-- MARS-M ([2025](https://arxiv.org/abs/2510.21800))
-- Matrix-preconditioner hyperparameter transfer across scales ([2025](https://arxiv.org/abs/2512.05620))
-- TEON tensorized orthonormalization ([2026](https://arxiv.org/abs/2601.23261))
-- ARO rotated-coordinate optimization ([2026](https://arxiv.org/abs/2602.09006))
+**Layer-wise orthogonalization:**
 
-The shift: conditioning is becoming a primary design axis, not a side detail.
+- NorMuon: neuron-wise normalization on top of Muon, improving conditioning balance ([2025](https://arxiv.org/abs/2510.05491)) `[1B+, open-source]`
 
-Community reports are useful early signals but should stay secondary to controlled evaluations.
+**Conditioning + variance reduction:**
+
+- MARS-M: combining variance reduction with matrix conditioning ([2025](https://arxiv.org/abs/2510.21800)) `[theory, small-scale, open-source]`
+
+**Scaling transfer:**
+
+- Matrix-preconditioner hyperparameter transfer across scales, showing that conditioning gains persist when transferring optimizer configs from small to large runs ([2025](https://arxiv.org/abs/2512.05620)) `[1B+, protocol]`
+
+**Tensorized and rotated conditioning:**
+
+- TEON: tensorized orthonormalization extending Muon beyond layer-wise structure ([2026](https://arxiv.org/abs/2601.23261)) `[theory, 1B-range]`
+- ARO: adaptively rotated optimization in coordinate space ([2026](https://arxiv.org/abs/2602.09006)) `[1B+, protocol]`
+
+The shift: conditioning is becoming a primary design axis, not a side detail. Evidence labels above (`[1B+]`, `[theory]`, etc.) indicate maturity — most of these methods have open-source implementations but limited independent replication so far.
+
+Community reports ([Muon comparisons](https://huggingface.co/blog/KingNish/optimizer-part1), [distributed Muon validation](https://huggingface.co/blog/bird-of-paradise/reproducing-and-validating-distributed-muon)) are useful early signals but should stay secondary to controlled evaluations.
 
 ## What won in practice by early 2026
 
 Defaults remain fairly stable:
 
-- Frontier LLMs/VLMs: AdamW + warmup + decay + clipping + selective decay exclusions.
-- ViTs: AdamW.
+- Frontier LLMs and VLMs (vision-language models): AdamW + warmup + decay + gradient clipping + selective decay exclusions.
+- ViTs (Vision Transformers): AdamW.
 - CNNs: SGD + momentum remains strong.
-- Diffusion/flow matching: Adam/AdamW, often with EMA.
+- Diffusion and flow-matching models: Adam/AdamW, often with EMA (exponential moving average of weights).
 - LARS/LAMB: useful in specific extreme-batch throughput regimes.
 
 ## Why optimizer innovation keeps happening
@@ -145,7 +176,18 @@ Methods that survive usually satisfy all three.
 | Diffusion/flow matching | AdamW (+ EMA) | Try Adafactor/low-precision states when memory dominates |
 | Extreme large-batch throughput | LARS/LAMB | Stay with AdamW if batch size is moderate and tuning budget is limited |
 
-Fair comparison protocol:
+### Starting hyperparameters
+
+These are typical starting points, not universal optima. Always tune on your workload.
+
+| Optimizer | Learning rate | beta1, beta2 | Weight decay | Notes |
+| --- | --- | --- | --- | --- |
+| AdamW (LLM) | 1e-4 to 6e-4 | 0.9, 0.95 | 0.01 to 0.1 | Warmup 1-5% of steps, cosine decay |
+| AdamW (ViT) | 1e-4 to 3e-4 | 0.9, 0.999 | 0.01 to 0.3 | Higher decay common with strong augmentation |
+| SGD + momentum (CNN) | 0.01 to 0.1 | momentum 0.9 | 1e-4 to 5e-4 | Step or cosine LR schedule |
+| Muon | 0.01 to 0.05 | 0.9, — | 0.0 to 0.01 | Orthogonalization replaces some of weight decay's role |
+
+### Fair comparison protocol
 
 1. Same model and tokenizer.
 2. Same token/image budget and data order.
@@ -154,20 +196,28 @@ Fair comparison protocol:
 
 ## Toy visual check (didactic)
 
-A toy trajectory view is useful for intuition before heavy benchmarks.
+A toy trajectory view is useful for building intuition before heavier benchmarks.
+
+The GIFs below show optimizer trajectories projected onto a 2D PCA slice of the loss landscape for a small spirals classification task (2-layer MLP, 120 epochs, seed 42, default learning rates). This is **not** a benchmark — it illustrates qualitative behavior.
 
 Adam trajectory:
 
-![](../../examples/optimizer-bench/toy/outputs/spirals_adam.gif){fig-align="center" width="560px"}
+![Adam on spirals task: adaptive step sizes let it navigate the landscape efficiently. (120 epochs, lr=0.001, PCA projection)](../../examples/optimizer-bench/toy/outputs/spirals_adam.gif){fig-align="center" width="560px"}
 
 SGD trajectory:
 
-![](../../examples/optimizer-bench/toy/outputs/spirals_sgd.gif){fig-align="center" width="560px"}
+![SGD on spirals task: fixed step size and momentum produce a wider trajectory with more oscillation. (120 epochs, lr=0.01, momentum=0.9, PCA projection)](../../examples/optimizer-bench/toy/outputs/spirals_sgd.gif){fig-align="center" width="560px"}
 
-In this toy run, Adam reaches a lower-loss region faster than SGD under the same short budget. Treat this as intuition only. Final decisions should come from controlled CIFAR-10 and NanoGPT-bin benchmarks. Repro steps: `../../examples/optimizer-bench/toy/README.md`.
+In this toy run, Adam reaches a lower-loss region faster than SGD under the same short budget. Treat this as intuition only — real optimizer decisions should rely on controlled comparisons at representative scale. Repro steps: `../../examples/optimizer-bench/toy/README.md`.
 
 ## Closing
 
 From heavy-ball momentum to conditioning-heavy methods, optimizer history is mostly a story of recurring constraints in new forms: curvature, noise, scale, and hardware budgets.
 
-By early 2026, AdamW is still the center of gravity. The next durable wave is likely to come from better directional control and conditioning, not only better scalar learning-rate heuristics.
+By early 2026, AdamW is still the center of gravity. The next durable shift is likely to come from better directional control and structured conditioning — not just better scalar learning-rate heuristics. What to watch for in the rest of 2026:
+
+- Whether conditioning methods (Muon-family, ARO, TEON) show consistent gains under independent replication at 10B+ scale.
+- Whether hyperparameter transfer protocols make these methods practical without per-run tuning.
+- Whether systems-level integration (fused kernels, native framework support) lowers the adoption barrier enough to challenge AdamW's position as the safe default.
+
+The optimizer that wins next will not just be mathematically better — it will be easier to deploy correctly at scale.
