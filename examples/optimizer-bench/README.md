@@ -13,6 +13,7 @@ Minimal Hydra-based benchmark project to compare six optimizers under one codepa
 
 - `cifar10` classification
 - `nanogpt_bin` language modeling from local `train.bin`/`val.bin`
+- `toy` visual benchmark via `loss-landscape-anim` (spirals + trajectory GIFs)
 
 ## TODO
 
@@ -54,6 +55,19 @@ python train.py task=nanochat task.data_dir=/tmp/cvl/nanogpt/data/shakespeare op
 export NANOGPT_DATA_DIR=/tmp/cvl/nanogpt/data/shakespeare
 ./scripts/run_nanochat_all.sh
 ```
+
+## Toy visual benchmark (illustrative)
+
+The toy benchmark is intentionally didactic and produces optimizer trajectory
+animations in a 2D loss-landscape slice.
+
+```bash
+pip install -r toy/requirements.txt
+cd toy
+./run_toy_all.sh
+```
+
+Outputs go to `toy/outputs/`.
 
 ## Notes
 
