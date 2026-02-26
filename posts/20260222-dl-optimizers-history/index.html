@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-02-22">
+
+<title>A Tour of Deep Learning Optimizers – Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About this blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/zzsi"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/zhangzhangsi/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">A Tour of Deep Learning Optimizers</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">ai</div>
+                <div class="quarto-category">deep learning</div>
+                <div class="quarto-category">optimization</div>
+                <div class="quarto-category">llm</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 22, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#a-practical-mental-model" id="toc-a-practical-mental-model" class="nav-link active" data-scroll-target="#a-practical-mental-model">A practical mental model</a></li>
+  <li><a href="#s-to-2000s-foundations-that-never-went-away" id="toc-s-to-2000s-foundations-that-never-went-away" class="nav-link" data-scroll-target="#s-to-2000s-foundations-that-never-went-away">1960s to 2000s: foundations that never went away</a></li>
+  <li><a href="#to-2014-getting-deep-nets-to-train-at-all" id="toc-to-2014-getting-deep-nets-to-train-at-all" class="nav-link" data-scroll-target="#to-2014-getting-deep-nets-to-train-at-all">2010 to 2014: getting deep nets to train at all</a></li>
+  <li><a href="#to-2019-adam-wins-adamw-corrects" id="toc-to-2019-adam-wins-adamw-corrects" class="nav-link" data-scroll-target="#to-2019-adam-wins-adamw-corrects">2014 to 2019: Adam wins, AdamW corrects</a></li>
+  <li><a href="#to-2020-large-batch-pressure" id="toc-to-2020-large-batch-pressure" class="nav-link" data-scroll-target="#to-2020-large-batch-pressure">2017 to 2020: large-batch pressure</a></li>
+  <li><a href="#to-2023-curvature-approximation-at-scale" id="toc-to-2023-curvature-approximation-at-scale" class="nav-link" data-scroll-target="#to-2023-curvature-approximation-at-scale">2015 to 2023: curvature approximation at scale</a></li>
+  <li><a href="#to-2023-memory-and-systems-become-first-class" id="toc-to-2023-memory-and-systems-become-first-class" class="nav-link" data-scroll-target="#to-2023-memory-and-systems-become-first-class">2018 to 2023: memory and systems become first-class</a></li>
+  <li><a href="#to-2023-generalization-aware-and-tweak-heavy-era" id="toc-to-2023-generalization-aware-and-tweak-heavy-era" class="nav-link" data-scroll-target="#to-2023-generalization-aware-and-tweak-heavy-era">2020 to 2023: generalization-aware and tweak-heavy era</a></li>
+  <li><a href="#to-2025-geometry-returns" id="toc-to-2025-geometry-returns" class="nav-link" data-scroll-target="#to-2025-geometry-returns">2024 to 2025: geometry returns</a></li>
+  <li><a href="#late-2025-to-early-2026-conditioning-wave" id="toc-late-2025-to-early-2026-conditioning-wave" class="nav-link" data-scroll-target="#late-2025-to-early-2026-conditioning-wave">Late-2025 to early-2026: conditioning wave</a></li>
+  <li><a href="#what-won-in-practice-by-early-2026" id="toc-what-won-in-practice-by-early-2026" class="nav-link" data-scroll-target="#what-won-in-practice-by-early-2026">What won in practice by early 2026</a></li>
+  <li><a href="#why-optimizer-innovation-keeps-happening" id="toc-why-optimizer-innovation-keeps-happening" class="nav-link" data-scroll-target="#why-optimizer-innovation-keeps-happening">Why optimizer innovation keeps happening</a></li>
+  <li><a href="#practical-recipe-chooser-2025-to-early-2026" id="toc-practical-recipe-chooser-2025-to-early-2026" class="nav-link" data-scroll-target="#practical-recipe-chooser-2025-to-early-2026">Practical recipe chooser (2025 to early-2026)</a></li>
+  <li><a href="#toy-visual-check-didactic" id="toc-toy-visual-check-didactic" class="nav-link" data-scroll-target="#toy-visual-check-didactic">Toy visual check (didactic)</a></li>
+  <li><a href="#closing" id="toc-closing" class="nav-link" data-scroll-target="#closing">Closing</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>Optimizers are the control systems of deep learning. Architecture and data define what a model can represent, but the optimizer often determines whether training is stable, efficient, and reproducible.</p>
+<p>Looking back through early 2026, optimizer progress came in waves: acceleration, adaptivity, regularization fixes, large-scale systems pressure, and now conditioning-heavy geometric methods.</p>
+<p>This post is a practical historical tour: what changed, why it changed, and what still works as a default.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>AdamW is still the default</strong> for most deep learning training in early 2026 — LLMs, vision transformers, diffusion models.</li>
+<li><strong>SGD + momentum</strong> remains competitive for convolutional architectures with well-tuned schedules.</li>
+<li><strong>Conditioning-based methods</strong> (Muon, NorMuon, TEON, ARO) are the most active research frontier, showing promising gains at 1B+ scale but not yet displacing AdamW in documented production recipes.</li>
+<li><strong>Choosing the wrong optimizer — or misconfiguring the right one — can waste 10-30% of a training run’s compute budget.</strong> The payoff for getting this right scales with your training spend.</li>
+</ul>
+</div>
+</div>
+<section id="a-practical-mental-model" class="level2">
+<h2 class="anchored" data-anchor-id="a-practical-mental-model">A practical mental model</h2>
+<p>At step <code>t</code>, we convert stochastic gradient <code>g_t</code> into update <code>delta_theta_t</code>.</p>
+<p>Every optimizer is trying to balance four controls:</p>
+<ul>
+<li>Direction control: where to move.</li>
+<li>Step-size control: how far to move.</li>
+<li>Stability control: how to survive noise and curvature.</li>
+<li>Resource control: memory, compute, and communication cost.</li>
+</ul>
+<p>Most innovations can be grouped as:</p>
+<ol type="1">
+<li>Acceleration (<code>momentum</code>, <code>Nesterov</code>).</li>
+<li>Preconditioning (<code>AdaGrad</code>, <code>RMSProp</code>, <code>Adam</code>).</li>
+<li>Regularization-correct updates (<code>AdamW</code>).</li>
+<li>Large-scale stabilization (<code>LARS</code>, <code>LAMB</code>).</li>
+<li>Generalization-aware updates (<code>SAM</code>).</li>
+<li>Systems-efficient updates (<code>Adafactor</code>, low-precision states).</li>
+<li>Geometry-aware updates (natural-gradient lineage, Muon-style orthogonalization).</li>
+</ol>
+</section>
+<section id="s-to-2000s-foundations-that-never-went-away" class="level2">
+<h2 class="anchored" data-anchor-id="s-to-2000s-foundations-that-never-went-away">1960s to 2000s: foundations that never went away</h2>
+<p>The key ideas predate modern deep learning:</p>
+<ul>
+<li>Polyak momentum (heavy ball) reduced zig-zag behavior in narrow valleys (<a href="https://doi.org/10.1016/0041-5553(64)90137-5">Polyak, 1964</a>).</li>
+<li>Nesterov acceleration added look-ahead correction (<a href="https://www.mathnet.ru/eng/dan/v269/i3/p543">Nesterov, 1983</a>).</li>
+<li>Natural gradient reframed descent in information geometry (<a href="https://doi.org/10.1162/089976698300017746">Amari, 1998</a>).</li>
+</ul>
+<p>These ideas established the long-term pattern: smooth noisy gradients, respect curvature, and seek invariance.</p>
+</section>
+<section id="to-2014-getting-deep-nets-to-train-at-all" class="level2">
+<h2 class="anchored" data-anchor-id="to-2014-getting-deep-nets-to-train-at-all">2010 to 2014: getting deep nets to train at all</h2>
+<p>Early deep learning leaned on SGD + momentum because it was cheap and scalable, but tuning was fragile (<a href="https://proceedings.mlr.press/v28/sutskever13.html">Sutskever et al., 2013</a>).</p>
+<p>Adaptive methods arrived quickly:</p>
+<ul>
+<li>AdaGrad (2011): per-coordinate scaling, strong for sparse settings (<a href="https://jmlr.org/papers/v12/duchi11a.html">Duchi et al., 2011</a>).</li>
+<li>RMSProp (2012): moving second-moment estimate to avoid AdaGrad’s monotonic decay (<a href="https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf">Hinton lecture notes, 2012</a>).</li>
+<li>AdaDelta (2012): reduced global LR sensitivity (<a href="https://arxiv.org/abs/1212.5701">Zeiler, 2012</a>).</li>
+</ul>
+<p>By the end of this period, the design direction was clear: momentum-like smoothing plus adaptive scaling.</p>
+</section>
+<section id="to-2019-adam-wins-adamw-corrects" class="level2">
+<h2 class="anchored" data-anchor-id="to-2019-adam-wins-adamw-corrects">2014 to 2019: Adam wins, AdamW corrects</h2>
+<p>Adam became the default because it reduced tuning friction across workloads (<a href="https://arxiv.org/abs/1412.6980">Kingma and Ba, 2014</a>).</p>
+<p>Two important caveats emerged:</p>
+<ul>
+<li>Adam showed convergence pathologies in certain settings, which the AMSGrad fix addressed by tracking max second moments (<a href="https://openreview.net/forum?id=ryQu7f-RZ">Reddi et al., 2018</a>).</li>
+<li>Adding L2 regularization to the gradient (standard “weight decay” in Adam) is not equivalent to true weight decay under adaptive preconditioning.</li>
+</ul>
+<p>AdamW fixed the second issue by decoupling weight decay (<a href="https://arxiv.org/abs/1711.05101">Loshchilov and Hutter, 2017</a>). This was a small implementation change with outsized practical impact.</p>
+</section>
+<section id="to-2020-large-batch-pressure" class="level2">
+<h2 class="anchored" data-anchor-id="to-2020-large-batch-pressure">2017 to 2020: large-batch pressure</h2>
+<p>As batch sizes grew, optimization dynamics changed:</p>
+<ul>
+<li>LARS stabilized layer-wise relative updates for huge-batch CNNs (<a href="https://arxiv.org/abs/1708.03888">You et al., 2017</a>).</li>
+<li>LAMB brought trust-ratio ideas to Adam moments for large-batch language pretraining (<a href="https://arxiv.org/abs/1904.00962">You et al., 2019</a>).</li>
+</ul>
+<p>These methods solved throughput bottlenecks, even though AdamW remained the broad default.</p>
+</section>
+<section id="to-2023-curvature-approximation-at-scale" class="level2">
+<h2 class="anchored" data-anchor-id="to-2023-curvature-approximation-at-scale">2015 to 2023: curvature approximation at scale</h2>
+<p>Full second-order methods (computing the Hessian) are too expensive for large models. Two lines of work made curvature information practical:</p>
+<ul>
+<li>K-FAC approximated the Fisher information matrix with Kronecker-factored blocks, giving stronger preconditioning than Adam at modest extra cost (<a href="https://arxiv.org/abs/1503.05671">Martens and Grosse, 2015</a>).</li>
+<li>Shampoo extended this to per-block matrix preconditioners with scalable update rules (<a href="https://arxiv.org/abs/1802.09568">Gupta et al., 2018</a>).</li>
+</ul>
+<p>Neither became a broad default — the implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that structured preconditioning could outperform diagonal methods, and they are direct intellectual ancestors of the 2024-2026 conditioning wave.</p>
+</section>
+<section id="to-2023-memory-and-systems-become-first-class" class="level2">
+<h2 class="anchored" data-anchor-id="to-2023-memory-and-systems-become-first-class">2018 to 2023: memory and systems become first-class</h2>
+<p>At Transformer scale, optimizer state is expensive:</p>
+<ul>
+<li>Adafactor reduced second-moment memory with factorization (<a href="https://arxiv.org/abs/1804.04235">Shazeer and Stern, 2018</a>).</li>
+<li>8-bit optimizer states reduced memory pressure in practice (<a href="https://arxiv.org/abs/2110.02861">Dettmers et al., 2021</a>).</li>
+<li>Communication-aware variants targeted distributed bandwidth (<a href="https://arxiv.org/abs/2102.02888">Tang et al., 2021</a>).</li>
+</ul>
+<p>The best optimizer is not only mathematically elegant; it must fit systems constraints.</p>
+</section>
+<section id="to-2023-generalization-aware-and-tweak-heavy-era" class="level2">
+<h2 class="anchored" data-anchor-id="to-2023-generalization-aware-and-tweak-heavy-era">2020 to 2023: generalization-aware and tweak-heavy era</h2>
+<p>SAM made flatness bias explicit via a local worst-case objective (<a href="https://arxiv.org/abs/2010.01412">Foret et al., 2020</a>).</p>
+<p>Many variants (Lookahead, RAdam, AdaBelief, AdaBound) tuned warmup and update coupling (<a href="https://arxiv.org/abs/1907.08610">Lookahead</a>, <a href="https://arxiv.org/abs/1908.03265">RAdam</a>, <a href="https://arxiv.org/abs/2010.07468">AdaBelief</a>, <a href="https://arxiv.org/abs/1902.09843">AdaBound</a>). Some helped in niches, but few replaced AdamW/SGD defaults broadly.</p>
+<p>Lion added a search-discovered optimizer angle (<a href="https://arxiv.org/abs/2302.06675">Chen et al., 2023</a>).</p>
+</section>
+<section id="to-2025-geometry-returns" class="level2">
+<h2 class="anchored" data-anchor-id="to-2025-geometry-returns">2024 to 2025: geometry returns</h2>
+<p>Muon-style methods reframed the problem: instead of scaling each parameter independently (as Adam does), they orthogonalize the gradient update to reduce interference across dominant directions in weight matrices (<a href="https://github.com/KellerJordan/Muon">Muon implementation</a>, <a href="https://arxiv.org/abs/2410.21265">modular-duality framing</a>).</p>
+<p>The key insight is that diagonal preconditioning (Adam-family) ignores correlations between parameters within a layer. Structured preconditioning addresses this directly. Early results showed Muon scaling competitively to 1B+ parameters (<a href="https://arxiv.org/abs/2502.16982">Jordan et al., 2025</a>), with a simpler implementation surface than K-FAC or Shampoo.</p>
+<p>By end-2025, this looked promising but not universal. AdamW still dominated documented frontier recipes.</p>
+</section>
+<section id="late-2025-to-early-2026-conditioning-wave" class="level2">
+<h2 class="anchored" data-anchor-id="late-2025-to-early-2026-conditioning-wave">Late-2025 to early-2026: conditioning wave</h2>
+<p>A broader conditioning-focused wave followed, with several distinct approaches:</p>
+<p><strong>Layer-wise orthogonalization:</strong></p>
+<ul>
+<li>NorMuon: neuron-wise normalization on top of Muon, improving conditioning balance (<a href="https://arxiv.org/abs/2510.05491">2025</a>) <code>[1B+, open-source]</code></li>
+</ul>
+<p><strong>Conditioning + variance reduction:</strong></p>
+<ul>
+<li>MARS-M: combining variance reduction with matrix conditioning (<a href="https://arxiv.org/abs/2510.21800">2025</a>) <code>[theory, small-scale, open-source]</code></li>
+</ul>
+<p><strong>Scaling transfer:</strong></p>
+<ul>
+<li>Matrix-preconditioner hyperparameter transfer across scales, showing that conditioning gains persist when transferring optimizer configs from small to large runs (<a href="https://arxiv.org/abs/2512.05620">2025</a>) <code>[1B+, protocol]</code></li>
+</ul>
+<p><strong>Tensorized and rotated conditioning:</strong></p>
+<ul>
+<li>TEON: tensorized orthonormalization extending Muon beyond layer-wise structure (<a href="https://arxiv.org/abs/2601.23261">2026</a>) <code>[theory, 1B-range]</code></li>
+<li>ARO: adaptively rotated optimization in coordinate space (<a href="https://arxiv.org/abs/2602.09006">2026</a>) <code>[1B+, protocol]</code></li>
+</ul>
+<p>The shift: conditioning is becoming a primary design axis, not a side detail. Evidence labels above (<code>[1B+]</code>, <code>[theory]</code>, etc.) indicate maturity — most of these methods have open-source implementations but limited independent replication so far.</p>
+<p>Community reports (<a href="https://huggingface.co/blog/KingNish/optimizer-part1">Muon comparisons</a>, <a href="https://huggingface.co/blog/bird-of-paradise/reproducing-and-validating-distributed-muon">distributed Muon validation</a>) are useful early signals but should stay secondary to controlled evaluations.</p>
+</section>
+<section id="what-won-in-practice-by-early-2026" class="level2">
+<h2 class="anchored" data-anchor-id="what-won-in-practice-by-early-2026">What won in practice by early 2026</h2>
+<p>Defaults remain fairly stable:</p>
+<ul>
+<li>Frontier LLMs and VLMs (vision-language models): AdamW + warmup + decay + gradient clipping + selective decay exclusions.</li>
+<li>ViTs (Vision Transformers): AdamW.</li>
+<li>CNNs: SGD + momentum remains strong.</li>
+<li>Diffusion and flow-matching models: Adam/AdamW, often with EMA (exponential moving average of weights).</li>
+<li>LARS/LAMB: useful in specific extreme-batch throughput regimes.</li>
+</ul>
+</section>
+<section id="why-optimizer-innovation-keeps-happening" class="level2">
+<h2 class="anchored" data-anchor-id="why-optimizer-innovation-keeps-happening">Why optimizer innovation keeps happening</h2>
+<p>Three forces interact repeatedly:</p>
+<ul>
+<li>Theory pressure: invariance, stability, objective reformulation.</li>
+<li>Empirical pressure: fewer knobs, faster loss reduction on real workloads.</li>
+<li>Systems pressure: memory, interconnect, and runtime constraints.</li>
+</ul>
+<p>Methods that survive usually satisfy all three.</p>
+</section>
+<section id="practical-recipe-chooser-2025-to-early-2026" class="level2">
+<h2 class="anchored" data-anchor-id="practical-recipe-chooser-2025-to-early-2026">Practical recipe chooser (2025 to early-2026)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Setting</th>
+<th>First choice</th>
+<th>When to deviate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LLM/VLM pretraining</td>
+<td>AdamW + warmup/decay + clipping</td>
+<td>Try Muon/conditioning if stability or scaling efficiency is bottleneck</td>
+</tr>
+<tr class="even">
+<td>Vision CNN</td>
+<td>SGD + momentum + strong LR schedule</td>
+<td>Use AdamW for transformer-heavy stacks or faster early convergence</td>
+</tr>
+<tr class="odd">
+<td>ViT training</td>
+<td>AdamW</td>
+<td>Trial SAM or conditioning methods when plateaus appear</td>
+</tr>
+<tr class="even">
+<td>Diffusion/flow matching</td>
+<td>AdamW (+ EMA)</td>
+<td>Try Adafactor/low-precision states when memory dominates</td>
+</tr>
+<tr class="odd">
+<td>Extreme large-batch throughput</td>
+<td>LARS/LAMB</td>
+<td>Stay with AdamW if batch size is moderate and tuning budget is limited</td>
+</tr>
+</tbody>
+</table>
+<section id="starting-hyperparameters" class="level3">
+<h3 class="anchored" data-anchor-id="starting-hyperparameters">Starting hyperparameters</h3>
+<p>These are typical starting points, not universal optima. Always tune on your workload.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Optimizer</th>
+<th>Learning rate</th>
+<th>beta1, beta2</th>
+<th>Weight decay</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AdamW (LLM)</td>
+<td>1e-4 to 6e-4</td>
+<td>0.9, 0.95</td>
+<td>0.01 to 0.1</td>
+<td>Warmup 1-5% of steps, cosine decay</td>
+</tr>
+<tr class="even">
+<td>AdamW (ViT)</td>
+<td>1e-4 to 3e-4</td>
+<td>0.9, 0.999</td>
+<td>0.01 to 0.3</td>
+<td>Higher decay common with strong augmentation</td>
+</tr>
+<tr class="odd">
+<td>SGD + momentum (CNN)</td>
+<td>0.01 to 0.1</td>
+<td>momentum 0.9</td>
+<td>1e-4 to 5e-4</td>
+<td>Step or cosine LR schedule</td>
+</tr>
+<tr class="even">
+<td>Muon</td>
+<td>0.01 to 0.05</td>
+<td>0.9, —</td>
+<td>0.0 to 0.01</td>
+<td>Orthogonalization replaces some of weight decay’s role</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="fair-comparison-protocol" class="level3">
+<h3 class="anchored" data-anchor-id="fair-comparison-protocol">Fair comparison protocol</h3>
+<ol type="1">
+<li>Same model and tokenizer.</li>
+<li>Same token/image budget and data order.</li>
+<li>Matched tuning budget across optimizers.</li>
+<li>Report time-to-target, compute-to-target, and seed stability.</li>
+</ol>
+</section>
+</section>
+<section id="toy-visual-check-didactic" class="level2">
+<h2 class="anchored" data-anchor-id="toy-visual-check-didactic">Toy visual check (didactic)</h2>
+<p>A toy trajectory view is useful for building intuition before heavier benchmarks.</p>
+<p>The GIFs below show optimizer trajectories projected onto a 2D PCA slice of the loss landscape for a small spirals classification task (2-layer MLP, 120 epochs, seed 42, default learning rates). This is <strong>not</strong> a benchmark — it illustrates qualitative behavior.</p>
+<p>Adam trajectory:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../examples/optimizer-bench/toy/outputs/spirals_adam.gif" class="img-fluid figure-img" width="560"></p>
+<figcaption>Adam on spirals task: adaptive step sizes let it navigate the landscape efficiently. (120 epochs, lr=0.001, PCA projection)</figcaption>
+</figure>
+</div>
+<p>SGD trajectory:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../examples/optimizer-bench/toy/outputs/spirals_sgd.gif" class="img-fluid figure-img" width="560"></p>
+<figcaption>SGD on spirals task: fixed step size and momentum produce a wider trajectory with more oscillation. (120 epochs, lr=0.01, momentum=0.9, PCA projection)</figcaption>
+</figure>
+</div>
+<p>In this toy run, Adam reaches a lower-loss region faster than SGD under the same short budget. Treat this as intuition only — real optimizer decisions should rely on controlled comparisons at representative scale. Repro steps: <code>../../examples/optimizer-bench/toy/README.md</code>.</p>
+</section>
+<section id="closing" class="level2">
+<h2 class="anchored" data-anchor-id="closing">Closing</h2>
+<p>From heavy-ball momentum to conditioning-heavy methods, optimizer history is mostly a story of recurring constraints in new forms: curvature, noise, scale, and hardware budgets.</p>
+<p>By early 2026, AdamW is still the center of gravity. The next durable shift is likely to come from better directional control and structured conditioning — not just better scalar learning-rate heuristics. What to watch for in the rest of 2026:</p>
+<ul>
+<li>Whether conditioning methods (Muon-family, ARO, TEON) show consistent gains under independent replication at 10B+ scale.</li>
+<li>Whether hyperparameter transfer protocols make these methods practical without per-run tuning.</li>
+<li>Whether systems-level integration (fused kernels, native framework support) lowers the adoption barrier enough to challenge AdamW’s position as the safe default.</li>
+</ul>
+<p>The optimizer that wins next will not just be mathematically better — it will be easier to deploy correctly at scale.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/zzsi\.github\.io\/blog\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -1,39 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://zzsi.github.io/blog/posts/20260219-mcp-proprietary-data/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.714Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20250712-agentic-causal/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.714Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20240915-soccer-tracking/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.655Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.591Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.591Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/about.html</loc>
-    <lastmod>2026-02-22T03:55:20.581Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20240825-sustainable-future/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.593Z</lastmod>
-  </url>
-  <url>
-    <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.710Z</lastmod>
+    <loc>https://zzsi.github.io/blog/posts/20260222-dl-optimizers-history/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.991Z</lastmod>
   </url>
   <url>
     <loc>https://zzsi.github.io/blog/posts/20251030-coding-agents-spooky/index.html</loc>
-    <lastmod>2026-02-22T03:55:20.714Z</lastmod>
+    <lastmod>2026-02-26T20:52:21.990Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20241002-minisora-part1/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.986Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20230802-cloudrun-githubaction/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.872Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/about.html</loc>
+    <lastmod>2026-02-26T20:52:21.860Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20260222-dl-optimizers-history/notes.html</loc>
+    <lastmod>2026-02-26T20:52:21.991Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20260222-dl-optimizers-history/benchmarks.html</loc>
+    <lastmod>2026-02-26T20:52:21.990Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.872Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20240915-soccer-tracking/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.931Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20240825-sustainable-future/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.874Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20250712-agentic-causal/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.990Z</lastmod>
+  </url>
+  <url>
+    <loc>https://zzsi.github.io/blog/posts/20260219-mcp-proprietary-data/index.html</loc>
+    <lastmod>2026-02-26T20:52:21.990Z</lastmod>
   </url>
 </urlset>
