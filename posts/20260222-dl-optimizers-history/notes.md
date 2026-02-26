@@ -1,3 +1,7 @@
+---
+listing: false
+---
+
 # History of Deep Learning Optimizers (to 2025)
 
 This reference tracks how optimization methods evolved into the standard recipes used in modern deep learning.
