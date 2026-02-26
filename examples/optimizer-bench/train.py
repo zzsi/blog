@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import math
+import os
+import pickle
 import random
-from dataclasses import dataclass
 from typing import Any, Iterator
 
 import hydra
@@ -10,12 +11,11 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from datasets import load_dataset
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader, Dataset, Subset
 from torchvision import datasets as tv_datasets
 from torchvision import transforms
-from transformers import Adafactor, AutoTokenizer
+from transformers import Adafactor
 
 from optimizers import LAMB, MuonLite, SAM
 
@@ -93,40 +93,33 @@ class TinyCausalLm(nn.Module):
         return self.lm_head(x)
 
 
-class LmDataset(Dataset):
-    def __init__(self, token_chunks: list[list[int]]):
-        self.token_chunks = token_chunks
+class MemmapLmDataset(Dataset):
+    def __init__(self, data_path: str, block_size: int, num_examples: int, seed: int = 42):
+        self.data = np.memmap(data_path, dtype=np.uint16, mode="r")
+        self.block_size = int(block_size)
+        self.max_start = len(self.data) - self.block_size - 1
+        if self.max_start <= 0:
+            raise RuntimeError(
+                f"Not enough tokens in {data_path} for block_size={self.block_size}. "
+                f"Need at least {self.block_size + 2} tokens."
+            )
+        if num_examples <= 0:
+            raise RuntimeError("num_examples must be > 0 for memmap sampling.")
+        rng = np.random.default_rng(seed)
+        # Sampling with replacement keeps memory bounded and works for any corpus size.
+        self.starts = rng.integers(0, self.max_start, size=num_examples, endpoint=False)
 
     def __len__(self) -> int:
-        return len(self.token_chunks)
+        return len(self.starts)
 
     def __getitem__(self, idx: int) -> dict[str, torch.Tensor]:
-        ids = torch.tensor(self.token_chunks[idx], dtype=torch.long)
+        start = int(self.starts[idx])
+        chunk = np.asarray(self.data[start : start + self.block_size + 1], dtype=np.int64)
+        ids = torch.from_numpy(chunk)
         return {
             "input_ids": ids[:-1],
             "labels": ids[1:],
         }
-
-
-def _text_from_record(record: dict[str, Any], text_field: str) -> str:
-    if text_field != "auto" and text_field in record and isinstance(record[text_field], str):
-        return record[text_field]
-
-    candidate_keys = ["text", "content", "prompt", "response", "instruction"]
-    for key in candidate_keys:
-        val = record.get(key)
-        if isinstance(val, str) and val.strip():
-            return val
-
-    for val in record.values():
-        if isinstance(val, str) and val.strip():
-            return val
-        if isinstance(val, list):
-            parts = [v for v in val if isinstance(v, str) and v.strip()]
-            if parts:
-                return "\n".join(parts)
-
-    return ""
 
 
 def _batch_iter(loader: DataLoader) -> Iterator[Any]:
@@ -166,62 +159,58 @@ def load_cifar(cfg: DictConfig) -> tuple[nn.Module, DataLoader, DataLoader]:
     return model, train_loader, val_loader
 
 
-def load_nanochat(cfg: DictConfig) -> tuple[nn.Module, DataLoader, DataLoader]:
-    ds_train = load_dataset(cfg.task.hf_dataset, split=cfg.task.train_split)
-    ds_val = load_dataset(cfg.task.hf_dataset, split=cfg.task.val_split)
+def load_nanogpt_bin(cfg: DictConfig) -> tuple[nn.Module, DataLoader, DataLoader]:
+    data_dir = os.path.expanduser(str(cfg.task.data_dir))
+    train_bin = os.path.join(data_dir, "train.bin")
+    val_bin = os.path.join(data_dir, "val.bin")
+    meta_pkl = os.path.join(data_dir, "meta.pkl")
 
-    if cfg.task.train_subset > 0:
-        ds_train = ds_train.select(range(min(len(ds_train), cfg.task.train_subset)))
-    if cfg.task.val_subset > 0:
-        ds_val = ds_val.select(range(min(len(ds_val), cfg.task.val_subset)))
-
-    tokenizer = AutoTokenizer.from_pretrained("gpt2")
-    if tokenizer.eos_token_id is None:
-        raise RuntimeError("Tokenizer must provide eos_token_id")
-
-    block = int(cfg.task.block_size)
-
-    def build_chunks(ds) -> list[list[int]]:
-        chunks: list[list[int]] = []
-        for record in ds:
-            text = _text_from_record(record, cfg.task.text_field)
-            if not text:
-                continue
-            ids = tokenizer.encode(text, add_special_tokens=False)
-            if len(ids) < 2:
-                continue
-            ids = ids[: block * 8] + [tokenizer.eos_token_id]
-            start = 0
-            while start + block + 1 <= len(ids):
-                chunks.append(ids[start : start + block + 1])
-                start += block
-        return chunks
-
-    train_chunks = build_chunks(ds_train)
-    val_chunks = build_chunks(ds_val)
-
-    if not train_chunks or not val_chunks:
+    if not os.path.exists(train_bin) or not os.path.exists(val_bin):
         raise RuntimeError(
-            "No usable text chunks were built from nanochat. Adjust text_field or subset settings."
+            f"Expected train.bin and val.bin under {data_dir}. "
+            "Create them with a NanoGPT-style prepare.py first."
         )
 
+    block = int(cfg.task.block_size)
+    train_ds = MemmapLmDataset(
+        data_path=train_bin,
+        block_size=block,
+        num_examples=int(cfg.task.train_examples),
+        seed=int(cfg.seed),
+    )
+    val_ds = MemmapLmDataset(
+        data_path=val_bin,
+        block_size=block,
+        num_examples=int(cfg.task.val_examples),
+        seed=int(cfg.seed) + 1,
+    )
+
     train_loader = DataLoader(
-        LmDataset(train_chunks),
+        train_ds,
         batch_size=cfg.run.batch_size,
         shuffle=True,
         num_workers=cfg.run.num_workers,
         pin_memory=True,
     )
     val_loader = DataLoader(
-        LmDataset(val_chunks),
+        val_ds,
         batch_size=cfg.run.batch_size,
         shuffle=False,
         num_workers=cfg.run.num_workers,
         pin_memory=True,
     )
 
+    vocab_size = cfg.task.vocab_size
+    if str(vocab_size).lower() == "auto":
+        if os.path.exists(meta_pkl):
+            with open(meta_pkl, "rb") as f:
+                meta = pickle.load(f)
+            vocab_size = int(meta.get("vocab_size", 50257))
+        else:
+            vocab_size = 50257
+
     model = TinyCausalLm(
-        vocab_size=cfg.task.vocab_size,
+        vocab_size=int(vocab_size),
         model_dim=cfg.task.model_dim,
         num_layers=cfg.task.num_layers,
         num_heads=cfg.task.num_heads,
@@ -413,8 +402,8 @@ def main(cfg: DictConfig) -> None:
 
     if cfg.task.name == "cifar10":
         model, train_loader, val_loader = load_cifar(cfg)
-    elif cfg.task.name == "nanochat":
-        model, train_loader, val_loader = load_nanochat(cfg)
+    elif cfg.task.name == "nanogpt_bin":
+        model, train_loader, val_loader = load_nanogpt_bin(cfg)
     else:
         raise ValueError(f"Unknown task: {cfg.task.name}")
 
