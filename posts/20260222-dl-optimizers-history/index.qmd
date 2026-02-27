@@ -36,7 +36,7 @@ In notation: at step $t$, the optimizer converts gradient $g_t$ into update $\De
 
 ## Visual intuition
 
-Here's a quick look at what an optimizer actually does, through two examples. The model below is a small 2-layer neural network trained on a toy classification task (120 epochs, seed 42). It has a few hundred parameters — far too many dimensions to visualize directly. To make the trajectory visible, we use PCA to project the model's parameters at each training step down to a single 2D point. The surface shows the loss landscape in that projected plane.
+Here's a quick look at what an optimizer actually does, through two examples. The task is classifying points from two interleaved spirals — a simple 2D dataset, but one where the decision boundary is non-trivial. The model is a small 2-layer neural network with a few hundred parameters. To visualize the training trajectory, we use PCA to project the model's parameters at each training step down to a single 2D point. The surface shows the loss landscape in that projected plane.
 
 ![Adam navigates the loss landscape with shorter, more directed steps — its per-coordinate scaling adapts to the local curvature.](assets/spirals_adam.gif){fig-align="center" width="560px"}
 
@@ -48,15 +48,19 @@ Visualizations generated with [loss-landscape-anim](https://github.com/logancyan
 
 ## 1960s to 2000s: foundations that never went away
 
-The key ideas predate modern deep learning:
+In classical optimization, Newton's method converges fast by using the full curvature of the loss surface (the Hessian). But the Hessian for a model with $n$ parameters is an $n \times n$ matrix — for a 7B-parameter model, that's unthinkable. Plain gradient descent avoids this cost but converges slowly on ill-conditioned problems. The entire history of deep learning optimizers lives in the gap between those two extremes: get some of Newton's speed without Newton's cost.
 
-- Polyak momentum (heavy ball) reduced zig-zag behavior in narrow valleys by accumulating a velocity term ([Polyak, 1964](https://doi.org/10.1016/0041-5553(64)90137-5)):
+The first key ideas predate modern deep learning:
+
+- Polyak momentum (heavy ball) reduced zig-zag behavior in narrow valleys by accumulating a velocity term $v$ ([Polyak, 1964](https://doi.org/10.1016/0041-5553(64)90137-5)). Instead of stepping directly in the gradient direction, each update blends the current gradient with the previous velocity — so the optimizer builds up speed in consistent directions and dampens oscillations in noisy ones:
 
 $$
-v_{t+1} = \beta\, v_t + g_t,\qquad \theta_{t+1} = \theta_t - \eta\, v_{t+1}.
+v_{t+1} = \beta\, v_t + g_t,\qquad \theta_{t+1} = \theta_t - \eta\, v_{t+1}, \qquad v_0 = 0.
 $$
 
-- Nesterov acceleration improved on this by evaluating the gradient at a look-ahead position $\theta_t - \eta\beta\, v_t$ rather than at $\theta_t$ itself ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)).
+  Here $\beta \in [0, 1)$ controls how much history to keep. With $\beta = 0$ this reduces to plain gradient descent.
+
+- Nesterov acceleration improved on this by evaluating the gradient at a look-ahead position $\theta_t - \eta\beta\, v_t$ rather than at $\theta_t$ itself — effectively correcting for where momentum is already taking you ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)).
 - Natural gradient reframed descent in information geometry ([Amari, 1998](https://doi.org/10.1162/089976698300017746)).
 
 Momentum smoothed noisy gradients, Nesterov improved convergence speed, and natural gradient sought invariance to parameterization. Together they set the long-term agenda — and defined a tension that recurs throughout this story: conditioning quality versus operational cost.
