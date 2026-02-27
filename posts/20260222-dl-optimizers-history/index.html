@@ -177,19 +177,18 @@ window.Quarto = {
    
   <ul class="collapse">
   <li><a href="#mental-model" id="toc-mental-model" class="nav-link active" data-scroll-target="#mental-model">Mental model</a></li>
+  <li><a href="#visual-intuition" id="toc-visual-intuition" class="nav-link" data-scroll-target="#visual-intuition">Visual intuition</a></li>
   <li><a href="#s-to-2000s-foundations-that-never-went-away" id="toc-s-to-2000s-foundations-that-never-went-away" class="nav-link" data-scroll-target="#s-to-2000s-foundations-that-never-went-away">1960s to 2000s: foundations that never went away</a></li>
   <li><a href="#to-2014-getting-deep-nets-to-train-at-all" id="toc-to-2014-getting-deep-nets-to-train-at-all" class="nav-link" data-scroll-target="#to-2014-getting-deep-nets-to-train-at-all">2010 to 2014: getting deep nets to train at all</a></li>
   <li><a href="#to-2019-adam-wins-adamw-corrects" id="toc-to-2019-adam-wins-adamw-corrects" class="nav-link" data-scroll-target="#to-2019-adam-wins-adamw-corrects">2014 to 2019: Adam wins, AdamW corrects</a></li>
-  <li><a href="#to-2020-large-batch-pressure" id="toc-to-2020-large-batch-pressure" class="nav-link" data-scroll-target="#to-2020-large-batch-pressure">2017 to 2020: large-batch pressure</a></li>
   <li><a href="#to-2023-curvature-approximation-at-scale" id="toc-to-2023-curvature-approximation-at-scale" class="nav-link" data-scroll-target="#to-2023-curvature-approximation-at-scale">2015 to 2023: curvature approximation at scale</a></li>
+  <li><a href="#to-2020-large-batch-pressure" id="toc-to-2020-large-batch-pressure" class="nav-link" data-scroll-target="#to-2020-large-batch-pressure">2017 to 2020: large-batch pressure</a></li>
   <li><a href="#to-2023-memory-and-systems-become-first-class" id="toc-to-2023-memory-and-systems-become-first-class" class="nav-link" data-scroll-target="#to-2023-memory-and-systems-become-first-class">2018 to 2023: memory and systems become first-class</a></li>
   <li><a href="#to-2023-generalization-aware-and-tweak-heavy-era" id="toc-to-2023-generalization-aware-and-tweak-heavy-era" class="nav-link" data-scroll-target="#to-2023-generalization-aware-and-tweak-heavy-era">2020 to 2023: generalization-aware and tweak-heavy era</a></li>
   <li><a href="#to-2025-geometry-returns" id="toc-to-2025-geometry-returns" class="nav-link" data-scroll-target="#to-2025-geometry-returns">2024 to 2025: geometry returns</a></li>
   <li><a href="#late-2025-to-early-2026-conditioning-wave" id="toc-late-2025-to-early-2026-conditioning-wave" class="nav-link" data-scroll-target="#late-2025-to-early-2026-conditioning-wave">Late-2025 to early-2026: conditioning wave</a></li>
   <li><a href="#what-won-in-practice-by-early-2026" id="toc-what-won-in-practice-by-early-2026" class="nav-link" data-scroll-target="#what-won-in-practice-by-early-2026">What won in practice by early 2026</a></li>
-  <li><a href="#why-optimizer-innovation-keeps-happening" id="toc-why-optimizer-innovation-keeps-happening" class="nav-link" data-scroll-target="#why-optimizer-innovation-keeps-happening">Why optimizer innovation keeps happening</a></li>
   <li><a href="#recipe-chooser-2025-to-early-2026" id="toc-recipe-chooser-2025-to-early-2026" class="nav-link" data-scroll-target="#recipe-chooser-2025-to-early-2026">Recipe chooser (2025 to early-2026)</a></li>
-  <li><a href="#toy-visual-check-didactic" id="toc-toy-visual-check-didactic" class="nav-link" data-scroll-target="#toy-visual-check-didactic">Toy visual check (didactic)</a></li>
   <li><a href="#closing" id="toc-closing" class="nav-link" data-scroll-target="#closing">Closing</a></li>
   </ul>
 </nav>
@@ -201,9 +200,8 @@ window.Quarto = {
 
 
 
-<p>Optimizers are the control systems of deep learning. Architecture and data define what a model can represent, but the optimizer often determines whether training is stable, efficient, and reproducible.</p>
-<p>Looking back through early 2026, optimizer progress came in waves: acceleration, adaptivity, regularization fixes, large-scale systems pressure, and now conditioning-heavy geometric methods.</p>
-<p>This post is a historical tour: what changed, why it changed, and what still works as a default.</p>
+<p>Optimizers are the most consequential part of deep learning that most practitioners never examine closely. You pick one, set a few hyperparameters, and move on.</p>
+<p>That trust is mostly earned. AdamW has been the safe bet for years. But optimizers have a long, eventful history, and the landscape is shifting again. This post traces how we got here, what actually changed at each stage, and where it’s heading.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -224,38 +222,48 @@ TL;DR
 </div>
 <section id="mental-model" class="level2">
 <h2 class="anchored" data-anchor-id="mental-model">Mental model</h2>
-<p>At step <span class="math inline">\(t\)</span>, training turns a stochastic gradient <span class="math inline">\(g_t\)</span> into a parameter update <span class="math inline">\(\Delta \theta_t\)</span>:</p>
-<p><span class="math display">\[
-\theta_{t+1} = \theta_t + \Delta \theta_t.
-\]</span></p>
-<p>Every optimizer is trying to balance four controls:</p>
+<p>The goal of training is to find model parameters that minimize error on the data. Backpropagation computes the gradient — a direction that tells each parameter how to change to reduce the loss. But that gradient comes from a mini-batch, not the full dataset, so it’s noisy. The optimizer decides what to actually do with it: how far to step, how to smooth out the noise, and what to remember from previous steps.</p>
+<p>Those decisions break into four controls:</p>
 <ul>
-<li>Direction control: where to move.</li>
-<li>Step-size control: how far to move.</li>
-<li>Stability control: how to survive noise and curvature.</li>
-<li>Resource control: memory, compute, and communication cost.</li>
+<li><strong>Direction</strong>: where to move.</li>
+<li><strong>Step size</strong>: how far.</li>
+<li><strong>Stability</strong>: how to survive noise and curvature.</li>
+<li><strong>Resource cost</strong>: memory, compute, and communication.</li>
 </ul>
-<p>Most innovations can be grouped as:</p>
-<ol type="1">
-<li>Acceleration (momentum, Nesterov).</li>
-<li>Preconditioning (AdaGrad, RMSProp, Adam).</li>
-<li>Regularization-correct updates (AdamW).</li>
-<li>Large-scale stabilization (LARS, LAMB).</li>
-<li>Generalization-aware updates (SAM).</li>
-<li>Systems-efficient updates (Adafactor, low-precision states).</li>
-<li>Geometry-aware updates (natural-gradient lineage, Muon-style orthogonalization).</li>
-</ol>
-<p>The rest of the post follows this lens: each optimizer wave solved one bottleneck, then exposed the next one.</p>
+<p>In notation: at step <span class="math inline">\(t\)</span>, the optimizer converts gradient <span class="math inline">\(g_t\)</span> into update <span class="math inline">\(\Delta \theta_t\)</span>. Most of the history below is about doing that conversion better. Each wave solved one bottleneck, then exposed the next one.</p>
+</section>
+<section id="visual-intuition" class="level2">
+<h2 class="anchored" data-anchor-id="visual-intuition">Visual intuition</h2>
+<p>Here’s a quick look at what an optimizer actually does, through two examples. The model below is a small 2-layer neural network trained on a toy classification task (120 epochs, seed 42). It has a few hundred parameters — far too many dimensions to visualize directly. To make the trajectory visible, we use PCA to project the model’s parameters at each training step down to a single 2D point. The surface shows the loss landscape in that projected plane.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/spirals_adam.gif" class="img-fluid figure-img" width="560"></p>
+<figcaption>Adam navigates the loss landscape with shorter, more directed steps — its per-coordinate scaling adapts to the local curvature.</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="assets/spirals_sgd.gif" class="img-fluid figure-img" width="560"></p>
+<figcaption>SGD+momentum takes a wider, more oscillatory path — it uses a single global step size and relies on momentum to dampen the zig-zagging.</figcaption>
+</figure>
+</div>
+<p>In this toy task, Adam converges faster. That’s not always the case — SGD + momentum with a well-tuned schedule often generalizes better, especially for convolutional architectures.</p>
+<p>Visualizations generated with <a href="https://github.com/logancyang/loss-landscape-anim">loss-landscape-anim</a>. <a href="../../examples/optimizer-bench/toy/README.md">Repro steps and code</a>.</p>
 </section>
 <section id="s-to-2000s-foundations-that-never-went-away" class="level2">
 <h2 class="anchored" data-anchor-id="s-to-2000s-foundations-that-never-went-away">1960s to 2000s: foundations that never went away</h2>
 <p>The key ideas predate modern deep learning:</p>
 <ul>
-<li>Polyak momentum (heavy ball) reduced zig-zag behavior in narrow valleys (<a href="https://doi.org/10.1016/0041-5553(64)90137-5">Polyak, 1964</a>).</li>
-<li>Nesterov acceleration added look-ahead correction (<a href="https://www.mathnet.ru/eng/dan/v269/i3/p543">Nesterov, 1983</a>).</li>
+<li>Polyak momentum (heavy ball) reduced zig-zag behavior in narrow valleys by accumulating a velocity term (<a href="https://doi.org/10.1016/0041-5553(64)90137-5">Polyak, 1964</a>):</li>
+</ul>
+<p><span class="math display">\[
+v_{t+1} = \beta\, v_t + g_t,\qquad \theta_{t+1} = \theta_t - \eta\, v_{t+1}.
+\]</span></p>
+<ul>
+<li>Nesterov acceleration improved on this by evaluating the gradient at a look-ahead position <span class="math inline">\(\theta_t - \eta\beta\, v_t\)</span> rather than at <span class="math inline">\(\theta_t\)</span> itself (<a href="https://www.mathnet.ru/eng/dan/v269/i3/p543">Nesterov, 1983</a>).</li>
 <li>Natural gradient reframed descent in information geometry (<a href="https://doi.org/10.1162/089976698300017746">Amari, 1998</a>).</li>
 </ul>
-<p>These ideas established the long-term pattern: smooth noisy gradients, respect curvature, and seek invariance. They also defined the core tension that still exists today: better conditioning usually costs more compute or implementation complexity.</p>
+<p>Momentum smoothed noisy gradients, Nesterov improved convergence speed, and natural gradient sought invariance to parameterization. Together they set the long-term agenda — and defined a tension that recurs throughout this story: conditioning quality versus operational cost.</p>
 </section>
 <section id="to-2014-getting-deep-nets-to-train-at-all" class="level2">
 <h2 class="anchored" data-anchor-id="to-2014-getting-deep-nets-to-train-at-all">2010 to 2014: getting deep nets to train at all</h2>
@@ -288,15 +296,6 @@ v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2,\quad
 \theta_{t+1} = (1-\eta\lambda)\theta_t + \Delta\theta_t^{\text{adam}}.
 \]</span></p>
 </section>
-<section id="to-2020-large-batch-pressure" class="level2">
-<h2 class="anchored" data-anchor-id="to-2020-large-batch-pressure">2017 to 2020: large-batch pressure</h2>
-<p>As batch sizes grew, optimization dynamics changed:</p>
-<ul>
-<li>LARS stabilized layer-wise relative updates for huge-batch CNNs (<a href="https://arxiv.org/abs/1708.03888">You et al., 2017</a>).</li>
-<li>LAMB brought trust-ratio ideas to Adam moments for large-batch language pretraining (<a href="https://arxiv.org/abs/1904.00962">You et al., 2019</a>).</li>
-</ul>
-<p>These methods solved throughput bottlenecks, even though AdamW remained the broad default. The key lesson was systems-driven: at scale, optimizer choice is partly a hardware-efficiency decision, not only a convergence decision.</p>
-</section>
 <section id="to-2023-curvature-approximation-at-scale" class="level2">
 <h2 class="anchored" data-anchor-id="to-2023-curvature-approximation-at-scale">2015 to 2023: curvature approximation at scale</h2>
 <p>Full second-order methods (computing the Hessian) are too expensive for large models. Two lines of work made curvature information practical:</p>
@@ -304,52 +303,78 @@ v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2,\quad
 <li>K-FAC approximated the Fisher information matrix with Kronecker-factored blocks, giving stronger preconditioning than Adam at modest extra cost (<a href="https://arxiv.org/abs/1503.05671">Martens and Grosse, 2015</a>).</li>
 <li>Shampoo extended this to per-block matrix preconditioners with scalable update rules (<a href="https://arxiv.org/abs/1802.09568">Gupta et al., 2018</a>).</li>
 </ul>
-<p>Neither became a broad default — the implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that structured preconditioning could outperform diagonal methods, and they are direct intellectual ancestors of the 2024-2026 conditioning wave. This lineage matters because modern conditioning-based methods reuse the same motivation with simpler operational surfaces.</p>
+<p>Neither became a broad default — the implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that structured preconditioning could outperform diagonal methods. That lineage matters: the 2024-2026 conditioning wave reuses the same motivation with simpler operational surfaces.</p>
+</section>
+<section id="to-2020-large-batch-pressure" class="level2">
+<h2 class="anchored" data-anchor-id="to-2020-large-batch-pressure">2017 to 2020: large-batch pressure</h2>
+<p>As batch sizes grew, optimization dynamics changed. The naive fix — scale the learning rate linearly with batch size — breaks down because different layers have different gradient magnitudes. A single global learning rate either over-updates some layers or under-updates others.</p>
+<ul>
+<li>LARS solved this with layer-wise trust ratios: scale each layer’s update by the ratio of weight norm to gradient norm (<a href="https://arxiv.org/abs/1708.03888">You et al., 2017</a>).</li>
+<li>LAMB brought the same idea to Adam-style moments for large-batch language pretraining (<a href="https://arxiv.org/abs/1904.00962">You et al., 2019</a>).</li>
+</ul>
+<p>These methods solved throughput bottlenecks, even though AdamW remained the broad default. The key lesson was systems-driven: at scale, optimizer choice is partly a hardware-efficiency decision, not only a convergence decision.</p>
 </section>
 <section id="to-2023-memory-and-systems-become-first-class" class="level2">
 <h2 class="anchored" data-anchor-id="to-2023-memory-and-systems-become-first-class">2018 to 2023: memory and systems become first-class</h2>
-<p>At Transformer scale, optimizer state is expensive:</p>
+<p>At Transformer scale, optimizer state is expensive. Adam stores two extra fp32 tensors per parameter (first and second moments), so optimizer state alone is 2x the model size — about 56 GB for a 7B-parameter model.</p>
 <ul>
 <li>Adafactor reduced second-moment memory with factorization (<a href="https://arxiv.org/abs/1804.04235">Shazeer and Stern, 2018</a>).</li>
 <li>8-bit optimizer states reduced memory pressure in practice (<a href="https://arxiv.org/abs/2110.02861">Dettmers et al., 2021</a>).</li>
 <li>Communication-aware variants targeted distributed bandwidth (<a href="https://arxiv.org/abs/2102.02888">Tang et al., 2021</a>).</li>
 </ul>
-<p>The best optimizer is not only mathematically elegant; it must fit systems constraints. For many, this systems constraint is exactly why AdamW kept winning despite stronger niche alternatives.</p>
+<p>The best optimizer is not only mathematically elegant; it must fit systems constraints. For many teams, this is why AdamW kept winning despite stronger niche alternatives.</p>
 </section>
 <section id="to-2023-generalization-aware-and-tweak-heavy-era" class="level2">
 <h2 class="anchored" data-anchor-id="to-2023-generalization-aware-and-tweak-heavy-era">2020 to 2023: generalization-aware and tweak-heavy era</h2>
-<p>SAM made flatness bias explicit via a local worst-case objective (<a href="https://arxiv.org/abs/2010.01412">Foret et al., 2020</a>).</p>
+<p>SAM (Sharpness-Aware Minimization) penalizes sharp minima by optimizing for the worst-case loss in a small neighborhood around the current parameters — the idea being that flatter minima tend to generalize better (<a href="https://arxiv.org/abs/2010.01412">Foret et al., 2020</a>):</p>
+<p><span class="math display">\[
+\min_\theta \max_{\|\epsilon\| \le \rho} \mathcal{L}(\theta + \epsilon).
+\]</span></p>
+<p>In practice, the inner max is approximated with a single gradient ascent step: <span class="math inline">\(\hat\epsilon = \rho\, g / \|g\|\)</span>, then the model is updated using the gradient at <span class="math inline">\(\theta + \hat\epsilon\)</span>.</p>
 <p>Many variants (Lookahead, RAdam, AdaBelief, AdaBound) tuned warmup and update coupling (<a href="https://arxiv.org/abs/1907.08610">Lookahead</a>, <a href="https://arxiv.org/abs/1908.03265">RAdam</a>, <a href="https://arxiv.org/abs/2010.07468">AdaBelief</a>, <a href="https://arxiv.org/abs/1902.09843">AdaBound</a>). Some helped in niches, but few replaced AdamW/SGD defaults broadly.</p>
-<p>Lion added a search-discovered optimizer angle (<a href="https://arxiv.org/abs/2302.06675">Chen et al., 2023</a>). This period broadened the search space but did not produce a universal AdamW replacement.</p>
+<p>Lion used the sign of a momentum-like term as the update — discovered through automated program search rather than manual design (<a href="https://arxiv.org/abs/2302.06675">Chen et al., 2023</a>). It validated optimizer design as a search problem, though it did not displace AdamW broadly.</p>
 </section>
 <section id="to-2025-geometry-returns" class="level2">
 <h2 class="anchored" data-anchor-id="to-2025-geometry-returns">2024 to 2025: geometry returns</h2>
-<p>Muon-style methods reframed the problem: instead of scaling each parameter independently (as Adam does), they orthogonalize the gradient update to reduce interference across dominant directions in weight matrices (<a href="https://github.com/KellerJordan/Muon">Muon implementation</a>, <a href="https://arxiv.org/abs/2410.21265">modular-duality framing</a>).</p>
-<p>The key insight is that diagonal preconditioning (Adam-family) ignores correlations between parameters within a layer. Structured preconditioning addresses this directly. Early results showed Muon scaling competitively to 1B+ parameters (<a href="https://arxiv.org/abs/2502.16982">Jordan et al., 2025</a>), with a simpler implementation surface than K-FAC or Shampoo.</p>
+<p>Muon-style methods reframed the problem. Adam scales each parameter independently — it doesn’t account for how parameters within a layer interact. In practice, a few dominant directions in the weight matrix can hog the update while others are neglected. Muon reshapes the gradient to spread the update more evenly across directions (<a href="https://github.com/KellerJordan/Muon">Muon implementation</a>, <a href="https://arxiv.org/abs/2410.21265">modular-duality framing</a>).</p>
+<p>The key operation is polar decomposition. For a gradient matrix <span class="math inline">\(G\)</span>, any matrix can be decomposed as <span class="math inline">\(G = U S\)</span> where <span class="math inline">\(U\)</span> is orthogonal and <span class="math inline">\(S\)</span> is symmetric positive semi-definite. Muon uses <span class="math inline">\(U\)</span> — the orthogonal factor — as the update direction:</p>
+<p><span class="math display">\[
+\Delta\theta = -\eta\, \text{polar}(G), \quad \text{where } \text{polar}(G) = G\,(G^\top G)^{-1/2}.
+\]</span></p>
+<p>This ensures the update has equal magnitude across all directions, preventing any single direction from dominating. In practice, the matrix inverse square root is approximated cheaply using a few iterations of Newton-Schulz, avoiding the cost of a full SVD.</p>
+<p>Early results showed Muon scaling competitively to 1B+ parameters (<a href="https://arxiv.org/abs/2502.16982">Jordan et al., 2025</a>), with a simpler implementation surface than K-FAC or Shampoo.</p>
 <p>By end-2025, this looked promising but not universal. AdamW still dominated documented frontier recipes. So the open question entering 2026 became replication at larger scales, not just first-paper wins.</p>
 </section>
 <section id="late-2025-to-early-2026-conditioning-wave" class="level2">
 <h2 class="anchored" data-anchor-id="late-2025-to-early-2026-conditioning-wave">Late-2025 to early-2026: conditioning wave</h2>
-<p>A broader conditioning-focused wave followed, with several distinct approaches:</p>
-<p><strong>Layer-wise orthogonalization:</strong></p>
-<ul>
-<li>NorMuon: neuron-wise normalization on top of Muon, improving conditioning balance (<a href="https://arxiv.org/abs/2510.05491">2025</a>) <code>[1B+, open-source]</code></li>
-</ul>
-<p><strong>Conditioning + variance reduction:</strong></p>
-<ul>
-<li>MARS-M: combining variance reduction with matrix conditioning (<a href="https://arxiv.org/abs/2510.21800">2025</a>) <code>[theory, small-scale, open-source]</code></li>
-</ul>
-<p><strong>Scaling transfer:</strong></p>
-<ul>
-<li>Matrix-preconditioner hyperparameter transfer across scales, showing that conditioning gains persist when transferring optimizer configs from small to large runs (<a href="https://arxiv.org/abs/2512.05620">2025</a>) <code>[1B+, protocol]</code></li>
-</ul>
-<p><strong>Tensorized and rotated conditioning:</strong></p>
-<ul>
-<li>TEON: tensorized orthonormalization extending Muon beyond layer-wise structure (<a href="https://arxiv.org/abs/2601.23261">2026</a>) <code>[theory, 1B-range]</code></li>
-<li>ARO: adaptively rotated optimization in coordinate space (<a href="https://arxiv.org/abs/2602.09006">2026</a>) <code>[1B+, protocol]</code></li>
-</ul>
+<p>A broader conditioning-focused wave followed. All of these methods share a common structure: transform the gradient <span class="math inline">\(G\)</span> through some structured preconditioner <span class="math inline">\(P\)</span> before updating:</p>
+<p><span class="math display">\[
+\Delta\theta = -\eta\, P(G).
+\]</span></p>
+<p>In base Muon, <span class="math inline">\(P(G) = \text{polar}(G)\)</span>. The new methods modify what goes into <span class="math inline">\(P\)</span>, what <span class="math inline">\(P\)</span> does, or what happens after:</p>
+<p><strong>NorMuon</strong> adds per-neuron adaptive scaling <em>after</em> orthogonalization. It tracks a row-wise running second moment of the orthogonalized update <span class="math inline">\(O_t = \text{polar}(M_t)\)</span>, then normalizes each row by its own RMS (<a href="https://arxiv.org/abs/2510.05491">2025</a>) <code>[1B+, open-source]</code>:</p>
+<p><span class="math display">\[
+v_t = \beta_2\, v_{t-1} + (1-\beta_2)\,\text{mean}_{\text{cols}}(O_t \odot O_t), \qquad \hat{O}_t = O_t \,/\, (\sqrt{v_t} + \epsilon).
+\]</span></p>
+<p>This is essentially Adam-style adaptive scaling, but applied per neuron to the post-orthogonalization update rather than per element to the raw gradient.</p>
+<p><strong>MARS-M</strong> modifies what goes <em>into</em> the Muon pipeline. It replaces the raw stochastic gradient with a variance-reduced estimator before momentum and orthogonalization (<a href="https://arxiv.org/abs/2510.21800">2025</a>) <code>[theory, small-scale, open-source]</code>:</p>
+<p><span class="math display">\[
+C_t = \nabla f(\theta_t, \xi_t) + \gamma_t \tfrac{\beta}{1-\beta}\bigl[\nabla f(\theta_t, \xi_t) - \nabla f(\theta_{t-1}, \xi_t)\bigr].
+\]</span></p>
+<p>The correction term uses the <em>same</em> mini-batch <span class="math inline">\(\xi_t\)</span> at both the current and previous iterate, reducing the variance of the momentum estimate at the cost of one extra gradient evaluation per step.</p>
+<p><strong>Hyperparameter transfer for matrix preconditioners</strong> showed that conditioning gains persist when transferring optimizer configs from small to large runs, making these methods more practical to tune (<a href="https://arxiv.org/abs/2512.05620">2025</a>) <code>[1B+, protocol]</code>.</p>
+<p><strong>TEON</strong> changes the <em>structure</em> of the orthogonalization. Where Muon orthogonalizes each layer’s gradient independently, TEON stacks <span class="math inline">\(K\)</span> same-shape layer gradients into a tensor, unfolds along a chosen mode, and orthogonalizes the unfolded matrix (<a href="https://arxiv.org/abs/2601.23261">2026</a>) <code>[theory, 1B-range]</code>:</p>
+<p><span class="math display">\[
+\mathcal{O}_i(\mathcal{G}) = \mathcal{M}_i^{-1}\!\bigl(\text{polar}\bigl(\mathcal{M}_i(\mathcal{G})\bigr)\bigr),
+\]</span></p>
+<p>where <span class="math inline">\(\mathcal{M}_i\)</span> is the mode-<span class="math inline">\(i\)</span> matricization (unfolding) of the stacked tensor <span class="math inline">\(\mathcal{G} \in \mathbb{R}^{m \times n \times K}\)</span>. This captures cross-layer correlations that per-layer Muon misses.</p>
+<p><strong>ARO</strong> changes the <em>coordinate system</em> in which the optimizer operates. It selects an adaptive rotation <span class="math inline">\(R_t\)</span> that maximizes instantaneous loss decrease, rather than using the gradient’s own eigenstructure (<a href="https://arxiv.org/abs/2602.09006">2026</a>) <code>[1B+, protocol]</code>:</p>
+<p><span class="math display">\[
+\Delta W_t = -\eta\, R_t\, f_t(R_t^\top M_t), \qquad R_t = \text{QR}\!\bigl(M_t\, f_t(R_{t-1}^\top M_t)^\top\bigr).
+\]</span></p>
+<p>The rotation at step <span class="math inline">\(t\)</span> depends on the previous step’s rotated projection, creating a feedback loop between the rotation and the base optimizer. Base Muon is a special case where <span class="math inline">\(R_t\)</span> is fixed to the eigenvectors of <span class="math inline">\(M_t M_t^\top\)</span>.</p>
 <p>The shift: conditioning is becoming a primary design axis, not a side detail. Evidence labels above (<code>[1B+]</code>, <code>[theory]</code>, etc.) indicate maturity — most of these methods have open-source implementations but limited independent replication so far.</p>
-<p>Community reports (<a href="https://huggingface.co/blog/KingNish/optimizer-part1">Muon comparisons</a>, <a href="https://huggingface.co/blog/bird-of-paradise/reproducing-and-validating-distributed-muon">distributed Muon validation</a>) are useful early signals but should stay secondary to controlled evaluations. That distinction helps avoid overfitting decisions to anecdotal runs.</p>
+<p>Community reports (<a href="https://huggingface.co/blog/KingNish/optimizer-part1">Muon comparisons</a>, <a href="https://huggingface.co/blog/bird-of-paradise/reproducing-and-validating-distributed-muon">distributed Muon validation</a>) are useful early signals, though controlled evaluations remain more reliable before committing to large-scale runs.</p>
 </section>
 <section id="what-won-in-practice-by-early-2026" class="level2">
 <h2 class="anchored" data-anchor-id="what-won-in-practice-by-early-2026">What won in practice by early 2026</h2>
@@ -361,16 +386,6 @@ v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2,\quad
 <li>Diffusion and flow-matching models: Adam/AdamW, often with EMA (exponential moving average of weights).</li>
 <li>LARS/LAMB: useful in specific extreme-batch throughput regimes.</li>
 </ul>
-</section>
-<section id="why-optimizer-innovation-keeps-happening" class="level2">
-<h2 class="anchored" data-anchor-id="why-optimizer-innovation-keeps-happening">Why optimizer innovation keeps happening</h2>
-<p>Three forces interact repeatedly:</p>
-<ul>
-<li>Theory pressure: invariance, stability, objective reformulation.</li>
-<li>Empirical pressure: fewer knobs, faster loss reduction on real workloads.</li>
-<li>Systems pressure: memory, interconnect, and runtime constraints.</li>
-</ul>
-<p>Methods that survive usually satisfy all three.</p>
 </section>
 <section id="recipe-chooser-2025-to-early-2026" class="level2">
 <h2 class="anchored" data-anchor-id="recipe-chooser-2025-to-early-2026">Recipe chooser (2025 to early-2026)</h2>
@@ -477,29 +492,9 @@ v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2,\quad
 </ol>
 </section>
 </section>
-<section id="toy-visual-check-didactic" class="level2">
-<h2 class="anchored" data-anchor-id="toy-visual-check-didactic">Toy visual check (didactic)</h2>
-<p>A toy trajectory view is useful for building intuition before heavier benchmarks.</p>
-<p>The GIFs below show optimizer trajectories projected onto a 2D PCA slice of the loss landscape for a small spirals classification task (2-layer MLP, 120 epochs, seed 42, default learning rates). This is <strong>not</strong> a benchmark — it illustrates qualitative behavior.</p>
-<p>Adam trajectory:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="assets/spirals_adam.gif" class="img-fluid figure-img" width="560"></p>
-<figcaption>Adam on a toy loss landscape: adaptive per-coordinate scaling yields a smoother, more direct trajectory.</figcaption>
-</figure>
-</div>
-<p>SGD trajectory:</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="assets/spirals_sgd.gif" class="img-fluid figure-img" width="560"></p>
-<figcaption>SGD+Momentum on the same toy landscape: fixed global scaling leads to wider oscillation before settling.</figcaption>
-</figure>
-</div>
-<p>In this toy run, Adam reaches a lower-loss region faster than SGD under the same short budget. Treat this as intuition only — real optimizer decisions should rely on controlled comparisons at representative scale. Repro steps: <code>../../examples/optimizer-bench/toy/README.md</code>.</p>
-</section>
 <section id="closing" class="level2">
 <h2 class="anchored" data-anchor-id="closing">Closing</h2>
-<p>From heavy-ball momentum to conditioning-heavy methods, optimizer history is mostly a story of recurring constraints in new forms: curvature, noise, scale, and hardware budgets.</p>
+<p>From heavy-ball momentum to conditioning-heavy methods, optimizer history is mostly a story of recurring constraints in new forms: curvature, noise, scale, and hardware budgets. Innovation keeps happening because three forces — theory (invariance, stability), empirical pressure (fewer knobs, faster convergence), and systems constraints (memory, interconnect) — keep interacting. Methods that survive usually satisfy all three.</p>
 <p>By early 2026, AdamW is still the center of gravity. The next durable shift is likely to come from better directional control and structured conditioning — not just better scalar learning-rate heuristics. What to watch for in the rest of 2026:</p>
 <ul>
 <li>Whether conditioning methods (Muon-family, ARO, TEON) show consistent gains under independent replication at 10B+ scale.</li>
