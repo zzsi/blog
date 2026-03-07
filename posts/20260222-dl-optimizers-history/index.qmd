@@ -153,10 +153,16 @@ $$
 
   Here $\eta$ is the learning rate (step size), and $\beta \in [0, 1)$ controls how much history to keep. With $\beta = 0$ this reduces to plain gradient descent.
 
-- Nesterov acceleration ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)) observed that standard momentum commits to a direction before seeing the gradient there. The fix: compute the gradient at a look-ahead position $\theta_t - \eta\beta\, v_t$, where momentum is already taking you, then correct course. In practice this means the optimizer "peeks ahead" before stepping, which reduces overshooting and improves convergence on smooth objectives. Nesterov momentum appears in many high-performing SGD recipes today.
-- Natural gradient ([Amari, 1998](https://doi.org/10.1162/089976698300017746)) addressed a different problem: standard gradient descent depends on how you parameterize the model. Amari proposed using the Fisher information matrix to define steepest descent in the space of distributions rather than the space of parameters. This makes the update invariant to reparameterization. The cost is prohibitive for large models (the Fisher is as expensive as the Hessian), but the idea directly inspired the scalable approximations K-FAC and Shampoo that appear later in this story.
+- Nesterov acceleration ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)) observed that standard momentum commits to a direction before seeing the gradient there. The fix: compute the gradient at a look-ahead position $\theta_t - \eta\beta\, v_t$, where momentum is already taking you, then correct course:
 
-Momentum smoothed noisy gradients, Nesterov improved convergence speed, and natural gradient sought invariance to parameterization. Together they set the long-term agenda, and defined a tension that recurs throughout this story: conditioning quality versus operational cost.
+$$
+v_{t+1} = \beta\, v_t + \nabla f(\theta_t - \eta\beta\, v_t), \qquad \theta_{t+1} = \theta_t - \eta\, v_{t+1}.
+$$
+
+  Compare with Polyak momentum above: the only change is where the gradient is evaluated. Instead of $\nabla f(\theta_t)$, we use $\nabla f(\theta_t - \eta\beta\, v_t)$. This "peek ahead" reduces overshooting and improves convergence on smooth objectives. Nesterov momentum appears in many high-performing SGD recipes today.
+- Natural gradient ([Amari, 1998](https://doi.org/10.1162/089976698300017746)) addressed a different problem: standard gradient descent depends on how you parameterize the model. Amari proposed using the Fisher information matrix to define steepest descent in the space of distributions rather than the space of parameters. This makes the update invariant to reparameterization. The cost is prohibitive for large models (the Fisher is as expensive as the Hessian), but the idea directly inspired the scalable approximations K-FAC and Shampoo that appear later.
+
+All three pointed in the same direction: a better-informed step is worth extra compute, up to a point. Finding that point is the recurring tension of optimizer design, and the rest of this post is largely about where different eras drew the line.
 
 ## 2010 to 2014: getting deep nets to train at all
 
@@ -164,14 +170,27 @@ Early deep learning leaned on SGD + momentum because it was cheap and scalable, 
 
 In practice, engineers could train deeper models, but only with careful learning-rate schedules and a lot of trial and error.
 
-Adaptive methods arrived quickly:
+Adaptive methods arrived quickly, each one fixing a limitation of the last:
 
-- AdaGrad (2011): per-coordinate scaling, strong for sparse settings ([Duchi et al., 2011](https://jmlr.org/papers/v12/duchi11a.html)).
-- RMSProp (2012): moving second-moment estimate to avoid AdaGrad's monotonic decay ([Hinton lecture notes, 2012](https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)).
-- AdaDelta (2012): reduced global LR sensitivity ([Zeiler, 2012](https://arxiv.org/abs/1212.5701)).
+- **AdaGrad** (2011) addressed a specific problem: in sparse settings (e.g. NLP with large vocabularies), rare features receive too-small updates under a single global learning rate. AdaGrad scales each parameter by the inverse square root of its accumulated squared gradients ([Duchi et al., 2011](https://jmlr.org/papers/v12/duchi11a.html)):
 
-By the end of this period, the design direction was clear: momentum-like smoothing plus adaptive scaling.
-That combination set up Adam's rapid adoption in the next wave.
+$$
+h_t = h_{t-1} + g_t^2, \qquad \Delta\theta_t = -\frac{\eta}{\sqrt{h_t} + \epsilon}\, g_t.
+$$
+
+  Parameters with consistently large gradients get smaller steps; rare-but-informative parameters get larger ones. The weakness: $h_t$ only grows, so effective step sizes shrink monotonically. For long training runs on deep nets, learning can stall.
+
+- **RMSProp** (2012) fixed this by replacing the cumulative sum with an exponential moving average, so old gradients are forgotten ([Hinton lecture notes, 2012](https://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf)):
+
+$$
+h_t = \rho\, h_{t-1} + (1-\rho)\, g_t^2, \qquad \Delta\theta_t = -\frac{\eta}{\sqrt{h_t} + \epsilon}\, g_t.
+$$
+
+  With $\rho$ typically around 0.9, the denominator adapts to recent curvature rather than all of history. RMSProp became a practical default and the direct precursor to Adam.
+
+- **AdaDelta** (2012) took a different approach: it eliminated the global learning rate entirely by normalizing updates using a running average of past updates, not just past gradients ([Zeiler, 2012](https://arxiv.org/abs/1212.5701)). Less common today, but it showed that the learning rate itself could be made adaptive.
+
+By the end of this period, the design direction was clear: momentum-like smoothing plus per-parameter adaptive scaling. That combination set up Adam's rapid adoption in the next wave.
 
 ## 2014 to 2019: Adam wins, AdamW corrects
 
