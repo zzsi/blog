@@ -250,7 +250,7 @@ Figure&nbsp;1: The two interleaved spirals dataset. Each class follows an Archim
 </div>
 </div>
 <p>The model is a small 2-layer neural network: 2 inputs, two hidden layers of 64 units with ReLU activations, and a 2-class softmax output (about 4,500 parameters total).</p>
-<div id="cell-fig-nn-arch" class="cell" data-fig-height="3" data-fig-width="8" data-execution_count="2">
+<div id="cell-fig-nn-arch" class="cell" data-fig-height="3" data-fig-width="10" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div id="fig-nn-arch" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -278,7 +278,7 @@ Figure&nbsp;2: Architecture of the 2-layer network used for the spirals task.
 </figure>
 </div>
 <p>In this toy task, Adam converges faster. That’s not always the case; SGD + momentum with a well-tuned schedule often generalizes better, especially for convolutional architectures.</p>
-<p>Visualizations generated with <a href="https://github.com/logancyang/loss-landscape-anim">loss-landscape-anim</a>. <a href="../../examples/optimizer-bench/toy/README.md">Repro steps and code</a>.</p>
+<p><a href="https://github.com/zzsi/blog/tree/main/examples/optimizer-bench/toy">Repro steps and code</a>.</p>
 </section>
 <section id="s-to-2000s-foundations-that-never-went-away" class="level2">
 <h2 class="anchored" data-anchor-id="s-to-2000s-foundations-that-never-went-away">1960s to 2000s: foundations that never went away</h2>
@@ -290,10 +290,10 @@ Figure&nbsp;2: Architecture of the 2-layer network used for the spirals task.
 <p><span class="math display">\[
 v_{t+1} = \beta\, v_t + g_t,\qquad \theta_{t+1} = \theta_t - \eta\, v_{t+1}, \qquad v_0 = 0.
 \]</span></p>
-<p>Here <span class="math inline">\(\beta \in [0, 1)\)</span> controls how much history to keep. With <span class="math inline">\(\beta = 0\)</span> this reduces to plain gradient descent.</p>
+<p>Here <span class="math inline">\(\eta\)</span> is the learning rate (step size), and <span class="math inline">\(\beta \in [0, 1)\)</span> controls how much history to keep. With <span class="math inline">\(\beta = 0\)</span> this reduces to plain gradient descent.</p>
 <ul>
-<li>Nesterov acceleration improved on this by evaluating the gradient at a look-ahead position <span class="math inline">\(\theta_t - \eta\beta\, v_t\)</span> rather than at <span class="math inline">\(\theta_t\)</span> itself, effectively correcting for where momentum is already taking you (<a href="https://www.mathnet.ru/eng/dan/v269/i3/p543">Nesterov, 1983</a>).</li>
-<li>Natural gradient reframed descent in information geometry (<a href="https://doi.org/10.1162/089976698300017746">Amari, 1998</a>).</li>
+<li>Nesterov acceleration (<a href="https://www.mathnet.ru/eng/dan/v269/i3/p543">Nesterov, 1983</a>) observed that standard momentum commits to a direction before seeing the gradient there. The fix: compute the gradient at a look-ahead position <span class="math inline">\(\theta_t - \eta\beta\, v_t\)</span>, where momentum is already taking you, then correct course. In practice this means the optimizer “peeks ahead” before stepping, which reduces overshooting and improves convergence on smooth objectives. Nesterov momentum appears in many high-performing SGD recipes today.</li>
+<li>Natural gradient (<a href="https://doi.org/10.1162/089976698300017746">Amari, 1998</a>) addressed a different problem: standard gradient descent depends on how you parameterize the model. Amari proposed using the Fisher information matrix to define steepest descent in the space of distributions rather than the space of parameters. This makes the update invariant to reparameterization. The cost is prohibitive for large models (the Fisher is as expensive as the Hessian), but the idea directly inspired the scalable approximations K-FAC and Shampoo that appear later in this story.</li>
 </ul>
 <p>Momentum smoothed noisy gradients, Nesterov improved convergence speed, and natural gradient sought invariance to parameterization. Together they set the long-term agenda, and defined a tension that recurs throughout this story: conditioning quality versus operational cost.</p>
 </section>
