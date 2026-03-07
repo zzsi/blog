@@ -77,20 +77,20 @@ The model is a small 2-layer neural network: 2 inputs, two hidden layers of 64 u
 #| label: fig-nn-arch
 #| fig-cap: "Architecture of the 2-layer network used for the spirals task."
 #| echo: false
-#| fig-width: 8
+#| fig-width: 10
 #| fig-height: 3
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-fig, ax = plt.subplots(figsize=(8, 3))
+fig, ax = plt.subplots(figsize=(10, 3))
 
 layer_sizes = [2, 6, 6, 2]  # representative nodes (actual: 2, 64, 64, 2)
 layer_labels = ['Input\n(2)', 'Hidden 1\n(64, ReLU)', 'Hidden 2\n(64, ReLU)', 'Output\n(2, softmax)']
 layer_colors = ['#a8d5e2', '#95d5b2', '#95d5b2', '#f4a261']
-x_positions = [0.15, 0.38, 0.62, 0.85]
+x_positions = [0.12, 0.37, 0.63, 0.88]
 
-node_radius = 0.06
+node_radius = 0.05
 y_center = 0.55
 
 # Draw edges first (behind nodes)
@@ -137,7 +137,7 @@ To visualize the training trajectory, we project the model's parameters at each 
 
 In this toy task, Adam converges faster. That's not always the case; SGD + momentum with a well-tuned schedule often generalizes better, especially for convolutional architectures.
 
-Visualizations generated with [loss-landscape-anim](https://github.com/logancyang/loss-landscape-anim). [Repro steps and code](../../examples/optimizer-bench/toy/README.md).
+[Repro steps and code](https://github.com/zzsi/blog/tree/main/examples/optimizer-bench/toy).
 
 ## 1960s to 2000s: foundations that never went away
 
@@ -151,10 +151,10 @@ $$
 v_{t+1} = \beta\, v_t + g_t,\qquad \theta_{t+1} = \theta_t - \eta\, v_{t+1}, \qquad v_0 = 0.
 $$
 
-  Here $\beta \in [0, 1)$ controls how much history to keep. With $\beta = 0$ this reduces to plain gradient descent.
+  Here $\eta$ is the learning rate (step size), and $\beta \in [0, 1)$ controls how much history to keep. With $\beta = 0$ this reduces to plain gradient descent.
 
-- Nesterov acceleration improved on this by evaluating the gradient at a look-ahead position $\theta_t - \eta\beta\, v_t$ rather than at $\theta_t$ itself, effectively correcting for where momentum is already taking you ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)).
-- Natural gradient reframed descent in information geometry ([Amari, 1998](https://doi.org/10.1162/089976698300017746)).
+- Nesterov acceleration ([Nesterov, 1983](https://www.mathnet.ru/eng/dan/v269/i3/p543)) observed that standard momentum commits to a direction before seeing the gradient there. The fix: compute the gradient at a look-ahead position $\theta_t - \eta\beta\, v_t$, where momentum is already taking you, then correct course. In practice this means the optimizer "peeks ahead" before stepping, which reduces overshooting and improves convergence on smooth objectives. Nesterov momentum appears in many high-performing SGD recipes today.
+- Natural gradient ([Amari, 1998](https://doi.org/10.1162/089976698300017746)) addressed a different problem: standard gradient descent depends on how you parameterize the model. Amari proposed using the Fisher information matrix to define steepest descent in the space of distributions rather than the space of parameters. This makes the update invariant to reparameterization. The cost is prohibitive for large models (the Fisher is as expensive as the Hessian), but the idea directly inspired the scalable approximations K-FAC and Shampoo that appear later in this story.
 
 Momentum smoothed noisy gradients, Nesterov improved convergence speed, and natural gradient sought invariance to parameterization. Together they set the long-term agenda, and defined a tension that recurs throughout this story: conditioning quality versus operational cost.
 
