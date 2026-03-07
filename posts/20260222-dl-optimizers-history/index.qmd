@@ -194,59 +194,77 @@ By the end of this period, the design direction was clear: momentum-like smoothi
 
 ## 2014 to 2019: Adam wins, AdamW corrects
 
-Adam became the default because it reduced tuning friction across workloads ([Kingma and Ba, 2014](https://arxiv.org/abs/1412.6980)).
+Adam became the default because its out-of-the-box hyperparameters worked reasonably well across tasks, with much less tuning than SGD required ([Kingma and Ba, 2014](https://arxiv.org/abs/1412.6980)).
 
-Its core update combines first and second moments:
+The idea: combine momentum (a running average of gradients, like Polyak) with per-parameter scaling (a running average of squared gradients, like RMSProp). Note: $v_t$ here is the second moment estimate, unrelated to the velocity $v$ in momentum above.
 
 $$
-m_t=\beta_1 m_{t-1}+(1-\beta_1)g_t,\quad
-v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2,\quad
+m_t=\beta_1 m_{t-1}+(1-\beta_1)g_t,\qquad
+v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2.
+$$
+
+Because $m_t$ and $v_t$ are initialized at zero, they are biased toward zero in early steps. Adam corrects for this with $\hat{m}_t = m_t / (1-\beta_1^t)$ and $\hat{v}_t = v_t / (1-\beta_2^t)$. The update is then:
+
+$$
 \Delta\theta_t=-\eta\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
 $$
 
+The denominator $\sqrt{\hat{v}_t}$ adapts the step size per parameter: dimensions with large gradients get smaller steps, and vice versa. Typical defaults ($\beta_1=0.9$, $\beta_2=0.999$, $\eta=10^{-3}$) worked well enough that many practitioners never changed them.
+
 Two important caveats emerged:
 
-- Adam showed convergence pathologies in certain settings, which the AMSGrad fix addressed by tracking max second moments ([Reddi et al., 2018](https://openreview.net/forum?id=ryQu7f-RZ)).
-- Adding L2 regularization to the gradient (standard "weight decay" in Adam) is not equivalent to true weight decay under adaptive preconditioning.
+- Adam showed convergence pathologies in certain settings: the adaptive step size could increase at the wrong time, preventing convergence. AMSGrad fixed this by tracking the running *maximum* of $\hat{v}_t$, ensuring effective learning rates never increase ([Reddi et al., 2018](https://openreview.net/forum?id=ryQu7f-RZ)). This was an important theoretical clarification, though in practice the next fix had more impact.
+- Adding L2 regularization to the gradient (the standard way to implement "weight decay" in Adam) is not equivalent to true weight decay. The problem: when you add $\lambda\theta$ to the gradient and then divide by $\sqrt{\hat{v}_t}$, the regularization gets scaled differently for each parameter. Parameters with large gradients get *less* regularization than intended, and parameters with small gradients get *more*.
 
-AdamW fixed the second issue by decoupling weight decay ([Loshchilov and Hutter, 2017](https://arxiv.org/abs/1711.05101)). This was a small implementation change with large impact in real training runs.
-With decoupling, shrinkage is explicit:
+AdamW fixed the second issue by decoupling weight decay from the adaptive update ([Loshchilov and Hutter, 2017](https://arxiv.org/abs/1711.05101)). Instead of adding regularization to the gradient, it shrinks the weights directly after the Adam step:
 
 $$
 \theta_{t+1} = (1-\eta\lambda)\theta_t + \Delta\theta_t^{\text{adam}}.
 $$
 
-## 2015 to 2023: curvature approximation at scale
+This was a small implementation change, but it made weight decay behave as intended regardless of the adaptive scaling. AdamW became the standard for Transformers and most modern architectures.
 
-Full second-order methods (computing the Hessian) are too expensive for large models. Two lines of work made curvature information practical:
+## 2015 to 2023: beyond Adam on multiple fronts
 
-- K-FAC approximated the Fisher information matrix with Kronecker-factored blocks, giving stronger preconditioning than Adam at modest extra cost ([Martens and Grosse, 2015](https://arxiv.org/abs/1503.05671)).
-- Shampoo extended this to per-block matrix preconditioners with scalable update rules ([Gupta et al., 2018](https://arxiv.org/abs/1802.09568)).
+After Adam became the default, several parallel lines of work tried to improve on it along different axes. These developed concurrently, not sequentially.
+
+### Curvature approximation
+
+Full second-order methods (computing the Hessian) are too expensive for large models. But the idea of using *some* curvature information, cheaply, motivated two important lines of work.
+
+**K-FAC** approximated the Fisher information matrix using Kronecker factorization ([Martens and Grosse, 2015](https://arxiv.org/abs/1503.05671)). The key insight: for a layer with input activations $a$ and output gradients $g$, the Fisher block can be approximated as $F \approx (aa^\top) \otimes (gg^\top)$, a Kronecker product of two much smaller matrices. Instead of storing and inverting a huge $n \times n$ matrix, you store and invert two matrices of size (input dim) and (output dim) separately. This gives stronger preconditioning than Adam's diagonal scaling, at a fraction of full second-order cost.
+
+**Shampoo** generalized this idea to per-block matrix preconditioners that don't require the Fisher structure ([Gupta et al., 2018](https://arxiv.org/abs/1802.09568)). For a weight matrix $W \in \mathbb{R}^{m \times n}$, Shampoo maintains left and right preconditioners $L \in \mathbb{R}^{m \times m}$ and $R \in \mathbb{R}^{n \times n}$, and updates with $L^{-1/4} G\, R^{-1/4}$. This captures cross-parameter correlations that Adam's per-element scaling misses.
 
 Neither became a broad default. The implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that structured preconditioning could outperform diagonal methods. That lineage matters: the 2024-2026 conditioning wave reuses the same motivation with simpler operational surfaces.
 
-## 2017 to 2020: large-batch pressure
+### Large-batch training
 
 As batch sizes grew, optimization dynamics changed. The naive fix, scaling the learning rate linearly with batch size, breaks down because different layers have different gradient magnitudes. A single global learning rate either over-updates some layers or under-updates others.
 
-- LARS solved this with layer-wise trust ratios: scale each layer's update by the ratio of weight norm to gradient norm ([You et al., 2017](https://arxiv.org/abs/1708.03888)).
-- LAMB brought the same idea to Adam-style moments for large-batch language pretraining ([You et al., 2019](https://arxiv.org/abs/1904.00962)).
+LARS solved this with a layer-wise trust ratio ([You et al., 2017](https://arxiv.org/abs/1708.03888)). For each layer $l$, the local learning rate is scaled by the ratio of weight norm to gradient norm:
 
-These methods solved throughput bottlenecks, even though AdamW remained the broad default.
-The key lesson was systems-driven: at scale, optimizer choice is partly a hardware-efficiency decision, not only a convergence decision.
+$$
+\eta_l = \eta \cdot \frac{\|w_l\|}{\|g_l\|}.
+$$
 
-## 2018 to 2023: memory and systems become first-class
+Layers with small weights relative to their gradients get smaller steps, preventing them from being blown up by an aggressive global rate. LAMB brought the same idea to Adam-style moments for large-batch language pretraining, enabling large-batch BERT training ([You et al., 2019](https://arxiv.org/abs/1904.00962)).
+
+These methods solved throughput bottlenecks, even though AdamW remained the broad default. The lesson: at scale, optimizer choice is partly a hardware-efficiency decision, not only a convergence decision.
+
+### Memory and systems
 
 At Transformer scale, optimizer state is expensive. Adam stores two extra fp32 tensors per parameter (first and second moments), so optimizer state alone is 2x the model size, about 56 GB for a 7B-parameter model.
 
-- Adafactor reduced second-moment memory with factorization ([Shazeer and Stern, 2018](https://arxiv.org/abs/1804.04235)).
-- 8-bit optimizer states reduced memory pressure in practice ([Dettmers et al., 2021](https://arxiv.org/abs/2110.02861)).
-- Communication-aware variants targeted distributed bandwidth ([Tang et al., 2021](https://arxiv.org/abs/2102.02888)).
+**Adafactor** addressed second-moment memory by factorizing it ([Shazeer and Stern, 2018](https://arxiv.org/abs/1804.04235)). Adam stores a full second-moment matrix $v_t$ with the same shape as each parameter. For a weight matrix $W \in \mathbb{R}^{m \times n}$, Adafactor instead stores row and column statistics $r_t \in \mathbb{R}^m$ and $c_t \in \mathbb{R}^n$, and reconstructs the second moment as their outer product: $\hat{v}_t \approx r_t\, c_t^\top / \text{mean}(r_t)$. This reduces memory from $O(mn)$ to $O(m+n)$ per matrix parameter, which was critical for scaling T5-class models.
 
-The best optimizer is not only mathematically elegant; it must fit systems constraints.
-For many teams, this is why AdamW kept winning despite stronger niche alternatives.
+**8-bit optimizer states** took a different approach: keep Adam's algorithm but quantize $m_t$ and $v_t$ to 8-bit integers with dynamic scaling, cutting state memory by roughly 75% with near-identical training behavior ([Dettmers et al., 2021](https://arxiv.org/abs/2110.02861)). This is now common in finetuning workflows.
 
-## 2020 to 2023: generalization-aware and tweak-heavy era
+**Communication-aware variants** like 1-bit Adam targeted distributed bandwidth by compressing the information exchanged between workers during training ([Tang et al., 2021](https://arxiv.org/abs/2102.02888)).
+
+The best optimizer is not only mathematically elegant; it must fit systems constraints. For many teams, this is why AdamW kept winning despite stronger niche alternatives.
+
+### Generalization and search
 
 SAM (Sharpness-Aware Minimization) penalizes sharp minima by optimizing for the worst-case loss in a small neighborhood around the current parameters, the idea being that flatter minima tend to generalize better ([Foret et al., 2020](https://arxiv.org/abs/2010.01412)):
 
