@@ -329,7 +329,7 @@ h_t = \rho\, h_{t-1} + (1-\rho)\, g_t^2, \qquad \Delta\theta_t = -\frac{\eta}{\s
 m_t=\beta_1 m_{t-1}+(1-\beta_1)g_t,\qquad
 v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2.
 \]</span></p>
-<p>Because <span class="math inline">\(m_t\)</span> and <span class="math inline">\(v_t\)</span> are initialized at zero, they are biased toward zero in early steps. Adam corrects for this with <span class="math inline">\(\hat{m}_t = m_t / (1-\beta_1^t)\)</span> and <span class="math inline">\(\hat{v}_t = v_t / (1-\beta_2^t)\)</span>. The update is then:</p>
+<p>Because <span class="math inline">\(m_t\)</span> and <span class="math inline">\(v_t\)</span> are initialized at zero, they are biased toward zero in early steps. Adam corrects for this by dividing by <span class="math inline">\((1-\beta_1^t)\)</span> and <span class="math inline">\((1-\beta_2^t)\)</span>, where the exponent <span class="math inline">\(t\)</span> is the step number (e.g.&nbsp;at step 10 with <span class="math inline">\(\beta_1=0.9\)</span>, the correction is <span class="math inline">\(1/(1-0.9^{10}) \approx 1.54\)</span>). The bias-corrected estimates are <span class="math inline">\(\hat{m}_t = m_t / (1-\beta_1^t)\)</span> and <span class="math inline">\(\hat{v}_t = v_t / (1-\beta_2^t)\)</span>. The update is then:</p>
 <p><span class="math display">\[
 \Delta\theta_t=-\eta\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
 \]</span></p>
