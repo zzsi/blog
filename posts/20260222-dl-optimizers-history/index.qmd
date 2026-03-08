@@ -253,7 +253,7 @@ Neither became a broad default. The implementation complexity and tuning overhea
 
 ### Large-batch training
 
-As batch sizes grew, optimization dynamics changed. The naive fix, scaling the learning rate linearly with batch size, breaks down because different layers have different gradient magnitudes. A single global learning rate either over-updates some layers or under-updates others.
+Larger batches give more accurate gradient estimates (less noise from mini-batch sampling), so in principle you can take larger steps. The standard fix is linear scaling: multiply the learning rate by $k$ when you multiply the batch size by $k$. But this breaks down in practice because different layers have different gradient magnitudes. A single global scaling factor either over-updates some layers or under-updates others.
 
 LARS solved this with a layer-wise trust ratio ([You et al., 2017](https://arxiv.org/abs/1708.03888)). For each layer $l$, the local learning rate is scaled by the ratio of weight norm to gradient norm:
 
@@ -263,7 +263,9 @@ $$
 
 Layers with small weights relative to their gradients get smaller steps, preventing them from being blown up by an aggressive global rate. LAMB brought the same idea to Adam-style moments for large-batch language pretraining, enabling large-batch BERT training ([You et al., 2019](https://arxiv.org/abs/1904.00962)).
 
-These methods solved throughput bottlenecks, even though AdamW remained the broad default. The lesson: at scale, optimizer choice is partly a hardware-efficiency decision, not only a convergence decision.
+LARS and LAMB themselves did not become standard in frontier LLM or diffusion model training. The community settled on AdamW with careful scheduling instead. The specific legacy of this work is narrower: **the insight that different layers need different effective learning rates**. Muon and the conditioning methods in the next sections address this same per-layer imbalance, just through orthogonalization rather than trust ratios.
+
+(Two other ingredients now standard in frontier training, learning rate warmup and gradient clipping, are sometimes associated with large-batch research but have their own origins: warmup was already used in the original Transformer paper ([Vaswani et al., 2017](https://arxiv.org/abs/1706.03762)), and gradient clipping was introduced for exploding gradients in RNNs ([Pascanu et al., 2013](https://arxiv.org/abs/1211.5063)).)
 
 ### Memory and systems
 
