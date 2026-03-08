@@ -203,13 +203,17 @@ m_t=\beta_1 m_{t-1}+(1-\beta_1)g_t,\qquad
 v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2.
 $$
 
-Because $m_t$ and $v_t$ are initialized at zero, they are biased toward zero in early steps. Adam corrects for this by dividing by $(1-\beta_1^t)$ and $(1-\beta_2^t)$, where the exponent $t$ is the step number (e.g. at step 10 with $\beta_1=0.9$, the correction is $1/(1-0.9^{10}) \approx 1.54$). The bias-corrected estimates are $\hat{m}_t = m_t / (1-\beta_1^t)$ and $\hat{v}_t = v_t / (1-\beta_2^t)$. The update is then:
+Notice the $(1-\beta)$ weighting on the current gradient. Polyak momentum accumulates gradients ($v \leftarrow \beta v + g$), so its magnitude scales as roughly $1/(1-\beta)$: change $\beta$ and you need to retune the learning rate. Adam uses exponential moving averages (EMAs) instead, so $m_t$ stays on the same scale as individual gradients regardless of $\beta_1$. This decouples the smoothing decision (how many past steps to blend) from the step-size decision (how far to move).
+
+That normalization enables Adam's core insight. After bias correction ($\hat{m}_t = m_t / (1-\beta_1^t)$ and $\hat{v}_t = v_t / (1-\beta_2^t)$, where the exponent $t$ is the step number), the update is:
 
 $$
 \Delta\theta_t=-\eta\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
 $$
 
-The denominator $\sqrt{\hat{v}_t}$ adapts the step size per parameter: dimensions with large gradients get smaller steps, and vice versa. Typical defaults ($\beta_1=0.9$, $\beta_2=0.999$, $\eta=10^{-3}$) worked well enough that many practitioners never changed them.
+The ratio $\hat{m}_t / \sqrt{\hat{v}_t}$ has an intuitive interpretation as a signal-to-noise ratio. $\hat{m}_t \approx \mathbb{E}[g]$ is the mean gradient: the consistent signal. $\hat{v}_t \approx \mathbb{E}[g^2]$ captures both signal and noise. When the gradient for some parameter consistently points the same way, $|\hat{m}_t|$ is large relative to $\sqrt{\hat{v}_t}$, and Adam takes a confident step close to $\pm\eta$. When the gradient is noisy and flips sign, $|\hat{m}_t|$ shrinks (positive and negative values cancel in the average) while $\hat{v}_t$ stays large (squared values don't cancel). The ratio drops, and Adam steps cautiously. In fact, by Jensen's inequality ($\mathbb{E}[g]^2 \leq \mathbb{E}[g^2]$), the ratio is bounded: each parameter's step is at most $\eta$.
+
+Typical defaults ($\beta_1=0.9$, $\beta_2=0.999$, $\eta=10^{-3}$) worked well enough that many practitioners never changed them.
 
 Two important caveats emerged:
 
