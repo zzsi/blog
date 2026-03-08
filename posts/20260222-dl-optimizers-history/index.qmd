@@ -203,7 +203,7 @@ m_t=\beta_1 m_{t-1}+(1-\beta_1)g_t,\qquad
 v_t=\beta_2 v_{t-1}+(1-\beta_2)g_t^2.
 $$
 
-Because $m_t$ and $v_t$ are initialized at zero, they are biased toward zero in early steps. Adam corrects for this with $\hat{m}_t = m_t / (1-\beta_1^t)$ and $\hat{v}_t = v_t / (1-\beta_2^t)$. The update is then:
+Because $m_t$ and $v_t$ are initialized at zero, they are biased toward zero in early steps. Adam corrects for this by dividing by $(1-\beta_1^t)$ and $(1-\beta_2^t)$, where the exponent $t$ is the step number (e.g. at step 10 with $\beta_1=0.9$, the correction is $1/(1-0.9^{10}) \approx 1.54$). The bias-corrected estimates are $\hat{m}_t = m_t / (1-\beta_1^t)$ and $\hat{v}_t = v_t / (1-\beta_2^t)$. The update is then:
 
 $$
 \Delta\theta_t=-\eta\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
