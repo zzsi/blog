@@ -234,13 +234,22 @@ After Adam became the default, several parallel lines of work tried to improve o
 
 ### Curvature approximation
 
-Full second-order methods (computing the Hessian) are too expensive for large models. But the idea of using *some* curvature information, cheaply, motivated two important lines of work.
+All the adaptive methods above (AdaGrad, RMSProp, Adam) are already doing *preconditioning*: transforming the gradient before stepping. Instead of $\Delta\theta = -\eta\, g$, they use $\Delta\theta = -\eta\, P\, g$ for some matrix $P$ that reshapes the step to account for the loss surface's geometry. In Adam, $P$ is diagonal, with entries $1/\sqrt{\hat{v}_t}$ for each parameter. This adjusts the step size per parameter but ignores how parameters interact.
 
-**K-FAC** approximated the Fisher information matrix using Kronecker factorization ([Martens and Grosse, 2015](https://arxiv.org/abs/1503.05671)). The key insight: for a layer with input activations $a$ and output gradients $g$, the Fisher block can be approximated as $F \approx (aa^\top) \otimes (gg^\top)$, a Kronecker product of two much smaller matrices. Instead of storing and inverting a huge $n \times n$ matrix, you store and invert two matrices of size (input dim) and (output dim) separately. This gives stronger preconditioning than Adam's diagonal scaling, at a fraction of full second-order cost.
+In reality, parameters within a layer are correlated: changing one weight affects what the optimal change for its neighbors should be. There is a spectrum of preconditioning richness:
 
-**Shampoo** generalized this idea to per-block matrix preconditioners that don't require the Fisher structure ([Gupta et al., 2018](https://arxiv.org/abs/1802.09568)). For a weight matrix $W \in \mathbb{R}^{m \times n}$, Shampoo maintains left and right preconditioners $L \in \mathbb{R}^{m \times m}$ and $R \in \mathbb{R}^{n \times n}$, and updates with $L^{-1/4} G\, R^{-1/4}$. This captures cross-parameter correlations that Adam's per-element scaling misses.
+- **SGD**: $P = I$ (identity). No preconditioning at all.
+- **Adam**: $P$ is diagonal. Per-parameter scaling, but no cross-parameter information.
+- **K-FAC/Shampoo**: $P$ is a structured matrix. Captures correlations between parameters within a layer.
+- **Newton's method**: $P = H^{-1}$ (full inverse Hessian). Captures everything, but for a layer with $p$ parameters that means storing and inverting a $p \times p$ matrix, which is impractical at scale.
 
-Neither became a broad default. The implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that structured preconditioning could outperform diagonal methods. That lineage matters: the 2024-2026 conditioning wave reuses the same motivation with simpler operational surfaces.
+K-FAC and Shampoo sit in the middle of this spectrum: richer than Adam, cheaper than Newton.
+
+**K-FAC** approximated the Fisher information matrix using Kronecker factorization ([Martens and Grosse, 2015](https://arxiv.org/abs/1503.05671)). The key insight: for a layer with input activations $a$ and output gradients $g$, the Fisher block can be approximated as $F \approx (aa^\top) \otimes (gg^\top)$, a Kronecker product of two much smaller matrices. For a layer with $m$ inputs and $n$ outputs, instead of storing and inverting a $mn \times mn$ matrix, you store and invert one $m \times m$ and one $n \times n$ matrix separately. This captures correlations between parameters in the same layer at a fraction of full second-order cost.
+
+**Shampoo** generalized this idea to per-block matrix preconditioners that don't require the Fisher structure ([Gupta et al., 2018](https://arxiv.org/abs/1802.09568)). For a weight matrix $W \in \mathbb{R}^{m \times n}$, Shampoo maintains left and right preconditioners $L \in \mathbb{R}^{m \times m}$ and $R \in \mathbb{R}^{n \times n}$, and updates with $L^{-1/4} G\, R^{-1/4}$. Like K-FAC, this captures how parameters within a layer interact, but with a more general formulation.
+
+Neither became a broad default. The implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that accounting for cross-parameter structure could outperform Adam's independent scaling. That lineage matters: the 2024-2026 conditioning wave reuses the same motivation with simpler operational surfaces.
 
 ### Large-batch training
 
