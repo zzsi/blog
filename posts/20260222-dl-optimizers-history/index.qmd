@@ -228,13 +228,15 @@ $$
 
 This was a small implementation change, but it made weight decay behave as intended regardless of the adaptive scaling. AdamW became the standard for Transformers and most modern architectures.
 
+Two other ingredients became part of the standard recipe around this time. Learning rate warmup ramps the learning rate up gradually in early training to let the moment estimates stabilize before taking large steps. The technique was used in earlier work including ResNet training, but became widely recognized through the Transformer paper ([Vaswani et al., 2017](https://arxiv.org/abs/1706.03762)) and large-batch studies ([Goyal et al., 2017](https://arxiv.org/abs/1706.02677)). Gradient clipping, introduced for exploding gradients in RNNs ([Pascanu et al., 2013](https://arxiv.org/abs/1211.5063)), caps the gradient norm to prevent occasional large updates from destabilizing a run. Together with AdamW, cosine learning rate decay, and careful weight decay exclusions, these form the baseline recipe that most frontier LLM training still uses.
+
 ## 2015 to 2023: beyond Adam on multiple fronts
 
-After Adam became the default, several parallel lines of work tried to improve on it along different axes. These developed concurrently, not sequentially.
+After Adam became the default, several parallel lines of work tried to improve on it along different axes.
 
 ### Curvature approximation
 
-All the adaptive methods above (AdaGrad, RMSProp, Adam) are already doing *preconditioning*: transforming the gradient before stepping. Instead of $\Delta\theta = -\eta\, g$, they use $\Delta\theta = -\eta\, P\, g$ for some matrix $P$ that reshapes the step to account for the loss surface's geometry. In Adam, $P$ is diagonal, with entries $1/\sqrt{\hat{v}_t}$ for each parameter. This adjusts the step size per parameter but ignores how parameters interact.
+All the adaptive methods above (AdaGrad, RMSProp, Adam) are already doing a simple form of *preconditioning*: transforming the gradient before stepping. Adam divides each element of the smoothed gradient by $\sqrt{\hat{v}_t}$, scaling each parameter independently. In linear algebra terms, this is the same as multiplying by a diagonal matrix: $\Delta\theta = -\eta\, P\, \hat{m}_t$ where $P$ has entries $1/(\sqrt{\hat{v}_t} + \epsilon)$ on the diagonal and zeros elsewhere. Each parameter gets its own scale, but the optimizer ignores how parameters interact.
 
 In reality, parameters within a layer are correlated: changing one weight affects what the optimal change for its neighbors should be. There is a spectrum of preconditioning richness:
 
@@ -249,7 +251,7 @@ K-FAC and Shampoo sit in the middle of this spectrum: richer than Adam, cheaper 
 
 **Shampoo** generalized this idea to per-block matrix preconditioners that don't require the Fisher structure ([Gupta et al., 2018](https://arxiv.org/abs/1802.09568)). For a weight matrix $W \in \mathbb{R}^{m \times n}$, Shampoo maintains left and right preconditioners $L \in \mathbb{R}^{m \times m}$ and $R \in \mathbb{R}^{n \times n}$, and updates with $L^{-1/4} G\, R^{-1/4}$. Like K-FAC, this captures how parameters within a layer interact, but with a more general formulation.
 
-Neither became a broad default. The implementation complexity and tuning overhead exceeded what most teams would absorb. But they proved that accounting for cross-parameter structure could outperform Adam's independent scaling. That lineage matters: the 2024-2026 conditioning wave reuses the same motivation with simpler operational surfaces.
+Neither became a broad default. The implementation complexity and tuning overhead exceeded the gain in performance for most teams. But they proved that accounting for cross-parameter structure could outperform Adam's independent scaling. Several years later, the 2024-2026 conditioning wave would revisit this same motivation with simpler methods.
 
 ### Large-batch training
 
@@ -263,9 +265,7 @@ $$
 
 Layers with small weights relative to their gradients get smaller steps, preventing them from being blown up by an aggressive global rate. LAMB brought the same idea to Adam-style moments for large-batch language pretraining, enabling large-batch BERT training ([You et al., 2019](https://arxiv.org/abs/1904.00962)).
 
-LARS and LAMB themselves did not become standard in frontier LLM or diffusion model training. The community settled on AdamW with careful scheduling instead. The specific legacy of this work is narrower: **the insight that different layers need different effective learning rates**. Muon and the conditioning methods in the next sections address this same per-layer imbalance, just through orthogonalization rather than trust ratios.
-
-(Two other ingredients now standard in frontier training, learning rate warmup and gradient clipping, are sometimes associated with large-batch research but have their own origins: warmup was already used in the original Transformer paper ([Vaswani et al., 2017](https://arxiv.org/abs/1706.03762)), and gradient clipping was introduced for exploding gradients in RNNs ([Pascanu et al., 2013](https://arxiv.org/abs/1211.5063)).)
+LARS and LAMB themselves did not become standard in frontier LLM or diffusion model training. The community settled on AdamW with careful scheduling instead. Still, the insight that different layers need different effective learning rates proved helpful for later development of optimizers, including the conditioning methods covered below.
 
 ### Memory and systems
 
