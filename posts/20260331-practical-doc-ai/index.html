@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2026-03-31">
 
-<title>Learnings from a Decade of Document AI Work – Blog</title>
+<title>Lessons from a Decade of Document AI Work – Blog</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -117,7 +117,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Learnings from a Decade of Document AI Work</h1>
+      <h1 class="title">Lessons from a Decade of Document AI Work</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">ai</div>
                 <div class="quarto-category">multimodal</div>
@@ -150,18 +150,14 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#the-problem-never-was-just-ocr" id="toc-the-problem-never-was-just-ocr" class="nav-link active" data-scroll-target="#the-problem-never-was-just-ocr">The problem never was just OCR</a></li>
+  <li><a href="#the-problem-was-never-just-ocr" id="toc-the-problem-was-never-just-ocr" class="nav-link active" data-scroll-target="#the-problem-was-never-just-ocr">The problem was never just OCR</a></li>
   <li><a href="#how-we-measured-success" id="toc-how-we-measured-success" class="nav-link" data-scroll-target="#how-we-measured-success">How we measured success</a></li>
   <li><a href="#phase-1-templates-ocr-and-heuristics" id="toc-phase-1-templates-ocr-and-heuristics" class="nav-link" data-scroll-target="#phase-1-templates-ocr-and-heuristics">Phase 1: templates, OCR, and heuristics</a></li>
   <li><a href="#phase-2-detector-first-pipelines" id="toc-phase-2-detector-first-pipelines" class="nav-link" data-scroll-target="#phase-2-detector-first-pipelines">Phase 2: detector-first pipelines</a></li>
-  <li><a href="#phase-3-learning-to-combine-cues" id="toc-phase-3-learning-to-combine-cues" class="nav-link" data-scroll-target="#phase-3-learning-to-combine-cues">Phase 3: learning to combine cues</a></li>
+  <li><a href="#phase-3-transformer-models-that-combine-cues" id="toc-phase-3-transformer-models-that-combine-cues" class="nav-link" data-scroll-target="#phase-3-transformer-models-that-combine-cues">Phase 3: transformer models that combine cues</a></li>
   <li><a href="#phase-4-foundation-models-changed-the-shape-of-the-stack" id="toc-phase-4-foundation-models-changed-the-shape-of-the-stack" class="nav-link" data-scroll-target="#phase-4-foundation-models-changed-the-shape-of-the-stack">Phase 4: foundation models changed the shape of the stack</a></li>
-  <li><a href="#what-wins-now-is-composition" id="toc-what-wins-now-is-composition" class="nav-link" data-scroll-target="#what-wins-now-is-composition">What wins now is composition</a></li>
-  <li><a href="#the-bottleneck-kept-moving" id="toc-the-bottleneck-kept-moving" class="nav-link" data-scroll-target="#the-bottleneck-kept-moving">The bottleneck kept moving</a></li>
-  <li><a href="#what-i-believe-now" id="toc-what-i-believe-now" class="nav-link" data-scroll-target="#what-i-believe-now">What I believe now</a></li>
-  <li><a href="#if-i-were-starting-a-new-document-ai-project-today" id="toc-if-i-were-starting-a-new-document-ai-project-today" class="nav-link" data-scroll-target="#if-i-were-starting-a-new-document-ai-project-today">If I were starting a new document AI project today</a></li>
-  <li><a href="#closing" id="toc-closing" class="nav-link" data-scroll-target="#closing">Closing</a></li>
-  <li><a href="#selected-references" id="toc-selected-references" class="nav-link" data-scroll-target="#selected-references">Selected references</a></li>
+  <li><a href="#each-phase-had-its-own-misconception" id="toc-each-phase-had-its-own-misconception" class="nav-link" data-scroll-target="#each-phase-had-its-own-misconception">Each phase had its own misconception</a></li>
+  <li><a href="#if-i-were-starting-today" id="toc-if-i-were-starting-today" class="nav-link" data-scroll-target="#if-i-were-starting-today">If I were starting today</a></li>
   </ul>
 </nav>
     </div>
@@ -172,9 +168,10 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>For most of the last decade, I kept running into the same business problem wearing different clothes: turn messy documents into reliable structured decisions.</p>
-<p>Sometimes the documents were forms. Sometimes they were invoices, onboarding packets, statements, or tax documents. The inputs changed. The models changed. The hype changed even faster. But the operational demand stayed remarkably constant: read what matters, understand enough structure and context, map the result into a schema, and do it reliably enough that an actual business process can depend on it.</p>
-<p>That is the lens I want to use in this post. Not “here is the history of document AI” in the abstract, and not “look how much benchmarks improved.” I mean something narrower and more practical: how the stack changed when you were the person trying to make document understanding work on real inputs with deadlines, edge cases, and annoyed users.</p>
+<p>I’ve worked on document AI problems for about a decade. The business problem stayed mostly the same. The stack did not.</p>
+<p>The core problem: extract the right information from messy documents, map it into a schema, make the result reliable enough for a real workflow. Sometimes contracts. Sometimes receipts, forms, statements, onboarding packets, tax documents. What changed was the modeling stack.</p>
+<p>It started with templates, image registration, and OCR. Then convnet-based detector-plus-OCR pipelines. Then transformer models that combined OCR text, layout, and image cues in one trainable system. Now the stack often includes OCR, VLMs, LLMs, validators, retrieval, post-training, and increasingly agentic tool use.</p>
+<p>Each phase mostly moved the bottleneck. That’s the pattern I want to capture here.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -186,11 +183,9 @@ TL;DR
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Early document AI systems were dominated by templates, OCR, and heuristics. They worked well in narrow settings and failed badly under variation.</li>
-<li>Detector-first deep learning systems improved robustness on the visual side, but often turned the stack into a brittle multi-stage pipeline.</li>
-<li>Layout-aware transformers mattered because they learned to combine OCR text, geometry, and image cues more directly, but they still depended heavily on task-specific labeled data.</li>
-<li>Foundation models changed the economics and architecture of the system again. The bottleneck is now less about whether a model can read a document and more about orchestration, validation, and evaluation.</li>
-<li>Practical document AI still is not one model. It is a composed system.</li>
+<li>Each generation of document AI mostly moved the bottleneck rather than eliminating it: from template brittleness, to pipeline complexity, to labeled data hunger, to orchestration and evaluation.</li>
+<li>Foundation models changed the economics but didn’t replace the system. The hard part shifted from “can the model read this” to “can we trust the answer.”</li>
+<li>Document AI is still a composed system, not a single model.</li>
 </ul>
 </div>
 </div>
@@ -218,13 +213,13 @@ TL;DR
 </tr>
 <tr class="even">
 <td>Detector-first pipelines</td>
-<td>Object detectors plus OCR plus postprocessing</td>
+<td>Object detectors + OCR + postprocessing</td>
 <td>Better visual robustness and localization</td>
 <td>Labeling burden, detector-OCR handoff, error propagation</td>
 </tr>
 <tr class="odd">
-<td>Layout-aware transformers</td>
-<td>OCR text plus layout plus image cues in one model</td>
+<td>Transformer models</td>
+<td>OCR text + layout + image cues in one model</td>
 <td>Easier supervision, stronger field extraction</td>
 <td>Task-specific data prep, specialized models, single-page limits</td>
 </tr>
@@ -236,54 +231,46 @@ TL;DR
 </tr>
 </tbody>
 </table>
-<section id="the-problem-never-was-just-ocr" class="level2">
-<h2 class="anchored" data-anchor-id="the-problem-never-was-just-ocr">The problem never was just OCR</h2>
-<p>People sometimes talk about document AI as if it were synonymous with OCR. OCR is part of it, but in production it was never the whole game.</p>
-<p>The real job usually looked more like this:</p>
+<section id="the-problem-was-never-just-ocr" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-was-never-just-ocr">The problem was never just OCR</h2>
+<p>People sometimes talk about document AI as if it were synonymous with OCR. It never was.</p>
+<p>In practice, the business problem looked more like this:</p>
 <ul>
 <li>find the relevant regions or fields</li>
 <li>recover text from noisy scans, photos, or PDFs</li>
 <li>infer structure from layout</li>
 <li>connect information across multiple fields or pages</li>
 <li>normalize the result into a business schema</li>
-<li>validate that the extracted values are internally consistent</li>
-<li>decide when the system should ask for human review</li>
+<li>validate that extracted values are internally consistent</li>
+<li>decide when to ask for human review</li>
 </ul>
-<p>That last point matters more than most benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
+<p>That last point matters more than benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
 </section>
 <section id="how-we-measured-success" class="level2">
 <h2 class="anchored" data-anchor-id="how-we-measured-success">How we measured success</h2>
-<p>In client projects, the metric that mattered most was usually field-level accuracy.</p>
-<p>That sounds simple until you try to evaluate real business documents. Often there is not exactly one canonical string answer. Addresses can be broken into lines in multiple valid ways. Dates may appear in more than one acceptable format. OCR may introduce harmless whitespace or punctuation differences. So field-level evaluation usually needed normalization logic and some task-aware intelligence in the evaluator rather than a naive string equality check.</p>
-<p>That field-level view then rolled up into the metric that mattered most to the business: automation quality. In practice this usually meant two coupled numbers:</p>
+<p>The metric that mattered most was usually field-level accuracy, but defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
+<p>Field-level accuracy then rolled up into what the business actually cared about: automation quality. Two coupled numbers:</p>
 <ul>
 <li>what percentage of work can be automated</li>
-<li>among the automatically processed cases, what is the error rate</li>
+<li>among the automated cases, what’s the error rate</li>
 </ul>
-<p>That is a policy problem as much as a modeling problem. Document AI systems make many small decisions, and the automation policy depends on confidence score thresholds or other confidence signals. If the confidence module is poor, the automation policy is poor even if the raw model is good.</p>
-<p>So in practice, I came to think about evaluation in layers:</p>
+<p>That’s a policy problem as much as a modeling problem. The automation policy depends on confidence signals. If confidence estimation is poor, the policy is poor even if the raw model is good.</p>
+<p>I came to think about evaluation in layers: field-level accuracy, automation coverage, automation precision, review rate, and how all of those move as confidence thresholds change. The most important chart was often not a single benchmark score but a coverage-versus-error curve.</p>
+<p>Depending on the task, standard supporting metrics also mattered:</p>
 <ul>
-<li><strong>Field-level accuracy:</strong> the primary task metric, usually with normalization and problem-specific matching logic</li>
-<li><strong>Automation coverage:</strong> the percentage of documents or fields the system chooses to automate</li>
-<li><strong>Automation precision:</strong> the error rate among automated decisions</li>
-<li><strong>Review rate:</strong> how often the system falls back to a human</li>
-<li><strong>Threshold behavior:</strong> how those numbers move as confidence thresholds change</li>
+<li>CER and WER for OCR quality</li>
+<li>entity-level precision, recall, and F1 for key information extraction</li>
+<li><a href="https://arxiv.org/abs/1907.00490">ANLS</a> for <a href="https://www.docvqa.org/">DocVQA</a>-style tasks where near-matches deserve partial credit</li>
+<li>mAP at IoU thresholds for layout detection, for example on <a href="https://arxiv.org/abs/2206.01062">DocLayNet</a></li>
+<li><a href="https://arxiv.org/abs/1911.10683">TEDS</a> for table structure recognition</li>
 </ul>
-<p>Depending on the problem, there were also standard supporting metrics:</p>
-<ul>
-<li><strong>Character error rate (CER)</strong> and <strong>word error rate (WER):</strong> still useful for OCR quality, often computed with edit distance</li>
-<li><strong>Entity-level precision / recall / F1:</strong> common for key information extraction and semantic entity recognition</li>
-<li><strong>ANLS (Average Normalized Levenshtein Similarity):</strong> widely used in DocVQA-style string-answer tasks when near-matches should get partial credit</li>
-<li><strong>mAP at IoU thresholds:</strong> standard for layout detection and document object detection tasks</li>
-<li><strong>TEDS / TEDS-Struct:</strong> useful for table structure recognition, where exact tree structure matters more than flat token overlap</li>
-</ul>
-<p>There is also a broader lesson here. The right metric depends on the shape of the downstream decision. For forms and contracts, field-level correctness may dominate. For OCR-heavy systems, CER and WER may still be useful diagnostics. For receipts and invoices, line-item structure may require entity F1 or table-structure metrics. For automation systems, the most important chart is often not a single benchmark score but a coverage-versus-error curve under the confidence policy.</p>
-<p>That is why I am skeptical of one-number evaluations in document AI. The system is not just trying to be correct in the abstract. It is trying to support a decision policy.</p>
+<p>The right metric depends on the shape of the downstream decision.</p>
+<p>That’s why I’m skeptical of one-number evaluations in document AI. The system isn’t trying to be correct in the abstract. It’s trying to support a decision policy.</p>
 </section>
 <section id="phase-1-templates-ocr-and-heuristics" class="level2">
 <h2 class="anchored" data-anchor-id="phase-1-templates-ocr-and-heuristics">Phase 1: templates, OCR, and heuristics</h2>
-<p>My early mental model of document AI was straightforward: if a document class is stable enough, you can solve a lot with templates, image registration, OCR, and rules.</p>
-<p>That stack typically looked like this:</p>
+<p>My early mental model was straightforward: if a document class is stable enough, you can solve a lot with templates, image registration, OCR, and rules.</p>
+<p>The stack typically looked like this:</p>
 <ul>
 <li>develop a template for the document family</li>
 <li>register the input image against the template</li>
@@ -293,14 +280,14 @@ TL;DR
 <li>use coordinates, nearby tokens, regexes, and page-specific rules</li>
 <li>map the result into a schema</li>
 </ul>
-<p>In a constrained workflow, this worked better than many people now remember. If the document family was narrow, the scan quality acceptable, the registration reliable enough, and the downstream schema stable, template-heavy systems could be fast, cheap, and surprisingly accurate.</p>
-<p>The downside was brittleness. Registration was never as reliable as one hoped once scans and photos became messy. Small layout shifts broke coordinate assumptions. A vendor changed a form revision and the parser quietly degraded. OCR errors propagated into every downstream rule. Handwriting, stamps, low-resolution scans, skew, or multi-page dependencies exposed how much of the system was really held together by assumptions.</p>
-<p>What I learned from that phase was that the problem was not merely reading text. The hard part was handling variation without rewriting the system every time a document changed shape.</p>
+<p>In a constrained workflow, this worked better than many people remember. If the document family was narrow, the scan quality acceptable, the registration reliable, and the downstream schema stable, template-heavy systems could be fast, cheap, and surprisingly accurate.</p>
+<p>The downside was brittleness. Registration was never as reliable as you hoped once scans and photos got messy. Small layout shifts broke coordinate assumptions. A vendor changed a form revision and the parser quietly degraded. Handwriting, stamps, low-resolution scans, skew, or multi-page dependencies exposed how much the system was really held together by assumptions.</p>
+<p>That phase taught me the hard part wasn’t reading text. It was handling variation without rewriting the system every time a document changed shape.</p>
 </section>
 <section id="phase-2-detector-first-pipelines" class="level2">
 <h2 class="anchored" data-anchor-id="phase-2-detector-first-pipelines">Phase 2: detector-first pipelines</h2>
-<p>The next major improvement came from better visual models. Instead of assuming we already knew where everything was, we trained or used detectors to find regions of interest: tables, signatures, key-value fields, checkboxes, logos, headers, or other structural elements.</p>
-<p>This was a real step forward. Even a moderately good detector could absorb a lot of the variability that broke template-only systems. Rather than hard-coding the location of a field, you could ask a model to find it. That reduced some of the worst coordinate brittleness and made the pipeline feel more adaptive.</p>
+<p>The next improvement came from better visual models. Instead of assuming we knew where everything was, we trained convnet-based detectors to find regions of interest: tables, signatures, key-value fields, checkboxes, headers.</p>
+<p>Even a moderately good detector could absorb variability that broke template-only systems. You could ask a model to find a field rather than hard-coding its location.</p>
 <p>But the architecture was still very staged:</p>
 <ul>
 <li>detect region</li>
@@ -309,64 +296,53 @@ TL;DR
 <li>parse OCR text</li>
 <li>apply rules</li>
 </ul>
-<p>In other words, it was already multimodal in a loose engineering sense, but not in a unified learned sense. Vision handled localization. OCR handled text recognition. Rules and business logic handled interpretation.</p>
-<p>That decomposition was often the right choice for the tools of the time, but it came with painful handoff boundaries. If the detector missed the box, OCR never had a chance. If OCR garbled the crop, the parser failed. If table structure was slightly off, everything downstream became an exception case. As these systems got more capable, they also got more operationally complicated.</p>
-<p>The key lesson for me was that better perception did not automatically mean simpler systems. In many cases, it meant the opposite.</p>
+<p>It was multimodal in a loose engineering sense, but not in a unified learned sense. Vision handled localization. OCR handled text recognition. Rules handled interpretation.</p>
+<p>That decomposition was often right for the tools of the time, but it came with painful handoff boundaries. If the detector missed the box, OCR never had a chance. If OCR garbled the crop, the parser failed. If table structure was slightly off, everything downstream became an exception case.</p>
+<p>Better perception didn’t automatically mean simpler systems. In many cases it meant the opposite.</p>
 <section id="a-concrete-example-from-2018-real-estate-contracts" class="level3">
 <h3 class="anchored" data-anchor-id="a-concrete-example-from-2018-real-estate-contracts">A concrete example from 2018: real estate contracts</h3>
-<p>Around 2018, one of the document classes I worked on was real estate contracts. On paper, this sounds like a fairly standard extraction problem: find a set of predefined fields and map them into a structured schema. In practice, the awkwardness of the visual geometry dominated the work.</p>
-<p>The target workflow also mattered. We were mainly extracting from historical contracts to unlock analytics, rather than automating live contract intake where latency mattered more. Success was measured by field-level accuracy against manually entered ground truth on a sample set, with the usual caveat that even human-entered values were not perfectly clean.</p>
-<p>Some fields were tiny. A value like the option period might span only a couple of characters, occupying a tiny fraction of the page. Other fields were long and horizontally stretched, which made them a bad fit for the default anchor-box assumptions in detectors like RetinaNet. There were also multiline address fields, which introduced ambiguity even at the labeling stage. When does one field end? Should the line break be treated as part of the same value or as evidence of a different structural unit? Those details sound small, but they shape the whole training pipeline.</p>
-<p>The common pattern at the time was:</p>
-<ul>
-<li>detect the field region with a visual model</li>
-<li>crop the region</li>
-<li>send the crop to a commercial OCR engine</li>
-<li>parse and normalize the text</li>
-</ul>
-<p>The OCR layer was often a commercial API such as Google Vision and AWS OCR services. That stack was powerful enough to be useful, but it made the coupling between detection and OCR very obvious. If the detection box was off by a little, the OCR result degraded immediately. If the field was unusually thin or elongated, the detector could miss it for reasons that were architectural rather than semantic.</p>
-<p>Those elongated and tiny fields were a good example. Initially some of them had mAP around 20% even after training on tens of thousands of examples. Once we fixed the anchor-box setup for those geometries, they jumped to above 90% mAP. That was both encouraging and humbling: the model was not “bad at the task” in some abstract sense. It was badly matched to the object geometry we cared about.</p>
-<p>That project made me appreciate how much document AI depends on mundane geometric details. It was not enough to say “use a detector.” You had to ask what shape of object the detector was biased toward, how small a target it could reliably localize, and how much labeling ambiguity you were inadvertently baking into the system.</p>
+<p>Around 2018, one document class I worked on was real estate contracts. On paper, straightforward: find predefined fields, map them into a schema. In practice, geometry dominated the work.</p>
+<p>We were mainly extracting from historical contracts to unlock analytics, not automating live intake. Success was measured by field-level accuracy against manually entered ground truth, with the usual caveat that even human-entered values were not perfectly clean.</p>
+<p>Some fields were tiny. An option period might span only a couple of characters, a tiny fraction of the page. Other fields were long and horizontally stretched, a bad fit for the default anchor-box assumptions in detectors like <a href="https://arxiv.org/abs/1708.02002">RetinaNet</a>. Multiline address fields introduced ambiguity even at labeling. When does one field end and another begin?</p>
+<p>The common pattern: detect the field region, crop it, send the crop to a commercial OCR engine (Google Cloud Vision, Amazon Textract), parse and normalize. Powerful enough to be useful, but the coupling between detection and OCR was painfully obvious. If the detection box was off by a little, OCR degraded immediately.</p>
+<p>Those elongated and tiny fields were a good example. Initially some had mAP around 20%, even after training on tens of thousands of examples. Once we fixed the anchor-box setup for those geometries, they jumped above 90%. The model wasn’t “bad at the task.” It was badly matched to the object geometry we cared about.</p>
+<p>That project made me appreciate how much document AI depends on mundane geometric details. It wasn’t enough to say “use a detector.” You had to ask what shapes it was biased toward, how small a target it could reliably localize, and how much labeling ambiguity you were baking in.</p>
 </section>
 <section id="another-example-from-2020-receipt-understanding" class="level3">
 <h3 class="anchored" data-anchor-id="another-example-from-2020-receipt-understanding">Another example from 2020: receipt understanding</h3>
-<p>Around 2020, colleagues of mine worked on receipt understanding. I was not directly on that project, but the engineering lessons were close enough to be instructive: production document problems are defined as much by acquisition noise as by semantics.</p>
-<p>Receipts are deceptively hard. The images often came from phone photos rather than clean scans, which meant weird viewing angles, blur, shadows, partial occlusion, and inconsistent lighting. Some receipts were long enough that users captured them in multiple photos, which introduced a stitching problem before extraction even began. And unlike a flat key-value form, the output schema had nested structure: line items sitting under subtotal and total, with all the ambiguity that implies.</p>
-<p>This kind of task exposed the limitations of thinking about document understanding as a sequence of isolated local predictions. You did not just need to read text. You needed to reconstruct a coherent object from messy visual evidence, impose structure on repeated rows, and keep the hierarchy of the output intact. Better preprocessing, including rectification and super-resolution, helped both detectors and OCR. Stitching multiple receipt images together added another large gain. It was a hard enough problem that outperforming strong specialist vendors on it was meaningful.</p>
+<p>Around 2020, colleagues worked on receipt understanding. I wasn’t directly on the project, but the engineering lessons were instructive.</p>
+<p>Receipts are deceptively hard. Images often came from phone photos: weird angles, blur, shadows, partial occlusion, inconsistent lighting. Some receipts were long enough that users captured them in multiple photos, which meant a stitching problem before extraction even began. And unlike a flat key-value form, the output schema had nested structure: line items under subtotals and totals, with all the ambiguity that implies.</p>
+<p>This exposed the limits of thinking about document understanding as isolated local predictions. You needed to reconstruct a coherent object from messy visual evidence, impose structure on repeated rows, and keep the hierarchy intact. Better preprocessing (rectification, super-resolution) helped both detectors and OCR. Stitching multiple receipt images together added another large gain.</p>
 </section>
 </section>
-<section id="phase-3-learning-to-combine-cues" class="level2">
-<h2 class="anchored" data-anchor-id="phase-3-learning-to-combine-cues">Phase 3: learning to combine cues</h2>
-<p>The transition to layout-aware transformers is sometimes described too loosely as “document AI became multimodal.” That is not quite right. Production systems were already combining visual signals and text. The more important change was this: the model itself began to treat text, geometry, and sometimes image features as jointly useful inputs for the same prediction problem.</p>
-<p>That mattered a lot.</p>
-<p>Models in the LayoutLM family and related approaches pushed the field toward learned fusion rather than hand-assembled coordination between separate components. Instead of a pipeline where OCR text and bounding boxes were merely intermediate artifacts passed between modules, the model could learn patterns like:</p>
+<section id="phase-3-transformer-models-that-combine-cues" class="level2">
+<h2 class="anchored" data-anchor-id="phase-3-transformer-models-that-combine-cues">Phase 3: transformer models that combine cues</h2>
+<p>Transformer models didn’t make document AI multimodal for the first time. We were already combining visual and text signals. What they changed was how that combination happened. Instead of stitching cues across multiple stages, we could train models that combine OCR text, layout, and image features end to end.</p>
+<p>The model could learn patterns like:</p>
 <ul>
 <li>this token means something different depending on where it appears</li>
 <li>nearby fields provide semantic context</li>
 <li>document layout carries information that plain text alone loses</li>
-<li>the same textual phrase can play different roles across forms</li>
+<li>the same phrase can play different roles across forms</li>
 </ul>
-<p>This was the first time many document understanding tasks felt natively modeled rather than patched together.</p>
-<p>It also made clear what the new bottleneck was: data.</p>
-<p>These models were often much better once properly trained or fine-tuned, but they were not magic. You still needed labeled examples. You still needed annotation conventions. You still had to decide what exactly the prediction target was, how to deal with low-confidence spans, and how to retrain when the incoming mix of documents changed.</p>
-<p>So the pain shifted. In earlier systems, the pain was brittle rules. In this phase, the pain became dataset curation, labeling operations, task framing, and maintenance of specialized models.</p>
-<p>That was still progress. But it was progress with a clear bill attached.</p>
-<section id="a-concrete-example-from-2022-layoutlm-style-models" class="level3">
-<h3 class="anchored" data-anchor-id="a-concrete-example-from-2022-layoutlm-style-models">A concrete example from 2022: LayoutLM-style models</h3>
-<p>Around 2022, we adopted LayoutLM-type models for some of our work, and the experience changed my view of what “document understanding” could feel like in practice.</p>
-<p>The most refreshing part was not that the models were magically zero-shot. They were not. The most refreshing part was that the shape of the task changed. We could take image pixels plus OCR text as input and predict which OCR tokens were the answer to a question. That was a much more natural fit for many extraction problems than drawing and detecting field boxes first.</p>
-<p>Operationally, this often looked like a token-classification setup over OCR words. We did not need to hand-label bounding boxes for every target field region in the same way detector pipelines did. The manual labeling only needed to specify the final answer. From there, we built an inverse labeling process to project those answers back onto token-level supervision. That let us generate token labels from the final extracted values rather than asking annotators to do the more tedious span-by-span geometric work directly.</p>
-<p>That shift mattered. It materially reduced annotation burden because there was no more box labeling, made iteration faster, and let us train on more data. More importantly, the transformer layers could cross-reference signals in a way our older pipelines could not. Text content, token position, page layout, and visual context could all inform the prediction jointly. A word was no longer interpreted in isolation or only through a local detector crop. It could be interpreted in the context of the document.</p>
-<p>The models were larger, but the cost was acceptable. In practice, model inference time was still small compared with the rest of a real production pipeline: retrieving PDFs from data sources, querying multiple databases, and doing all the ordinary glue work around the model.</p>
-<p>That was the phase where I started feeling that the stack had become meaningfully more “document native.”</p>
+<p>This was the first time many document understanding tasks felt natively modeled rather than patched together. It also made the new bottleneck obvious: data.</p>
+<p>These models were much better once properly trained, but they weren’t magic. You still needed labeled examples, annotation conventions, decisions about prediction targets, and retraining plans when the document mix changed.</p>
+<p>The pain shifted. In earlier systems it was brittle rules. Now it was dataset curation, labeling operations, task framing, and model maintenance.</p>
+<section id="a-concrete-example-from-2022-transformer-models-for-document-understanding" class="level3">
+<h3 class="anchored" data-anchor-id="a-concrete-example-from-2022-transformer-models-for-document-understanding">A concrete example from 2022: transformer models for document understanding</h3>
+<p>Around 2022, we adopted transformer models like <a href="https://arxiv.org/abs/2204.08387">LayoutLMv3</a> for document understanding. The best part wasn’t that the models were zero-shot (they weren’t). The best part was that the shape of the task changed.</p>
+<p>We could take image pixels plus OCR text as input and predict which OCR tokens answered a question. That was a much more natural fit than drawing and detecting field boxes first.</p>
+<p>Operationally, this looked like token classification over OCR words. We didn’t need to hand-label bounding boxes for every field region. The manual labeling only needed to specify the final answer, and we built an inverse labeling process to project those answers back onto token-level supervision. That cut annotation burden significantly and let us train on more data.</p>
+<p>The transformer layers could cross-reference signals in ways our older pipelines couldn’t. Text content, token position, page layout, and visual context all informed the prediction jointly. A word was no longer interpreted in isolation.</p>
+<p>The models were larger, but the cost was acceptable. In practice, model inference time was still small compared with the rest of a real production pipeline: retrieving PDFs from data sources, querying databases, and doing all the ordinary glue work around the model.</p>
+<p>In hindsight, I should have used the model earlier to audit the labels. These were practical extraction workflows where the ground truth came from existing human-entered systems, imperfect by nature. I already knew from active learning and error analysis that comparing predictions against ground truth can surface labeling errors faster than random spot checks. But I was too focused on pushing the benchmark score higher. Some of what looked like a model limit was actually label noise in the human-entered answers. That made me put much more weight on data quality, active learning, and human-in-the-loop workflows.</p>
 </section>
 </section>
 <section id="phase-4-foundation-models-changed-the-shape-of-the-stack" class="level2">
 <h2 class="anchored" data-anchor-id="phase-4-foundation-models-changed-the-shape-of-the-stack">Phase 4: foundation models changed the shape of the stack</h2>
-<p>The latest wave feels different again.</p>
-<p>Modern OCR engines are much stronger than they used to be. Vision-language models can reason over pages more flexibly. Large language models are good at schema mapping, normalization, and conditional extraction. Long-context models make multi-page reasoning more tractable. Prompting, few-shot examples, and tool use often get you surprisingly far before any custom training enters the picture.</p>
-<p>The consequence is not simply that accuracy went up. The consequence is that the architecture of the system changed.</p>
-<p>For a growing set of document problems, you can now start from something like this:</p>
+<p>Modern OCR engines are much stronger than they used to be. Vision-language models can reason over pages more flexibly. Large language models handle schema mapping, normalization, and conditional extraction well. Long-context models make multi-page reasoning more tractable. Prompting and few-shot examples often get you surprisingly far before any custom training.</p>
+<p>The consequence isn’t just that accuracy went up. The architecture of the system changed.</p>
+<p>For a growing set of document problems, you can now start from something like:</p>
 <ul>
 <li>extract text and page images</li>
 <li>send the right representation to a VLM or LLM</li>
@@ -374,22 +350,24 @@ TL;DR
 <li>run validators and business-rule checks</li>
 <li>retry, route, or escalate when confidence is low</li>
 </ul>
-<p>That reduces the amount of task-specific modeling you need up front. It also makes previously annoying problems more approachable: fuzzy field definitions, cross-page references, lightweight reasoning, or documents that do not fit neatly into a single pre-trained template.</p>
-<p>But this shift creates a new trap. It is tempting to think the model has replaced the system.</p>
-<p>It has not.</p>
-<p>What changed is that more of the complexity moved upward into orchestration:</p>
+<p>That reduces the task-specific modeling you need up front. It also makes some annoying problems more approachable: fuzzy field definitions, cross-page references, lightweight reasoning, documents that don’t fit a pre-trained template.</p>
+<p>But this shift creates a trap. It’s tempting to think the model has replaced the system.</p>
+<p>It hasn’t.</p>
+<p>More of the complexity moved into orchestration:</p>
 <ul>
 <li>when to use OCR text, raw image, or both</li>
 <li>which model to route a document to</li>
 <li>how to enforce structured outputs</li>
 <li>how to validate extracted values against business rules</li>
-<li>when to re-prompt, when to fall back, and when to send to a human</li>
+<li>when to re-prompt, fall back, or send to a human</li>
 <li>how to measure regression when prompts, models, or providers change</li>
 </ul>
-<p>In older stacks, the fragility lived in templates and hand-tuned pipelines. In current stacks, the fragility often lives in orchestration and evaluation.</p>
+<p>In older stacks, the fragility lived in templates and hand-tuned pipelines. Now it often lives in orchestration and evaluation.</p>
+<p>Another important change: <a href="https://arxiv.org/abs/2210.03629">agentic</a> control flow. In older systems, we wired steps together deterministically. In newer systems, we increasingly provide the model with context and tools and let it decide which steps to invoke and in what order.</p>
+<p>The tools, schemas, validators, and review policy are still designed by us. But the extraction flow no longer has to be a rigid hand-authored pipeline. For messy documents, that flexibility matters. The model can inspect a page more closely, compare OCR output with visual evidence, call retrieval utilities, or reconcile conflicting results before committing to an answer.</p>
 <section id="a-concrete-example-from-2024-to-2026-multi-model-systems-and-post-training" class="level3">
 <h3 class="anchored" data-anchor-id="a-concrete-example-from-2024-to-2026-multi-model-systems-and-post-training">A concrete example from 2024 to 2026: multi-model systems and post-training</h3>
-<p>What defined this phase for me was not replacing the old stack with a single foundation model. It was wiring together multiple models and utilities into a system that could make better use of each component’s strengths.</p>
+<p>What defined this phase wasn’t replacing the old stack with a single foundation model. It was wiring together multiple models and utilities so each could do what it was best at.</p>
 <p>Across several projects, the stack often included:</p>
 <ul>
 <li>a VLM for schema-informed extraction on single-page or small multi-page inputs</li>
@@ -426,84 +404,36 @@ TL;DR
 </div>
 </div>
 </div>
-<p>This was powerful because the components were not interchangeable. OCR was often the recall-oriented layer. The VLM was useful when the extraction target depended on layout and semantic intent. Custom detectors still mattered for niche objects that general models handled unreliably. LLMs were useful not only for extraction, but for reconciling conflicting evidence across model outputs.</p>
-<p>That last point changed how I thought about the problem. In earlier pipelines, model outputs were often treated as final. In these newer systems, intermediate outputs became evidence that could be compared, challenged, and combined. A modern document pipeline can look less like a linear parser and more like a controlled cross-examination among specialized components.</p>
+<p>The components weren’t interchangeable. OCR was the recall-oriented layer. The VLM was useful when extraction depended on layout and semantic intent. Custom detectors still mattered for niche objects that general models handled unreliably. LLMs were useful not just for extraction, but for reconciling conflicting evidence across model outputs.</p>
+<p>That last point changed how I thought about the problem. In earlier pipelines, model outputs were treated as final. In these newer systems, intermediate outputs became evidence that could be compared, challenged, and combined. A modern document pipeline looks less like a linear parser and more like a system where specialized components check each other’s work, sometimes driven by the model itself through tool-use decisions rather than a fixed sequence.</p>
 <p>We also found that post-training still mattered.</p>
-<p>For some VLM use cases, supervised fine-tuning was useful both for getting a more desirable output format and for improving accuracy on inputs that were out of distribution relative to the base open-source model’s training data. SFT was especially helpful for making the model emit cleaner, more usable structured outputs. It also helped on difficult inputs such as low-quality scans of forms, handwritten content, and unfamiliar formats like music sheets.</p>
-<p>But SFT had limits. It gave a good initial accuracy bump and improved formatting behavior, then started to plateau. The harder part was pushing beyond that plateau, which is where we spent a lot of time on RL with verifiable rewards. Getting RL to work reliably was much more demanding than getting SFT to work. Reward design, verification logic, training stability, and evaluation all mattered.</p>
-<p>So even in the foundation-model phase, the story was not “prompting replaced training.” The more accurate story was that prompting widened the starting point, while post-training remained important when you cared about domain robustness, output discipline, and performance on ugly real-world inputs.</p>
-<p>This phase also made me appreciate how much leverage now comes from open ecosystems. A lot of this work was enabled by open-source tooling and models: Hugging Face Transformers, TRL, Unsloth, and Miles on the tooling side, and model families like Llama, Mistral, Qwen, and Nemotron on the modeling side. That ecosystem made it much easier to experiment with both orchestration and post-training, even if making the whole system production-grade still took real engineering discipline.</p>
-<p>So the foundational-model phase feels less like “the problem is solved” and more like “the design space got much larger.” That is powerful, but only if the surrounding system is built to keep the models honest.</p>
+<p>For some VLM use cases, supervised fine-tuning helped both with output format and accuracy on inputs that were out of distribution for the base model, such as low-quality scans, handwritten content, and unfamiliar formats like music sheets.</p>
+<p>But SFT had limits. It gave an initial accuracy bump and improved formatting, then plateaued. Pushing beyond that is where we spent a lot of time on RL with verifiable rewards. Getting RL to work reliably was much more demanding. Reward design, verification logic, training stability, and evaluation all mattered.</p>
+<p>So even in the foundation-model phase, the story wasn’t “prompting replaced training.” Prompting widened the starting point. Post-training still mattered when you cared about domain robustness, output discipline, and performance on ugly real-world inputs.</p>
+<p>This phase also brought new practical pain points that are still unfolding. Production documents are often sensitive (contracts, tax forms, medical records), and compliance constraints make it hard to access real data for experimentation. That limits both how quickly you can iterate and how representative your evaluation sets are. To compensate for the lack of both documents and labels, we invested in synthetic data generation: simulating printing artifacts, scanner noise, paper distortion, stamps, and handwritten notes over programmatically generated documents. It’s not a perfect substitute for real data, but it meaningfully expanded the training distribution.</p>
+<p>Hallucination is the other open problem. VLMs can confidently extract values that aren’t in the document, or subtly misread a field while producing well-formatted output that looks correct. This is harder to catch than an OCR error because the output is fluent. We’re addressing it with visual and textual grounding tools, forcing the model to point back to specific regions or tokens in the source document rather than generating answers from its parametric memory alone. It helps, but it’s not solved.</p>
+<p>This phase was also enabled by open-source tooling and models: <a href="https://huggingface.co/docs/transformers/index">Hugging Face Transformers</a>, <a href="https://huggingface.co/docs/trl/index">TRL</a>, <a href="https://github.com/unslothai/unsloth">Unsloth</a>, and <a href="https://github.com/kungfuai/miles">Miles</a> on the tooling side, and model families like <a href="https://ai.meta.com/llama/">Llama</a>, <a href="https://mistral.ai/">Mistral</a>, <a href="https://huggingface.co/Qwen">Qwen</a>, and <a href="https://developer.nvidia.com/nemotron">Nemotron</a> on the modeling side.</p>
 </section>
 </section>
-<section id="what-wins-now-is-composition" class="level2">
-<h2 class="anchored" data-anchor-id="what-wins-now-is-composition">What wins now is composition</h2>
-<p>If I had to summarize the biggest practical lesson from the last decade, it is this: document AI is still not a one-model problem.</p>
-<p>The strongest systems today are usually composed. They mix several ingredients:</p>
+<section id="each-phase-had-its-own-misconception" class="level2">
+<h2 class="anchored" data-anchor-id="each-phase-had-its-own-misconception">Each phase had its own misconception</h2>
+<p>Looking back, it’s striking how each phase came with its own version of “this will be enough”:</p>
 <ul>
-<li>OCR or native text extraction when available</li>
-<li>image understanding for visual structure and ambiguous regions</li>
-<li>language models for normalization, schema mapping, and reasoning</li>
-<li>validators for checksums, totals, dates, identities, and business constraints</li>
-<li>confidence estimation and failure routing</li>
-<li>human review for the residual long tail</li>
-</ul>
-<p>This sounds less elegant than a pure end-to-end story, but it matches reality better.</p>
-<p>In business workflows, the goal is rarely to produce a plausible answer. The goal is to produce a trustworthy answer, or to fail in a way that the rest of the system can handle. A model that is very smart but poorly harnessed can be less useful than a narrower component inside a disciplined pipeline.</p>
-<p>In the systems we delivered, confidence policy usually relied less on any single model score and more on agreement and validation. Agreement across OCR, VLM, and LLM outputs was useful. Validator pass/fail was useful. Field-level review then focused on uncertain fields rather than sending whole documents to manual fallback. Over time, that review path should become increasingly infrequent, but it remains a critical part of the safety net.</p>
-<p>That is why I think the phrase “agentic document AI” is simultaneously useful and easy to misuse. The interesting part is not just that an agent can call multiple models. The interesting part is that the system can coordinate extraction, validation, re-checking, and exception handling in a controlled loop. If that loop is sloppy, you do not have a production system. You have an expensive demo.</p>
-</section>
-<section id="the-bottleneck-kept-moving" class="level2">
-<h2 class="anchored" data-anchor-id="the-bottleneck-kept-moving">The bottleneck kept moving</h2>
-<p>Looking back, I think each phase mostly moved the bottleneck rather than eliminating it.</p>
-<ul>
-<li>Template-heavy systems were bottlenecked by brittleness under variation.</li>
-<li>Detector-first systems were bottlenecked by pipeline complexity and error propagation.</li>
-<li>Layout-aware transformers were bottlenecked by labeled data and task-specific training.</li>
-<li>Foundation-model systems are bottlenecked by orchestration, evaluation, and reliability.</li>
-</ul>
-<p>That is part of why this field remains interesting. It keeps changing, but it does not change by becoming simpler in some absolute sense. It changes by making one layer easier and exposing the next layer more clearly.</p>
-<p>The misconceptions also changed with the stack:</p>
-<ul>
-<li><strong>Templates and heuristics:</strong> if I keep adding templates, I can solve all document extraction problems. In reality, templates drift, scans are distorted or incomplete, and registration is much less reliable than it first appears.</li>
-<li><strong>Detector-first pipelines:</strong> if I tune the detector and the OCR separately, I am done. In reality, labeling is hard, the detector-OCR integration boundary is painful, and box quality itself becomes a source of downstream error.</li>
-<li><strong>Layout-aware transformers:</strong> if the model works on one document family and a few fields, I can reuse it broadly. In reality, these models are still fairly specialized and need new task data when the document or extraction target changes.</li>
-<li><strong>Foundation models:</strong> I can just throw documents at an API and get the answer. For simple tasks that is increasingly true. For messy, mission-critical extraction on large real documents, there is still a substantial gap.</li>
+<li><strong>Templates and heuristics:</strong> if I keep adding templates, I can cover all document types. In reality, templates drift, scans distort, and registration is much less reliable than it first appears.</li>
+<li><strong>Detector-first pipelines:</strong> if the detector and the OCR each work well, I’m done. In reality, the integration boundary between them is where errors compound.</li>
+<li><strong>Layout-aware transformers:</strong> if the model works on one document family, I can reuse it broadly. In reality, these models still need new task data when the document or extraction target changes.</li>
+<li><strong>Foundation models:</strong> I can just throw documents at an API and get the answer. For simple tasks, increasingly true. For messy, mission-critical extraction on large real documents, there’s still a substantial gap.</li>
 </ul>
 </section>
-<section id="what-i-believe-now" class="level2">
-<h2 class="anchored" data-anchor-id="what-i-believe-now">What I believe now</h2>
-<p>After working on practical document understanding problems for years, a few beliefs have become stronger for me.</p>
-<p>First, narrow systems still matter. General models are real progress, but boring domain constraints, validation logic, and carefully designed fallbacks still do a huge amount of the actual work.</p>
-<p>Second, benchmark wins and production wins are not the same thing. A model can look impressive on a public task and still be awkward in a real workflow where documents are incomplete, mislabeled, duplicated, rotated, partially photographed, or mixed with irrelevant pages.</p>
-<p>Third, data work never went away. Even when you do not fine-tune models, you still need curated evaluation sets, failure analysis, representative samples, and some discipline around measuring change.</p>
-<p>Fourth, the most important property of a document system is often not raw intelligence. It is calibrated reliability.</p>
-</section>
-<section id="if-i-were-starting-a-new-document-ai-project-today" class="level2">
-<h2 class="anchored" data-anchor-id="if-i-were-starting-a-new-document-ai-project-today">If I were starting a new document AI project today</h2>
-<p>I would begin much more pragmatically than I would have ten years ago.</p>
-<p>I would start with a narrow workflow, pick a high-quality OCR path and a strong general multimodal model, define the output schema tightly, and add validators early. I would build an evaluation set before I built a large custom modeling effort. I would study the failure distribution before deciding whether the next step should be prompting, routing, fine-tuning, better OCR, or a human-in-the-loop review path.</p>
-<p>Most importantly, I would resist the temptation to ask a single model to do everything.</p>
-<p>The field has changed enormously. But the underlying production question still feels familiar: how do you turn messy documents into dependable decisions?</p>
-<p>The answer, then as now, is not a single breakthrough. It is the discipline of building systems that combine perception, language, validation, and operational feedback in the right way.</p>
-</section>
-<section id="closing" class="level2">
-<h2 class="anchored" data-anchor-id="closing">Closing</h2>
-<p>A decade ago, practical document AI often meant OCR plus a pile of rules. Today it can mean VLMs, LLMs, modern OCR, structured outputs, validators, and agentic orchestration. That is real progress.</p>
-<p>But the deepest continuity is that useful document AI has always depended on respecting the long tail: visual variation, semantic ambiguity, business constraints, and the need to know when the machine should stop and ask for help.</p>
-<p>The models got better. The stack got more powerful. The job, in a strangely durable way, stayed the same.</p>
-</section>
-<section id="selected-references" class="level2">
-<h2 class="anchored" data-anchor-id="selected-references">Selected references</h2>
-<ul>
-<li><a href="https://arxiv.org/abs/1912.13318">LayoutLM: Pre-training of Text and Layout for Document Image Understanding</a></li>
-<li><a href="https://arxiv.org/abs/2204.08387">LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking</a></li>
-<li><a href="https://www.docvqa.org/">DocVQA</a></li>
-<li><a href="https://arxiv.org/abs/2206.01062">DocLayNet: A Large Human-Annotated Dataset for Document-Layout Analysis</a></li>
-<li><a href="https://arxiv.org/abs/1911.10683">PubTabNet: A Large-scale Dataset for Image-based Table Recognition</a></li>
-<li><a href="https://huggingface.co/docs/transformers/index">Hugging Face Transformers</a></li>
-<li><a href="https://huggingface.co/docs/trl/index">TRL: Transformer Reinforcement Learning</a></li>
-</ul>
+<section id="if-i-were-starting-today" class="level2">
+<h2 class="anchored" data-anchor-id="if-i-were-starting-today">If I were starting today</h2>
+<p>I’d start much more pragmatically than I would have ten years ago.</p>
+<p>Narrow workflow. High-quality OCR. Strong general multimodal model. Tight output schema. Validators early. An evaluation set before a large custom modeling effort. Study the failure distribution before deciding whether the next step is prompting, routing, fine-tuning, better OCR, or human-in-the-loop review.</p>
+<p>I’d resist the temptation to ask a single model to do everything. The strongest systems I’ve seen are composed: OCR for recall, VLMs for visual understanding, LLMs for reasoning and normalization, validators for trust, confidence routing for the long tail, and human review as the safety net. Less elegant than a pure end-to-end story, but it matches reality.</p>
+<p>In those composed systems, confidence policy deserves more attention than it usually gets. It rarely relies on any single model score. What works better is agreement: do OCR, VLM, and LLM outputs converge? Do validators pass? Field-level review should focus on uncertain fields rather than sending whole documents to manual fallback. The review path should become increasingly infrequent over time, but it remains the safety net that makes the rest of the automation trustworthy.</p>
+<p>I’d also put more weight on data quality than I used to. Not just labeling more data, but auditing labels, closing the loop between model predictions and annotation errors, and building evaluation sets that actually represent the ugly inputs the system will face. The ceiling is usually in the data before it’s in the model.</p>
+<p>Benchmark wins and production wins are not the same thing. A model can look impressive on a public task and still be awkward in a real workflow where documents are incomplete, mislabeled, duplicated, rotated, partially photographed, or mixed with irrelevant pages. The most important property of a document system is often not raw intelligence. It’s calibrated reliability.</p>
+<p>The field has changed enormously. The production question still feels familiar: how do you turn messy documents into dependable decisions? Not with a single breakthrough. With the discipline of building systems that combine perception, language, validation, and operational feedback, and knowing when the machine should stop and ask for help.</p>
 
 
 </section>
