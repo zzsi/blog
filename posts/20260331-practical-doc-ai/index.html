@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-03-31">
+
+<title>Learnings from a Decade of Document AI Work – Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About this blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/zzsi"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/zhangzhangsi/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Learnings from a Decade of Document AI Work</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">ai</div>
+                <div class="quarto-category">multimodal</div>
+                <div class="quarto-category">document ai</div>
+                <div class="quarto-category">ml systems</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 31, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-problem-never-was-just-ocr" id="toc-the-problem-never-was-just-ocr" class="nav-link active" data-scroll-target="#the-problem-never-was-just-ocr">The problem never was just OCR</a></li>
+  <li><a href="#how-we-measured-success" id="toc-how-we-measured-success" class="nav-link" data-scroll-target="#how-we-measured-success">How we measured success</a></li>
+  <li><a href="#phase-1-templates-ocr-and-heuristics" id="toc-phase-1-templates-ocr-and-heuristics" class="nav-link" data-scroll-target="#phase-1-templates-ocr-and-heuristics">Phase 1: templates, OCR, and heuristics</a></li>
+  <li><a href="#phase-2-detector-first-pipelines" id="toc-phase-2-detector-first-pipelines" class="nav-link" data-scroll-target="#phase-2-detector-first-pipelines">Phase 2: detector-first pipelines</a></li>
+  <li><a href="#phase-3-learning-to-combine-cues" id="toc-phase-3-learning-to-combine-cues" class="nav-link" data-scroll-target="#phase-3-learning-to-combine-cues">Phase 3: learning to combine cues</a></li>
+  <li><a href="#phase-4-foundation-models-changed-the-shape-of-the-stack" id="toc-phase-4-foundation-models-changed-the-shape-of-the-stack" class="nav-link" data-scroll-target="#phase-4-foundation-models-changed-the-shape-of-the-stack">Phase 4: foundation models changed the shape of the stack</a></li>
+  <li><a href="#what-wins-now-is-composition" id="toc-what-wins-now-is-composition" class="nav-link" data-scroll-target="#what-wins-now-is-composition">What wins now is composition</a></li>
+  <li><a href="#the-bottleneck-kept-moving" id="toc-the-bottleneck-kept-moving" class="nav-link" data-scroll-target="#the-bottleneck-kept-moving">The bottleneck kept moving</a></li>
+  <li><a href="#what-i-believe-now" id="toc-what-i-believe-now" class="nav-link" data-scroll-target="#what-i-believe-now">What I believe now</a></li>
+  <li><a href="#if-i-were-starting-a-new-document-ai-project-today" id="toc-if-i-were-starting-a-new-document-ai-project-today" class="nav-link" data-scroll-target="#if-i-were-starting-a-new-document-ai-project-today">If I were starting a new document AI project today</a></li>
+  <li><a href="#closing" id="toc-closing" class="nav-link" data-scroll-target="#closing">Closing</a></li>
+  <li><a href="#selected-references" id="toc-selected-references" class="nav-link" data-scroll-target="#selected-references">Selected references</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>For most of the last decade, I kept running into the same business problem wearing different clothes: turn messy documents into reliable structured decisions.</p>
+<p>Sometimes the documents were forms. Sometimes they were invoices, onboarding packets, statements, or tax documents. The inputs changed. The models changed. The hype changed even faster. But the operational demand stayed remarkably constant: read what matters, understand enough structure and context, map the result into a schema, and do it reliably enough that an actual business process can depend on it.</p>
+<p>That is the lens I want to use in this post. Not “here is the history of document AI” in the abstract, and not “look how much benchmarks improved.” I mean something narrower and more practical: how the stack changed when you were the person trying to make document understanding work on real inputs with deadlines, edge cases, and annoyed users.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Early document AI systems were dominated by templates, OCR, and heuristics. They worked well in narrow settings and failed badly under variation.</li>
+<li>Detector-first deep learning systems improved robustness on the visual side, but often turned the stack into a brittle multi-stage pipeline.</li>
+<li>Layout-aware transformers mattered because they learned to combine OCR text, geometry, and image cues more directly, but they still depended heavily on task-specific labeled data.</li>
+<li>Foundation models changed the economics and architecture of the system again. The bottleneck is now less about whether a model can read a document and more about orchestration, validation, and evaluation.</li>
+<li>Practical document AI still is not one model. It is a composed system.</li>
+</ul>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Phase</th>
+<th>Dominant stack</th>
+<th>What improved</th>
+<th>What became painful</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Templates and heuristics</td>
+<td>Templates, registration, cropped OCR, rules</td>
+<td>Fast wins on narrow stable forms</td>
+<td>Template drift, registration failures, OCR brittleness</td>
+</tr>
+<tr class="even">
+<td>Detector-first pipelines</td>
+<td>Object detectors plus OCR plus postprocessing</td>
+<td>Better visual robustness and localization</td>
+<td>Labeling burden, detector-OCR handoff, error propagation</td>
+</tr>
+<tr class="odd">
+<td>Layout-aware transformers</td>
+<td>OCR text plus layout plus image cues in one model</td>
+<td>Easier supervision, stronger field extraction</td>
+<td>Task-specific data prep, specialized models, single-page limits</td>
+</tr>
+<tr class="even">
+<td>Foundation-model systems</td>
+<td>OCR, VLMs, LLMs, validators, routing, post-training</td>
+<td>Faster prototyping, stronger generalization, richer reasoning</td>
+<td>Orchestration, confidence policy, evaluation, OOD robustness</td>
+</tr>
+</tbody>
+</table>
+<section id="the-problem-never-was-just-ocr" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-never-was-just-ocr">The problem never was just OCR</h2>
+<p>People sometimes talk about document AI as if it were synonymous with OCR. OCR is part of it, but in production it was never the whole game.</p>
+<p>The real job usually looked more like this:</p>
+<ul>
+<li>find the relevant regions or fields</li>
+<li>recover text from noisy scans, photos, or PDFs</li>
+<li>infer structure from layout</li>
+<li>connect information across multiple fields or pages</li>
+<li>normalize the result into a business schema</li>
+<li>validate that the extracted values are internally consistent</li>
+<li>decide when the system should ask for human review</li>
+</ul>
+<p>That last point matters more than most benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
+</section>
+<section id="how-we-measured-success" class="level2">
+<h2 class="anchored" data-anchor-id="how-we-measured-success">How we measured success</h2>
+<p>In client projects, the metric that mattered most was usually field-level accuracy.</p>
+<p>That sounds simple until you try to evaluate real business documents. Often there is not exactly one canonical string answer. Addresses can be broken into lines in multiple valid ways. Dates may appear in more than one acceptable format. OCR may introduce harmless whitespace or punctuation differences. So field-level evaluation usually needed normalization logic and some task-aware intelligence in the evaluator rather than a naive string equality check.</p>
+<p>That field-level view then rolled up into the metric that mattered most to the business: automation quality. In practice this usually meant two coupled numbers:</p>
+<ul>
+<li>what percentage of work can be automated</li>
+<li>among the automatically processed cases, what is the error rate</li>
+</ul>
+<p>That is a policy problem as much as a modeling problem. Document AI systems make many small decisions, and the automation policy depends on confidence score thresholds or other confidence signals. If the confidence module is poor, the automation policy is poor even if the raw model is good.</p>
+<p>So in practice, I came to think about evaluation in layers:</p>
+<ul>
+<li><strong>Field-level accuracy:</strong> the primary task metric, usually with normalization and problem-specific matching logic</li>
+<li><strong>Automation coverage:</strong> the percentage of documents or fields the system chooses to automate</li>
+<li><strong>Automation precision:</strong> the error rate among automated decisions</li>
+<li><strong>Review rate:</strong> how often the system falls back to a human</li>
+<li><strong>Threshold behavior:</strong> how those numbers move as confidence thresholds change</li>
+</ul>
+<p>Depending on the problem, there were also standard supporting metrics:</p>
+<ul>
+<li><strong>Character error rate (CER)</strong> and <strong>word error rate (WER):</strong> still useful for OCR quality, often computed with edit distance</li>
+<li><strong>Entity-level precision / recall / F1:</strong> common for key information extraction and semantic entity recognition</li>
+<li><strong>ANLS (Average Normalized Levenshtein Similarity):</strong> widely used in DocVQA-style string-answer tasks when near-matches should get partial credit</li>
+<li><strong>mAP at IoU thresholds:</strong> standard for layout detection and document object detection tasks</li>
+<li><strong>TEDS / TEDS-Struct:</strong> useful for table structure recognition, where exact tree structure matters more than flat token overlap</li>
+</ul>
+<p>There is also a broader lesson here. The right metric depends on the shape of the downstream decision. For forms and contracts, field-level correctness may dominate. For OCR-heavy systems, CER and WER may still be useful diagnostics. For receipts and invoices, line-item structure may require entity F1 or table-structure metrics. For automation systems, the most important chart is often not a single benchmark score but a coverage-versus-error curve under the confidence policy.</p>
+<p>That is why I am skeptical of one-number evaluations in document AI. The system is not just trying to be correct in the abstract. It is trying to support a decision policy.</p>
+</section>
+<section id="phase-1-templates-ocr-and-heuristics" class="level2">
+<h2 class="anchored" data-anchor-id="phase-1-templates-ocr-and-heuristics">Phase 1: templates, OCR, and heuristics</h2>
+<p>My early mental model of document AI was straightforward: if a document class is stable enough, you can solve a lot with templates, image registration, OCR, and rules.</p>
+<p>That stack typically looked like this:</p>
+<ul>
+<li>develop a template for the document family</li>
+<li>register the input image against the template</li>
+<li>crop expected field regions</li>
+<li>run OCR over the cropped regions or the page</li>
+<li>find anchor phrases like “Invoice Number” or “Gross Pay”</li>
+<li>use coordinates, nearby tokens, regexes, and page-specific rules</li>
+<li>map the result into a schema</li>
+</ul>
+<p>In a constrained workflow, this worked better than many people now remember. If the document family was narrow, the scan quality acceptable, the registration reliable enough, and the downstream schema stable, template-heavy systems could be fast, cheap, and surprisingly accurate.</p>
+<p>The downside was brittleness. Registration was never as reliable as one hoped once scans and photos became messy. Small layout shifts broke coordinate assumptions. A vendor changed a form revision and the parser quietly degraded. OCR errors propagated into every downstream rule. Handwriting, stamps, low-resolution scans, skew, or multi-page dependencies exposed how much of the system was really held together by assumptions.</p>
+<p>What I learned from that phase was that the problem was not merely reading text. The hard part was handling variation without rewriting the system every time a document changed shape.</p>
+</section>
+<section id="phase-2-detector-first-pipelines" class="level2">
+<h2 class="anchored" data-anchor-id="phase-2-detector-first-pipelines">Phase 2: detector-first pipelines</h2>
+<p>The next major improvement came from better visual models. Instead of assuming we already knew where everything was, we trained or used detectors to find regions of interest: tables, signatures, key-value fields, checkboxes, logos, headers, or other structural elements.</p>
+<p>This was a real step forward. Even a moderately good detector could absorb a lot of the variability that broke template-only systems. Rather than hard-coding the location of a field, you could ask a model to find it. That reduced some of the worst coordinate brittleness and made the pipeline feel more adaptive.</p>
+<p>But the architecture was still very staged:</p>
+<ul>
+<li>detect region</li>
+<li>crop region</li>
+<li>OCR region</li>
+<li>parse OCR text</li>
+<li>apply rules</li>
+</ul>
+<p>In other words, it was already multimodal in a loose engineering sense, but not in a unified learned sense. Vision handled localization. OCR handled text recognition. Rules and business logic handled interpretation.</p>
+<p>That decomposition was often the right choice for the tools of the time, but it came with painful handoff boundaries. If the detector missed the box, OCR never had a chance. If OCR garbled the crop, the parser failed. If table structure was slightly off, everything downstream became an exception case. As these systems got more capable, they also got more operationally complicated.</p>
+<p>The key lesson for me was that better perception did not automatically mean simpler systems. In many cases, it meant the opposite.</p>
+<section id="a-concrete-example-from-2018-real-estate-contracts" class="level3">
+<h3 class="anchored" data-anchor-id="a-concrete-example-from-2018-real-estate-contracts">A concrete example from 2018: real estate contracts</h3>
+<p>Around 2018, one of the document classes I worked on was real estate contracts. On paper, this sounds like a fairly standard extraction problem: find a set of predefined fields and map them into a structured schema. In practice, the awkwardness of the visual geometry dominated the work.</p>
+<p>The target workflow also mattered. We were mainly extracting from historical contracts to unlock analytics, rather than automating live contract intake where latency mattered more. Success was measured by field-level accuracy against manually entered ground truth on a sample set, with the usual caveat that even human-entered values were not perfectly clean.</p>
+<p>Some fields were tiny. A value like the option period might span only a couple of characters, occupying a tiny fraction of the page. Other fields were long and horizontally stretched, which made them a bad fit for the default anchor-box assumptions in detectors like RetinaNet. There were also multiline address fields, which introduced ambiguity even at the labeling stage. When does one field end? Should the line break be treated as part of the same value or as evidence of a different structural unit? Those details sound small, but they shape the whole training pipeline.</p>
+<p>The common pattern at the time was:</p>
+<ul>
+<li>detect the field region with a visual model</li>
+<li>crop the region</li>
+<li>send the crop to a commercial OCR engine</li>
+<li>parse and normalize the text</li>
+</ul>
+<p>The OCR layer was often a commercial API such as Google Vision and AWS OCR services. That stack was powerful enough to be useful, but it made the coupling between detection and OCR very obvious. If the detection box was off by a little, the OCR result degraded immediately. If the field was unusually thin or elongated, the detector could miss it for reasons that were architectural rather than semantic.</p>
+<p>Those elongated and tiny fields were a good example. Initially some of them had mAP around 20% even after training on tens of thousands of examples. Once we fixed the anchor-box setup for those geometries, they jumped to above 90% mAP. That was both encouraging and humbling: the model was not “bad at the task” in some abstract sense. It was badly matched to the object geometry we cared about.</p>
+<p>That project made me appreciate how much document AI depends on mundane geometric details. It was not enough to say “use a detector.” You had to ask what shape of object the detector was biased toward, how small a target it could reliably localize, and how much labeling ambiguity you were inadvertently baking into the system.</p>
+</section>
+<section id="another-example-from-2020-receipt-understanding" class="level3">
+<h3 class="anchored" data-anchor-id="another-example-from-2020-receipt-understanding">Another example from 2020: receipt understanding</h3>
+<p>Around 2020, colleagues of mine worked on receipt understanding. I was not directly on that project, but the engineering lessons were close enough to be instructive: production document problems are defined as much by acquisition noise as by semantics.</p>
+<p>Receipts are deceptively hard. The images often came from phone photos rather than clean scans, which meant weird viewing angles, blur, shadows, partial occlusion, and inconsistent lighting. Some receipts were long enough that users captured them in multiple photos, which introduced a stitching problem before extraction even began. And unlike a flat key-value form, the output schema had nested structure: line items sitting under subtotal and total, with all the ambiguity that implies.</p>
+<p>This kind of task exposed the limitations of thinking about document understanding as a sequence of isolated local predictions. You did not just need to read text. You needed to reconstruct a coherent object from messy visual evidence, impose structure on repeated rows, and keep the hierarchy of the output intact. Better preprocessing, including rectification and super-resolution, helped both detectors and OCR. Stitching multiple receipt images together added another large gain. It was a hard enough problem that outperforming strong specialist vendors on it was meaningful.</p>
+</section>
+</section>
+<section id="phase-3-learning-to-combine-cues" class="level2">
+<h2 class="anchored" data-anchor-id="phase-3-learning-to-combine-cues">Phase 3: learning to combine cues</h2>
+<p>The transition to layout-aware transformers is sometimes described too loosely as “document AI became multimodal.” That is not quite right. Production systems were already combining visual signals and text. The more important change was this: the model itself began to treat text, geometry, and sometimes image features as jointly useful inputs for the same prediction problem.</p>
+<p>That mattered a lot.</p>
+<p>Models in the LayoutLM family and related approaches pushed the field toward learned fusion rather than hand-assembled coordination between separate components. Instead of a pipeline where OCR text and bounding boxes were merely intermediate artifacts passed between modules, the model could learn patterns like:</p>
+<ul>
+<li>this token means something different depending on where it appears</li>
+<li>nearby fields provide semantic context</li>
+<li>document layout carries information that plain text alone loses</li>
+<li>the same textual phrase can play different roles across forms</li>
+</ul>
+<p>This was the first time many document understanding tasks felt natively modeled rather than patched together.</p>
+<p>It also made clear what the new bottleneck was: data.</p>
+<p>These models were often much better once properly trained or fine-tuned, but they were not magic. You still needed labeled examples. You still needed annotation conventions. You still had to decide what exactly the prediction target was, how to deal with low-confidence spans, and how to retrain when the incoming mix of documents changed.</p>
+<p>So the pain shifted. In earlier systems, the pain was brittle rules. In this phase, the pain became dataset curation, labeling operations, task framing, and maintenance of specialized models.</p>
+<p>That was still progress. But it was progress with a clear bill attached.</p>
+<section id="a-concrete-example-from-2022-layoutlm-style-models" class="level3">
+<h3 class="anchored" data-anchor-id="a-concrete-example-from-2022-layoutlm-style-models">A concrete example from 2022: LayoutLM-style models</h3>
+<p>Around 2022, we adopted LayoutLM-type models for some of our work, and the experience changed my view of what “document understanding” could feel like in practice.</p>
+<p>The most refreshing part was not that the models were magically zero-shot. They were not. The most refreshing part was that the shape of the task changed. We could take image pixels plus OCR text as input and predict which OCR tokens were the answer to a question. That was a much more natural fit for many extraction problems than drawing and detecting field boxes first.</p>
+<p>Operationally, this often looked like a token-classification setup over OCR words. We did not need to hand-label bounding boxes for every target field region in the same way detector pipelines did. The manual labeling only needed to specify the final answer. From there, we built an inverse labeling process to project those answers back onto token-level supervision. That let us generate token labels from the final extracted values rather than asking annotators to do the more tedious span-by-span geometric work directly.</p>
+<p>That shift mattered. It materially reduced annotation burden because there was no more box labeling, made iteration faster, and let us train on more data. More importantly, the transformer layers could cross-reference signals in a way our older pipelines could not. Text content, token position, page layout, and visual context could all inform the prediction jointly. A word was no longer interpreted in isolation or only through a local detector crop. It could be interpreted in the context of the document.</p>
+<p>The models were larger, but the cost was acceptable. In practice, model inference time was still small compared with the rest of a real production pipeline: retrieving PDFs from data sources, querying multiple databases, and doing all the ordinary glue work around the model.</p>
+<p>That was the phase where I started feeling that the stack had become meaningfully more “document native.”</p>
+</section>
+</section>
+<section id="phase-4-foundation-models-changed-the-shape-of-the-stack" class="level2">
+<h2 class="anchored" data-anchor-id="phase-4-foundation-models-changed-the-shape-of-the-stack">Phase 4: foundation models changed the shape of the stack</h2>
+<p>The latest wave feels different again.</p>
+<p>Modern OCR engines are much stronger than they used to be. Vision-language models can reason over pages more flexibly. Large language models are good at schema mapping, normalization, and conditional extraction. Long-context models make multi-page reasoning more tractable. Prompting, few-shot examples, and tool use often get you surprisingly far before any custom training enters the picture.</p>
+<p>The consequence is not simply that accuracy went up. The consequence is that the architecture of the system changed.</p>
+<p>For a growing set of document problems, you can now start from something like this:</p>
+<ul>
+<li>extract text and page images</li>
+<li>send the right representation to a VLM or LLM</li>
+<li>ask for structured output in a target schema</li>
+<li>run validators and business-rule checks</li>
+<li>retry, route, or escalate when confidence is low</li>
+</ul>
+<p>That reduces the amount of task-specific modeling you need up front. It also makes previously annoying problems more approachable: fuzzy field definitions, cross-page references, lightweight reasoning, or documents that do not fit neatly into a single pre-trained template.</p>
+<p>But this shift creates a new trap. It is tempting to think the model has replaced the system.</p>
+<p>It has not.</p>
+<p>What changed is that more of the complexity moved upward into orchestration:</p>
+<ul>
+<li>when to use OCR text, raw image, or both</li>
+<li>which model to route a document to</li>
+<li>how to enforce structured outputs</li>
+<li>how to validate extracted values against business rules</li>
+<li>when to re-prompt, when to fall back, and when to send to a human</li>
+<li>how to measure regression when prompts, models, or providers change</li>
+</ul>
+<p>In older stacks, the fragility lived in templates and hand-tuned pipelines. In current stacks, the fragility often lives in orchestration and evaluation.</p>
+<section id="a-concrete-example-from-2024-to-2026-multi-model-systems-and-post-training" class="level3">
+<h3 class="anchored" data-anchor-id="a-concrete-example-from-2024-to-2026-multi-model-systems-and-post-training">A concrete example from 2024 to 2026: multi-model systems and post-training</h3>
+<p>What defined this phase for me was not replacing the old stack with a single foundation model. It was wiring together multiple models and utilities into a system that could make better use of each component’s strengths.</p>
+<p>Across several projects, the stack often included:</p>
+<ul>
+<li>a VLM for schema-informed extraction on single-page or small multi-page inputs</li>
+<li>OCR for high-recall generic extraction</li>
+<li>custom detectors for stamps, signatures, and other out-of-distribution visual objects</li>
+<li>page classifiers</li>
+<li>heuristic image-preprocessing modules</li>
+<li>retrieval or knowledge utilities for context engineering</li>
+<li>LLMs for cross-examining intermediate results from multiple models</li>
+</ul>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart LR
+    A[Document or PDF] --&gt; B[Preprocessing\nrectify, enhance, split]
+    B --&gt; C[OCR\nhigh-recall text extraction]
+    B --&gt; D[VLM\nschema-informed extraction]
+    B --&gt; E[Custom detectors\nstamps, signatures, OOD objects]
+    B --&gt; F[Page classifier]
+    C --&gt; G[Context engineering\nretrieval, business context]
+    D --&gt; G
+    E --&gt; G
+    F --&gt; G
+    G --&gt; H[LLM reconciliation\ncross-examine intermediate results]
+    H --&gt; I[Validators and business rules]
+    I --&gt; J[Confidence policy]
+    J --&gt;|high confidence| K[Automated output]
+    J --&gt;|low confidence| L[Field-level review]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>This was powerful because the components were not interchangeable. OCR was often the recall-oriented layer. The VLM was useful when the extraction target depended on layout and semantic intent. Custom detectors still mattered for niche objects that general models handled unreliably. LLMs were useful not only for extraction, but for reconciling conflicting evidence across model outputs.</p>
+<p>That last point changed how I thought about the problem. In earlier pipelines, model outputs were often treated as final. In these newer systems, intermediate outputs became evidence that could be compared, challenged, and combined. A modern document pipeline can look less like a linear parser and more like a controlled cross-examination among specialized components.</p>
+<p>We also found that post-training still mattered.</p>
+<p>For some VLM use cases, supervised fine-tuning was useful both for getting a more desirable output format and for improving accuracy on inputs that were out of distribution relative to the base open-source model’s training data. SFT was especially helpful for making the model emit cleaner, more usable structured outputs. It also helped on difficult inputs such as low-quality scans of forms, handwritten content, and unfamiliar formats like music sheets.</p>
+<p>But SFT had limits. It gave a good initial accuracy bump and improved formatting behavior, then started to plateau. The harder part was pushing beyond that plateau, which is where we spent a lot of time on RL with verifiable rewards. Getting RL to work reliably was much more demanding than getting SFT to work. Reward design, verification logic, training stability, and evaluation all mattered.</p>
+<p>So even in the foundation-model phase, the story was not “prompting replaced training.” The more accurate story was that prompting widened the starting point, while post-training remained important when you cared about domain robustness, output discipline, and performance on ugly real-world inputs.</p>
+<p>This phase also made me appreciate how much leverage now comes from open ecosystems. A lot of this work was enabled by open-source tooling and models: Hugging Face Transformers, TRL, Unsloth, and Miles on the tooling side, and model families like Llama, Mistral, Qwen, and Nemotron on the modeling side. That ecosystem made it much easier to experiment with both orchestration and post-training, even if making the whole system production-grade still took real engineering discipline.</p>
+<p>So the foundational-model phase feels less like “the problem is solved” and more like “the design space got much larger.” That is powerful, but only if the surrounding system is built to keep the models honest.</p>
+</section>
+</section>
+<section id="what-wins-now-is-composition" class="level2">
+<h2 class="anchored" data-anchor-id="what-wins-now-is-composition">What wins now is composition</h2>
+<p>If I had to summarize the biggest practical lesson from the last decade, it is this: document AI is still not a one-model problem.</p>
+<p>The strongest systems today are usually composed. They mix several ingredients:</p>
+<ul>
+<li>OCR or native text extraction when available</li>
+<li>image understanding for visual structure and ambiguous regions</li>
+<li>language models for normalization, schema mapping, and reasoning</li>
+<li>validators for checksums, totals, dates, identities, and business constraints</li>
+<li>confidence estimation and failure routing</li>
+<li>human review for the residual long tail</li>
+</ul>
+<p>This sounds less elegant than a pure end-to-end story, but it matches reality better.</p>
+<p>In business workflows, the goal is rarely to produce a plausible answer. The goal is to produce a trustworthy answer, or to fail in a way that the rest of the system can handle. A model that is very smart but poorly harnessed can be less useful than a narrower component inside a disciplined pipeline.</p>
+<p>In the systems we delivered, confidence policy usually relied less on any single model score and more on agreement and validation. Agreement across OCR, VLM, and LLM outputs was useful. Validator pass/fail was useful. Field-level review then focused on uncertain fields rather than sending whole documents to manual fallback. Over time, that review path should become increasingly infrequent, but it remains a critical part of the safety net.</p>
+<p>That is why I think the phrase “agentic document AI” is simultaneously useful and easy to misuse. The interesting part is not just that an agent can call multiple models. The interesting part is that the system can coordinate extraction, validation, re-checking, and exception handling in a controlled loop. If that loop is sloppy, you do not have a production system. You have an expensive demo.</p>
+</section>
+<section id="the-bottleneck-kept-moving" class="level2">
+<h2 class="anchored" data-anchor-id="the-bottleneck-kept-moving">The bottleneck kept moving</h2>
+<p>Looking back, I think each phase mostly moved the bottleneck rather than eliminating it.</p>
+<ul>
+<li>Template-heavy systems were bottlenecked by brittleness under variation.</li>
+<li>Detector-first systems were bottlenecked by pipeline complexity and error propagation.</li>
+<li>Layout-aware transformers were bottlenecked by labeled data and task-specific training.</li>
+<li>Foundation-model systems are bottlenecked by orchestration, evaluation, and reliability.</li>
+</ul>
+<p>That is part of why this field remains interesting. It keeps changing, but it does not change by becoming simpler in some absolute sense. It changes by making one layer easier and exposing the next layer more clearly.</p>
+<p>The misconceptions also changed with the stack:</p>
+<ul>
+<li><strong>Templates and heuristics:</strong> if I keep adding templates, I can solve all document extraction problems. In reality, templates drift, scans are distorted or incomplete, and registration is much less reliable than it first appears.</li>
+<li><strong>Detector-first pipelines:</strong> if I tune the detector and the OCR separately, I am done. In reality, labeling is hard, the detector-OCR integration boundary is painful, and box quality itself becomes a source of downstream error.</li>
+<li><strong>Layout-aware transformers:</strong> if the model works on one document family and a few fields, I can reuse it broadly. In reality, these models are still fairly specialized and need new task data when the document or extraction target changes.</li>
+<li><strong>Foundation models:</strong> I can just throw documents at an API and get the answer. For simple tasks that is increasingly true. For messy, mission-critical extraction on large real documents, there is still a substantial gap.</li>
+</ul>
+</section>
+<section id="what-i-believe-now" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-believe-now">What I believe now</h2>
+<p>After working on practical document understanding problems for years, a few beliefs have become stronger for me.</p>
+<p>First, narrow systems still matter. General models are real progress, but boring domain constraints, validation logic, and carefully designed fallbacks still do a huge amount of the actual work.</p>
+<p>Second, benchmark wins and production wins are not the same thing. A model can look impressive on a public task and still be awkward in a real workflow where documents are incomplete, mislabeled, duplicated, rotated, partially photographed, or mixed with irrelevant pages.</p>
+<p>Third, data work never went away. Even when you do not fine-tune models, you still need curated evaluation sets, failure analysis, representative samples, and some discipline around measuring change.</p>
+<p>Fourth, the most important property of a document system is often not raw intelligence. It is calibrated reliability.</p>
+</section>
+<section id="if-i-were-starting-a-new-document-ai-project-today" class="level2">
+<h2 class="anchored" data-anchor-id="if-i-were-starting-a-new-document-ai-project-today">If I were starting a new document AI project today</h2>
+<p>I would begin much more pragmatically than I would have ten years ago.</p>
+<p>I would start with a narrow workflow, pick a high-quality OCR path and a strong general multimodal model, define the output schema tightly, and add validators early. I would build an evaluation set before I built a large custom modeling effort. I would study the failure distribution before deciding whether the next step should be prompting, routing, fine-tuning, better OCR, or a human-in-the-loop review path.</p>
+<p>Most importantly, I would resist the temptation to ask a single model to do everything.</p>
+<p>The field has changed enormously. But the underlying production question still feels familiar: how do you turn messy documents into dependable decisions?</p>
+<p>The answer, then as now, is not a single breakthrough. It is the discipline of building systems that combine perception, language, validation, and operational feedback in the right way.</p>
+</section>
+<section id="closing" class="level2">
+<h2 class="anchored" data-anchor-id="closing">Closing</h2>
+<p>A decade ago, practical document AI often meant OCR plus a pile of rules. Today it can mean VLMs, LLMs, modern OCR, structured outputs, validators, and agentic orchestration. That is real progress.</p>
+<p>But the deepest continuity is that useful document AI has always depended on respecting the long tail: visual variation, semantic ambiguity, business constraints, and the need to know when the machine should stop and ask for help.</p>
+<p>The models got better. The stack got more powerful. The job, in a strangely durable way, stayed the same.</p>
+</section>
+<section id="selected-references" class="level2">
+<h2 class="anchored" data-anchor-id="selected-references">Selected references</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1912.13318">LayoutLM: Pre-training of Text and Layout for Document Image Understanding</a></li>
+<li><a href="https://arxiv.org/abs/2204.08387">LayoutLMv3: Pre-training for Document AI with Unified Text and Image Masking</a></li>
+<li><a href="https://www.docvqa.org/">DocVQA</a></li>
+<li><a href="https://arxiv.org/abs/2206.01062">DocLayNet: A Large Human-Annotated Dataset for Document-Layout Analysis</a></li>
+<li><a href="https://arxiv.org/abs/1911.10683">PubTabNet: A Large-scale Dataset for Image-based Table Recognition</a></li>
+<li><a href="https://huggingface.co/docs/transformers/index">Hugging Face Transformers</a></li>
+<li><a href="https://huggingface.co/docs/trl/index">TRL: Transformer Reinforcement Learning</a></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/zzsi\.github\.io\/blog\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
