@@ -168,10 +168,10 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>I’ve worked on document AI problems for about a decade. The business problem stayed mostly the same. The stack did not.</p>
-<p>The core problem: extract the right information from messy documents, map it into a schema, make the result reliable enough for a real workflow. Sometimes contracts. Sometimes receipts, forms, statements, onboarding packets, tax documents. What changed was the modeling stack.</p>
-<p>It started with templates, image registration, and OCR. Then convnet-based detector-plus-OCR pipelines. Then transformer models that combined OCR text, layout, and image cues in one trainable system. Now the stack often includes OCR, VLMs, LLMs, validators, retrieval, post-training, and increasingly agentic tool use.</p>
-<p>Each phase mostly moved the bottleneck. That’s the pattern I want to capture here.</p>
+<p>I’ve worked on document AI problems for about a decade. The business problem stayed mostly the same. The AI models, tools, and system design went through several paradigm shifts.</p>
+<p>The core problem was to extract the right information from messy documents, map it into a schema, and make the result reliable enough for a real workflow. Sometimes contracts. Sometimes receipts, forms, statements, onboarding packets, tax documents.</p>
+<p>The earliest systems I worked with used templates, image registration, and OCR. Then convnet-based detector-plus-OCR pipelines. Then transformer models that combined OCR text, layout, and image cues in one trainable system. Now the stack often includes OCR, VLMs, LLMs, validators, retrieval, post-training, and increasingly agentic tool use.</p>
+<p>Each phase mostly moved the bottleneck rather than eliminating it.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -183,9 +183,10 @@ TL;DR
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Each generation of document AI mostly moved the bottleneck rather than eliminating it: from template brittleness, to pipeline complexity, to labeled data hunger, to orchestration and evaluation.</li>
-<li>Foundation models changed the economics but didn’t replace the system. The hard part shifted from “can the model read this” to “can we trust the answer.”</li>
+<li>Each generation of document AI mostly moved the bottleneck rather than eliminating it: from template brittleness, to pipeline complexity, to the cost of task-specific training data, to orchestration, evaluation, and hallucination.</li>
+<li>Foundation models changed the economics but didn’t replace the system. The hard part shifted from getting models to extract useful information to making their output reliable and precise.</li>
 <li>Document AI is still a composed system, not a single model.</li>
+<li>In practice, evolving a document AI solution means balancing model capability, data quality, and system reliability. Improving one usually exposes the limits of the others.</li>
 </ul>
 </div>
 </div>
@@ -233,22 +234,12 @@ TL;DR
 </table>
 <section id="the-problem-was-never-just-ocr" class="level2">
 <h2 class="anchored" data-anchor-id="the-problem-was-never-just-ocr">The problem was never just OCR</h2>
-<p>People sometimes talk about document AI as if it were synonymous with OCR. It never was.</p>
-<p>In practice, the business problem looked more like this:</p>
-<ul>
-<li>find the relevant regions or fields</li>
-<li>recover text from noisy scans, photos, or PDFs</li>
-<li>infer structure from layout</li>
-<li>connect information across multiple fields or pages</li>
-<li>normalize the result into a business schema</li>
-<li>validate that extracted values are internally consistent</li>
-<li>decide when to ask for human review</li>
-</ul>
-<p>That last point matters more than benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
+<p>People sometimes talk about document AI as if it were synonymous with OCR. It never was. In practice, you had to find the relevant regions, recover text from noisy scans or photos, infer structure from layout, connect information across fields and pages, normalize everything into a business schema, and validate that the results were internally consistent. And then you had to decide when the system should stop and ask a human for help.</p>
+<p>That last part matters more than benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
 </section>
 <section id="how-we-measured-success" class="level2">
 <h2 class="anchored" data-anchor-id="how-we-measured-success">How we measured success</h2>
-<p>The metric that mattered most was usually field-level accuracy, but defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
+<p>The metric that mattered most in our projects was usually field-level accuracy. Other document AI tasks, like table extraction or layout analysis, have their own evaluation challenges, but most of our work was structured field extraction, so that is the scenario I will use here. Even within that scope, defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
 <p>Field-level accuracy then rolled up into what the business actually cared about: automation quality. Two coupled numbers:</p>
 <ul>
 <li>what percentage of work can be automated</li>
@@ -256,20 +247,37 @@ TL;DR
 </ul>
 <p>That’s a policy problem as much as a modeling problem. The automation policy depends on confidence signals. If confidence estimation is poor, the policy is poor even if the raw model is good.</p>
 <p>I came to think about evaluation in layers: field-level accuracy, automation coverage, automation precision, review rate, and how all of those move as confidence thresholds change. The most important chart was often not a single benchmark score but a coverage-versus-error curve.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class="figure"><p></p>
+<div>
+<pre class="mermaid mermaid-js">xychart-beta
+    title "Coverage vs Error Rate (as confidence threshold changes)"
+    x-axis "Automation Coverage (%)" [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    y-axis "Error Rate (%)" 0 --&gt; 15
+    line [0.5, 0.6, 0.8, 1.0, 1.5, 2.5, 4.0, 6.5, 10, 14]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+<p>The numbers above are illustrative. Moving the confidence threshold to automate more documents lets more errors through. The shape of this curve, not a single accuracy number, is what determined whether a system was production-ready.</p>
 <p>Depending on the task, standard supporting metrics also mattered:</p>
 <ul>
-<li>CER and WER for OCR quality</li>
-<li>entity-level precision, recall, and F1 for key information extraction</li>
-<li><a href="https://arxiv.org/abs/1907.00490">ANLS</a> for <a href="https://www.docvqa.org/">DocVQA</a>-style tasks where near-matches deserve partial credit</li>
+<li>CER (character error rate) and WER (word error rate) for OCR quality</li>
+<li>field-level precision, recall, and F1 for key information extraction</li>
+<li>ANLS (average normalized Levenshtein similarity) for <a href="https://www.docvqa.org/">DocVQA</a>-style tasks where near-matches deserve partial credit</li>
 <li>mAP at IoU thresholds for layout detection, for example on <a href="https://arxiv.org/abs/2206.01062">DocLayNet</a></li>
 <li><a href="https://arxiv.org/abs/1911.10683">TEDS</a> for table structure recognition</li>
 </ul>
 <p>The right metric depends on the shape of the downstream decision.</p>
-<p>That’s why I’m skeptical of one-number evaluations in document AI. The system isn’t trying to be correct in the abstract. It’s trying to support a decision policy.</p>
+<p>That’s why I’m skeptical of one-number evaluations in document AI. The system isn’t trying to be correct in the abstract. It’s trying to support a decision policy, which has tangible impact on cost, productivity, and revenue.</p>
 </section>
 <section id="phase-1-templates-ocr-and-heuristics" class="level2">
 <h2 class="anchored" data-anchor-id="phase-1-templates-ocr-and-heuristics">Phase 1: templates, OCR, and heuristics</h2>
-<p>My early mental model was straightforward: if a document class is stable enough, you can solve a lot with templates, image registration, OCR, and rules.</p>
+<p>Before deep learning became practical for document tasks, the standard approach was straightforward: if a document class is stable enough, you can solve a lot with templates, image registration, OCR, and rules.</p>
 <p>The stack typically looked like this:</p>
 <ul>
 <li>develop a template for the document family</li>
@@ -286,15 +294,13 @@ TL;DR
 </section>
 <section id="phase-2-detector-first-pipelines" class="level2">
 <h2 class="anchored" data-anchor-id="phase-2-detector-first-pipelines">Phase 2: detector-first pipelines</h2>
-<p>The next improvement came from better visual models. Instead of assuming we knew where everything was, we trained convnet-based detectors to find regions of interest: tables, signatures, key-value fields, checkboxes, headers.</p>
+<p>By the mid-2010s, convolutional networks had proven they could reliably detect and localize objects in natural images. Models like Faster R-CNN (2015) and <a href="https://arxiv.org/abs/1708.02002">RetinaNet</a> (2017) made it practical to apply the same ideas to documents: train detectors to find regions of interest like tables, signatures, key-value fields, checkboxes, and headers.</p>
 <p>Even a moderately good detector could absorb variability that broke template-only systems. You could ask a model to find a field rather than hard-coding its location.</p>
-<p>But the architecture was still very staged:</p>
+<p>The pipeline was clear: extraction was tackled in a sequence of isolated steps.</p>
 <ul>
-<li>detect region</li>
-<li>crop region</li>
-<li>OCR region</li>
-<li>parse OCR text</li>
-<li>apply rules</li>
+<li>detect the field region</li>
+<li>run OCR on the detected region</li>
+<li>parse and normalize the result</li>
 </ul>
 <p>It was multimodal in a loose engineering sense, but not in a unified learned sense. Vision handled localization. OCR handled text recognition. Rules handled interpretation.</p>
 <p>That decomposition was often right for the tools of the time, but it came with painful handoff boundaries. If the detector missed the box, OCR never had a chance. If OCR garbled the crop, the parser failed. If table structure was slightly off, everything downstream became an exception case.</p>
