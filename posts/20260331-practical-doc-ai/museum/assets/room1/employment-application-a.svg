@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="900" viewBox="0 0 700 900">
+  <rect width="700" height="900" fill="#eee3ca"/>
+  <rect x="70" y="48" width="560" height="780" fill="#f9f6eb" stroke="#9d9278" stroke-width="2"/>
+
+  <circle cx="120" cy="98" r="26" fill="#d7ccb4" stroke="#8e836a" stroke-width="2"/>
+  <text x="164" y="95" fill="#332b1d" font-family="Georgia, serif" font-size="24" font-weight="700">Employment Application</text>
+  <text x="164" y="122" fill="#5a533f" font-family="Georgia, serif" font-size="14">Northwind Logistics</text>
+  <text x="164" y="142" fill="#5a533f" font-family="Georgia, serif" font-size="13">Applicant intake form for hourly and salaried roles</text>
+
+  <rect x="104" y="164" width="492" height="30" fill="#e5ddca" stroke="#9d9278"/>
+  <text x="116" y="184" fill="#413828" font-family="Georgia, serif" font-size="14" font-weight="700">Section 1. Applicant Information</text>
+
+  <text x="106" y="232" fill="#574f40" font-family="Georgia, serif" font-size="14">Applicant name</text>
+  <rect x="172" y="214" width="248" height="28" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="182" y="233" fill="#2f2b23" font-family="Georgia, serif" font-size="16" font-weight="600">Alexandra Hayes</text>
+
+  <text x="106" y="280" fill="#574f40" font-family="Georgia, serif" font-size="14">Position desired</text>
+  <rect x="172" y="262" width="338" height="28" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="182" y="281" fill="#2f2b23" font-family="Georgia, serif" font-size="15" font-weight="600">Senior Operations Analyst</text>
+
+  <text x="106" y="330" fill="#574f40" font-family="Georgia, serif" font-size="14">Street address</text>
+  <rect x="172" y="312" width="302" height="48" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="182" y="331" fill="#2f2b23" font-family="Georgia, serif" font-size="15" font-weight="600">2714 Red Cedar Lane</text>
+  <text x="182" y="350" fill="#2f2b23" font-family="Georgia, serif" font-size="15" font-weight="600">Austin, TX</text>
+
+  <text x="498" y="330" fill="#574f40" font-family="Georgia, serif" font-size="14">ZIP</text>
+  <rect x="500" y="312" width="46" height="24" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="508" y="329" fill="#2f2b23" font-family="Georgia, serif" font-size="14" font-weight="600">78704</text>
+
+  <rect x="104" y="388" width="492" height="30" fill="#e5ddca" stroke="#9d9278"/>
+  <text x="116" y="408" fill="#413828" font-family="Georgia, serif" font-size="14" font-weight="700">Section 2. Work History</text>
+
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="13">
+    <text x="106" y="452">Employer name</text>
+    <text x="362" y="452">Dates employed</text>
+    <text x="106" y="480">Job title</text>
+    <text x="106" y="536">Employer name</text>
+    <text x="362" y="536">Dates employed</text>
+    <text x="106" y="564">Job title</text>
+  </g>
+  <g stroke="#b0a58f" stroke-width="1">
+    <line x1="106" y1="458" x2="322" y2="458"/>
+    <line x1="362" y1="458" x2="540" y2="458"/>
+    <line x1="106" y1="486" x2="540" y2="486"/>
+    <line x1="106" y1="542" x2="322" y2="542"/>
+    <line x1="362" y1="542" x2="540" y2="542"/>
+    <line x1="106" y1="570" x2="540" y2="570"/>
+  </g>
+
+  <rect x="104" y="612" width="492" height="30" fill="#e5ddca" stroke="#9d9278"/>
+  <text x="116" y="632" fill="#413828" font-family="Georgia, serif" font-size="14" font-weight="700">Section 3. Availability and Certification</text>
+
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="13">
+    <text x="106" y="676">Earliest start date</text>
+    <text x="328" y="676">Available weekends?</text>
+    <text x="106" y="724">I certify the information above is complete and accurate to the best of my knowledge.</text>
+  </g>
+  <g stroke="#b0a58f" stroke-width="1">
+    <line x1="106" y1="682" x2="260" y2="682"/>
+    <rect x="328" y="661" width="14" height="14" fill="none"/>
+    <rect x="410" y="661" width="14" height="14" fill="none"/>
+    <line x1="106" y1="754" x2="350" y2="754"/>
+    <line x1="390" y1="754" x2="540" y2="754"/>
+  </g>
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="12">
+    <text x="348" y="673">Yes</text>
+    <text x="430" y="673">No</text>
+    <text x="106" y="772">Applicant signature</text>
+    <text x="390" y="772">Date</text>
+  </g>
+</svg>

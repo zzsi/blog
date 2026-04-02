@@ -1,0 +1,593 @@
+---
+title: "Doc AI Museum: Room 1"
+subtitle: "Templates, Registration, and OCR"
+resources:
+  - assets/room1/*
+format:
+  html:
+    toc: false
+page-layout: full
+---
+
+[Back to the post](../index.qmd)
+
+This room shows why early document AI systems could work well on narrow document families, and why they broke so easily. The workflow is simple: register the incoming scan against a template, crop expected field regions, and run OCR on those regions.
+
+The failure mode is not abstract. A template stack can still look solid after registration succeeds. What breaks next is usually the fixed crop plus OCR step, especially on small fields and multiline content.
+
+The assets here come from a real offline generator in the same folder: synthetic employment-application forms, feature-based image matching, DocTR OCR, and a hybrid corruption pipeline that simulates print defects, paper defects, geometry drift, and capture artifacts.
+
+::: {.callout-note appearance="simple"}
+## What To Try
+
+- Start on `Clean`. The full pipeline works.
+- Click `Rotation`. Registration still succeeds and extraction stays correct.
+- Click `JPEG` or `Marked-up form`. Matching still works, but OCR starts degrading.
+- Click a field card, especially `ZIP code` or `Street address`, and inspect the crop that OCR actually saw.
+:::
+
+<div class="room1-shell">
+  <section class="room1-toolbar">
+    <div class="room1-toolbar-copy">
+      <h2>Choose A Corruption Profile</h2>
+      <p>These presets are precomputed. The room is showing real registration and OCR outputs, not a browser simulation.</p>
+    </div>
+    <div class="room1-presets" id="room1-presets"></div>
+  </section>
+
+  <section class="room1-status">
+    <div class="room1-status-main">
+      <h2 id="room1-profile-title">Clean</h2>
+      <p id="room1-profile-description">No corruption.</p>
+      <p id="room1-diagnosis" class="room1-diagnosis"></p>
+    </div>
+    <div class="room1-badges" id="room1-badges"></div>
+  </section>
+
+  <div class="room1-stage">
+    <section class="room1-panel">
+      <header>
+        <h3>Incoming Document</h3>
+        <p>The observed form after corruption. This is the image fed into matching.</p>
+      </header>
+      <img id="room1-incoming" alt="Incoming corrupted form" />
+    </section>
+
+    <section class="room1-panel">
+      <header>
+        <h3>Registered To Template</h3>
+        <p>Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
+      </header>
+      <canvas id="room1-registered" width="700" height="900"></canvas>
+    </section>
+
+    <section class="room1-panel room1-focus">
+      <header>
+        <h3>Selected Field</h3>
+        <p id="room1-focus-copy">Click a field card to inspect the OCR crop and output.</p>
+      </header>
+      <div class="room1-focus-body">
+        <img id="room1-crop" alt="Selected OCR crop" />
+        <div class="room1-focus-meta">
+          <h4 id="room1-focus-label">ZIP code</h4>
+          <dl>
+            <div>
+              <dt>Expected</dt>
+              <dd id="room1-focus-expected"></dd>
+            </div>
+            <div>
+              <dt>OCR output</dt>
+              <dd id="room1-focus-ocr"></dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="room1-results">
+    <header>
+      <h2>Field Extraction</h2>
+      <p>Small fields and cramped multiline fields fail before the whole page looks obviously broken.</p>
+    </header>
+    <div class="room1-grid" id="room1-grid"></div>
+  </section>
+
+  <details class="room1-advanced">
+    <summary>Advanced View</summary>
+    <div class="room1-advanced-body">
+      <label class="room1-toggle">
+        <input id="room1-show-registered" type="checkbox" checked />
+        <span>Show registered image</span>
+      </label>
+      <label class="room1-toggle">
+        <input id="room1-show-boxes" type="checkbox" checked />
+        <span>Show crop boxes</span>
+      </label>
+      <pre id="room1-profile-json"></pre>
+    </div>
+  </details>
+</div>
+
+<style>
+.room1-shell {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1.3rem;
+}
+
+.room1-toolbar,
+.room1-status,
+.room1-results,
+.room1-advanced,
+.room1-panel {
+  border: 1px solid #d7ccb4;
+  border-radius: 18px;
+  background: #fffdf7;
+  box-shadow: 0 10px 24px rgba(43, 31, 7, 0.06);
+}
+
+.room1-toolbar {
+  padding: 1rem 1.2rem 1.2rem;
+  background: linear-gradient(180deg, #fffef8, #f5efe0);
+}
+
+.room1-toolbar-copy h2,
+.room1-status-main h2,
+.room1-results header h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.08rem;
+}
+
+.room1-toolbar-copy p,
+.room1-status-main p,
+.room1-results header p,
+.room1-panel header p {
+  margin: 0;
+  color: #5a533f;
+  font-size: 0.93rem;
+}
+
+.room1-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.room1-preset {
+  border: 1px solid #cbbd9f;
+  background: #fff9ec;
+  color: #332b1d;
+  padding: 0.55rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.92rem;
+}
+
+.room1-preset.active {
+  background: #332b1d;
+  color: #fff8e8;
+  border-color: #332b1d;
+}
+
+.room1-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  align-items: start;
+}
+
+.room1-diagnosis {
+  margin-top: 0.6rem !important;
+  font-weight: 600;
+  color: #413828 !important;
+}
+
+.room1-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.room1-chip {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.room1-chip.good {
+  background: #d9f5dd;
+  color: #195126;
+}
+
+.room1-chip.warn {
+  background: #fff0c9;
+  color: #6d4f00;
+}
+
+.room1-chip.fail {
+  background: #ffd9d6;
+  color: #7a1f18;
+}
+
+.room1-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.room1-panel {
+  padding: 1rem;
+  background: #fbf7ec;
+}
+
+.room1-panel header h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.room1-panel img,
+.room1-panel canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  background: #f0ead9;
+  margin-top: 0.9rem;
+}
+
+.room1-focus-body {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.room1-focus img {
+  border: 1px solid #dfd2b6;
+  background: white;
+}
+
+.room1-focus-meta h4 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+
+.room1-focus-meta dl {
+  margin: 0;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.room1-focus-meta dt,
+.room1-card dt {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6a634d;
+}
+
+.room1-focus-meta dd,
+.room1-card dd,
+#room1-profile-json {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.92rem;
+}
+
+.room1-results {
+  padding: 1rem;
+}
+
+.room1-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.room1-card {
+  border: 1px solid #d7ccb4;
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: #fffaf0;
+  cursor: pointer;
+}
+
+.room1-card.active {
+  border-color: #8b6942;
+  box-shadow: 0 0 0 2px rgba(139, 105, 66, 0.16);
+}
+
+.room1-card h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.98rem;
+}
+
+.room1-badge {
+  display: inline-block;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 0.65rem;
+}
+
+.room1-badge.clean {
+  background: #d9f5dd;
+  color: #195126;
+}
+
+.room1-badge.fail {
+  background: #ffd9d6;
+  color: #7a1f18;
+}
+
+.room1-card dl {
+  margin: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.room1-note {
+  color: #5a533f;
+  font-size: 0.88rem;
+  margin-top: 0.75rem;
+}
+
+.room1-advanced {
+  padding: 0.9rem 1rem;
+}
+
+.room1-advanced summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.room1-advanced-body {
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.room1-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(98, 73, 30, 0.08);
+  width: fit-content;
+}
+
+#room1-profile-json {
+  white-space: pre-wrap;
+  background: #fbf7ec;
+  border: 1px solid #dfd2b6;
+  padding: 0.9rem;
+  border-radius: 14px;
+  overflow-x: auto;
+}
+</style>
+
+<script>
+(() => {
+  const presetContainer = document.getElementById("room1-presets");
+  const incomingImage = document.getElementById("room1-incoming");
+  const registeredCanvas = document.getElementById("room1-registered");
+  const registeredCtx = registeredCanvas.getContext("2d");
+  const cropImage = document.getElementById("room1-crop");
+  const profileTitle = document.getElementById("room1-profile-title");
+  const profileDescription = document.getElementById("room1-profile-description");
+  const diagnosis = document.getElementById("room1-diagnosis");
+  const badges = document.getElementById("room1-badges");
+  const grid = document.getElementById("room1-grid");
+  const profileJson = document.getElementById("room1-profile-json");
+  const showRegistered = document.getElementById("room1-show-registered");
+  const showBoxes = document.getElementById("room1-show-boxes");
+  const focusCopy = document.getElementById("room1-focus-copy");
+  const focusLabel = document.getElementById("room1-focus-label");
+  const focusExpected = document.getElementById("room1-focus-expected");
+  const focusOcr = document.getElementById("room1-focus-ocr");
+
+  const state = {
+    manifest: null,
+    currentVariant: null,
+    selectedFieldId: "zip",
+    imageCache: new Map()
+  };
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+  }
+
+  function assetPath(relativePath) {
+    return `assets/room1/${relativePath}`;
+  }
+
+  function loadImage(src) {
+    if (state.imageCache.has(src)) return state.imageCache.get(src);
+    const promise = new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = reject;
+      image.src = src;
+    });
+    state.imageCache.set(src, promise);
+    return promise;
+  }
+
+  function fieldById(id) {
+    return state.currentVariant.fields.find((field) => field.id === id) || state.currentVariant.fields[0];
+  }
+
+  function templateFieldById(id) {
+    return state.manifest.template.fields.find((field) => field.id === id);
+  }
+
+  function diagnosisText(variant) {
+    if (variant.id === "clean") {
+      return "On a stable form, registration plus fixed crops and OCR can work surprisingly well.";
+    }
+    if (variant.all_fields_correct) {
+      return "Matching still succeeds and the fixed crops stay usable. This is why template stacks survived for years in narrow workflows.";
+    }
+    if (variant.registration.ok) {
+      return "Registration still works, but OCR on fixed crops is now the bottleneck. Small fields and cramped multiline text fail first.";
+    }
+    return "The page no longer registers cleanly enough for the template to stay trustworthy.";
+  }
+
+  function badgeMarkup(variant) {
+    const goodFields = variant.fields.filter((field) => field.correct).length;
+    const totalFields = variant.fields.length;
+    const statusClass = variant.all_fields_correct ? "good" : variant.registration.ok ? "warn" : "fail";
+    return [
+      `<span class="room1-chip ${variant.registration.ok ? "good" : "fail"}">registration ${variant.registration.ok ? "ok" : "failed"}</span>`,
+      `<span class="room1-chip ${statusClass}">${goodFields}/${totalFields} fields correct</span>`,
+      `<span class="room1-chip ${variant.registration.inlier_ratio >= 0.75 ? "good" : variant.registration.inlier_ratio >= 0.5 ? "warn" : "fail"}">inlier ratio ${(variant.registration.inlier_ratio * 100).toFixed(0)}%</span>`
+    ].join("");
+  }
+
+  function drawRegisteredView() {
+    const variant = state.currentVariant;
+    const selectedField = fieldById(state.selectedFieldId);
+    const fieldBoxes = state.manifest.template.fields;
+    const baseImagePath = showRegistered.checked && variant.registration.ok
+      ? assetPath(`generated/variants/${variant.id}-registered.png`)
+      : assetPath(variant.image);
+
+    loadImage(baseImagePath).then((image) => {
+      registeredCtx.clearRect(0, 0, registeredCanvas.width, registeredCanvas.height);
+      registeredCtx.drawImage(image, 0, 0, registeredCanvas.width, registeredCanvas.height);
+
+      if (!showBoxes.checked) return;
+      fieldBoxes.forEach((field) => {
+        const active = selectedField && selectedField.id === field.id;
+        const current = variant.fields.find((item) => item.id === field.id);
+        const [x, y, w, h] = field.box;
+        registeredCtx.save();
+        registeredCtx.lineWidth = active ? 4 : 2.5;
+        registeredCtx.strokeStyle = active
+          ? "#7a1f18"
+          : current && current.correct
+            ? "#27934b"
+            : "#b0602d";
+        registeredCtx.strokeRect(x, y, w, h);
+        registeredCtx.fillStyle = "rgba(255, 250, 240, 0.92)";
+        registeredCtx.fillRect(x, y - 22, 122, 18);
+        registeredCtx.fillStyle = "#312814";
+        registeredCtx.font = "600 12px ui-sans-serif, system-ui, sans-serif";
+        registeredCtx.fillText(field.label, x + 6, y - 8);
+        registeredCtx.restore();
+      });
+    });
+  }
+
+  function renderFieldFocus() {
+    const field = fieldById(state.selectedFieldId);
+    cropImage.src = assetPath(field.crop);
+    focusLabel.textContent = field.label;
+    focusExpected.textContent = field.expected;
+    focusOcr.textContent = field.ocr_text || "No text recovered";
+    focusCopy.textContent = field.correct
+      ? "This crop still gives OCR enough signal to recover the field."
+      : "This crop is where the pipeline starts to break. Registration may still be fine while OCR becomes unreliable.";
+  }
+
+  function renderFieldCards() {
+    const variant = state.currentVariant;
+    grid.innerHTML = "";
+    variant.fields.forEach((field) => {
+      const card = document.createElement("article");
+      card.className = `room1-card${field.id === state.selectedFieldId ? " active" : ""}`;
+      card.innerHTML = `
+        <h3>${escapeHtml(field.label)}</h3>
+        <span class="room1-badge ${field.correct ? "clean" : "fail"}">${field.correct ? "Correct" : "Failed"}</span>
+        <dl>
+          <div>
+            <dt>Expected</dt>
+            <dd>${escapeHtml(field.expected)}</dd>
+          </div>
+          <div>
+            <dt>OCR output</dt>
+            <dd>${escapeHtml(field.ocr_text || "No text recovered")}</dd>
+          </div>
+        </dl>
+        <div class="room1-note">Click to inspect the actual OCR crop.</div>
+      `;
+      card.addEventListener("click", () => {
+        state.selectedFieldId = field.id;
+        render();
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  function renderPresetButtons() {
+    presetContainer.innerHTML = "";
+    state.manifest.variants.forEach((variant) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `room1-preset${state.currentVariant.id === variant.id ? " active" : ""}`;
+      button.textContent = variant.id === "combo"
+        ? "Everything goes wrong"
+        : variant.id === "lines"
+          ? "Marked-up form"
+          : variant.id[0].toUpperCase() + variant.id.slice(1);
+      button.addEventListener("click", () => {
+        state.currentVariant = variant;
+        if (!variant.fields.some((field) => field.id === state.selectedFieldId)) {
+          state.selectedFieldId = variant.fields[0].id;
+        }
+        render();
+      });
+      presetContainer.appendChild(button);
+    });
+  }
+
+  function render() {
+    const variant = state.currentVariant;
+    if (!variant) return;
+
+    profileTitle.textContent = variant.id === "combo"
+      ? "Everything Goes Wrong"
+      : variant.id === "lines"
+        ? "Marked-up Form"
+        : variant.id[0].toUpperCase() + variant.id.slice(1);
+    profileDescription.textContent = variant.description;
+    diagnosis.textContent = diagnosisText(variant);
+    badges.innerHTML = badgeMarkup(variant);
+    incomingImage.src = assetPath(variant.image);
+    profileJson.textContent = JSON.stringify(variant.profile, null, 2);
+
+    renderPresetButtons();
+    renderFieldCards();
+    renderFieldFocus();
+    drawRegisteredView();
+  }
+
+  [showRegistered, showBoxes].forEach((element) => {
+    element.addEventListener("change", render);
+  });
+
+  async function init() {
+    const response = await fetch("assets/room1/generated/room1-manifest.json");
+    state.manifest = await response.json();
+    state.currentVariant = state.manifest.variants.find((variant) => variant.id === "clean") || state.manifest.variants[0];
+    state.selectedFieldId = "zip";
+    render();
+  }
+
+  init().catch((error) => {
+    diagnosis.textContent = "Failed to load Room 1 assets.";
+    console.error(error);
+  });
+})();
+</script>
