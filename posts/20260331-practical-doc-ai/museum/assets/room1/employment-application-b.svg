@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="900" viewBox="0 0 700 900">
+  <rect width="700" height="900" fill="#e8e0cb"/>
+  <rect x="70" y="48" width="560" height="780" fill="#fbf8ef" stroke="#9d9278" stroke-width="2"/>
+
+  <rect x="102" y="86" width="70" height="44" rx="4" fill="#d9ceb7" stroke="#8f846a" stroke-width="2"/>
+  <text x="116" y="114" fill="#4a4030" font-family="Georgia, serif" font-size="18" font-weight="700">HR</text>
+  <text x="194" y="98" fill="#332b1d" font-family="Georgia, serif" font-size="24" font-weight="700">Candidate Intake Form</text>
+  <text x="194" y="124" fill="#5a533f" font-family="Georgia, serif" font-size="14">Riverview Distribution Group</text>
+  <text x="194" y="144" fill="#5a533f" font-family="Georgia, serif" font-size="13">Structured intake sheet for operations and warehouse roles</text>
+
+  <rect x="104" y="166" width="492" height="30" fill="#e7dfcf" stroke="#9d9278"/>
+  <text x="116" y="186" fill="#413828" font-family="Georgia, serif" font-size="14" font-weight="700">Section 1. Candidate Details</text>
+
+  <text x="106" y="224" fill="#574f40" font-family="Georgia, serif" font-size="14">Applicant name</text>
+  <rect x="166" y="206" width="260" height="28" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="176" y="225" fill="#2f2b23" font-family="Georgia, serif" font-size="16" font-weight="600">Jordan Patel</text>
+
+  <text x="106" y="270" fill="#574f40" font-family="Georgia, serif" font-size="14">Position sought</text>
+  <rect x="166" y="252" width="328" height="28" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="176" y="271" fill="#2f2b23" font-family="Georgia, serif" font-size="15" font-weight="600">Inventory Control Supervisor</text>
+
+  <text x="106" y="318" fill="#574f40" font-family="Georgia, serif" font-size="14">Street address</text>
+  <rect x="166" y="300" width="314" height="48" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="176" y="319" fill="#2f2b23" font-family="Georgia, serif" font-size="15" font-weight="600">4821 Harbor Point Drive</text>
+  <text x="176" y="338" fill="#2f2b23" font-family="Georgia, serif" font-size="15" font-weight="600">Dallas, TX</text>
+
+  <text x="500" y="318" fill="#574f40" font-family="Georgia, serif" font-size="14">ZIP</text>
+  <rect x="502" y="300" width="44" height="24" fill="none" stroke="#756a52" stroke-width="1.2"/>
+  <text x="510" y="317" fill="#2f2b23" font-family="Georgia, serif" font-size="14" font-weight="600">75207</text>
+
+  <rect x="104" y="382" width="492" height="30" fill="#e7dfcf" stroke="#9d9278"/>
+  <text x="116" y="402" fill="#413828" font-family="Georgia, serif" font-size="14" font-weight="700">Section 2. Experience Summary</text>
+
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="13">
+    <text x="106" y="446">Most recent employer</text>
+    <text x="376" y="446">Years of experience</text>
+    <text x="106" y="474">Key responsibilities</text>
+    <text x="106" y="540">Forklift certification</text>
+    <text x="340" y="540">Shift preference</text>
+  </g>
+  <g stroke="#b0a58f" stroke-width="1">
+    <line x1="106" y1="452" x2="328" y2="452"/>
+    <line x1="376" y1="452" x2="540" y2="452"/>
+    <line x1="106" y1="480" x2="540" y2="480"/>
+    <rect x="106" y="524" width="14" height="14" fill="none"/>
+    <rect x="154" y="524" width="14" height="14" fill="none"/>
+    <line x1="340" y1="546" x2="540" y2="546"/>
+  </g>
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="12">
+    <text x="126" y="536">Yes</text>
+    <text x="174" y="536">No</text>
+  </g>
+
+  <rect x="104" y="616" width="492" height="30" fill="#e7dfcf" stroke="#9d9278"/>
+  <text x="116" y="636" fill="#413828" font-family="Georgia, serif" font-size="14" font-weight="700">Section 3. Certification</text>
+
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="13">
+    <text x="106" y="684">I authorize the company to verify the information provided on this application.</text>
+  </g>
+  <g stroke="#b0a58f" stroke-width="1">
+    <line x1="106" y1="744" x2="348" y2="744"/>
+    <line x1="390" y1="744" x2="540" y2="744"/>
+  </g>
+  <g fill="#6b6557" font-family="Georgia, serif" font-size="12">
+    <text x="106" y="762">Applicant signature</text>
+    <text x="390" y="762">Date</text>
+  </g>
+</svg>

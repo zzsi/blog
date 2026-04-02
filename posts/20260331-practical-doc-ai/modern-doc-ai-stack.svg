@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520">
+  <rect width="1200" height="520" fill="#fffdf7"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c735f"/>
+    </marker>
+  </defs>
+
+  <style>
+    .box { fill: #fbf7ec; stroke: #c7baa0; stroke-width: 2; rx: 18; }
+    .accent { fill: #f2ead6; }
+    .decision { fill: #f9f0da; stroke: #c59a42; stroke-width: 2; }
+    .text { font-family: Verdana, sans-serif; fill: #312814; font-size: 17px; }
+    .small { font-size: 14px; fill: #5b5547; }
+    .arrow { stroke: #7c735f; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+  </style>
+
+  <text x="600" y="40" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#2f2b23">
+    A modern document AI stack
+  </text>
+
+  <rect class="box accent" x="40" y="210" width="170" height="72"/>
+  <text class="text" x="125" y="242" text-anchor="middle">Document or PDF</text>
+  <text class="small" x="125" y="264" text-anchor="middle">raw input</text>
+
+  <rect class="box accent" x="260" y="210" width="185" height="72"/>
+  <text class="text" x="352.5" y="240" text-anchor="middle">Preprocessing</text>
+  <text class="small" x="352.5" y="262" text-anchor="middle">rectify, enhance, split</text>
+
+  <rect class="box" x="520" y="70" width="220" height="72"/>
+  <text class="text" x="630" y="100" text-anchor="middle">OCR</text>
+  <text class="small" x="630" y="122" text-anchor="middle">high-recall text extraction</text>
+
+  <rect class="box" x="520" y="170" width="220" height="72"/>
+  <text class="text" x="630" y="200" text-anchor="middle">VLM</text>
+  <text class="small" x="630" y="222" text-anchor="middle">schema-informed extraction</text>
+
+  <rect class="box" x="520" y="270" width="220" height="72"/>
+  <text class="text" x="630" y="300" text-anchor="middle">Custom detectors</text>
+  <text class="small" x="630" y="322" text-anchor="middle">stamps, signatures, OOD objects</text>
+
+  <rect class="box" x="520" y="370" width="220" height="72"/>
+  <text class="text" x="630" y="400" text-anchor="middle">Page classifier</text>
+  <text class="small" x="630" y="422" text-anchor="middle">document routing cues</text>
+
+  <rect class="box accent" x="800" y="165" width="220" height="92"/>
+  <text class="text" x="910" y="195" text-anchor="middle">Context engineering</text>
+  <text class="small" x="910" y="219" text-anchor="middle">retrieval, business context,</text>
+  <text class="small" x="910" y="240" text-anchor="middle">intermediate evidence</text>
+
+  <rect class="box accent" x="800" y="295" width="220" height="82"/>
+  <text class="text" x="910" y="326" text-anchor="middle">LLM reconciliation</text>
+  <text class="small" x="910" y="348" text-anchor="middle">cross-examine intermediate results</text>
+
+  <rect class="box accent" x="1060" y="165" width="110" height="92"/>
+  <text class="text" x="1115" y="196" text-anchor="middle">Validators</text>
+  <text class="small" x="1115" y="219" text-anchor="middle">rules, schema,</text>
+  <text class="small" x="1115" y="240" text-anchor="middle">consistency</text>
+
+  <polygon class="decision" points="1115,305 1175,350 1115,395 1055,350"/>
+  <text class="text" x="1115" y="345" text-anchor="middle">Confidence</text>
+  <text class="small" x="1115" y="364" text-anchor="middle">policy</text>
+
+  <rect class="box" x="1025" y="440" width="150" height="54"/>
+  <text class="text" x="1100" y="472" text-anchor="middle">Field-level review</text>
+
+  <rect class="box" x="840" y="440" width="150" height="54"/>
+  <text class="text" x="915" y="472" text-anchor="middle">Automated output</text>
+
+  <path class="arrow" d="M 210 246 L 260 246"/>
+  <path class="arrow" d="M 445 246 L 520 106"/>
+  <path class="arrow" d="M 445 246 L 520 206"/>
+  <path class="arrow" d="M 445 246 L 520 306"/>
+  <path class="arrow" d="M 445 246 L 520 406"/>
+
+  <path class="arrow" d="M 740 106 L 800 196"/>
+  <path class="arrow" d="M 740 206 L 800 206"/>
+  <path class="arrow" d="M 740 306 L 800 226"/>
+  <path class="arrow" d="M 740 406 L 800 246"/>
+
+  <path class="arrow" d="M 910 257 L 910 295"/>
+  <path class="arrow" d="M 1020 336 L 1060 210"/>
+  <path class="arrow" d="M 1115 257 L 1115 305"/>
+  <path class="arrow" d="M 1085 385 L 945 440"/>
+  <path class="arrow" d="M 1115 395 L 1100 440"/>
+
+  <text class="small" x="970" y="422">high confidence</text>
+  <text class="small" x="1048" y="417">low confidence</text>
+</svg>
