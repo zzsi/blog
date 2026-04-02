@@ -1,0 +1,77 @@
+{
+  "defaultTemplate": "employment-a",
+  "templates": [
+    {
+      "id": "employment-a",
+      "label": "Employment Application A",
+      "asset": "assets/room1/employment-application-a.svg",
+      "page": { "x": 70, "y": 48, "w": 560, "h": 780 },
+      "fields": [
+        {
+          "id": "name",
+          "label": "Applicant name",
+          "value": "Alexandra Hayes",
+          "box": { "x": 172, "y": 214, "w": 248, "h": 28 },
+          "sensitivity": 0.82
+        },
+        {
+          "id": "position",
+          "label": "Position desired",
+          "value": "Senior Operations Analyst",
+          "box": { "x": 172, "y": 262, "w": 338, "h": 28 },
+          "sensitivity": 1.1
+        },
+        {
+          "id": "address",
+          "label": "Street address",
+          "value": "2714 Red Cedar Lane, Austin, TX",
+          "box": { "x": 172, "y": 312, "w": 302, "h": 48 },
+          "sensitivity": 1.03
+        },
+        {
+          "id": "zip",
+          "label": "ZIP code",
+          "value": "78704",
+          "box": { "x": 500, "y": 312, "w": 46, "h": 24 },
+          "sensitivity": 1.38
+        }
+      ]
+    },
+    {
+      "id": "employment-b",
+      "label": "Employment Application B",
+      "asset": "assets/room1/employment-application-b.svg",
+      "page": { "x": 70, "y": 48, "w": 560, "h": 780 },
+      "fields": [
+        {
+          "id": "name",
+          "label": "Applicant name",
+          "value": "Jordan Patel",
+          "box": { "x": 166, "y": 206, "w": 260, "h": 28 },
+          "sensitivity": 0.82
+        },
+        {
+          "id": "position",
+          "label": "Position sought",
+          "value": "Inventory Control Supervisor",
+          "box": { "x": 166, "y": 252, "w": 328, "h": 28 },
+          "sensitivity": 1.12
+        },
+        {
+          "id": "address",
+          "label": "Street address",
+          "value": "4821 Harbor Point Drive, Dallas, TX",
+          "box": { "x": 166, "y": 300, "w": 314, "h": 48 },
+          "sensitivity": 1.03
+        },
+        {
+          "id": "zip",
+          "label": "ZIP code",
+          "value": "75207",
+          "box": { "x": 502, "y": 300, "w": 44, "h": 24 },
+          "sensitivity": 1.38
+        }
+      ]
+    }
+  ]
+}
