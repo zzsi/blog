@@ -2,7 +2,7 @@
 title: "Doc AI Museum: Room 1"
 subtitle: "Templates, Registration, and OCR"
 resources:
-  - assets/room1/*
+  - assets/room1/**
 format:
   html:
     toc: false
@@ -294,6 +294,7 @@ The assets here come from a real offline generator in the same folder: synthetic
 
 <script>
 (() => {
+  const HF_ROOM1_BASE = "https://huggingface.co/datasets/zzsi/blog_assets/resolve/main/docai/template-registration-ocr-employment-forms";
   const app = document.getElementById("room1-app");
   app.innerHTML = `
     <div class="room1-shell">
@@ -413,7 +414,7 @@ The assets here come from a real offline generator in the same folder: synthetic
   }
 
   function assetPath(relativePath) {
-    return `assets/room1/${relativePath}`;
+    return `${HF_ROOM1_BASE}/${relativePath}`;
   }
 
   function loadImage(src) {
@@ -583,7 +584,7 @@ The assets here come from a real offline generator in the same folder: synthetic
   });
 
   async function init() {
-    const response = await fetch("assets/room1/generated/room1-manifest.json");
+    const response = await fetch(assetPath("generated/room1-manifest.json"));
     state.manifest = await response.json();
     state.currentVariant = state.manifest.variants.find((variant) => variant.id === "clean") || state.manifest.variants[0];
     state.selectedFieldId = "zip";

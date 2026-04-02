@@ -36,7 +36,7 @@ People sometimes talk about document AI as if it were synonymous with OCR. It ne
 
 That last part matters more than benchmark papers suggest. A document system is only useful when it knows when not to trust itself.
 
-The complexity of the business workflow drove the complexity of the pipeline, and the pipeline drove the metrics that mattered. In our projects, the metric was usually field-level accuracy on structured field extraction. Even defining "correct" was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.
+The demands of the business workflow drove the complexity of the pipeline, and determined the metrics that mattered. In our projects, the metric was usually field-level accuracy on structured field extraction. Even defining "correct" was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.
 
 Field-level accuracy then rolled up into what the business actually cared about: automation quality. Two coupled numbers:
 
@@ -65,15 +65,7 @@ Before deep learning became practical for document tasks, the standard approach 
 
 ![Template-based extraction: register the document against a known template, crop field regions, run OCR, and map the results into a schema.](template_extraction.png){width=600px fig-align="center"}
 
-The stack typically looked like this:
-
-- develop a template for the document family
-- register the input image against the template
-- crop expected field regions
-- run OCR over the cropped regions or the page
-- find anchor phrases like "Invoice Number" or "Gross Pay"
-- use coordinates, nearby tokens, regexes, and page-specific rules
-- map the result into a schema
+The pipeline had two parts. Offline, you defined a template for each document family, specifying where fields like "Invoice Number" or "Gross Pay" were expected to appear. At runtime, the system registered the input image against the template, cropped the field regions, ran OCR, and used anchor phrases, coordinates, and rules to parse the results into a schema.
 
 If the document family was narrow, the scan quality acceptable, the registration reliable, and the downstream schema stable, template-heavy systems could be fast, cheap, and surprisingly accurate.
 
