@@ -77,11 +77,19 @@ FONT_MICRO = load_font("Georgia.ttf", 11)
 def ensure_dirs() -> None:
     (OUTPUT_DIR / "variants").mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "crops").mkdir(parents=True, exist_ok=True)
+    (OUTPUT_DIR / "matching").mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "textures").mkdir(parents=True, exist_ok=True)
 
 
 def clear_generated_outputs() -> None:
-    for pattern in ["variants/*.png", "crops/*.png", "template-blank.png", "template-filled.png", "room1-manifest.json"]:
+    for pattern in [
+        "variants/*.png",
+        "crops/*.png",
+        "matching/*.png",
+        "template-blank.png",
+        "template-filled.png",
+        "room1-manifest.json",
+    ]:
         for path in OUTPUT_DIR.glob(pattern):
             if path.is_file():
                 path.unlink()
@@ -672,13 +680,53 @@ def apply_profile(profile: CorruptionProfile, image: Image.Image, seed: int) -> 
     return result
 
 
-def match_and_register(template: np.ndarray, target: np.ndarray) -> tuple[np.ndarray | None, dict]:
+def build_match_visualization(
+    template: np.ndarray,
+    target: np.ndarray,
+    kp1,
+    kp2,
+    matches,
+    inlier_mask: np.ndarray | None,
+    output_path: Path,
+) -> None:
+    if not matches:
+        side_by_side = np.hstack([template, target])
+        cv2.imwrite(str(output_path), side_by_side)
+        return
+
+    if inlier_mask is not None:
+        filtered = [match for match, keep in zip(matches, inlier_mask.ravel().tolist(), strict=False) if keep]
+    else:
+        filtered = list(matches)
+    chosen = filtered if filtered else list(matches)
+    chosen = sorted(chosen, key=lambda match: match.distance)
+
+    if len(chosen) > 28:
+        step = max(1, len(chosen) // 28)
+        chosen = chosen[::step][:28]
+
+    visualization = cv2.drawMatches(
+        template,
+        kp1,
+        target,
+        kp2,
+        chosen,
+        None,
+        matchColor=(64, 196, 120),
+        singlePointColor=(215, 186, 120),
+        flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS,
+    )
+    cv2.imwrite(str(output_path), visualization)
+
+
+def match_and_register(template: np.ndarray, target: np.ndarray, match_output_path: Path) -> tuple[np.ndarray | None, dict]:
     template_gray = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)
     orb = cv2.ORB_create(nfeatures=5000, fastThreshold=5)
     kp1, des1 = orb.detectAndCompute(template_gray, None)
     kp2, des2 = orb.detectAndCompute(target_gray, None)
     if des1 is None or des2 is None:
+        build_match_visualization(template, target, kp1 or [], kp2 or [], [], None, match_output_path)
         return None, {"ok": False, "reason": "no_descriptors"}
     matcher = cv2.BFMatcher(cv2.NORM_HAMMING)
     knn = matcher.knnMatch(des1, des2, k=2)
@@ -690,13 +738,16 @@ def match_and_register(template: np.ndarray, target: np.ndarray) -> tuple[np.nda
         if m.distance < 0.75 * n.distance:
             good.append(m)
     if len(good) < 12:
+        build_match_visualization(template, target, kp1, kp2, good, None, match_output_path)
         return None, {"ok": False, "reason": "too_few_matches", "matches": len(good)}
 
     src = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
     dst = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
     homography, mask = cv2.findHomography(src, dst, cv2.RANSAC, 4.0)
     if homography is None:
+        build_match_visualization(template, target, kp1, kp2, good, None, match_output_path)
         return None, {"ok": False, "reason": "homography_failed", "matches": len(good)}
+    build_match_visualization(template, target, kp1, kp2, good, mask, match_output_path)
     registered = cv2.warpPerspective(
         target,
         homography,
@@ -814,8 +865,9 @@ def generate_manifest() -> dict:
         variant_image = apply_profile(profile, filled, seed=400 + index * 13)
         variant_path = OUTPUT_DIR / "variants" / f"{profile.id}.png"
         variant_image.save(variant_path)
+        match_path = OUTPUT_DIR / "matching" / f"{profile.id}-matches.png"
 
-        registered_cv, match_info = match_and_register(template_cv, to_cv(variant_image))
+        registered_cv, match_info = match_and_register(template_cv, to_cv(variant_image), match_path)
         crop_paths = []
         field_results = []
 
@@ -855,6 +907,7 @@ def generate_manifest() -> dict:
                 "id": profile.id,
                 "description": profile.description,
                 "image": str(variant_path.relative_to(ASSET_DIR)),
+                "matching_visualization": str(match_path.relative_to(ASSET_DIR)),
                 "profile": {
                     "print_artifacts": profile.print_artifacts,
                     "paper_artifacts": profile.paper_artifacts,
