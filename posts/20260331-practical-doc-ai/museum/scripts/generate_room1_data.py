@@ -44,10 +44,10 @@ class CorruptionProfile:
 
 
 FIELDS = [
-    Field("name", "Applicant name", "Alexandra Hayes", (172, 214, 248, 28)),
-    Field("position", "Position desired", "Senior Operations Analyst", (172, 262, 338, 28)),
-    Field("address", "Street address", "2714 Red Cedar Lane, Austin, TX", (180, 310, 302, 52)),
-    Field("zip", "ZIP code", "78704", (496, 308, 56, 32)),
+    Field("name", "Applicant name", "Alexandra Hayes", (106, 224, 320, 30)),
+    Field("position", "Position desired", "Senior Operations Analyst", (106, 285, 380, 30)),
+    Field("address", "Street address", "2714 Red Cedar Lane, Austin, TX", (106, 346, 430, 56)),
+    Field("records_days", "Records due (days)", "3", (142, 741, 82, 18)),
 ]
 
 
@@ -71,12 +71,20 @@ FONT_VALUE_SMALL = load_font("Georgia.ttf", 14)
 FONT_BODY = load_font("Georgia.ttf", 13)
 FONT_SECTION = load_font("Georgia.ttf", 14)
 FONT_TINY = load_font("Georgia.ttf", 12)
+FONT_MICRO = load_font("Georgia.ttf", 11)
 
 
 def ensure_dirs() -> None:
     (OUTPUT_DIR / "variants").mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "crops").mkdir(parents=True, exist_ok=True)
     (OUTPUT_DIR / "textures").mkdir(parents=True, exist_ok=True)
+
+
+def clear_generated_outputs() -> None:
+    for pattern in ["variants/*.png", "crops/*.png", "template-blank.png", "template-filled.png", "room1-manifest.json"]:
+        for path in OUTPUT_DIR.glob(pattern):
+            if path.is_file():
+                path.unlink()
 
 
 def render_template(blank: bool = True) -> Image.Image:
@@ -101,59 +109,79 @@ def render_template(blank: bool = True) -> Image.Image:
     draw.text((116, 171), "Section 1. Applicant Information", font=FONT_SECTION, fill="#413828")
 
     labels = [
-        ("Applicant name", (106, 232)),
-        ("Position desired", (106, 280)),
-        ("Street address", (106, 330)),
-        ("ZIP", (498, 330)),
+        ("Applicant name", (106, 206)),
+        ("Position desired", (106, 267)),
+        ("Street address", (106, 328)),
     ]
     for text, xy in labels:
         draw.text(xy, text, font=FONT_LABEL, fill="#574f40")
 
     for field in FIELDS:
         x, y, w, h = field.box
-        draw.rectangle((x, y, x + w, y + h), outline="#756a52", width=1)
+        if field.id == "records_days":
+            draw.line((x + 8, y + h - 4, x + 26, y + h - 4), fill="#756a52", width=1)
+        else:
+            draw.rectangle((x, y, x + w, y + h), outline="#756a52", width=1)
 
     if not blank:
-        draw.text((182, 216), FIELDS[0].value, font=FONT_VALUE, fill="#2f2b23")
-        draw.text((182, 264), FIELDS[1].value, font=FONT_VALUE, fill="#2f2b23")
-        draw.text((182, 314), "2714 Red Cedar Lane", font=FONT_VALUE_SMALL, fill="#2f2b23")
-        draw.text((182, 333), "Austin, TX", font=FONT_VALUE_SMALL, fill="#2f2b23")
-        draw.text((508, 313), FIELDS[3].value, font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((118, 228), FIELDS[0].value, font=FONT_VALUE, fill="#2f2b23")
+        draw.text((118, 289), FIELDS[1].value, font=FONT_VALUE, fill="#2f2b23")
+        draw.text((118, 350), "2714 Red Cedar Lane", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((118, 369), "Austin, TX", font=FONT_VALUE_SMALL, fill="#2f2b23")
 
-    draw.rectangle((104, 388, 596, 418), fill="#e5ddca", outline="#9d9278", width=1)
-    draw.text((116, 395), "Section 2. Work History", font=FONT_SECTION, fill="#413828")
+    draw.rectangle((104, 420, 596, 450), fill="#e5ddca", outline="#9d9278", width=1)
+    draw.text((116, 427), "Section 2. Work History", font=FONT_SECTION, fill="#413828")
 
     body_lines = [
-        ("Employer name", (106, 452), (106, 458, 322, 458)),
-        ("Dates employed", (362, 452), (362, 458, 540, 458)),
-        ("Job title", (106, 480), (106, 486, 540, 486)),
-        ("Employer name", (106, 536), (106, 542, 322, 542)),
-        ("Dates employed", (362, 536), (362, 542, 540, 542)),
-        ("Job title", (106, 564), (106, 570, 540, 570)),
+        ("Employer name", (106, 484), (106, 490, 322, 490)),
+        ("Dates employed", (362, 484), (362, 490, 540, 490)),
+        ("Job title", (106, 512), (106, 518, 540, 518)),
+        ("Employer name", (106, 568), (106, 574, 322, 574)),
+        ("Dates employed", (362, 568), (362, 574, 540, 574)),
+        ("Job title", (106, 596), (106, 602, 540, 602)),
     ]
     for text, label_xy, line in body_lines:
         draw.text(label_xy, text, font=FONT_BODY, fill="#6b6557")
         draw.line(line, fill="#b0a58f", width=1)
 
-    draw.rectangle((104, 612, 596, 642), fill="#e5ddca", outline="#9d9278", width=1)
-    draw.text((116, 619), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
-    draw.text((106, 676), "Earliest start date", font=FONT_BODY, fill="#6b6557")
-    draw.text((328, 676), "Available weekends?", font=FONT_BODY, fill="#6b6557")
-    draw.line((106, 682, 260, 682), fill="#b0a58f", width=1)
-    draw.rectangle((328, 661, 342, 675), outline="#b0a58f", width=1)
-    draw.rectangle((410, 661, 424, 675), outline="#b0a58f", width=1)
-    draw.text((348, 663), "Yes", font=FONT_TINY, fill="#6b6557")
-    draw.text((430, 663), "No", font=FONT_TINY, fill="#6b6557")
+    draw.rectangle((104, 644, 596, 674), fill="#e5ddca", outline="#9d9278", width=1)
+    draw.text((116, 651), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
+    draw.text((106, 706), "Earliest start date", font=FONT_BODY, fill="#6b6557")
+    draw.text((328, 706), "Available weekends?", font=FONT_BODY, fill="#6b6557")
+    draw.line((106, 712, 260, 712), fill="#b0a58f", width=1)
+    draw.rectangle((328, 691, 342, 705), outline="#b0a58f", width=1)
+    draw.rectangle((410, 691, 424, 705), outline="#b0a58f", width=1)
+    draw.text((348, 693), "Yes", font=FONT_TINY, fill="#6b6557")
+    draw.text((430, 693), "No", font=FONT_TINY, fill="#6b6557")
+
+    dense_y = 724
+    dense_line_1 = "After a written offer, missing employment records must be submitted"
+    dense_prefix = "within"
+    dense_suffix = "business days or the applicant start date may be delayed."
+    dense_line_3 = "The hiring team should also be notified of scheduling conflicts before the first shift."
+    draw.text((106, dense_y), dense_line_1, font=FONT_MICRO, fill="#6b6557")
+    prefix_bbox = draw.textbbox((106, dense_y + 15), dense_prefix, font=FONT_MICRO)
+    draw.text((106, dense_y + 15), dense_prefix, font=FONT_MICRO, fill="#6b6557")
+    blank_x = prefix_bbox[2] + 10
+    blank_y = dense_y + 25
+    blank_w = 18
+    draw.line((blank_x, blank_y, blank_x + blank_w, blank_y), fill="#756a52", width=1)
+    draw.text((blank_x + blank_w + 8, dense_y + 15), dense_suffix, font=FONT_MICRO, fill="#6b6557")
+    draw.text((106, dense_y + 30), dense_line_3, font=FONT_MICRO, fill="#6b6557")
+    if not blank:
+        draw.text((blank_x + 4, dense_y + 10), FIELDS[3].value, font=FONT_TINY, fill="#2f2b23")
+
     draw.text(
-        (106, 724),
+        (106, 778),
         "I certify the information above is complete and accurate to the best of my knowledge.",
         font=FONT_BODY,
         fill="#6b6557",
     )
-    draw.line((106, 754, 350, 754), fill="#b0a58f", width=1)
-    draw.line((390, 754, 540, 754), fill="#b0a58f", width=1)
-    draw.text((106, 762), "Applicant signature", font=FONT_TINY, fill="#6b6557")
-    draw.text((390, 762), "Date", font=FONT_TINY, fill="#6b6557")
+    draw.line((106, 808, 350, 808), fill="#b0a58f", width=1)
+    draw.line((390, 808, 540, 808), fill="#b0a58f", width=1)
+    draw.text((106, 816), "Applicant signature", font=FONT_TINY, fill="#6b6557")
+    draw.text((390, 816), "Date", font=FONT_TINY, fill="#6b6557")
+
     return image
 
 
@@ -323,8 +351,8 @@ def add_random_dots(image: Image.Image, count: int, seed: int) -> Image.Image:
     for _ in range(count):
         x = rng.randint(70, 630)
         y = rng.randint(48, 828)
-        r = rng.randint(1, 2)
-        shade = rng.randint(120, 210)
+        r = 1 if rng.random() < 0.85 else 2
+        shade = rng.randint(145, 220)
         draw.ellipse((x - r, y - r, x + r, y + r), fill=(shade, shade, shade))
     return noisy
 
@@ -403,6 +431,34 @@ def rotate_scale(image: Image.Image, angle: float, scale_x: float, scale_y: floa
     return from_cv(warped)
 
 
+def shrink_and_offset(
+    image: Image.Image,
+    scale: float,
+    offset_x: int,
+    offset_y: int,
+    background: tuple[int, int, int] = (236, 229, 210),
+) -> Image.Image:
+    if abs(scale - 1.0) < 1e-4 and offset_x == 0 and offset_y == 0:
+        return image
+    src = to_cv(image)
+    h, w = src.shape[:2]
+    matrix = np.float32(
+        [
+            [scale, 0.0, offset_x + (1.0 - scale) * w / 2.0],
+            [0.0, scale, offset_y + (1.0 - scale) * h / 2.0],
+        ]
+    )
+    warped = cv2.warpAffine(
+        src,
+        matrix,
+        TEMPLATE_SIZE,
+        flags=cv2.INTER_LINEAR,
+        borderMode=cv2.BORDER_CONSTANT,
+        borderValue=background,
+    )
+    return from_cv(warped)
+
+
 PROFILES = [
     CorruptionProfile(
         id="clean",
@@ -421,12 +477,22 @@ PROFILES = [
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
     ),
     CorruptionProfile(
-        id="squeeze",
-        description="Slight scanner squeeze and uneven scale.",
-        print_artifacts={"ink_fade": 0.04, "stroke_breakage": 0.04, "toner_band": 0.04},
-        paper_artifacts={"paper_texture": 0.03, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
-        geometry={"angle": -1.8, "scale_x": 1.04, "scale_y": 0.96, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
-        capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.03, "camera_shadow": 0.0},
+        id="phone_photo",
+        description="Phone photo from farther away with slight tilt, background, and mild capture blur.",
+        print_artifacts={"ink_fade": 0.05, "stroke_breakage": 0.03, "toner_band": 0.03},
+        paper_artifacts={"paper_texture": 0.05, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
+        geometry={
+            "angle": 1.6,
+            "scale_x": 1.0,
+            "scale_y": 1.0,
+            "perspective": [(-10, 12), (16, -8), (20, 18), (-12, -6)],
+            "wave_amplitude": 0.0,
+            "wave_length": 240.0,
+            "frame_scale": 0.88,
+            "offset_x": 18,
+            "offset_y": 22,
+        },
+        capture={"blur": 0.55, "jpeg_quality": None, "lighting_gradient": 0.06, "camera_shadow": 0.08},
     ),
     CorruptionProfile(
         id="warp",
@@ -435,6 +501,14 @@ PROFILES = [
         paper_artifacts={"paper_texture": 0.04, "stain_strength": 0.0, "fold_shadow": 0.08, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": [(-8, 10), (14, -6), (16, 12), (-14, -10)], "wave_amplitude": 1.4, "wave_length": 320.0},
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.05, "camera_shadow": 0.0},
+    ),
+    CorruptionProfile(
+        id="blur",
+        description="Soft focus or scanner blur with slightly faded print.",
+        print_artifacts={"ink_fade": 0.08, "stroke_breakage": 0.04, "toner_band": 0.04},
+        paper_artifacts={"paper_texture": 0.03, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
+        geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
+        capture={"blur": 1.1, "jpeg_quality": None, "lighting_gradient": 0.03, "camera_shadow": 0.0},
     ),
     CorruptionProfile(
         id="jpeg",
@@ -446,17 +520,9 @@ PROFILES = [
     ),
     CorruptionProfile(
         id="lines",
-        description="Marked-up paper with pen lines and fold shadows.",
+        description="Marked-up and dusty paper with pen lines, fold shadows, and scan specks.",
         print_artifacts={"ink_fade": 0.05, "stroke_breakage": 0.03, "toner_band": 0.03},
-        paper_artifacts={"paper_texture": 0.05, "stain_strength": 0.02, "fold_shadow": 0.22, "random_lines": 22, "random_dots": 0},
-        geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
-        capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.02, "camera_shadow": 0.0},
-    ),
-    CorruptionProfile(
-        id="dots",
-        description="Dusty scan with minor spots and paper grain.",
-        print_artifacts={"ink_fade": 0.04, "stroke_breakage": 0.03, "toner_band": 0.03},
-        paper_artifacts={"paper_texture": 0.06, "stain_strength": 0.03, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 240},
+        paper_artifacts={"paper_texture": 0.05, "stain_strength": 0.02, "fold_shadow": 0.22, "random_lines": 22, "random_dots": 180},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.02, "camera_shadow": 0.0},
     ),
@@ -498,13 +564,52 @@ def apply_camera_shadow(image: Image.Image, strength: float) -> Image.Image:
     return from_float_rgb(rgb)
 
 
-def apply_capture_pipeline(image: Image.Image, capture: dict[str, Any]) -> Image.Image:
+def apply_motion_blur(image: Image.Image, radius: float, angle_deg: float) -> Image.Image:
+    if radius <= 0:
+        return image
+    size = max(3, int(round(radius * 6)))
+    if size % 2 == 0:
+        size += 1
+    kernel = np.zeros((size, size), dtype=np.float32)
+    kernel[size // 2, :] = 1.0
+    center = (size / 2 - 0.5, size / 2 - 0.5)
+    rotation = cv2.getRotationMatrix2D(center, angle_deg, 1.0)
+    kernel = cv2.warpAffine(kernel, rotation, (size, size))
+    kernel_sum = kernel.sum()
+    if kernel_sum > 0:
+        kernel /= kernel_sum
+    blurred = cv2.filter2D(to_cv(image), -1, kernel)
+    return from_cv(blurred)
+
+
+def apply_focus_falloff(image: Image.Image, radius: float, seed: int) -> Image.Image:
+    if radius <= 0:
+        return image
+    rng = random.Random(seed)
+    sharp = to_float_rgb(image)
+    heavy = to_float_rgb(image.filter(ImageFilter.GaussianBlur(radius=radius)))
+    h, w = sharp.shape[:2]
+    x = np.linspace(0.0, 1.0, w, dtype=np.float32)
+    y = np.linspace(0.0, 1.0, h, dtype=np.float32)
+    xv, yv = np.meshgrid(x, y)
+    cx = 0.46 + rng.uniform(-0.06, 0.08)
+    cy = 0.42 + rng.uniform(-0.05, 0.07)
+    sx = 0.22 + rng.uniform(-0.03, 0.04)
+    sy = 0.26 + rng.uniform(-0.04, 0.05)
+    sharp_mask = np.exp(-(((xv - cx) ** 2) / (2 * sx * sx) + ((yv - cy) ** 2) / (2 * sy * sy)))
+    sharp_mask = np.clip(0.25 + 0.85 * sharp_mask, 0.0, 1.0)[..., None]
+    mixed = sharp * sharp_mask + heavy * (1.0 - sharp_mask)
+    return from_float_rgb(mixed)
+
+
+def apply_capture_pipeline(image: Image.Image, capture: dict[str, Any], seed: int) -> Image.Image:
     result = image
     result = apply_lighting_gradient(result, capture.get("lighting_gradient", 0.0))
     result = apply_camera_shadow(result, capture.get("camera_shadow", 0.0))
     blur = capture.get("blur", 0.0)
     if blur:
-        result = result.filter(ImageFilter.GaussianBlur(radius=blur))
+        result = apply_motion_blur(result, radius=max(0.6, blur * 0.9), angle_deg=8 + (seed % 9) * 7)
+        result = apply_focus_falloff(result, radius=blur * 1.35, seed=seed + 19)
     jpeg_quality = capture.get("jpeg_quality")
     if jpeg_quality:
         result = jpeg_roundtrip(result, quality=jpeg_quality)
@@ -524,6 +629,11 @@ def apply_geometry_pipeline(image: Image.Image, geometry: dict[str, Any], seed: 
     wave_amp = geometry.get("wave_amplitude", 0.0)
     if wave_amp:
         result = wave_displacement(result, amplitude=wave_amp, wavelength=geometry.get("wave_length", 240.0), seed=seed)
+    frame_scale = geometry.get("frame_scale", 1.0)
+    offset_x = geometry.get("offset_x", 0)
+    offset_y = geometry.get("offset_y", 0)
+    if frame_scale != 1.0 or offset_x or offset_y:
+        result = shrink_and_offset(result, scale=frame_scale, offset_x=offset_x, offset_y=offset_y)
     return result
 
 
@@ -558,7 +668,7 @@ def apply_profile(profile: CorruptionProfile, image: Image.Image, seed: int) -> 
     result = apply_print_pipeline(result, profile.print_artifacts, seed)
     result = apply_paper_pipeline(result, profile.paper_artifacts, seed)
     result = apply_geometry_pipeline(result, profile.geometry, seed)
-    result = apply_capture_pipeline(result, profile.capture)
+    result = apply_capture_pipeline(result, profile.capture, seed)
     return result
 
 
@@ -610,7 +720,7 @@ def crop_with_padding(image: np.ndarray, field: Field) -> np.ndarray:
         "name": (6, 8, 6, 8),
         "position": (6, 8, 6, 8),
         "address": (0, 12, 12, 12),
-        "zip": (12, 12, 12, 12),
+        "records_days": (16, 8, 68, 12),
     }
     left, top, right, bottom = pad_map.get(field.id, (8, 8, 8, 8))
     x0 = max(0, x - left)
@@ -625,7 +735,7 @@ def preprocess_for_ocr(crop: np.ndarray, field: Field) -> np.ndarray:
         "name": 3.0,
         "position": 3.0,
         "address": 3.5,
-        "zip": 5.0,
+        "records_days": 5.5,
     }
     scale = scale_map.get(field.id, 3.0)
     enlarged = cv2.resize(crop, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
@@ -685,6 +795,7 @@ def doctr_extract_text(predictor, image_paths: list[Path]) -> list[str]:
 
 def generate_manifest() -> dict:
     ensure_dirs()
+    clear_generated_outputs()
     blank = render_template(blank=True)
     filled = render_template(blank=False)
 
