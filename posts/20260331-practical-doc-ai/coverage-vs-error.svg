@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+  <rect width="900" height="520" fill="#fffdf7"/>
+  <text x="450" y="42" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#2f2b23">
+    Coverage vs Error Rate
+  </text>
+
+  <line x1="120" y1="430" x2="790" y2="430" stroke="#5b5547" stroke-width="2"/>
+  <line x1="120" y1="430" x2="120" y2="90" stroke="#5b5547" stroke-width="2"/>
+
+  <g font-family="Verdana, sans-serif" font-size="14" fill="#5b5547">
+    <text x="455" y="485" text-anchor="middle">Automation Coverage (%)</text>
+    <text x="34" y="260" text-anchor="middle" transform="rotate(-90 34 260)">Error Rate (%)</text>
+  </g>
+
+  <g stroke="#d7ccb4" stroke-width="1">
+    <line x1="120" y1="430" x2="790" y2="430"/>
+    <line x1="120" y1="316.7" x2="790" y2="316.7"/>
+    <line x1="120" y1="203.3" x2="790" y2="203.3"/>
+    <line x1="120" y1="90" x2="790" y2="90"/>
+  </g>
+
+  <g font-family="Verdana, sans-serif" font-size="12" fill="#5b5547">
+    <text x="92" y="434" text-anchor="end">0</text>
+    <text x="92" y="320" text-anchor="end">5</text>
+    <text x="92" y="207" text-anchor="end">10</text>
+    <text x="92" y="94" text-anchor="end">15</text>
+
+    <text x="120" y="452" text-anchor="middle">10</text>
+    <text x="194.4" y="452" text-anchor="middle">20</text>
+    <text x="268.9" y="452" text-anchor="middle">30</text>
+    <text x="343.3" y="452" text-anchor="middle">40</text>
+    <text x="417.8" y="452" text-anchor="middle">50</text>
+    <text x="492.2" y="452" text-anchor="middle">60</text>
+    <text x="566.7" y="452" text-anchor="middle">70</text>
+    <text x="641.1" y="452" text-anchor="middle">80</text>
+    <text x="715.6" y="452" text-anchor="middle">90</text>
+    <text x="790" y="452" text-anchor="middle">100</text>
+  </g>
+
+  <polyline
+    fill="none"
+    stroke="#b0602d"
+    stroke-width="4"
+    points="120,418.7 194.4,416.4 268.9,411.9 343.3,407.3 417.8,396 492.2,373.3 566.7,339.3 641.1,282.7 715.6,203.3 790,112.7"
+  />
+
+  <g fill="#b0602d">
+    <circle cx="120" cy="418.7" r="4.5"/>
+    <circle cx="194.4" cy="416.4" r="4.5"/>
+    <circle cx="268.9" cy="411.9" r="4.5"/>
+    <circle cx="343.3" cy="407.3" r="4.5"/>
+    <circle cx="417.8" cy="396" r="4.5"/>
+    <circle cx="492.2" cy="373.3" r="4.5"/>
+    <circle cx="566.7" cy="339.3" r="4.5"/>
+    <circle cx="641.1" cy="282.7" r="4.5"/>
+    <circle cx="715.6" cy="203.3" r="4.5"/>
+    <circle cx="790" cy="112.7" r="4.5"/>
+  </g>
+</svg>
