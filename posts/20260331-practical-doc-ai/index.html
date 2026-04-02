@@ -147,8 +147,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#the-problem-was-never-just-ocr" id="toc-the-problem-was-never-just-ocr" class="nav-link active" data-scroll-target="#the-problem-was-never-just-ocr">The problem was never just OCR</a></li>
-  <li><a href="#how-we-measured-success" id="toc-how-we-measured-success" class="nav-link" data-scroll-target="#how-we-measured-success">How we measured success</a></li>
+  <li><a href="#what-the-business-actually-needed" id="toc-what-the-business-actually-needed" class="nav-link active" data-scroll-target="#what-the-business-actually-needed">What the business actually needed</a></li>
   <li><a href="#phase-1-templates-ocr-and-heuristics" id="toc-phase-1-templates-ocr-and-heuristics" class="nav-link" data-scroll-target="#phase-1-templates-ocr-and-heuristics">Phase 1: templates, OCR, and heuristics</a></li>
   <li><a href="#phase-2-detector-first-pipelines" id="toc-phase-2-detector-first-pipelines" class="nav-link" data-scroll-target="#phase-2-detector-first-pipelines">Phase 2: detector-first pipelines</a></li>
   <li><a href="#phase-3-transformer-models-that-combine-cues" id="toc-phase-3-transformer-models-that-combine-cues" class="nav-link" data-scroll-target="#phase-3-transformer-models-that-combine-cues">Phase 3: transformer models that combine cues</a></li>
@@ -228,28 +227,18 @@ TL;DR
 </tr>
 </tbody>
 </table>
-<section id="the-problem-was-never-just-ocr" class="level2">
-<h2 class="anchored" data-anchor-id="the-problem-was-never-just-ocr">The problem was never just OCR</h2>
+<section id="what-the-business-actually-needed" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-business-actually-needed">What the business actually needed</h2>
 <p>People sometimes talk about document AI as if it were synonymous with OCR. It never was. You had to find the relevant regions, recover text from noisy scans or photos, infer structure from layout, connect information across fields and pages, normalize everything into a business schema, and validate that the results were internally consistent. And then you had to decide when the system should stop and ask a human for help.</p>
 <p>That last part matters more than benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
-</section>
-<section id="how-we-measured-success" class="level2">
-<h2 class="anchored" data-anchor-id="how-we-measured-success">How we measured success</h2>
-<p>The metric that mattered most in our projects was usually field-level accuracy. Other document AI tasks, like table extraction or layout analysis, have their own evaluation challenges, but most of our work was structured field extraction, so that is the scenario I will use here. Even within that scope, defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
+<p>The complexity of the business workflow drove the complexity of the pipeline, and the pipeline drove the metrics that mattered. In our projects, the metric was usually field-level accuracy on structured field extraction. Even defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
 <p>Field-level accuracy then rolled up into what the business actually cared about: automation quality. Two coupled numbers:</p>
 <ul>
-<li>what percentage of work can be automated</li>
-<li>among the automated cases, what’s the error rate</li>
+<li><strong>automation coverage</strong>: what percentage of work the system handles without human review</li>
+<li><strong>automation precision</strong> (sometimes called straight-through accuracy): among the automated cases, how often the system is right</li>
 </ul>
-<p>That’s a policy problem as much as a modeling problem. The automation policy depends on confidence signals. If confidence estimation is poor, the policy is poor even if the raw model is good.</p>
-<p>I came to think about evaluation in layers: field-level accuracy, automation coverage, automation precision, review rate, and how all of those move as confidence thresholds change. The most important chart was often not a single benchmark score but a coverage-versus-error curve.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="coverage-vs-error.svg" class="img-fluid figure-img" width="760"></p>
-<figcaption>Illustrative coverage-versus-error curve. As automation coverage increases, the error rate among automated cases also rises.</figcaption>
-</figure>
-</div>
-<p>Moving the confidence threshold to automate more documents lets more errors through. The shape of this curve, not a single accuracy number, is what determined whether a system was production-ready.</p>
+<p>That’s a policy problem as much as a modeling problem. No model is perfect, so the system needs a reliable estimate of when its extraction is wrong. A good confidence score lets the policy say “I’m not sure” and escalate to a human, rather than blindly committing an answer. This matters even more in the age of LLMs, where the model is eager to produce fluent output even when it’s hallucinated.</p>
+<p>I found it useful to think about evaluation in layers. Character- and word-level accuracy is about not losing information. Field-level accuracy is about extracting the right information. Automation coverage and automation precision (how much work the system handles, and how often it’s right when it does) are about economic utility.</p>
 <p>Depending on the task, standard supporting metrics also mattered:</p>
 <ul>
 <li>CER (character error rate) and WER (word error rate) for OCR quality</li>
