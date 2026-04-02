@@ -149,6 +149,29 @@ The assets here come from a real offline generator in the same folder: synthetic
   font-size: 1rem;
 }
 
+.room1-panel-tools {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.room1-view-button {
+  border: 1px solid #cbbd9f;
+  background: #fff9ec;
+  color: #332b1d;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.84rem;
+}
+
+.room1-view-button.active {
+  background: #332b1d;
+  color: #fff8e8;
+  border-color: #332b1d;
+}
+
 .room1-panel img,
 .room1-panel canvas {
   width: 100%;
@@ -168,6 +191,25 @@ The assets here come from a real offline generator in the same folder: synthetic
 .room1-focus img {
   border: 1px solid #dfd2b6;
   background: white;
+}
+
+.room1-matching {
+  margin-top: 0.9rem;
+}
+
+.room1-matching[hidden] {
+  display: none;
+}
+
+.room1-matching h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.room1-matching p {
+  margin: 0;
+  color: #5a533f;
+  font-size: 0.9rem;
 }
 
 .room1-focus-meta h4 {
@@ -326,9 +368,13 @@ The assets here come from a real offline generator in the same folder: synthetic
 
         <section class="room1-panel">
           <header>
-            <h3>Registered To Template</h3>
-            <p>Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
+            <h3 id="room1-reference-title">Registered To Template</h3>
+            <p id="room1-reference-copy">Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
           </header>
+          <div class="room1-panel-tools" id="room1-view-modes">
+            <button type="button" class="room1-view-button active" data-view-mode="registered">Registered page</button>
+            <button type="button" class="room1-view-button" data-view-mode="template">Blank template</button>
+          </div>
           <canvas id="room1-registered" width="700" height="900"></canvas>
         </section>
 
@@ -368,13 +414,18 @@ The assets here come from a real offline generator in the same folder: synthetic
         <summary>Advanced View</summary>
         <div class="room1-advanced-body">
           <label class="room1-toggle">
-            <input id="room1-show-registered" type="checkbox" checked />
-            <span>Show registered image</span>
-          </label>
-          <label class="room1-toggle">
             <input id="room1-show-boxes" type="checkbox" checked />
             <span>Show crop boxes</span>
           </label>
+          <label class="room1-toggle">
+            <input id="room1-show-matching" type="checkbox" />
+            <span>Show image matching</span>
+          </label>
+          <section class="room1-matching" id="room1-matching" hidden>
+            <h3>Feature Matches</h3>
+            <p>Blank template on the left, observed document on the right. The green lines are sampled inlier matches used for registration.</p>
+            <img id="room1-matching-image" alt="Feature matching visualization between the template and the observed document" />
+          </section>
           <pre id="room1-profile-json"></pre>
         </div>
       </details>
@@ -385,6 +436,9 @@ The assets here come from a real offline generator in the same folder: synthetic
   const incomingImage = document.getElementById("room1-incoming");
   const registeredCanvas = document.getElementById("room1-registered");
   const registeredCtx = registeredCanvas.getContext("2d");
+  const referenceTitle = document.getElementById("room1-reference-title");
+  const referenceCopy = document.getElementById("room1-reference-copy");
+  const viewModeButtons = Array.from(document.querySelectorAll("[data-view-mode]"));
   const cropImage = document.getElementById("room1-crop");
   const profileTitle = document.getElementById("room1-profile-title");
   const profileDescription = document.getElementById("room1-profile-description");
@@ -392,8 +446,10 @@ The assets here come from a real offline generator in the same folder: synthetic
   const badges = document.getElementById("room1-badges");
   const grid = document.getElementById("room1-grid");
   const profileJson = document.getElementById("room1-profile-json");
-  const showRegistered = document.getElementById("room1-show-registered");
   const showBoxes = document.getElementById("room1-show-boxes");
+  const showMatching = document.getElementById("room1-show-matching");
+  const matchingSection = document.getElementById("room1-matching");
+  const matchingImage = document.getElementById("room1-matching-image");
   const focusCopy = document.getElementById("room1-focus-copy");
   const focusLabel = document.getElementById("room1-focus-label");
   const focusExpected = document.getElementById("room1-focus-expected");
@@ -403,6 +459,7 @@ The assets here come from a real offline generator in the same folder: synthetic
     manifest: null,
     currentVariant: null,
     selectedFieldId: "records_days",
+    viewMode: "registered",
     imageCache: new Map()
   };
 
@@ -465,9 +522,11 @@ The assets here come from a real offline generator in the same folder: synthetic
     const variant = state.currentVariant;
     const selectedField = fieldById(state.selectedFieldId);
     const fieldBoxes = state.manifest.template.fields;
-    const baseImagePath = showRegistered.checked && variant.registration.ok
-      ? assetPath(`generated/variants/${variant.id}-registered.png`)
-      : assetPath(variant.image);
+    const baseImagePath = state.viewMode === "template"
+      ? assetPath(state.manifest.template.blank_image)
+      : variant.registration.ok
+        ? assetPath(`generated/variants/${variant.id}-registered.png`)
+        : assetPath(variant.image);
 
     loadImage(baseImagePath).then((image) => {
       registeredCtx.clearRect(0, 0, registeredCanvas.width, registeredCanvas.height);
@@ -507,6 +566,19 @@ The assets here come from a real offline generator in the same folder: synthetic
       : "This crop is where the pipeline starts to break. Registration may still be fine while OCR becomes unreliable.";
   }
 
+  function renderReferenceMode() {
+    if (state.viewMode === "template") {
+      referenceTitle.textContent = "Template Reference";
+      referenceCopy.textContent = "This blank form is the canonical coordinate system. Fixed crop boxes are authored against this template.";
+    } else {
+      referenceTitle.textContent = "Registered To Template";
+      referenceCopy.textContent = "Feature matching aligns the page to the template. Crop boxes live in this coordinate system.";
+    }
+    viewModeButtons.forEach((button) => {
+      button.classList.toggle("active", button.dataset.viewMode === state.viewMode);
+    });
+  }
+
   function renderFieldCards() {
     const variant = state.currentVariant;
     grid.innerHTML = "";
@@ -534,6 +606,16 @@ The assets here come from a real offline generator in the same folder: synthetic
       });
       grid.appendChild(card);
     });
+  }
+
+  function renderMatchingView() {
+    if (!showMatching.checked) {
+      matchingSection.hidden = true;
+      matchingImage.removeAttribute("src");
+      return;
+    }
+    matchingSection.hidden = false;
+    matchingImage.src = assetPath(state.currentVariant.matching_visualization);
   }
 
   function renderPresetButtons() {
@@ -577,14 +659,23 @@ The assets here come from a real offline generator in the same folder: synthetic
     incomingImage.src = assetPath(variant.image);
     profileJson.textContent = JSON.stringify(variant.profile, null, 2);
 
+    renderReferenceMode();
     renderPresetButtons();
     renderFieldCards();
     renderFieldFocus();
     drawRegisteredView();
+    renderMatchingView();
   }
 
-  [showRegistered, showBoxes].forEach((element) => {
+  [showBoxes, showMatching].forEach((element) => {
     element.addEventListener("change", render);
+  });
+
+  viewModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.viewMode = button.dataset.viewMode;
+      render();
+    });
   });
 
   async function init() {

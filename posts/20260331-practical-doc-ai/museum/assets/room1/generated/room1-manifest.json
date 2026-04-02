@@ -60,6 +60,7 @@
       "id": "clean",
       "description": "No corruption.",
       "image": "generated/variants/clean.png",
+      "matching_visualization": "generated/matching/clean-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.0,
@@ -134,6 +135,7 @@
       "id": "rotation",
       "description": "Mild skewed scan.",
       "image": "generated/variants/rotation.png",
+      "matching_visualization": "generated/matching/rotation-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.03,
@@ -208,6 +210,7 @@
       "id": "phone_photo",
       "description": "Phone photo from farther away with slight tilt, background, and mild capture blur.",
       "image": "generated/variants/phone_photo.png",
+      "matching_visualization": "generated/matching/phone_photo-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.05,
@@ -302,6 +305,7 @@
       "id": "warp",
       "description": "Perspective warp with mild paper curl.",
       "image": "generated/variants/warp.png",
+      "matching_visualization": "generated/matching/warp-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.03,
@@ -393,6 +397,7 @@
       "id": "blur",
       "description": "Soft focus or scanner blur with slightly faded print.",
       "image": "generated/variants/blur.png",
+      "matching_visualization": "generated/matching/blur-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.08,
@@ -467,6 +472,7 @@
       "id": "jpeg",
       "description": "Compressed upload with mild blur and low-ink print.",
       "image": "generated/variants/jpeg.png",
+      "matching_visualization": "generated/matching/jpeg-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.11,
@@ -541,6 +547,7 @@
       "id": "lines",
       "description": "Marked-up and dusty paper with pen lines, fold shadows, and scan specks.",
       "image": "generated/variants/lines.png",
+      "matching_visualization": "generated/matching/lines-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.05,
@@ -615,6 +622,7 @@
       "id": "combo",
       "description": "Phone-photo style capture with low ink, stains, warp, blur, compression, and scribbles.",
       "image": "generated/variants/combo.png",
+      "matching_visualization": "generated/matching/combo-matches.png",
       "profile": {
         "print_artifacts": {
           "ink_fade": 0.16,
