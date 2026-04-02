@@ -64,14 +64,14 @@ def load_font(name: str, size: int) -> ImageFont.FreeTypeFont:
 
 
 FONT_TITLE = load_font("Georgia.ttf", 24)
-FONT_SUBTITLE = load_font("Georgia.ttf", 14)
-FONT_LABEL = load_font("Georgia.ttf", 14)
-FONT_VALUE = load_font("Georgia.ttf", 16)
-FONT_VALUE_SMALL = load_font("Georgia.ttf", 14)
-FONT_BODY = load_font("Georgia.ttf", 13)
-FONT_SECTION = load_font("Georgia.ttf", 14)
-FONT_TINY = load_font("Georgia.ttf", 12)
-FONT_MICRO = load_font("Georgia.ttf", 11)
+FONT_SUBTITLE = load_font("Georgia.ttf", 13)
+FONT_LABEL = load_font("Georgia.ttf", 13)
+FONT_VALUE = load_font("Georgia.ttf", 15)
+FONT_VALUE_SMALL = load_font("Georgia.ttf", 13)
+FONT_BODY = load_font("Georgia.ttf", 12)
+FONT_SECTION = load_font("Georgia.ttf", 13)
+FONT_TINY = load_font("Georgia.ttf", 11)
+FONT_MICRO = load_font("Georgia.ttf", 10)
 
 
 def ensure_dirs() -> None:
@@ -141,12 +141,12 @@ def render_template(blank: bool = True) -> Image.Image:
     draw.text((116, 427), "Section 2. Work History", font=FONT_SECTION, fill="#413828")
 
     body_lines = [
-        ("Employer name", (106, 484), (106, 490, 322, 490)),
-        ("Dates employed", (362, 484), (362, 490, 540, 490)),
-        ("Job title", (106, 512), (106, 518, 540, 518)),
-        ("Employer name", (106, 568), (106, 574, 322, 574)),
-        ("Dates employed", (362, 568), (362, 574, 540, 574)),
-        ("Job title", (106, 596), (106, 602, 540, 602)),
+        ("Employer name", (106, 482), (106, 502, 322, 502)),
+        ("Dates employed", (362, 482), (362, 502, 540, 502)),
+        ("Job title", (106, 518), (106, 538, 540, 538)),
+        ("Employer name", (106, 564), (106, 584, 322, 584)),
+        ("Dates employed", (362, 564), (362, 584, 540, 584)),
+        ("Job title", (106, 600), (106, 620, 540, 620)),
     ]
     for text, label_xy, line in body_lines:
         draw.text(label_xy, text, font=FONT_BODY, fill="#6b6557")
@@ -154,41 +154,41 @@ def render_template(blank: bool = True) -> Image.Image:
 
     draw.rectangle((104, 644, 596, 674), fill="#e5ddca", outline="#9d9278", width=1)
     draw.text((116, 651), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
-    draw.text((106, 706), "Earliest start date", font=FONT_BODY, fill="#6b6557")
-    draw.text((328, 706), "Available weekends?", font=FONT_BODY, fill="#6b6557")
-    draw.line((106, 712, 260, 712), fill="#b0a58f", width=1)
-    draw.rectangle((328, 691, 342, 705), outline="#b0a58f", width=1)
-    draw.rectangle((410, 691, 424, 705), outline="#b0a58f", width=1)
-    draw.text((348, 693), "Yes", font=FONT_TINY, fill="#6b6557")
-    draw.text((430, 693), "No", font=FONT_TINY, fill="#6b6557")
+    draw.text((106, 696), "Earliest start date", font=FONT_BODY, fill="#6b6557")
+    draw.line((106, 714, 260, 714), fill="#b0a58f", width=1)
+    draw.text((328, 696), "Available weekends?", font=FONT_BODY, fill="#6b6557")
+    draw.rectangle((328, 708, 342, 722), outline="#b0a58f", width=1)
+    draw.rectangle((410, 708, 424, 722), outline="#b0a58f", width=1)
+    draw.text((347, 709), "Yes", font=FONT_TINY, fill="#6b6557")
+    draw.text((429, 709), "No", font=FONT_TINY, fill="#6b6557")
 
-    dense_y = 724
+    dense_y = 726
     dense_line_1 = "After a written offer, missing employment records must be submitted"
     dense_prefix = "within"
     dense_suffix = "business days or the applicant start date may be delayed."
     dense_line_3 = "The hiring team should also be notified of scheduling conflicts before the first shift."
     draw.text((106, dense_y), dense_line_1, font=FONT_MICRO, fill="#6b6557")
-    prefix_bbox = draw.textbbox((106, dense_y + 15), dense_prefix, font=FONT_MICRO)
-    draw.text((106, dense_y + 15), dense_prefix, font=FONT_MICRO, fill="#6b6557")
+    prefix_bbox = draw.textbbox((106, dense_y + 12), dense_prefix, font=FONT_MICRO)
+    draw.text((106, dense_y + 12), dense_prefix, font=FONT_MICRO, fill="#6b6557")
     blank_x = prefix_bbox[2] + 10
-    blank_y = dense_y + 25
+    blank_y = dense_y + 22
     blank_w = 18
     draw.line((blank_x, blank_y, blank_x + blank_w, blank_y), fill="#756a52", width=1)
-    draw.text((blank_x + blank_w + 8, dense_y + 15), dense_suffix, font=FONT_MICRO, fill="#6b6557")
-    draw.text((106, dense_y + 30), dense_line_3, font=FONT_MICRO, fill="#6b6557")
+    draw.text((blank_x + blank_w + 8, dense_y + 12), dense_suffix, font=FONT_MICRO, fill="#6b6557")
+    draw.text((106, dense_y + 24), dense_line_3, font=FONT_MICRO, fill="#6b6557")
     if not blank:
-        draw.text((blank_x + 4, dense_y + 10), FIELDS[3].value, font=FONT_TINY, fill="#2f2b23")
+        draw.text((blank_x + 4, dense_y + 8), FIELDS[3].value, font=FONT_TINY, fill="#2f2b23")
 
     draw.text(
-        (106, 778),
+        (106, 758),
         "I certify the information above is complete and accurate to the best of my knowledge.",
         font=FONT_BODY,
         fill="#6b6557",
     )
-    draw.line((106, 808, 350, 808), fill="#b0a58f", width=1)
-    draw.line((390, 808, 540, 808), fill="#b0a58f", width=1)
-    draw.text((106, 816), "Applicant signature", font=FONT_TINY, fill="#6b6557")
-    draw.text((390, 816), "Date", font=FONT_TINY, fill="#6b6557")
+    draw.line((106, 784, 350, 784), fill="#b0a58f", width=1)
+    draw.line((390, 784, 540, 784), fill="#b0a58f", width=1)
+    draw.text((106, 792), "Applicant signature", font=FONT_TINY, fill="#6b6557")
+    draw.text((390, 792), "Date", font=FONT_TINY, fill="#6b6557")
 
     return image
 
