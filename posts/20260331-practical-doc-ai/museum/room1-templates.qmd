@@ -22,8 +22,8 @@ The assets here come from a real offline generator in the same folder: synthetic
 
 - Start on `Clean`. The full pipeline works.
 - Click `Rotation`. Registration still succeeds and extraction stays correct.
-- Click `JPEG` or `Marked-up form`. Matching still works, but OCR starts degrading.
-- Click a field card, especially `ZIP code` or `Street address`, and inspect the crop that OCR actually saw.
+- Click `Blur`, `JPEG`, or `Marked-up form`. Matching still works, but OCR starts degrading.
+- Click a field card, especially `Records due (days)` or `Street address`, and inspect the crop that OCR actually saw.
 :::
 
 <div id="room1-app"></div>
@@ -340,7 +340,7 @@ The assets here come from a real offline generator in the same folder: synthetic
           <div class="room1-focus-body">
             <img id="room1-crop" alt="Selected OCR crop" />
             <div class="room1-focus-meta">
-              <h4 id="room1-focus-label">ZIP code</h4>
+              <h4 id="room1-focus-label">Records due (days)</h4>
               <dl>
                 <div>
                   <dt>Expected</dt>
@@ -402,7 +402,7 @@ The assets here come from a real offline generator in the same folder: synthetic
   const state = {
     manifest: null,
     currentVariant: null,
-    selectedFieldId: "zip",
+    selectedFieldId: "records_days",
     imageCache: new Map()
   };
 
@@ -543,7 +543,9 @@ The assets here come from a real offline generator in the same folder: synthetic
       button.type = "button";
       button.className = `room1-preset${state.currentVariant.id === variant.id ? " active" : ""}`;
       button.textContent = variant.id === "combo"
-        ? "Everything goes wrong"
+        ? "Combined noise"
+        : variant.id === "phone_photo"
+          ? "Phone photo"
         : variant.id === "lines"
           ? "Marked-up form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -563,7 +565,9 @@ The assets here come from a real offline generator in the same folder: synthetic
     if (!variant) return;
 
     profileTitle.textContent = variant.id === "combo"
-      ? "Everything Goes Wrong"
+      ? "Combined Noise"
+      : variant.id === "phone_photo"
+        ? "Phone Photo"
       : variant.id === "lines"
         ? "Marked-up Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -587,7 +591,7 @@ The assets here come from a real offline generator in the same folder: synthetic
     const response = await fetch(assetPath("generated/room1-manifest.json"));
     state.manifest = await response.json();
     state.currentVariant = state.manifest.variants.find((variant) => variant.id === "clean") || state.manifest.variants[0];
-    state.selectedFieldId = "zip";
+    state.selectedFieldId = "records_days";
     render();
   }
 
