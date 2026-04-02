@@ -155,8 +155,8 @@ What To Try
 <ul>
 <li>Start on <code>Clean</code>. The full pipeline works.</li>
 <li>Click <code>Rotation</code>. Registration still succeeds and extraction stays correct.</li>
-<li>Click <code>JPEG</code> or <code>Marked-up form</code>. Matching still works, but OCR starts degrading.</li>
-<li>Click a field card, especially <code>ZIP code</code> or <code>Street address</code>, and inspect the crop that OCR actually saw.</li>
+<li>Click <code>Blur</code>, <code>JPEG</code>, or <code>Marked-up form</code>. Matching still works, but OCR starts degrading.</li>
+<li>Click a field card, especially <code>Records due (days)</code> or <code>Street address</code>, and inspect the crop that OCR actually saw.</li>
 </ul>
 </div>
 </div>
@@ -284,6 +284,29 @@ What To Try
   font-size: 1rem;
 }
 
+.room1-panel-tools {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.room1-view-button {
+  border: 1px solid #cbbd9f;
+  background: #fff9ec;
+  color: #332b1d;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.84rem;
+}
+
+.room1-view-button.active {
+  background: #332b1d;
+  color: #fff8e8;
+  border-color: #332b1d;
+}
+
 .room1-panel img,
 .room1-panel canvas {
   width: 100%;
@@ -303,6 +326,25 @@ What To Try
 .room1-focus img {
   border: 1px solid #dfd2b6;
   background: white;
+}
+
+.room1-matching {
+  margin-top: 0.9rem;
+}
+
+.room1-matching[hidden] {
+  display: none;
+}
+
+.room1-matching h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.room1-matching p {
+  margin: 0;
+  color: #5a533f;
+  font-size: 0.9rem;
 }
 
 .room1-focus-meta h4 {
@@ -460,9 +502,13 @@ What To Try
 
         <section class="room1-panel">
           <header>
-            <h3>Registered To Template</h3>
-            <p>Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
+            <h3 id="room1-reference-title">Registered To Template</h3>
+            <p id="room1-reference-copy">Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
           </header>
+          <div class="room1-panel-tools" id="room1-view-modes">
+            <button type="button" class="room1-view-button active" data-view-mode="registered">Registered page</button>
+            <button type="button" class="room1-view-button" data-view-mode="template">Blank template</button>
+          </div>
           <canvas id="room1-registered" width="700" height="900"></canvas>
         </section>
 
@@ -474,7 +520,7 @@ What To Try
           <div class="room1-focus-body">
             <img id="room1-crop" alt="Selected OCR crop" />
             <div class="room1-focus-meta">
-              <h4 id="room1-focus-label">ZIP code</h4>
+              <h4 id="room1-focus-label">Records due (days)</h4>
               <dl>
                 <div>
                   <dt>Expected</dt>
@@ -502,13 +548,18 @@ What To Try
         <summary>Advanced View</summary>
         <div class="room1-advanced-body">
           <label class="room1-toggle">
-            <input id="room1-show-registered" type="checkbox" checked />
-            <span>Show registered image</span>
-          </label>
-          <label class="room1-toggle">
             <input id="room1-show-boxes" type="checkbox" checked />
             <span>Show crop boxes</span>
           </label>
+          <label class="room1-toggle">
+            <input id="room1-show-matching" type="checkbox" />
+            <span>Show image matching</span>
+          </label>
+          <section class="room1-matching" id="room1-matching" hidden>
+            <h3>Feature Matches</h3>
+            <p>Blank template on the left, observed document on the right. The green lines are sampled inlier matches used for registration.</p>
+            <img id="room1-matching-image" alt="Feature matching visualization between the template and the observed document" />
+          </section>
           <pre id="room1-profile-json"></pre>
         </div>
       </details>
@@ -519,6 +570,9 @@ What To Try
   const incomingImage = document.getElementById("room1-incoming");
   const registeredCanvas = document.getElementById("room1-registered");
   const registeredCtx = registeredCanvas.getContext("2d");
+  const referenceTitle = document.getElementById("room1-reference-title");
+  const referenceCopy = document.getElementById("room1-reference-copy");
+  const viewModeButtons = Array.from(document.querySelectorAll("[data-view-mode]"));
   const cropImage = document.getElementById("room1-crop");
   const profileTitle = document.getElementById("room1-profile-title");
   const profileDescription = document.getElementById("room1-profile-description");
@@ -526,8 +580,10 @@ What To Try
   const badges = document.getElementById("room1-badges");
   const grid = document.getElementById("room1-grid");
   const profileJson = document.getElementById("room1-profile-json");
-  const showRegistered = document.getElementById("room1-show-registered");
   const showBoxes = document.getElementById("room1-show-boxes");
+  const showMatching = document.getElementById("room1-show-matching");
+  const matchingSection = document.getElementById("room1-matching");
+  const matchingImage = document.getElementById("room1-matching-image");
   const focusCopy = document.getElementById("room1-focus-copy");
   const focusLabel = document.getElementById("room1-focus-label");
   const focusExpected = document.getElementById("room1-focus-expected");
@@ -536,7 +592,8 @@ What To Try
   const state = {
     manifest: null,
     currentVariant: null,
-    selectedFieldId: "zip",
+    selectedFieldId: "records_days",
+    viewMode: "registered",
     imageCache: new Map()
   };
 
@@ -599,9 +656,11 @@ What To Try
     const variant = state.currentVariant;
     const selectedField = fieldById(state.selectedFieldId);
     const fieldBoxes = state.manifest.template.fields;
-    const baseImagePath = showRegistered.checked && variant.registration.ok
-      ? assetPath(`generated/variants/${variant.id}-registered.png`)
-      : assetPath(variant.image);
+    const baseImagePath = state.viewMode === "template"
+      ? assetPath(state.manifest.template.blank_image)
+      : variant.registration.ok
+        ? assetPath(`generated/variants/${variant.id}-registered.png`)
+        : assetPath(variant.image);
 
     loadImage(baseImagePath).then((image) => {
       registeredCtx.clearRect(0, 0, registeredCanvas.width, registeredCanvas.height);
@@ -641,6 +700,19 @@ What To Try
       : "This crop is where the pipeline starts to break. Registration may still be fine while OCR becomes unreliable.";
   }
 
+  function renderReferenceMode() {
+    if (state.viewMode === "template") {
+      referenceTitle.textContent = "Template Reference";
+      referenceCopy.textContent = "This blank form is the canonical coordinate system. Fixed crop boxes are authored against this template.";
+    } else {
+      referenceTitle.textContent = "Registered To Template";
+      referenceCopy.textContent = "Feature matching aligns the page to the template. Crop boxes live in this coordinate system.";
+    }
+    viewModeButtons.forEach((button) => {
+      button.classList.toggle("active", button.dataset.viewMode === state.viewMode);
+    });
+  }
+
   function renderFieldCards() {
     const variant = state.currentVariant;
     grid.innerHTML = "";
@@ -670,6 +742,16 @@ What To Try
     });
   }
 
+  function renderMatchingView() {
+    if (!showMatching.checked) {
+      matchingSection.hidden = true;
+      matchingImage.removeAttribute("src");
+      return;
+    }
+    matchingSection.hidden = false;
+    matchingImage.src = assetPath(state.currentVariant.matching_visualization);
+  }
+
   function renderPresetButtons() {
     presetContainer.innerHTML = "";
     state.manifest.variants.forEach((variant) => {
@@ -677,7 +759,9 @@ What To Try
       button.type = "button";
       button.className = `room1-preset${state.currentVariant.id === variant.id ? " active" : ""}`;
       button.textContent = variant.id === "combo"
-        ? "Everything goes wrong"
+        ? "Combined noise"
+        : variant.id === "phone_photo"
+          ? "Phone photo"
         : variant.id === "lines"
           ? "Marked-up form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -697,7 +781,9 @@ What To Try
     if (!variant) return;
 
     profileTitle.textContent = variant.id === "combo"
-      ? "Everything Goes Wrong"
+      ? "Combined Noise"
+      : variant.id === "phone_photo"
+        ? "Phone Photo"
       : variant.id === "lines"
         ? "Marked-up Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -707,21 +793,30 @@ What To Try
     incomingImage.src = assetPath(variant.image);
     profileJson.textContent = JSON.stringify(variant.profile, null, 2);
 
+    renderReferenceMode();
     renderPresetButtons();
     renderFieldCards();
     renderFieldFocus();
     drawRegisteredView();
+    renderMatchingView();
   }
 
-  [showRegistered, showBoxes].forEach((element) => {
+  [showBoxes, showMatching].forEach((element) => {
     element.addEventListener("change", render);
+  });
+
+  viewModeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      state.viewMode = button.dataset.viewMode;
+      render();
+    });
   });
 
   async function init() {
     const response = await fetch(assetPath("generated/room1-manifest.json"));
     state.manifest = await response.json();
     state.currentVariant = state.manifest.variants.find((variant) => variant.id === "clean") || state.manifest.variants[0];
-    state.selectedFieldId = "zip";
+    state.selectedFieldId = "records_days";
     render();
   }
 
