@@ -428,6 +428,7 @@ What To Try
 </style>
 <script>
 (() => {
+  const HF_ROOM1_BASE = "https://huggingface.co/datasets/zzsi/blog_assets/resolve/main/docai/template-registration-ocr-employment-forms";
   const app = document.getElementById("room1-app");
   app.innerHTML = `
     <div class="room1-shell">
@@ -547,7 +548,7 @@ What To Try
   }
 
   function assetPath(relativePath) {
-    return `assets/room1/${relativePath}`;
+    return `${HF_ROOM1_BASE}/${relativePath}`;
   }
 
   function loadImage(src) {
@@ -717,7 +718,7 @@ What To Try
   });
 
   async function init() {
-    const response = await fetch("assets/room1/generated/room1-manifest.json");
+    const response = await fetch(assetPath("generated/room1-manifest.json"));
     state.manifest = await response.json();
     state.currentVariant = state.manifest.variants.find((variant) => variant.id === "clean") || state.manifest.variants[0];
     state.selectedFieldId = "zip";

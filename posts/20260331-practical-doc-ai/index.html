@@ -231,7 +231,7 @@ TL;DR
 <h2 class="anchored" data-anchor-id="what-the-business-actually-needed">What the business actually needed</h2>
 <p>People sometimes talk about document AI as if it were synonymous with OCR. It never was. You had to find the relevant regions, recover text from noisy scans or photos, infer structure from layout, connect information across fields and pages, normalize everything into a business schema, and validate that the results were internally consistent. And then you had to decide when the system should stop and ask a human for help.</p>
 <p>That last part matters more than benchmark papers suggest. A document system is only useful when it knows when not to trust itself.</p>
-<p>The complexity of the business workflow drove the complexity of the pipeline, and the pipeline drove the metrics that mattered. In our projects, the metric was usually field-level accuracy on structured field extraction. Even defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
+<p>The demands of the business workflow drove the complexity of the pipeline, and determined the metrics that mattered. In our projects, the metric was usually field-level accuracy on structured field extraction. Even defining “correct” was harder than it sounds. Addresses can be broken into lines multiple valid ways. Dates appear in multiple formats. OCR introduces harmless whitespace differences. So evaluation always needed normalization logic and task-aware matching, not naive string equality.</p>
 <p>Field-level accuracy then rolled up into what the business actually cared about: automation quality. Two coupled numbers:</p>
 <ul>
 <li><strong>automation coverage</strong>: what percentage of work the system handles without human review</li>
@@ -259,16 +259,7 @@ TL;DR
 <figcaption>Template-based extraction: register the document against a known template, crop field regions, run OCR, and map the results into a schema.</figcaption>
 </figure>
 </div>
-<p>The stack typically looked like this:</p>
-<ul>
-<li>develop a template for the document family</li>
-<li>register the input image against the template</li>
-<li>crop expected field regions</li>
-<li>run OCR over the cropped regions or the page</li>
-<li>find anchor phrases like “Invoice Number” or “Gross Pay”</li>
-<li>use coordinates, nearby tokens, regexes, and page-specific rules</li>
-<li>map the result into a schema</li>
-</ul>
+<p>The pipeline had two parts. Offline, you defined a template for each document family, specifying where fields like “Invoice Number” or “Gross Pay” were expected to appear. At runtime, the system registered the input image against the template, cropped the field regions, ran OCR, and used anchor phrases, coordinates, and rules to parse the results into a schema.</p>
 <p>If the document family was narrow, the scan quality acceptable, the registration reliable, and the downstream schema stable, template-heavy systems could be fast, cheap, and surprisingly accurate.</p>
 <p>The downside was brittleness. Registration was never as reliable as you hoped once scans and photos got messy. Small layout shifts broke coordinate assumptions. A vendor changed a form revision and the parser quietly degraded. Handwriting, stamps, low-resolution scans, skew, or multi-page dependencies exposed how much the system was really held together by assumptions.</p>
 <div class="callout callout-style-simple callout-tip callout-titled">
