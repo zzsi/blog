@@ -91,9 +91,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 3410,
-        "inliers": 3290,
-        "inlier_ratio": 0.9648
+        "matches": 3515,
+        "inliers": 3414,
+        "inlier_ratio": 0.9713
       },
       "all_fields_correct": true,
       "fields": [
@@ -101,7 +101,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "PPavua LALLLAV Alexandra Hayes",
+          "ocr_text": "- - Alexandra Hayes",
           "correct": true,
           "crop": "generated/crops/clean-name.png"
         },
@@ -109,7 +109,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "VwLV1A AVA Senior Operations Analyst",
+          "ocr_text": "av Senior Operations Analyst",
           "correct": true,
           "crop": "generated/crops/clean-position.png"
         },
@@ -117,7 +117,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "sureet aaaress 2714 Red Cedar Lane Austin, TX",
+          "ocr_text": "oueel duuress 2714 Red Cedar Lane Austin, TX",
           "correct": true,
           "crop": "generated/crops/clean-address.png"
         },
@@ -125,7 +125,7 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": "C r in 3 business days or the app hiring team should also be notifie",
+          "ocr_text": "C WAALLEA wa LLDLS capivyaicali n 3 business daysor the applica urin geam should also benotified ofs - I the intormation above - 1S CC",
           "correct": true,
           "crop": "generated/crops/clean-records_days.png"
         }
@@ -166,9 +166,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 1486,
-        "inliers": 1203,
-        "inlier_ratio": 0.8096
+        "matches": 1541,
+        "inliers": 1273,
+        "inlier_ratio": 0.8261
       },
       "all_fields_correct": true,
       "fields": [
@@ -176,7 +176,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "*PPLAsL suss Alexandra Hayes",
+          "ocr_text": "- r Alexandra Hayes",
           "correct": true,
           "crop": "generated/crops/rotation-name.png"
         },
@@ -184,7 +184,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "WLAVA AVvA Senior Operations Analyst",
+          "ocr_text": ") : Senior Operations Analyst",
           "correct": true,
           "crop": "generated/crops/rotation-position.png"
         },
@@ -192,7 +192,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "street auaress 2714 Red Cedar Lane Austin, TX",
+          "ocr_text": "outer duuress 2714 Red Cedar Lane Austin, TX",
           "correct": true,
           "crop": "generated/crops/rotation-address.png"
         },
@@ -200,7 +200,7 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": "- - - L in 3 business days ( or theapp hiring team should also be - notifie",
+          "ocr_text": "2 Ad- - b caupavyuCICuLA 3 business daysor - the applica teau should alsobe notified ofs the intormanonabove1s - a",
           "correct": true,
           "crop": "generated/crops/rotation-records_days.png"
         }
@@ -261,9 +261,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 413,
-        "inliers": 279,
-        "inlier_ratio": 0.6755
+        "matches": 460,
+        "inliers": 306,
+        "inlier_ratio": 0.6652
       },
       "all_fields_correct": false,
       "fields": [
@@ -271,7 +271,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "- - n Ararssligg * A",
+          "ocr_text": "I L 1 sinisalip I",
           "correct": false,
           "crop": "generated/crops/phone_photo-name.png"
         },
@@ -279,7 +279,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "rinonarAunyn",
+          "ocr_text": "Sriralypidanatioin",
           "correct": false,
           "crop": "generated/crops/phone_photo-position.png"
         },
@@ -287,7 +287,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "s casrad TuhAGhela bufiTh",
+          "ocr_text": "drvsion TAgTCd SuanTZ",
           "correct": false,
           "crop": "generated/crops/phone_photo-address.png"
         },
@@ -295,8 +295,8 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": "* A : - I P - . : pvH e a 3 H AF AMETA o * - on a * * - wa. a A 1 - * i ris",
-          "correct": true,
+          "ocr_text": "- 5 ** & I a - - . * - a YP #* - - : * : ? E 4 - ( A F - * - - - ? . : # a * F - - - - Kur L : # y7 us : :H",
+          "correct": false,
           "crop": "generated/crops/phone_photo-records_days.png"
         }
       ]
@@ -353,9 +353,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 676,
-        "inliers": 422,
-        "inlier_ratio": 0.6243
+        "matches": 725,
+        "inliers": 513,
+        "inlier_ratio": 0.7076
       },
       "all_fields_correct": false,
       "fields": [
@@ -363,7 +363,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "- - 4-0 Alexandra Hayes",
+          "ocr_text": "Alexandra Hayes",
           "correct": true,
           "crop": "generated/crops/warp-name.png"
         },
@@ -371,7 +371,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "- aa ( La Senior Operations Analyst",
+          "ocr_text": ") Senior Operations Analyst",
           "correct": true,
           "crop": "generated/crops/warp-position.png"
         },
@@ -379,7 +379,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "otreet aaaress 271.1 Red Cedar Line Austin, TX",
+          "ocr_text": "JUCT duuress 2711 RedCedar Line Austin, TX",
           "correct": false,
           "crop": "generated/crops/warp-address.png"
         },
@@ -387,7 +387,7 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": "I 3 business daye or theapp iring tean I shouldakotenotifie",
+          "ocr_text": ": dVatey - - >5 aupivyilleili n 3 business daysor - the applica utn I ar obe tifvtne in: 0) - - 1S E Hatiohaboreists",
           "correct": true,
           "crop": "generated/crops/warp-records_days.png"
         }
@@ -428,9 +428,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 621,
-        "inliers": 421,
-        "inlier_ratio": 0.6779
+        "matches": 672,
+        "inliers": 474,
+        "inlier_ratio": 0.7054
       },
       "all_fields_correct": false,
       "fields": [
@@ -438,7 +438,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": ">- - - Sirarts a",
+          "ocr_text": "Siai",
           "correct": false,
           "crop": "generated/crops/blur-name.png"
         },
@@ -446,7 +446,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "Ceanr OrsTis ardrn",
+          "ocr_text": "Saretrrensaciuer -",
           "correct": false,
           "crop": "generated/crops/blur-position.png"
         },
@@ -454,7 +454,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "str Fstri ra2oea Auint - r",
+          "ocr_text": "- - A -",
           "correct": false,
           "crop": "generated/crops/blur-address.png"
         },
@@ -462,8 +462,8 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": "in +r - * Buw - I - - * - E - a - = * : * y w' yr m i",
-          "correct": false,
+          "ocr_text": "yn vy : - = N 3. L - - A - X Aun an * de",
+          "correct": true,
           "crop": "generated/crops/blur-records_days.png"
         }
       ]
@@ -503,9 +503,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 558,
-        "inliers": 370,
-        "inlier_ratio": 0.6631
+        "matches": 567,
+        "inliers": 394,
+        "inlier_ratio": 0.6949
       },
       "all_fields_correct": false,
       "fields": [
@@ -513,7 +513,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "- Brys - Alrxandra",
+          "ocr_text": "Abrandralleyis",
           "correct": false,
           "crop": "generated/crops/jpeg-name.png"
         },
@@ -521,7 +521,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "Matict Oyrtations-Atalyst",
+          "ocr_text": "PriknDwraTAAAtAEAnalyA",
           "correct": false,
           "crop": "generated/crops/jpeg-position.png"
         },
@@ -529,7 +529,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "fririfa 114 Posahrlair Arttin,%",
+          "ocr_text": "-146AS M47rloi Aratif,%",
           "correct": false,
           "crop": "generated/crops/jpeg-address.png"
         },
@@ -537,7 +537,7 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": ": 1 - - I I - . - a *: * : Tr- 4 * tffi I a # : sslics w sintrdi",
+          "ocr_text": "h - - - IF - * I < - - ar . - a + - I - - / k - i Pah",
           "correct": false,
           "crop": "generated/crops/jpeg-records_days.png"
         }
@@ -578,9 +578,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 651,
-        "inliers": 463,
-        "inlier_ratio": 0.7112
+        "matches": 664,
+        "inliers": 482,
+        "inlier_ratio": 0.7259
       },
       "all_fields_correct": false,
       "fields": [
@@ -588,7 +588,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "PPas 4444440 Alexandra Hayes",
+          "ocr_text": "- r Alexandra Hayes",
           "correct": true,
           "crop": "generated/crops/lines-name.png"
         },
@@ -596,7 +596,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "ALAVA4 wywu ) Senior Operations Analyst",
+          "ocr_text": "Senior Operations Analyst",
           "correct": true,
           "crop": "generated/crops/lines-position.png"
         },
@@ -604,7 +604,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "Streeladdress 2714 Red Cedartane * Austin, TX",
+          "ocr_text": "ouleelduuress 2714 Red Cedartane e 4 e Austin, TX",
           "correct": false,
           "crop": "generated/crops/lines-address.png"
         },
@@ -612,7 +612,7 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": "C in 3 business days or the app hiring team should alsobe notifie",
+          "ocr_text": "- DLLLLCA - Vaci) 111130115 capivyeCuLL - - 3 business days or - the applica 11 1rin team should alsobenotifiedofs - the informationabove 1S CC",
           "correct": true,
           "crop": "generated/crops/lines-records_days.png"
         }
@@ -670,9 +670,9 @@
       },
       "registration": {
         "ok": true,
-        "matches": 231,
-        "inliers": 121,
-        "inlier_ratio": 0.5238
+        "matches": 232,
+        "inliers": 105,
+        "inlier_ratio": 0.4526
       },
       "all_fields_correct": false,
       "fields": [
@@ -680,7 +680,7 @@
           "id": "name",
           "label": "Applicant name",
           "expected": "Alexandra Hayes",
-          "ocr_text": "Alrrudialleges",
+          "ocr_text": "Arandalloyer",
           "correct": false,
           "crop": "generated/crops/combo-name.png"
         },
@@ -688,7 +688,7 @@
           "id": "position",
           "label": "Position desired",
           "expected": "Senior Operations Analyst",
-          "ocr_text": "- 1 - - Cin OgeTalintu Analyat",
+          "ocr_text": "grat Thirath-raticadulyu",
           "correct": false,
           "crop": "generated/crops/combo-position.png"
         },
@@ -696,7 +696,7 @@
           "id": "address",
           "label": "Street address",
           "expected": "2714 Red Cedar Lane, Austin, TX",
-          "ocr_text": "-1i41allitia I arr FailCodatlaie An:fiu,",
+          "ocr_text": "- - -am 7147-iCHL Auit,lX",
           "correct": false,
           "crop": "generated/crops/combo-address.png"
         },
@@ -704,8 +704,8 @@
           "id": "records_days",
           "label": "Records due (days)",
           "expected": "3",
-          "ocr_text": ": * : H +* * - : i - - \u00e0 a : tat -",
-          "correct": false,
+          "ocr_text": ": * I I - ! 3 . - F - 1 * -, \u20ac + - % a - >> - : : f t * 4 * * i a",
+          "correct": true,
           "crop": "generated/crops/combo-records_days.png"
         }
       ]
