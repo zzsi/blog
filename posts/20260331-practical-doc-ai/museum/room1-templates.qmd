@@ -26,88 +26,7 @@ The assets here come from a real offline generator in the same folder: synthetic
 - Click a field card, especially `ZIP code` or `Street address`, and inspect the crop that OCR actually saw.
 :::
 
-<div class="room1-shell">
-  <section class="room1-toolbar">
-    <div class="room1-toolbar-copy">
-      <h2>Choose A Corruption Profile</h2>
-      <p>These presets are precomputed. The room is showing real registration and OCR outputs, not a browser simulation.</p>
-    </div>
-    <div class="room1-presets" id="room1-presets"></div>
-  </section>
-
-  <section class="room1-status">
-    <div class="room1-status-main">
-      <h2 id="room1-profile-title">Clean</h2>
-      <p id="room1-profile-description">No corruption.</p>
-      <p id="room1-diagnosis" class="room1-diagnosis"></p>
-    </div>
-    <div class="room1-badges" id="room1-badges"></div>
-  </section>
-
-  <div class="room1-stage">
-    <section class="room1-panel">
-      <header>
-        <h3>Incoming Document</h3>
-        <p>The observed form after corruption. This is the image fed into matching.</p>
-      </header>
-      <img id="room1-incoming" alt="Incoming corrupted form" />
-    </section>
-
-    <section class="room1-panel">
-      <header>
-        <h3>Registered To Template</h3>
-        <p>Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
-      </header>
-      <canvas id="room1-registered" width="700" height="900"></canvas>
-    </section>
-
-    <section class="room1-panel room1-focus">
-      <header>
-        <h3>Selected Field</h3>
-        <p id="room1-focus-copy">Click a field card to inspect the OCR crop and output.</p>
-      </header>
-      <div class="room1-focus-body">
-        <img id="room1-crop" alt="Selected OCR crop" />
-        <div class="room1-focus-meta">
-          <h4 id="room1-focus-label">ZIP code</h4>
-          <dl>
-            <div>
-              <dt>Expected</dt>
-              <dd id="room1-focus-expected"></dd>
-            </div>
-            <div>
-              <dt>OCR output</dt>
-              <dd id="room1-focus-ocr"></dd>
-            </div>
-          </dl>
-        </div>
-      </div>
-    </section>
-  </div>
-
-  <section class="room1-results">
-    <header>
-      <h2>Field Extraction</h2>
-      <p>Small fields and cramped multiline fields fail before the whole page looks obviously broken.</p>
-    </header>
-    <div class="room1-grid" id="room1-grid"></div>
-  </section>
-
-  <details class="room1-advanced">
-    <summary>Advanced View</summary>
-    <div class="room1-advanced-body">
-      <label class="room1-toggle">
-        <input id="room1-show-registered" type="checkbox" checked />
-        <span>Show registered image</span>
-      </label>
-      <label class="room1-toggle">
-        <input id="room1-show-boxes" type="checkbox" checked />
-        <span>Show crop boxes</span>
-      </label>
-      <pre id="room1-profile-json"></pre>
-    </div>
-  </details>
-</div>
+<div id="room1-app"></div>
 
 <style>
 .room1-shell {
@@ -375,6 +294,92 @@ The assets here come from a real offline generator in the same folder: synthetic
 
 <script>
 (() => {
+  const app = document.getElementById("room1-app");
+  app.innerHTML = `
+    <div class="room1-shell">
+      <section class="room1-toolbar">
+        <div class="room1-toolbar-copy">
+          <h2>Choose A Corruption Profile</h2>
+          <p>These presets are precomputed. The room is showing real registration and OCR outputs, not a browser simulation.</p>
+        </div>
+        <div class="room1-presets" id="room1-presets"></div>
+      </section>
+
+      <section class="room1-status">
+        <div class="room1-status-main">
+          <h2 id="room1-profile-title">Clean</h2>
+          <p id="room1-profile-description">No corruption.</p>
+          <p id="room1-diagnosis" class="room1-diagnosis"></p>
+        </div>
+        <div class="room1-badges" id="room1-badges"></div>
+      </section>
+
+      <div class="room1-stage">
+        <section class="room1-panel">
+          <header>
+            <h3>Incoming Document</h3>
+            <p>The observed form after corruption. This is the image fed into matching.</p>
+          </header>
+          <img id="room1-incoming" alt="Incoming corrupted form" />
+        </section>
+
+        <section class="room1-panel">
+          <header>
+            <h3>Registered To Template</h3>
+            <p>Feature matching aligns the page to the template. Crop boxes live in this coordinate system.</p>
+          </header>
+          <canvas id="room1-registered" width="700" height="900"></canvas>
+        </section>
+
+        <section class="room1-panel room1-focus">
+          <header>
+            <h3>Selected Field</h3>
+            <p id="room1-focus-copy">Click a field card to inspect the OCR crop and output.</p>
+          </header>
+          <div class="room1-focus-body">
+            <img id="room1-crop" alt="Selected OCR crop" />
+            <div class="room1-focus-meta">
+              <h4 id="room1-focus-label">ZIP code</h4>
+              <dl>
+                <div>
+                  <dt>Expected</dt>
+                  <dd id="room1-focus-expected"></dd>
+                </div>
+                <div>
+                  <dt>OCR output</dt>
+                  <dd id="room1-focus-ocr"></dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="room1-results">
+        <header>
+          <h2>Field Extraction</h2>
+          <p>Small fields and cramped multiline fields fail before the whole page looks obviously broken.</p>
+        </header>
+        <div class="room1-grid" id="room1-grid"></div>
+      </section>
+
+      <details class="room1-advanced">
+        <summary>Advanced View</summary>
+        <div class="room1-advanced-body">
+          <label class="room1-toggle">
+            <input id="room1-show-registered" type="checkbox" checked />
+            <span>Show registered image</span>
+          </label>
+          <label class="room1-toggle">
+            <input id="room1-show-boxes" type="checkbox" checked />
+            <span>Show crop boxes</span>
+          </label>
+          <pre id="room1-profile-json"></pre>
+        </div>
+      </details>
+    </div>
+  `;
+
   const presetContainer = document.getElementById("room1-presets");
   const incomingImage = document.getElementById("room1-incoming");
   const registeredCanvas = document.getElementById("room1-registered");
