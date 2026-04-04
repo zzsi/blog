@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 16pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 22pt; margin: 0; }
+.header h2 { color: %%HEADER_TEXT%%; font-size: 11pt; margin: 4pt 0 0 0; font-weight: 400; opacity: 0.8; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.45; }
+.code-box { background: #263238; color: #ECEFF1; border-radius: 4pt; padding: 12pt 14pt; margin: 8pt 0; font-family: monospace; font-size: 9.5pt; line-height: 1.6; white-space: pre; }
+.note { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt 10pt; margin-top: 8pt; }
+.note p { font-size: 10pt; margin: 0 0 4pt 0; }
+</style></head><body>
+<div class="header">
+  <h1>Chunk-Parallel: Pseudocode</h1>
+  <h2>Schematic view of one DeltaNet layer's forward pass during training</h2>
+</div>
+<div class="content">
+  <div class="col" style="flex: 1.2;">
+    <p class="section-title">Training loop (one layer)</p>
+    <div class="code-box">S = zeros(d_v, d_k)       # recurrent state
+
+for chunk in chunks:
+  K, V, Q, beta = chunk_projections()
+
+  # structured factors from rank-1 structure
+  W, U = structured_factors(K, beta, V)
+
+  # within-chunk outputs: dense matmuls
+  O = Q @ S.T
+    + (Q @ K.T * causal_mask)
+    @ (U - W @ S.T)
+
+  # boundary update: one step per chunk
+  S = S + (U - W @ S.T).T @ K</div>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Reading the code</p>
+    <p><b>W</b> encodes how the chunk transforms incoming state. <b>U</b> encodes what the chunk writes.</p>
+    <p><b>U - W @ S.T</b> is the chunk's net update: new writes minus what overlaps with existing memory.</p>
+    <p><b>Q @ K.T * causal_mask</b> handles within-chunk token interactions (analogous to attention scores).</p>
+    <div class="note">
+      <p><b>Attention:</b> $O(L^2)$ compute, fully parallel (big matmuls).</p>
+      <p><b>DeltaNet:</b> $O(L)$ compute, chunk-parallel at training, sequential at decode.</p>
+      <p>OLMo Hybrid slightly outperforms OLMo 3 in early throughput benchmarks.</p>
+    </div>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>
