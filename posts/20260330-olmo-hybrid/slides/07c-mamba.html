@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 22pt; margin: 0; }
+.header h2 { color: %%HEADER_TEXT%%; font-size: 12pt; margin: 4pt 0 0 0; font-weight: 400; opacity: 0.8; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+.eq-box { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 10pt 12pt; margin: 8pt 0; text-align: center; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.45; }
+.note { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt 10pt; margin-top: 8pt; }
+.note p { font-size: 10pt; margin: 0 0 4pt 0; }
+table { width: 100%; border-collapse: collapse; margin-top: 6pt; }
+th { background: %%CARD_BG%%; color: %%ACCENT%%; font-size: 10pt; text-align: left; padding: 5pt 10pt; border-bottom: 1.5pt solid %%CARD_BORDER%%; }
+td { color: %%BODY_TEXT%%; font-size: 10pt; padding: 5pt 10pt; border-bottom: 1pt solid %%CARD_BORDER%%; }
+</style></head><body>
+<div class="header">
+  <h1>Detour: The Other Lineage (Mamba / SSM)</h1>
+  <h2>Gu &amp; Dao, 2024. The main competing family of recurrent layers.</h2>
+</div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">State space model recurrence</p>
+    <p>A discrete-time linear recurrence with input-dependent parameters (selective SSM):</p>
+    <div class="eq-box">
+      $h_t = \bar{A}_t \, h_{t-1} + \bar{B}_t \, x_t$
+    </div>
+    <div class="eq-box">
+      $y_t = C_t \, h_t$
+    </div>
+    <p>$h_t \in \mathbb{R}^{n}$ is the hidden state. $\bar{A}_t, \bar{B}_t, C_t$ are all <b>input-dependent</b> (Mamba's key innovation over S4, which used fixed $A, B$).</p>
+    <p>Like DeltaNet, this is a fixed-size recurrent state updated per token. Like DeltaNet, training uses chunk-parallel algorithms.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Comparison to DeltaNet</p>
+    <table>
+      <tr><th></th><th>Mamba (SSM)</th><th>DeltaNet</th></tr>
+      <tr><td><b>State</b></td><td>Vector $h \in \mathbb{R}^n$</td><td>Matrix $S \in \mathbb{R}^{d_v \times d_k}$</td></tr>
+      <tr><td><b>Update</b></td><td>Diagonal decay + input</td><td>Erase along key + write</td></tr>
+      <tr><td><b>Memory</b></td><td>Compressed, no retrieval</td><td>Associative key-value</td></tr>
+      <tr><td><b>Origin</b></td><td>Control theory (S4)</td><td>Delta rule (1960)</td></tr>
+    </table>
+    <div class="note">
+      <p><b>Mamba-2</b> (Dao &amp; Gu, 2024) showed SSMs and linear attention are duals (state space duality). Both families are converging.</p>
+      <p>Hybrid LLMs pick one: Nemotron-H uses Mamba-2, OLMo Hybrid uses GDN.</p>
+    </div>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

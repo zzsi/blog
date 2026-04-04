@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 22pt; margin: 0; }
+.header h2 { color: %%HEADER_TEXT%%; font-size: 12pt; margin: 4pt 0 0 0; font-weight: 400; opacity: 0.8; }
+.content { padding: 10pt 30pt; flex: 1; display: flex; gap: 16pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 12pt; font-weight: bold; margin: 0 0 5pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+.eq-box { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt 12pt; margin: 5pt 0; text-align: center; }
+.highlight-box { background: #FFF3E0; border: 1pt solid #FFE0B2; border-radius: 4pt; padding: 8pt 12pt; margin: 5pt 0; text-align: center; }
+p { color: %%BODY_TEXT%%; font-size: 10pt; margin: 0 0 5pt 0; line-height: 1.4; }
+.note { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 6pt 8pt; margin-top: 6pt; }
+.note p { font-size: 9pt; margin: 0 0 3pt 0; }
+</style></head><body>
+<div class="header">
+  <h1>Step 2: DeltaNet</h1>
+  <h2>Schlag, Irie &amp; Schmidhuber 2021. Lift from vector to matrix memory, apply at every token.</h2>
+</div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">From delta rule to DeltaNet</p>
+    <p>Lift from weight vector to a <b>memory matrix</b> $S \in \mathbb{R}^{d_v \times d_k}$ mapping <b>keys</b> to <b>values</b>. Now $t$ indexes <b>tokens</b> (not training examples). At each token:</p>
+    <div class="highlight-box">
+      $S_t = S_{t-1} + \beta_t\underbrace{(v_t - S_{t-1}k_t)}_{\text{retrieval error}}\;k_t^\top$
+    </div>
+    <p>Equivalent (expand and rearrange):</p>
+    <div class="eq-box">
+      $S_t = \underbrace{S_{t-1}(I - \beta_t k_t k_t^\top)}_{\text{erase along } k_t} + \underbrace{\beta_t \, v_t \, k_t^\top}_{\text{write new}}$
+    </div>
+    <p>$k_t, v_t, q_t$ are linear projections of input $x_t$ (as in attention). Write uses $k_t$, read uses $q_t$: $\;o_t = S_t \, q_t$.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">What is $\beta_t$?</p>
+    <p>A per-head, data-dependent gate:</p>
+    <div class="eq-box">
+      $\beta_t = \sigma(w_\beta^\top x_t + b_\beta) \;\in (0, 1)$
+    </div>
+    <p>Controls how much to erase the old value at key $k_t$ and how strongly to write the new value. Learned via backprop.</p>
+    <div class="note">
+      <p><b>Key insight:</b> DeltaNet doesn't just accumulate memories. It <em>edits</em> existing ones by erasing along $k_t$ before writing. This is why retrieval error stays bounded as sequence length grows.</p>
+    </div>
+    <div class="note">
+      <p><b>Key limitation:</b> Forgetting only happens along the current key $k_t$. Old memories in other directions persist forever, even if no longer relevant.</p>
+    </div>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

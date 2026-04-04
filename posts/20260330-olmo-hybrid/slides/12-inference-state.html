@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 10pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.45; }
+.bar-row { display: flex; align-items: center; gap: 10pt; margin: 10pt 0; }
+.bar { height: 20pt; border-radius: 3pt; }
+.bar-label { font-size: 11pt; color: %%BODY_TEXT%%; }
+.bar-size { font-size: 11pt; font-weight: bold; }
+.note { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 10pt 12pt; margin-top: 10pt; }
+.note p { font-size: 10pt; margin: 0 0 4pt 0; }
+</style></head><body>
+<div class="header"><h1>Inference State: Why This Matters for Serving</h1></div>
+<div class="content">
+  <div class="col" style="flex: 1.3;">
+    <p class="section-title">Per-layer state size (FP16)</p>
+    <div class="bar-row">
+      <div class="bar" style="width: 300pt; background: #EF5350;"></div>
+      <p class="bar-size" style="color: #EF5350;">512 MiB</p>
+    </div>
+    <p class="bar-label">Full Attention (32K seq, 32 KV heads)</p>
+
+    <div class="bar-row">
+      <div class="bar" style="width: 75pt; background: #FF9800;"></div>
+      <p class="bar-size" style="color: #FF9800;">128 MiB</p>
+    </div>
+    <p class="bar-label">Grouped-Query Attention (32K seq, 8 KV heads)</p>
+
+    <div class="bar-row">
+      <div class="bar" style="width: 10pt; background: #42A5F5;"></div>
+      <p class="bar-size" style="color: #42A5F5;">16 MiB</p>
+    </div>
+    <p class="bar-label">Sliding Window Attention (4K window, 8 heads)</p>
+
+    <div class="bar-row">
+      <div class="bar" style="width: 2pt; background: #66BB6A;"></div>
+      <p class="bar-size" style="color: #2E7D32;">1.05 MiB</p>
+    </div>
+    <p class="bar-label" style="color: #2E7D32; font-weight: bold;">GDN (30 heads), 485x smaller</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Why is GDN so small?</p>
+    <p><b>Attention</b> stores a KV cache: every past token's key and value vectors. Size grows linearly with sequence length.</p>
+    <p><b>GDN</b> compresses the entire history into a fixed-size state matrix $S \in \mathbb{R}^{d_v \times d_k}$. New tokens update $S$ in place. No matter how long the context, the state is the same size.</p>
+    <div class="note">
+      <p><b>OLMo Hybrid:</b> 75% of layers use GDN (fixed state), 25% use attention (KV cache). The bottleneck shifts to those 25% of layers.</p>
+      <p>Result: serve longer contexts on the same GPU, or fit more concurrent users.</p>
+    </div>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

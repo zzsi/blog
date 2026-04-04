@@ -1,0 +1,48 @@
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#F5F3F2', 'primaryBorderColor': '#D9D5D2',
+  'primaryTextColor': '#110A29', 'lineColor': '#E41159',
+  'fontFamily': 'Arial', 'fontSize': '15px'
+}}}%%
+flowchart LR
+    subgraph delta["Delta-Rule Lineage"]
+        direction LR
+        DR["Delta Rule\nWidrow & Hoff, 1960"]
+        LA["Linear Attention\nKatharopoulos 2020"]
+        DN["DeltaNet\nSchlag et al. 2021"]
+        GDN["Gated DeltaNet\nYang et al. 2025"]
+        GDNE["GDN + Neg Eigenvalues\nGrazzi et al. 2025"]
+        KDA["Kimi Delta Attention\nKimi Team 2025"]
+        DR --> LA --> DN --> GDN --> GDNE
+        GDN --> KDA
+    end
+
+    subgraph ssm["State Space Model Lineage"]
+        direction LR
+        S4["S4\nGu et al. 2022"]
+        M1["Mamba\nGu & Dao 2024"]
+        M2["Mamba-2\nDao & Gu 2024"]
+        M3["Mamba-3\nDao & Gu 2025"]
+        S4 --> M1 --> M2 --> M3
+    end
+
+    subgraph hybrids["Hybrid LLMs 2024-2026"]
+        direction LR
+        RG["RecurrentGemma\nGoogle 2024"]
+        SB["Samba\nMicrosoft 2025"]
+        NH["Nemotron-H 8B\nNVIDIA 2025"]
+        KL["Kimi Linear 48B\nMoonshot 2025"]
+        QW["Qwen 3.5\nAlibaba 2026"]
+        OH["OLMo Hybrid 7B\nAllen AI 2026"]
+    end
+
+    GDNE --> OH
+    GDN --> QW
+    KDA --> KL
+    M2 --> NH
+    M1 --> SB
+    S4 --> RG
+
+    style OH fill:#4a9eff,color:#fff,stroke:#2a7edf
+    style KL fill:#9b59b6,color:#fff,stroke:#7d3c98
+    style GDNE fill:#2ecc71,color:#fff,stroke:#27ae60
+    style KDA fill:#9b59b6,color:#fff,stroke:#7d3c98

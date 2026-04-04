@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><head><style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 12pt 30pt; flex: 1; display: flex; gap: 16pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+p { color: %%BODY_TEXT%%; font-size: 10.5pt; margin: 0 0: 7pt 0; line-height: 1.4; }
+.card { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt 10pt; margin: 5pt 0; }
+.card h3 { color: %%ACCENT%%; font-size: 11pt; margin: 0 0 3pt 0; }
+.card p { font-size: 10pt; margin: 0 0 3pt 0; }
+.result { display: flex; gap: 8pt; margin-top: 6pt; }
+.result-box { flex: 1; text-align: center; padding: 8pt; border-radius: 4pt; }
+.fail { background: #FFEBEE; border: 1pt solid #EF9A9A; }
+.fail p { color: #C62828; font-size: 10pt; margin: 0; }
+.pass { background: #E8F5E9; border: 1pt solid #A5D6A7; }
+.pass p { color: #2E7D32; font-size: 10pt; margin: 0; }
+.footnote { font-size: 8pt; color: %%BODY_TEXT%%; opacity: 0.5; margin-top: 6pt; }
+</style></head><body>
+<div class="header"><h1>Hybrids Are More Than the Sum of Their Parts</h1></div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">Complementary strengths</p>
+    <div class="card">
+      <h3>Transformers</h3>
+      <p>Can recall/copy from arbitrary positions.</p>
+      <p>Cannot maintain and update state sequentially (e.g., tracking variable assignments through a sequence: x=1, y=x+1, ...). This is a fundamental expressivity gap, not a training data issue.*</p>
+    </div>
+    <div class="card">
+      <h3>Linear RNNs (GDN)</h3>
+      <p>Can track state (variable assignment, counting).</p>
+      <p>Cannot recall from arbitrary positions (bounded state).</p>
+    </div>
+    <div class="card">
+      <h3>Hybrid (GDN + Attention)</h3>
+      <p>State tracking <b>AND</b> recall.</p>
+      <p>Can solve tasks <b>neither</b> can alone.</p>
+    </div>
+    <p class="footnote">* Merrill & Sabharwal, 2023. Fixed-depth transformers are limited to TC0; state tracking requires NC1.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Key example: state-based recall</p>
+    <p style="color: %%BODY_TEXT%%; font-size: 10.5pt; margin: 0 0 7pt 0;">A task that requires:</p>
+    <p style="color: %%BODY_TEXT%%; font-size: 10.5pt; margin: 0 0 7pt 0;">1. <b>Track state</b> through a sequence (needs recurrence)</p>
+    <p style="color: %%BODY_TEXT%%; font-size: 10.5pt; margin: 0 0 7pt 0;">2. <b>Retrieve a value</b> based on current state (needs attention)</p>
+    <p style="color: %%BODY_TEXT%%; font-size: 10pt; margin: 0 0 7pt 0; opacity: 0.7;">e.g., "which variable currently holds the largest value?" Requires tracking assignments AND looking up values.</p>
+    <div class="result">
+      <div class="result-box fail"><p><b>Pure Transformer</b><br>Fails</p></div>
+      <div class="result-box fail"><p><b>Pure GDN</b><br>Fails</p></div>
+      <div class="result-box pass"><p><b>Hybrid</b><br>Solves it</p></div>
+    </div>
+    <p style="color: %%BODY_TEXT%%; font-size: 10pt; margin-top: 8pt;">Validated on synthetic tasks in the OLMo paper (Section 3.3). Hybrid models learn state-based recall perfectly. Neither pure architecture can.</p>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

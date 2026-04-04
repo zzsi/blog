@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 22pt; margin: 0; }
+.header h2 { color: %%HEADER_TEXT%%; font-size: 12pt; margin: 4pt 0 0 0; font-weight: 400; opacity: 0.8; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+.eq-box { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 12pt; margin: 8pt 0; text-align: center; }
+.eq-box .katex { font-size: 14pt; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.45; }
+.label { display: inline-block; background: %%ACCENT%%; color: white; font-size: 8pt; padding: 2pt 6pt; border-radius: 2pt; font-weight: bold; margin-bottom: 6pt; }
+</style></head><body>
+<div class="header">
+  <h1>Step 1: The Delta Rule (1960)</h1>
+  <h2>Widrow &amp; Hoff, 1960. The simplest gradient-based learning rule.</h2>
+</div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">Setting</p>
+    <p>A linear predictor with weight $w$, input $x_t$, target $y_t$. The prediction is $\hat{y}_t = w_{t-1}^\top x_t$. Here $t$ indexes <b>training examples</b>.</p>
+    <p>Gradient descent on squared error gives the update rule:</p>
+    <div class="eq-box">
+      $w_t = w_{t-1} + \eta \underbrace{(y_t - w_{t-1}^\top x_t)}_{\delta_t\text{ = prediction error}} \cdot\; x_t$
+    </div>
+    <p>Correct the weight in proportion to the error. This is an <b>online</b> update: one example arrives, weights change immediately.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">A pattern that keeps reappearing</p>
+    <p><span class="label">MEMORY</span> A stored state ($w_{t-1}$)</p>
+    <p><span class="label">READ</span> Retrieve a prediction ($w_{t-1}^\top x_t$)</p>
+    <p><span class="label">WRITE</span> Error-correcting update ($\delta_t \cdot x_t$)</p>
+    <p style="margin-top: 14pt; padding-top: 10pt; border-top: 1pt solid %%CARD_BORDER%%;">This structure (<em>memory, read, write</em>) is exactly what shows up in DeltaNet 65 years later, with $w$ replaced by a matrix and $x$ replaced by key/value pairs.</p>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 16pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 22pt; margin: 0; }
+.header h2 { color: %%HEADER_TEXT%%; font-size: 11pt; margin: 4pt 0 0 0; font-weight: 400; opacity: 0.8; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+.eq-box { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 10pt 12pt; margin: 8pt 0; text-align: center; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.45; }
+.note { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt 10pt; margin-top: 8pt; }
+.note p { font-size: 10pt; margin: 0 0 4pt 0; }
+</style></head><body>
+<div class="header">
+  <h1>How Training Stays Fast: Chunk-Parallel</h1>
+  <h2>Yang et al., NeurIPS 2024</h2>
+</div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">The problem</p>
+    <p>DeltaNet's recurrence $S_t = f(S_{t-1}, x_t)$ is sequential. Naively, training a length-$L$ sequence requires $L$ serial steps. GPUs need large parallel matmuls.</p>
+    <p class="section-title" style="margin-top: 10pt;">The solution: chunk it</p>
+    <p>Split the sequence into chunks of size $C$. Let $t$ = chunk index, $r$ = position within chunk ($1 \le r \le C$).</p>
+    <div class="eq-box">
+      $S_t^{(r)} = \underbrace{S_t \cdot P_t^{(r)}}_{\text{carry from previous chunks}} + \underbrace{H_t^{(r)}}_{\text{new from this chunk}}$
+    </div>
+    <p>$S_t$: state entering chunk $t$.<br>$P_t^{(r)}$: transition matrix after $r$ steps within the chunk.<br>$H_t^{(r)}$: contribution from the first $r$ tokens in the chunk.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Why this decomposition is exact</p>
+    <p>Each step is <b>affine</b> in the state: $S \leftarrow S \cdot A_i + B_i$, where $A_i = I - \beta_i k_i k_i^\top$ and $B_i = v_i k_i^\top$.</p>
+    <p>Unrolling from $S_t$:</p>
+    <div class="eq-box" style="text-align: left; padding: 8pt 12pt;">
+      $r{=}1:\; S_t \cdot A_1 + B_1$<br>
+      $r{=}2:\; S_t \cdot A_1 A_2 + B_1 A_2 + B_2$
+    </div>
+    <p>The $S_t$-dependent and independent parts separate cleanly:<br>$P_t^{(r)} = \prod_i A_i$, $\;H_t^{(r)} = \sum_i B_i \prod_{j>i} A_j$.</p>
+    <p class="section-title" style="margin-top: 6pt;">Result</p>
+    <p><b>Within chunk:</b> $P$ and $H$ computed via dense matmuls (rank-1 structure of each $A_i$).</p>
+    <p><b>Across chunks:</b> sequential depth drops from $L$ to $L/C$.</p>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>
