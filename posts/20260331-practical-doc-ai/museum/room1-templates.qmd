@@ -18,10 +18,11 @@ The assets here come from a real offline generator in the same folder: synthetic
 ::: {.callout-note appearance="simple"}
 ## What To Try
 
-- Start on `Clean`. The full pipeline works.
-- Click `Rotation`. Registration still succeeds and extraction stays correct.
-- Click `Blur`, `JPEG`, or `Marked-up form`. Matching still works, but OCR starts degrading.
-- Click a field card, especially `Records due (days)` or `Street address`, and inspect the crop that OCR actually saw.
+- Start on `Clean`. The full pipeline works: 4/4 fields extracted correctly.
+- Click `Rotation` or `Marked-up form`. Registration still succeeds and extraction stays correct.
+- Click `Blur`, `JPEG`, or `Phone photo`. Matching still works, but OCR starts degrading on small fields.
+- Now click `Revised form`. Registration succeeds with *more* inlier matches than clean. But the form has one fewer employment-history row, so Section 3 shifted up. The template's crop coordinates silently miss `Records due (days)`. This is the failure mode that motivates field detectors.
+- Click a field card to inspect the crop region.
 :::
 
 <div id="room1-app"></div>

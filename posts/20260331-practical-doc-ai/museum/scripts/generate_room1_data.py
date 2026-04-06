@@ -904,12 +904,15 @@ def preprocess_for_ocr(crop: np.ndarray, field: Field) -> np.ndarray:
     return cv2.cvtColor(bordered, cv2.COLOR_GRAY2BGR)
 
 
-def save_crop(image: np.ndarray, field: Field, variant_name: str) -> Path:
+def save_crop(image: np.ndarray, field: Field, variant_name: str) -> tuple[Path, Path]:
+    """Save raw crop for display and preprocessed crop for OCR. Returns (display_path, ocr_path)."""
     crop = crop_with_padding(image, field)
-    crop = preprocess_for_ocr(crop, field)
-    path = OUTPUT_DIR / "crops" / f"{variant_name}-{field.id}.png"
-    cv2.imwrite(str(path), crop)
-    return path
+    display_path = OUTPUT_DIR / "crops" / f"{variant_name}-{field.id}.png"
+    cv2.imwrite(str(display_path), crop)
+    ocr_crop = preprocess_for_ocr(crop, field)
+    ocr_path = OUTPUT_DIR / "crops" / f"{variant_name}-{field.id}-ocr.png"
+    cv2.imwrite(str(ocr_path), ocr_crop)
+    return display_path, ocr_path
 
 
 def normalize_text(value: str) -> str:
@@ -968,10 +971,14 @@ def generate_manifest() -> dict:
         if registered_cv is not None:
             registered_path = OUTPUT_DIR / "variants" / f"{profile.id}-registered.png"
             cv2.imwrite(str(registered_path), registered_cv)
+            display_paths = []
+            ocr_paths = []
             for field in FIELDS:
-                crop_paths.append(save_crop(registered_cv, field, profile.id))
-            ocr_texts = doctr_extract_text(predictor, crop_paths)
-            for field, ocr_text, crop_path in zip(FIELDS, ocr_texts, crop_paths):
+                display_path, ocr_path = save_crop(registered_cv, field, profile.id)
+                display_paths.append(display_path)
+                ocr_paths.append(ocr_path)
+            ocr_texts = doctr_extract_text(predictor, ocr_paths)
+            for field, ocr_text, display_path in zip(FIELDS, ocr_texts, display_paths):
                 correct = normalize_text(field.value) in normalize_text(ocr_text)
                 field_results.append(
                     {
@@ -980,7 +987,7 @@ def generate_manifest() -> dict:
                         "expected": field.value,
                         "ocr_text": ocr_text,
                         "correct": bool(correct),
-                        "crop": str(crop_path.relative_to(OUTPUT_DIR)),
+                        "crop": str(display_path.relative_to(OUTPUT_DIR)),
                     }
                 )
         else:
