@@ -817,6 +817,8 @@ What To Try
         ? "Combined noise"
         : variant.id === "phone_photo"
           ? "Phone photo"
+        : variant.id === "print"
+          ? "Printer artifacts"
         : variant.id === "revised"
           ? "Revised form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -839,6 +841,8 @@ What To Try
       ? "Combined Noise"
       : variant.id === "phone_photo"
         ? "Phone Photo"
+      : variant.id === "print"
+        ? "Printer Artifacts"
       : variant.id === "revised"
         ? "Revised Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
