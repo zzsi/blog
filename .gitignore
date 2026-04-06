@@ -19,3 +19,6 @@ examples/optimizer-bench/toy/outputs/
 
 # Paper PDFs
 **/*.pdf
+
+# Museum generated assets (hosted on HF)
+posts/20260331-practical-doc-ai/museum/assets/room1/generated/

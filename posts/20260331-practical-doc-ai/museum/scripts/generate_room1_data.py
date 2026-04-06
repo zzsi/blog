@@ -21,8 +21,15 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIR = ROOT / "assets" / "room1"
 OUTPUT_DIR = ASSET_DIR / "generated"
 TEXTURE_DIR = ASSET_DIR / "textures"
-TEMPLATE_SIZE = (700, 900)
-PAGE_BOX = {"x": 70, "y": 48, "w": 560, "h": 780}
+SCALE = 3
+
+
+def S(value: int | float) -> int:
+    return int(round(value * SCALE))
+
+
+TEMPLATE_SIZE = (S(700), S(1000))
+PAGE_BOX = {"x": S(36), "y": S(22), "w": S(628), "h": S(972)}
 
 
 @dataclass
@@ -44,10 +51,10 @@ class CorruptionProfile:
 
 
 FIELDS = [
-    Field("name", "Applicant name", "Alexandra Hayes", (106, 224, 320, 30)),
-    Field("position", "Position desired", "Senior Operations Analyst", (106, 285, 380, 30)),
-    Field("address", "Street address", "2714 Red Cedar Lane, Austin, TX", (106, 346, 430, 56)),
-    Field("records_days", "Records due (days)", "3", (142, 741, 82, 18)),
+    Field("name", "Applicant name", "Alexandra Hayes", (S(110), S(224), S(300), S(30))),
+    Field("position", "Position desired", "Senior Operations Analyst", (S(110), S(284), S(250), S(30))),
+    Field("address", "Street address", "2714 Red Cedar Lane, Larkhaven, TX", (S(110), S(344), S(225), S(56))),
+    Field("records_days", "Records due (days)", "3", (S(300), S(892), S(24), S(16))),
 ]
 
 
@@ -63,15 +70,15 @@ def load_font(name: str, size: int) -> ImageFont.FreeTypeFont:
     return ImageFont.load_default()
 
 
-FONT_TITLE = load_font("Georgia.ttf", 24)
-FONT_SUBTITLE = load_font("Georgia.ttf", 13)
-FONT_LABEL = load_font("Georgia.ttf", 13)
-FONT_VALUE = load_font("Georgia.ttf", 15)
-FONT_VALUE_SMALL = load_font("Georgia.ttf", 13)
-FONT_BODY = load_font("Georgia.ttf", 12)
-FONT_SECTION = load_font("Georgia.ttf", 13)
-FONT_TINY = load_font("Georgia.ttf", 11)
-FONT_MICRO = load_font("Georgia.ttf", 10)
+FONT_TITLE = load_font("Georgia.ttf", S(21))
+FONT_SUBTITLE = load_font("Georgia.ttf", S(11))
+FONT_LABEL = load_font("Georgia.ttf", S(11))
+FONT_VALUE = load_font("Georgia.ttf", S(13))
+FONT_VALUE_SMALL = load_font("Georgia.ttf", S(11))
+FONT_BODY = load_font("Georgia.ttf", S(10))
+FONT_SECTION = load_font("Georgia.ttf", S(10))
+FONT_TINY = load_font("Georgia.ttf", S(9))
+FONT_MICRO = load_font("Georgia.ttf", S(8))
 
 
 def ensure_dirs() -> None:
@@ -99,96 +106,165 @@ def render_template(blank: bool = True) -> Image.Image:
     image = Image.new("RGB", TEMPLATE_SIZE, "#eee3ca")
     draw = ImageDraw.Draw(image)
 
-    draw.rectangle((0, 0, 699, 899), fill="#eee3ca")
+    draw.rectangle((0, 0, TEMPLATE_SIZE[0] - 1, TEMPLATE_SIZE[1] - 1), fill="#eee3ca")
     px, py, pw, ph = PAGE_BOX["x"], PAGE_BOX["y"], PAGE_BOX["w"], PAGE_BOX["h"]
     draw.rectangle((px, py, px + pw, py + ph), fill="#f9f6eb", outline="#9d9278", width=2)
 
-    draw.ellipse((94, 72, 146, 124), fill="#d7ccb4", outline="#8e836a", width=2)
-    draw.text((164, 74), "Employment Application", font=FONT_TITLE, fill="#332b1d")
-    draw.text((164, 101), "Northwind Logistics", font=FONT_SUBTITLE, fill="#5a533f")
+    draw.ellipse((S(94), S(72), S(146), S(124)), fill="#d7ccb4", outline="#8e836a", width=2)
+    draw.text((S(164), S(74)), "Employment Application", font=FONT_TITLE, fill="#332b1d")
+    draw.text((S(164), S(101)), "Northwind Logistics", font=FONT_SUBTITLE, fill="#5a533f")
     draw.text(
-        (164, 121),
+        (S(164), S(121)),
         "Applicant intake form for hourly and salaried roles",
         font=FONT_BODY,
         fill="#5a533f",
     )
-
-    draw.rectangle((104, 164, 596, 194), fill="#e5ddca", outline="#9d9278", width=1)
-    draw.text((116, 171), "Section 1. Applicant Information", font=FONT_SECTION, fill="#413828")
-
-    labels = [
-        ("Applicant name", (106, 206)),
-        ("Position desired", (106, 267)),
-        ("Street address", (106, 328)),
-    ]
-    for text, xy in labels:
-        draw.text(xy, text, font=FONT_LABEL, fill="#574f40")
-
-    for field in FIELDS:
-        x, y, w, h = field.box
-        if field.id == "records_days":
-            draw.line((x + 8, y + h - 4, x + 26, y + h - 4), fill="#756a52", width=1)
-        else:
-            draw.rectangle((x, y, x + w, y + h), outline="#756a52", width=1)
-
-    if not blank:
-        draw.text((118, 228), FIELDS[0].value, font=FONT_VALUE, fill="#2f2b23")
-        draw.text((118, 289), FIELDS[1].value, font=FONT_VALUE, fill="#2f2b23")
-        draw.text((118, 350), "2714 Red Cedar Lane", font=FONT_VALUE_SMALL, fill="#2f2b23")
-        draw.text((118, 369), "Austin, TX", font=FONT_VALUE_SMALL, fill="#2f2b23")
-
-    draw.rectangle((104, 420, 596, 450), fill="#e5ddca", outline="#9d9278", width=1)
-    draw.text((116, 427), "Section 2. Work History", font=FONT_SECTION, fill="#413828")
-
-    body_lines = [
-        ("Employer name", (106, 482), (106, 502, 322, 502)),
-        ("Dates employed", (362, 482), (362, 502, 540, 502)),
-        ("Job title", (106, 518), (106, 538, 540, 538)),
-        ("Employer name", (106, 564), (106, 584, 322, 584)),
-        ("Dates employed", (362, 564), (362, 584, 540, 584)),
-        ("Job title", (106, 600), (106, 620, 540, 620)),
-    ]
-    for text, label_xy, line in body_lines:
-        draw.text(label_xy, text, font=FONT_BODY, fill="#6b6557")
-        draw.line(line, fill="#b0a58f", width=1)
-
-    draw.rectangle((104, 644, 596, 674), fill="#e5ddca", outline="#9d9278", width=1)
-    draw.text((116, 651), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
-    draw.text((106, 696), "Earliest start date", font=FONT_BODY, fill="#6b6557")
-    draw.line((106, 714, 260, 714), fill="#b0a58f", width=1)
-    draw.text((328, 696), "Available weekends?", font=FONT_BODY, fill="#6b6557")
-    draw.rectangle((328, 708, 342, 722), outline="#b0a58f", width=1)
-    draw.rectangle((410, 708, 424, 722), outline="#b0a58f", width=1)
-    draw.text((347, 709), "Yes", font=FONT_TINY, fill="#6b6557")
-    draw.text((429, 709), "No", font=FONT_TINY, fill="#6b6557")
-
-    dense_y = 726
-    dense_line_1 = "After a written offer, missing employment records must be submitted"
-    dense_prefix = "within"
-    dense_suffix = "business days or the applicant start date may be delayed."
-    dense_line_3 = "The hiring team should also be notified of scheduling conflicts before the first shift."
-    draw.text((106, dense_y), dense_line_1, font=FONT_MICRO, fill="#6b6557")
-    prefix_bbox = draw.textbbox((106, dense_y + 12), dense_prefix, font=FONT_MICRO)
-    draw.text((106, dense_y + 12), dense_prefix, font=FONT_MICRO, fill="#6b6557")
-    blank_x = prefix_bbox[2] + 10
-    blank_y = dense_y + 22
-    blank_w = 18
-    draw.line((blank_x, blank_y, blank_x + blank_w, blank_y), fill="#756a52", width=1)
-    draw.text((blank_x + blank_w + 8, dense_y + 12), dense_suffix, font=FONT_MICRO, fill="#6b6557")
-    draw.text((106, dense_y + 24), dense_line_3, font=FONT_MICRO, fill="#6b6557")
-    if not blank:
-        draw.text((blank_x + 4, dense_y + 8), FIELDS[3].value, font=FONT_TINY, fill="#2f2b23")
-
     draw.text(
-        (106, 758),
-        "I certify the information above is complete and accurate to the best of my knowledge.",
-        font=FONT_BODY,
-        fill="#6b6557",
+        (S(164), S(136)),
+        "Please print clearly. Attach supplemental work history if more space is needed.",
+        font=FONT_TINY,
+        fill="#6a624d",
     )
-    draw.line((106, 784, 350, 784), fill="#b0a58f", width=1)
-    draw.line((390, 784, 540, 784), fill="#b0a58f", width=1)
-    draw.text((106, 792), "Applicant signature", font=FONT_TINY, fill="#6b6557")
-    draw.text((390, 792), "Date", font=FONT_TINY, fill="#6b6557")
+
+    draw.rectangle((S(104), S(164), S(596), S(194)), fill="#e5ddca", outline="#9d9278", width=1)
+    draw.text((S(116), S(171)), "Section 1. Applicant, Contact, and Role", font=FONT_SECTION, fill="#413828")
+
+    # Repeated semantic fields: names, roles, addresses, and phones.
+    draw.text((S(110), S(202)), "Applicant name", font=FONT_LABEL, fill="#574f40")
+    draw.text((S(440), S(202)), "Preferred name / alias", font=FONT_LABEL, fill="#574f40")
+    draw.rectangle((S(110), S(224), S(410), S(254)), outline="#756a52", width=1)
+    draw.rectangle((S(440), S(224), S(586), S(254)), outline="#756a52", width=1)
+
+    draw.text((S(110), S(262)), "Position desired", font=FONT_LABEL, fill="#574f40")
+    draw.text((S(390), S(262)), "Department requested", font=FONT_LABEL, fill="#574f40")
+    draw.rectangle((S(110), S(284), S(360), S(314)), outline="#756a52", width=1)
+    draw.rectangle((S(390), S(284), S(586), S(314)), outline="#756a52", width=1)
+
+    draw.text((S(110), S(322)), "Street address", font=FONT_LABEL, fill="#574f40")
+    draw.text((S(360), S(322)), "City / State / ZIP", font=FONT_LABEL, fill="#574f40")
+    draw.rectangle((S(110), S(344), S(335), S(400)), outline="#756a52", width=1)
+    draw.rectangle((S(360), S(344), S(586), S(376)), outline="#756a52", width=1)
+
+    # Reading-order trap: labels across the row, values on the next row.
+    contact_labels = [
+        ("Mobile phone", S(110)),
+        ("Alternate phone", S(255)),
+        ("Emergency phone", S(430)),
+    ]
+    for text, x in contact_labels:
+        draw.text((x, S(414)), text, font=FONT_BODY, fill="#6b6557")
+    draw.line((S(110), S(448), S(230), S(448)), fill="#b0a58f", width=1)
+    draw.line((S(255), S(448), S(405), S(448)), fill="#b0a58f", width=1)
+    draw.line((S(430), S(448), S(585), S(448)), fill="#b0a58f", width=1)
+
+    draw.text((S(110), S(458)), "Email address", font=FONT_BODY, fill="#6b6557")
+    draw.text((S(345), S(458)), "Current supervisor", font=FONT_BODY, fill="#6b6557")
+    draw.line((S(110), S(486), S(320), S(486)), fill="#b0a58f", width=1)
+    draw.line((S(345), S(486), S(586), S(486)), fill="#b0a58f", width=1)
+    if not blank:
+        draw.text((S(118), S(231)), "Alexandra Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((S(448), S(231)), "Alex Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((S(118), S(291)), "Senior Operations Analyst", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((S(398), S(291)), "Network Operations", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((S(118), S(359)), "2714 Red Cedar Lane", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((S(118), S(377)), "Larkhaven, TX 78705", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        draw.text((S(368), S(352)), "Larkhaven, TX 78705", font=FONT_VALUE_SMALL, fill="#2f2b23")
+
+        draw.text((S(110), S(428)), "(512) 555-0147", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(255), S(428)), "(737) 555-0199", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(430), S(428)), "(512) 555-0102", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(110), S(470)), "alex.hayes@example.com", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(345), S(470)), "M. Patel / (512) 555-0130", font=FONT_BODY, fill="#2f2b23")
+
+    draw.rectangle((S(104), S(500), S(596), S(530)), fill="#e5ddca", outline="#9d9278", width=1)
+    draw.text((S(116), S(507)), "Section 2. Recent Work History", font=FONT_SECTION, fill="#413828")
+
+    # Reading-order challenge: labels first, values later in a separate row.
+    history_rows = [
+        {
+            "y": 546,
+            "employer": "Northwind Fulfillment",
+            "address": "9101 Logistics Way, Brighthaven, TX",
+            "dates": "03/2022 - 02/2026",
+            "title": "Operations Coordinator",
+            "supervisor": "J. Rivera",
+            "reason": "Relocation of facility",
+        },
+        {
+            "y": 660,
+            "employer": "Capstone Field Services",
+            "address": "4800 Mesa Park Dr, Stonecross, TX",
+            "dates": "07/2019 - 02/2022",
+            "title": "Customer Success Lead",
+            "supervisor": "L. Chen",
+            "reason": "Pursued internal operations role",
+        },
+    ]
+    for row in history_rows:
+        y = S(row["y"])
+        draw.text((S(110), y), "Employer name", font=FONT_BODY, fill="#6b6557")
+        draw.text((S(280), y), "Employer address", font=FONT_BODY, fill="#6b6557")
+        draw.text((S(500), y), "Dates employed", font=FONT_BODY, fill="#6b6557")
+        draw.text((S(110), y + S(40)), "Job title", font=FONT_BODY, fill="#6b6557")
+        draw.text((S(360), y + S(40)), "Supervisor name", font=FONT_BODY, fill="#6b6557")
+        draw.text((S(110), y + S(72)), "Reason for leaving", font=FONT_BODY, fill="#6b6557")
+
+        draw.line((S(110), y + S(26), S(250), y + S(26)), fill="#b0a58f", width=1)
+        draw.line((S(280), y + S(26), S(470), y + S(26)), fill="#b0a58f", width=1)
+        draw.line((S(500), y + S(26), S(586), y + S(26)), fill="#b0a58f", width=1)
+        draw.line((S(110), y + S(66), S(330), y + S(66)), fill="#b0a58f", width=1)
+        draw.line((S(360), y + S(66), S(586), y + S(66)), fill="#b0a58f", width=1)
+        draw.line((S(110), y + S(96), S(586), y + S(96)), fill="#b0a58f", width=1)
+
+        if not blank:
+            draw.text((S(110), y + S(12)), row["employer"], font=FONT_BODY, fill="#2f2b23")
+            draw.text((S(280), y + S(12)), row["address"], font=FONT_BODY, fill="#2f2b23")
+            draw.text((S(500), y + S(12)), row["dates"], font=FONT_BODY, fill="#2f2b23")
+            draw.text((S(110), y + S(52)), row["title"], font=FONT_BODY, fill="#2f2b23")
+            draw.text((S(360), y + S(52)), row["supervisor"], font=FONT_BODY, fill="#2f2b23")
+            draw.text((S(110), y + S(84)), row["reason"], font=FONT_BODY, fill="#2f2b23")
+
+    draw.rectangle((S(104), S(760), S(596), S(790)), fill="#e5ddca", outline="#9d9278", width=1)
+    draw.text((S(116), S(767)), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
+
+    draw.text((S(110), S(800)), "Earliest start date", font=FONT_BODY, fill="#6b6557")
+    draw.text((S(335), S(800)), "Available weekends?", font=FONT_BODY, fill="#6b6557")
+    draw.text((S(486), S(800)), "Badge renewal date", font=FONT_BODY, fill="#6b6557")
+    draw.line((S(110), S(822), S(260), S(822)), fill="#b0a58f", width=1)
+    draw.rectangle((S(335), S(818), S(349), S(832)), outline="#b0a58f", width=1)
+    draw.rectangle((S(412), S(818), S(426), S(832)), outline="#b0a58f", width=1)
+    draw.text((S(358), S(819)), "Yes", font=FONT_TINY, fill="#6b6557")
+    draw.text((S(435), S(819)), "No", font=FONT_TINY, fill="#6b6557")
+    draw.line((S(486), S(822), S(586), S(822)), fill="#b0a58f", width=1)
+
+    if not blank:
+        draw.text((S(110), S(808)), "04/27/2026", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(494), S(808)), "05/15/2026", font=FONT_BODY, fill="#2f2b23")
+
+    draw.text((S(110), S(844)), "Disciplinary action within last 24 months?", font=FONT_BODY, fill="#6b6557")
+    draw.rectangle((S(420), S(840), S(434), S(854)), outline="#b0a58f", width=1)
+    draw.rectangle((S(486), S(840), S(500), S(854)), outline="#b0a58f", width=1)
+    draw.text((S(444), S(841)), "Yes", font=FONT_TINY, fill="#6b6557")
+    draw.text((S(510), S(841)), "No", font=FONT_TINY, fill="#6b6557")
+    if not blank:
+        draw.text((S(110), S(860)), "Explain if yes on attached page.", font=FONT_TINY, fill="#6b6557")
+
+    # Dense local context around the hard target with several distractor numbers nearby.
+    dense_y = S(878)
+    draw.text((S(110), dense_y), "After a written offer, payroll records and I-9 support must be submitted within", font=FONT_MICRO, fill="#6b6557")
+    prefix = "the shorter of 30 calendar days, 7 orientation days, or "
+    draw.text((S(110), dense_y + S(16)), prefix, font=FONT_MICRO, fill="#6b6557")
+    prefix_w = draw.textlength(prefix, font=FONT_MICRO)
+    blank_x = S(110) + int(prefix_w)
+    blank_w = S(24)
+    blank_y = dense_y + S(16) + S(12)
+    draw.line((blank_x, blank_y, blank_x + blank_w, blank_y), fill="#756a52", width=1)
+    suffix_x = blank_x + blank_w + S(4)
+    draw.text((suffix_x, dense_y + S(16)), "business days", font=FONT_MICRO, fill="#6b6557")
+    draw.text((S(110), dense_y + S(30)), "after supervisor notice.", font=FONT_MICRO, fill="#6b6557")
+    draw.text((S(110), dense_y + S(48)), "This deadline is separate from the 90-day review window and the 14-day badge reset.", font=FONT_MICRO, fill="#6b6557")
+    if not blank:
+        draw.text((blank_x + S(4), dense_y + S(14)), FIELDS[3].value, font=FONT_TINY, fill="#2f2b23")
 
     return image
 
@@ -324,12 +400,13 @@ def add_fold_shadows(image: Image.Image, strength: float, seed: int) -> Image.Im
     rng = random.Random(seed)
     shaded = image.copy()
     draw = ImageDraw.Draw(shaded, "RGBA")
+    img_w, img_h = image.size
     for _ in range(2):
-        x = rng.randint(140, 560)
+        x = rng.randint(int(img_w * 0.1), int(img_w * 0.8))
         width = rng.randint(18, 34)
         alpha = int(45 * strength)
-        draw.rectangle((x, 90, x + width, 810), fill=(90, 80, 60, alpha))
-        draw.rectangle((x + width, 90, x + width + 6, 810), fill=(255, 255, 255, int(26 * strength)))
+        draw.rectangle((x, int(img_h * 0.05), x + width, int(img_h * 0.95)), fill=(90, 80, 60, alpha))
+        draw.rectangle((x + width, int(img_h * 0.05), x + width + 6, int(img_h * 0.95)), fill=(255, 255, 255, int(26 * strength)))
     return shaded.convert("RGB")
 def jpeg_roundtrip(image: Image.Image, quality: int) -> Image.Image:
     buffer = io.BytesIO()
@@ -366,13 +443,15 @@ def add_random_dots(image: Image.Image, count: int, seed: int) -> Image.Image:
 
 
 def warp_perspective(image: Image.Image, offsets: list[tuple[int, int]]) -> Image.Image:
-    src = np.float32([[70, 48], [630, 48], [630, 828], [70, 828]])
+    x0, y0 = PAGE_BOX["x"], PAGE_BOX["y"]
+    x1, y1 = x0 + PAGE_BOX["w"], y0 + PAGE_BOX["h"]
+    src = np.float32([[x0, y0], [x1, y0], [x1, y1], [x0, y1]])
     dst = np.float32(
         [
-            [70 + offsets[0][0], 48 + offsets[0][1]],
-            [630 + offsets[1][0], 48 + offsets[1][1]],
-            [630 + offsets[2][0], 828 + offsets[2][1]],
-            [70 + offsets[3][0], 828 + offsets[3][1]],
+            [x0 + S(offsets[0][0]), y0 + S(offsets[0][1])],
+            [x1 + S(offsets[1][0]), y0 + S(offsets[1][1])],
+            [x1 + S(offsets[2][0]), y1 + S(offsets[2][1])],
+            [x0 + S(offsets[3][0]), y1 + S(offsets[3][1])],
         ]
     )
     matrix = cv2.getPerspectiveTransform(src, dst)
@@ -410,8 +489,9 @@ def wave_displacement(image: Image.Image, amplitude: float, wavelength: float, s
 
 
 def rotate_scale(image: Image.Image, angle: float, scale_x: float, scale_y: float) -> Image.Image:
-    src = np.float32([[0, 0], [699, 0], [699, 899], [0, 899]])
-    center = np.array([350.0, 450.0], dtype=np.float32)
+    w, h = TEMPLATE_SIZE
+    src = np.float32([[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]])
+    center = np.array([w / 2.0, h / 2.0], dtype=np.float32)
     radians = math.radians(angle)
     rotation = np.array(
         [
@@ -771,7 +851,7 @@ def crop_with_padding(image: np.ndarray, field: Field) -> np.ndarray:
         "name": (6, 8, 6, 8),
         "position": (6, 8, 6, 8),
         "address": (0, 12, 12, 12),
-        "records_days": (16, 8, 68, 12),
+        "records_days": (18, 4, 18, 14),
     }
     left, top, right, bottom = pad_map.get(field.id, (8, 8, 8, 8))
     x0 = max(0, x - left)
@@ -786,7 +866,7 @@ def preprocess_for_ocr(crop: np.ndarray, field: Field) -> np.ndarray:
         "name": 3.0,
         "position": 3.0,
         "address": 3.5,
-        "records_days": 5.5,
+        "records_days": 7.0,
     }
     scale = scale_map.get(field.id, 3.0)
     enlarged = cv2.resize(crop, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
@@ -924,6 +1004,7 @@ def generate_manifest() -> dict:
         "template": {
             "blank_image": str(blank_path.relative_to(ASSET_DIR)),
             "filled_image": str(filled_path.relative_to(ASSET_DIR)),
+            "size": {"width": TEMPLATE_SIZE[0], "height": TEMPLATE_SIZE[1]},
             "page": PAGE_BOX,
             "fields": [
                 {"id": field.id, "label": field.label, "value": field.value, "box": field.box}
