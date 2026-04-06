@@ -153,15 +153,19 @@ What To Try
 </div>
 <div class="callout-body-container callout-body">
 <ul>
-<li>Start on <code>Clean</code>. The full pipeline works.</li>
-<li>Click <code>Rotation</code>. Registration still succeeds and extraction stays correct.</li>
-<li>Click <code>Blur</code>, <code>JPEG</code>, or <code>Marked-up form</code>. Matching still works, but OCR starts degrading.</li>
-<li>Click a field card, especially <code>Records due (days)</code> or <code>Street address</code>, and inspect the crop that OCR actually saw.</li>
+<li>Start on <code>Clean</code>. The full pipeline works: 4/4 fields extracted correctly.</li>
+<li>Click <code>Rotation</code> or <code>Marked-up form</code>. Registration still succeeds and extraction stays correct.</li>
+<li>Click <code>Blur</code>, <code>JPEG</code>, or <code>Phone photo</code>. Matching still works, but OCR starts degrading on small fields.</li>
+<li>Now click <code>Revised form</code>. Registration succeeds with <em>more</em> inlier matches than clean. But the form has one fewer employment-history row, so Section 3 shifted up. The template’s crop coordinates silently miss <code>Records due (days)</code>. This is the failure mode that motivates field detectors.</li>
+<li>Click a field card to inspect the crop region.</li>
 </ul>
 </div>
 </div>
 <div id="room1-app">
 
+</div>
+<div id="room1-lightbox" class="room1-lightbox">
+<img id="room1-lightbox-img" alt="Full resolution view">
 </div>
 <style>
 .room1-shell {
@@ -315,6 +319,37 @@ What To Try
   border-radius: 12px;
   background: #f0ead9;
   margin-top: 0.9rem;
+  cursor: zoom-in;
+}
+
+.room1-matching img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-top: 0.9rem;
+  cursor: zoom-in;
+}
+
+.room1-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+}
+
+.room1-lightbox.open {
+  display: flex;
+}
+
+.room1-lightbox img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .room1-focus-body {
@@ -612,6 +647,7 @@ What To Try
     if (state.imageCache.has(src)) return state.imageCache.get(src);
     const promise = new Promise((resolve, reject) => {
       const image = new Image();
+      image.crossOrigin = "anonymous";
       image.onload = () => resolve(image);
       image.onerror = reject;
       image.src = src;
@@ -631,6 +667,9 @@ What To Try
   function diagnosisText(variant) {
     if (variant.id === "clean") {
       return "On a stable form, registration plus fixed crops and OCR can work surprisingly well.";
+    }
+    if (variant.id === "revised") {
+      return "Registration succeeds because most of the page still matches. But the form revision shifted Section 3 up, so the template's crop coordinates silently miss the target field. A detector would find the field wherever it moved.";
     }
     if (variant.all_fields_correct) {
       return "Matching still succeeds and the fixed crops stay usable. This is why template stacks survived for years in narrow workflows.";
@@ -780,6 +819,8 @@ What To Try
           ? "Phone photo"
         : variant.id === "lines"
           ? "Marked-up form"
+        : variant.id === "revised"
+          ? "Revised form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
       button.addEventListener("click", () => {
         state.currentVariant = variant;
@@ -802,6 +843,8 @@ What To Try
         ? "Phone Photo"
       : variant.id === "lines"
         ? "Marked-up Form"
+      : variant.id === "revised"
+        ? "Revised Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
     profileDescription.textContent = variant.description;
     diagnosis.textContent = diagnosisText(variant);
@@ -840,6 +883,37 @@ What To Try
     state.selectedFieldId = "records_days";
     render();
   }
+
+  // Lightbox
+  const lightbox = document.getElementById("room1-lightbox");
+  const lightboxImg = document.getElementById("room1-lightbox-img");
+
+  function openLightbox(src) {
+    lightboxImg.src = src;
+    lightbox.classList.add("open");
+  }
+
+  lightbox.addEventListener("click", () => {
+    lightbox.classList.remove("open");
+    lightboxImg.src = "";
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      lightbox.classList.remove("open");
+      lightboxImg.src = "";
+    }
+  });
+
+  // Click-to-zoom on images
+  incomingImage.addEventListener("click", () => openLightbox(incomingImage.src));
+  cropImage.addEventListener("click", () => openLightbox(cropImage.src));
+  matchingImage.addEventListener("click", () => openLightbox(matchingImage.src));
+
+  // Click-to-zoom on canvas (export to data URL)
+  registeredCanvas.addEventListener("click", () => {
+    openLightbox(registeredCanvas.toDataURL("image/png"));
+  });
 
   init().catch((error) => {
     diagnosis.textContent = "Failed to load Room 1 assets.";
