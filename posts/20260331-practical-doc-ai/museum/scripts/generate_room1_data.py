@@ -384,18 +384,52 @@ def apply_ink_fade(image: Image.Image, fade_strength: float, seed: int) -> Image
     return Image.fromarray(np.clip(faded, 0, 255).astype(np.uint8), mode="RGB")
 
 
-def apply_stroke_breakage(image: Image.Image, amount: float) -> Image.Image:
+def apply_morphological_noise(image: Image.Image, amount: float, seed: int) -> Image.Image:
+    """Simulate ink bleed (dilation) and broken strokes (erosion) via morphological ops.
+
+    Works on the full-color image — no binarization. Dark pixels are dilated to
+    simulate ink spreading, then light salt-and-pepper specks are added.
+    """
     if amount <= 0:
         return image
-    gray = cv2.cvtColor(to_cv(image), cv2.COLOR_BGR2GRAY)
-    _, binary = cv2.threshold(gray, 185, 255, cv2.THRESH_BINARY_INV)
-    iterations = 1 if amount < 0.45 else 2
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
-    eroded = cv2.erode(binary, kernel, iterations=iterations)
-    restored = 255 - eroded
-    color = cv2.cvtColor(restored, cv2.COLOR_GRAY2BGR)
-    base = cv2.addWeighted(to_cv(image), 0.55, color, 0.45, 0)
-    return from_cv(base)
+    img = to_cv(image)
+    rng = np.random.default_rng(seed)
+
+    # Dilate dark regions to simulate ink bleed
+    k = 2 if amount < 0.5 else 3
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (k, k))
+    dilated = cv2.erode(img, kernel, iterations=1)  # erode in BGR = dilate dark ink
+    alpha = min(amount * 0.6, 0.4)
+    blended = cv2.addWeighted(img, 1.0 - alpha, dilated, alpha, 0)
+
+    # Salt-and-pepper specks (printer dust)
+    n_specks = int(amount * 800)
+    h, w = blended.shape[:2]
+    for _ in range(n_specks):
+        x, y = rng.integers(0, w), rng.integers(0, h)
+        shade = rng.integers(160, 230)
+        blended[y, x] = [shade, shade, shade]
+
+    return from_cv(blended)
+
+
+def apply_print_streaks(image: Image.Image, strength: float, seed: int) -> Image.Image:
+    """Vertical ink streaks from dirty printer rollers or toner cartridge."""
+    if strength <= 0:
+        return image
+    rng = random.Random(seed)
+    result = image.copy()
+    draw = ImageDraw.Draw(result, "RGBA")
+    w, h = image.size
+    n_streaks = rng.randint(2, 5)
+    for _ in range(n_streaks):
+        x = rng.randint(int(w * 0.05), int(w * 0.95))
+        thickness = rng.randint(1, 3)
+        alpha = int(strength * rng.randint(25, 60))
+        y0 = rng.randint(0, int(h * 0.1))
+        y1 = rng.randint(int(h * 0.85), h)
+        draw.rectangle((x, y0, x + thickness, y1), fill=(40, 35, 30, alpha))
+    return result.convert("RGB")
 
 
 def apply_toner_band(image: Image.Image, strength: float, seed: int) -> Image.Image:
@@ -566,7 +600,7 @@ PROFILES = [
     CorruptionProfile(
         id="clean",
         description="No corruption.",
-        print_artifacts={"ink_fade": 0.0, "stroke_breakage": 0.0, "toner_band": 0.0},
+        print_artifacts={"ink_fade": 0.0, "morph_noise": 0.0, "print_streaks": 0.0, "toner_band": 0.0},
         paper_artifacts={"paper_texture": 0.0, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
@@ -574,7 +608,7 @@ PROFILES = [
     CorruptionProfile(
         id="rotation",
         description="Mild skewed scan.",
-        print_artifacts={"ink_fade": 0.03, "stroke_breakage": 0.0, "toner_band": 0.02},
+        print_artifacts={"ink_fade": 0.03, "morph_noise": 0.0, "print_streaks": 0.0, "toner_band": 0.02},
         paper_artifacts={"paper_texture": 0.02, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 3.2, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
@@ -582,7 +616,7 @@ PROFILES = [
     CorruptionProfile(
         id="phone_photo",
         description="Phone photo from farther away with slight tilt, background, and mild capture blur.",
-        print_artifacts={"ink_fade": 0.05, "stroke_breakage": 0.03, "toner_band": 0.03},
+        print_artifacts={"ink_fade": 0.05, "morph_noise": 0.0, "print_streaks": 0.03, "toner_band": 0.03},
         paper_artifacts={"paper_texture": 0.05, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
         geometry={
             "angle": 1.6,
@@ -600,7 +634,7 @@ PROFILES = [
     CorruptionProfile(
         id="warp",
         description="Perspective warp with mild paper curl.",
-        print_artifacts={"ink_fade": 0.03, "stroke_breakage": 0.02, "toner_band": 0.03},
+        print_artifacts={"ink_fade": 0.03, "morph_noise": 0.0, "print_streaks": 0.02, "toner_band": 0.03},
         paper_artifacts={"paper_texture": 0.04, "stain_strength": 0.0, "fold_shadow": 0.08, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": [(-8, 10), (14, -6), (16, 12), (-14, -10)], "wave_amplitude": 1.4, "wave_length": 320.0},
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.05, "camera_shadow": 0.0},
@@ -608,7 +642,7 @@ PROFILES = [
     CorruptionProfile(
         id="blur",
         description="Soft focus or scanner blur with slightly faded print.",
-        print_artifacts={"ink_fade": 0.08, "stroke_breakage": 0.04, "toner_band": 0.04},
+        print_artifacts={"ink_fade": 0.08, "morph_noise": 0.08, "print_streaks": 0.04, "toner_band": 0.04},
         paper_artifacts={"paper_texture": 0.03, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
         capture={"blur": 1.1, "jpeg_quality": None, "lighting_gradient": 0.03, "camera_shadow": 0.0},
@@ -616,7 +650,7 @@ PROFILES = [
     CorruptionProfile(
         id="jpeg",
         description="Compressed upload with mild blur and low-ink print.",
-        print_artifacts={"ink_fade": 0.11, "stroke_breakage": 0.08, "toner_band": 0.05},
+        print_artifacts={"ink_fade": 0.11, "morph_noise": 0.10, "print_streaks": 0.08, "toner_band": 0.05},
         paper_artifacts={"paper_texture": 0.05, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
         capture={"blur": 0.45, "jpeg_quality": 22, "lighting_gradient": 0.04, "camera_shadow": 0.0},
@@ -624,7 +658,7 @@ PROFILES = [
     CorruptionProfile(
         id="revised",
         description="Shorter form revision with only one employment history row. Section 3 shifts up, breaking template crop coordinates.",
-        print_artifacts={"ink_fade": 0.0, "stroke_breakage": 0.0, "toner_band": 0.0},
+        print_artifacts={"ink_fade": 0.0, "morph_noise": 0.0, "print_streaks": 0.0, "toner_band": 0.0},
         paper_artifacts={"paper_texture": 0.0, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
         geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
@@ -632,7 +666,7 @@ PROFILES = [
     CorruptionProfile(
         id="combo",
         description="Phone-photo style capture with low ink, stains, warp, blur, compression, and scribbles.",
-        print_artifacts={"ink_fade": 0.16, "stroke_breakage": 0.12, "toner_band": 0.08},
+        print_artifacts={"ink_fade": 0.16, "morph_noise": 0.15, "print_streaks": 0.12, "toner_band": 0.08},
         paper_artifacts={"paper_texture": 0.10, "stain_strength": 0.10, "fold_shadow": 0.30, "random_lines": 18, "random_dots": 180},
         geometry={"angle": 2.4, "scale_x": 1.03, "scale_y": 0.97, "perspective": [(-12, 16), (18, -8), (22, 20), (-18, -12)], "wave_amplitude": 2.8, "wave_length": 210.0},
         capture={"blur": 0.8, "jpeg_quality": 35, "lighting_gradient": 0.14, "camera_shadow": 0.12},
@@ -743,7 +777,8 @@ def apply_geometry_pipeline(image: Image.Image, geometry: dict[str, Any], seed: 
 def apply_print_pipeline(image: Image.Image, print_artifacts: dict[str, Any], seed: int) -> Image.Image:
     result = image
     result = apply_ink_fade(result, print_artifacts.get("ink_fade", 0.0), seed)
-    result = apply_stroke_breakage(result, print_artifacts.get("stroke_breakage", 0.0))
+    result = apply_morphological_noise(result, print_artifacts.get("morph_noise", 0.0), seed + 5)
+    result = apply_print_streaks(result, print_artifacts.get("print_streaks", 0.0), seed + 7)
     result = apply_toner_band(result, print_artifacts.get("toner_band", 0.0), seed + 9)
     return result
 
