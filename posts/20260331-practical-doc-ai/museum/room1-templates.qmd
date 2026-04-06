@@ -507,6 +507,14 @@ The assets here come from a real offline generator in the same folder: synthetic
     return "The page no longer registers cleanly enough for the template to stay trustworthy.";
   }
 
+  function templateScale() {
+    const size = state.manifest?.template?.size || { width: 700, height: 900 };
+    return {
+      x: registeredCanvas.width / size.width,
+      y: registeredCanvas.height / size.height
+    };
+  }
+
   function badgeMarkup(variant) {
     const goodFields = variant.fields.filter((field) => field.correct).length;
     const totalFields = variant.fields.length;
@@ -533,10 +541,18 @@ The assets here come from a real offline generator in the same folder: synthetic
       registeredCtx.drawImage(image, 0, 0, registeredCanvas.width, registeredCanvas.height);
 
       if (!showBoxes.checked) return;
+      const scale = templateScale();
       fieldBoxes.forEach((field) => {
         const active = selectedField && selectedField.id === field.id;
         const current = variant.fields.find((item) => item.id === field.id);
-        const [x, y, w, h] = field.box;
+        const [rawX, rawY, rawW, rawH] = field.box;
+        const x = rawX * scale.x;
+        const y = rawY * scale.y;
+        const w = rawW * scale.x;
+        const h = rawH * scale.y;
+        const fontSize = 12 * Math.max(scale.x, scale.y);
+        const labelWidth = Math.max(150, field.label.length * fontSize * 0.6);
+        const labelHeight = fontSize + 10;
         registeredCtx.save();
         registeredCtx.lineWidth = active ? 4 : 2.5;
         registeredCtx.strokeStyle = active
@@ -546,9 +562,9 @@ The assets here come from a real offline generator in the same folder: synthetic
             : "#b0602d";
         registeredCtx.strokeRect(x, y, w, h);
         registeredCtx.fillStyle = "rgba(255, 250, 240, 0.92)";
-        registeredCtx.fillRect(x, y - 22, 122, 18);
+        registeredCtx.fillRect(x, y - (labelHeight + 6), labelWidth, labelHeight);
         registeredCtx.fillStyle = "#312814";
-        registeredCtx.font = "600 12px ui-sans-serif, system-ui, sans-serif";
+        registeredCtx.font = `600 ${fontSize}px ui-sans-serif, system-ui, sans-serif`;
         registeredCtx.fillText(field.label, x + 6, y - 8);
         registeredCtx.restore();
       });
@@ -681,6 +697,11 @@ The assets here come from a real offline generator in the same folder: synthetic
   async function init() {
     const response = await fetch(assetPath("generated/room1-manifest.json"));
     state.manifest = await response.json();
+    const size = state.manifest.template?.size;
+    if (size?.width && size?.height) {
+      registeredCanvas.width = size.width;
+      registeredCanvas.height = size.height;
+    }
     state.currentVariant = state.manifest.variants.find((variant) => variant.id === "clean") || state.manifest.variants[0];
     state.selectedFieldId = "records_days";
     render();
