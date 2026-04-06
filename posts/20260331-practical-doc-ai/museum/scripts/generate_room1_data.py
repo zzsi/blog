@@ -102,7 +102,7 @@ def clear_generated_outputs() -> None:
                 path.unlink()
 
 
-def render_template(blank: bool = True, num_history_rows: int = 2) -> Image.Image:
+def render_template(blank: bool = True, num_history_rows: int = 2, swap_name_position: bool = False) -> Image.Image:
     image = Image.new("RGB", TEMPLATE_SIZE, "#eee3ca")
     draw = ImageDraw.Draw(image)
 
@@ -130,13 +130,19 @@ def render_template(blank: bool = True, num_history_rows: int = 2) -> Image.Imag
     draw.text((S(116), S(171)), "Section 1. Applicant, Contact, and Role", font=FONT_SECTION, fill="#413828")
 
     # Repeated semantic fields: names, roles, addresses, and phones.
-    draw.text((S(110), S(202)), "Applicant name", font=FONT_LABEL, fill="#574f40")
-    draw.text((S(440), S(202)), "Preferred name / alias", font=FONT_LABEL, fill="#574f40")
+    # In the revised form, "Position desired" and "Applicant name" swap rows.
+    row1_labels = ("Applicant name", "Preferred name / alias")
+    row2_labels = ("Position desired", "Department requested")
+    if swap_name_position:
+        row1_labels, row2_labels = row2_labels, row1_labels
+
+    draw.text((S(110), S(202)), row1_labels[0], font=FONT_LABEL, fill="#574f40")
+    draw.text((S(440), S(202)), row1_labels[1], font=FONT_LABEL, fill="#574f40")
     draw.rectangle((S(110), S(224), S(410), S(254)), outline="#756a52", width=1)
     draw.rectangle((S(440), S(224), S(586), S(254)), outline="#756a52", width=1)
 
-    draw.text((S(110), S(262)), "Position desired", font=FONT_LABEL, fill="#574f40")
-    draw.text((S(390), S(262)), "Department requested", font=FONT_LABEL, fill="#574f40")
+    draw.text((S(110), S(262)), row2_labels[0], font=FONT_LABEL, fill="#574f40")
+    draw.text((S(390), S(262)), row2_labels[1], font=FONT_LABEL, fill="#574f40")
     draw.rectangle((S(110), S(284), S(360), S(314)), outline="#756a52", width=1)
     draw.rectangle((S(390), S(284), S(586), S(314)), outline="#756a52", width=1)
 
@@ -162,10 +168,16 @@ def render_template(blank: bool = True, num_history_rows: int = 2) -> Image.Imag
     draw.line((S(110), S(486), S(320), S(486)), fill="#b0a58f", width=1)
     draw.line((S(345), S(486), S(586), S(486)), fill="#b0a58f", width=1)
     if not blank:
-        draw.text((S(118), S(231)), "Alexandra Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
-        draw.text((S(448), S(231)), "Alex Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
-        draw.text((S(118), S(291)), "Senior Operations Analyst", font=FONT_VALUE_SMALL, fill="#2f2b23")
-        draw.text((S(398), S(291)), "Network Operations", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        if swap_name_position:
+            draw.text((S(118), S(231)), "Senior Operations Analyst", font=FONT_VALUE_SMALL, fill="#2f2b23")
+            draw.text((S(448), S(231)), "Network Operations", font=FONT_VALUE_SMALL, fill="#2f2b23")
+            draw.text((S(118), S(291)), "Alexandra Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
+            draw.text((S(398), S(291)), "Alex Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
+        else:
+            draw.text((S(118), S(231)), "Alexandra Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
+            draw.text((S(448), S(231)), "Alex Hayes", font=FONT_VALUE_SMALL, fill="#2f2b23")
+            draw.text((S(118), S(291)), "Senior Operations Analyst", font=FONT_VALUE_SMALL, fill="#2f2b23")
+            draw.text((S(398), S(291)), "Network Operations", font=FONT_VALUE_SMALL, fill="#2f2b23")
         draw.text((S(118), S(359)), "2714 Red Cedar Lane", font=FONT_VALUE_SMALL, fill="#2f2b23")
         draw.text((S(118), S(377)), "Larkhaven, TX 78705", font=FONT_VALUE_SMALL, fill="#2f2b23")
         draw.text((S(368), S(352)), "Larkhaven, TX 78705", font=FONT_VALUE_SMALL, fill="#2f2b23")
@@ -955,7 +967,7 @@ def generate_manifest() -> dict:
 
     variants = []
 
-    revised_filled = render_template(blank=False, num_history_rows=1)
+    revised_filled = render_template(blank=False, num_history_rows=1, swap_name_position=True)
 
     for index, profile in enumerate(PROFILES):
         base_image = revised_filled if profile.id == "revised" else filled
