@@ -154,7 +154,7 @@ What To Try
 <div class="callout-body-container callout-body">
 <ul>
 <li>Start on <code>Clean</code>. The full pipeline works: 4/4 fields extracted correctly.</li>
-<li>Click <code>Rotation</code> or <code>Marked-up form</code>. Registration still succeeds and extraction stays correct.</li>
+<li>Click <code>Rotation</code>, <code>Warp</code>, or <code>Phone photo</code>. Registration still succeeds but OCR quality varies.</li>
 <li>Click <code>Blur</code>, <code>JPEG</code>, or <code>Phone photo</code>. Matching still works, but OCR starts degrading on small fields.</li>
 <li>Now click <code>Revised form</code>. Registration succeeds with <em>more</em> inlier matches than clean. But the form has one fewer employment-history row, so Section 3 shifted up. The template’s crop coordinates silently miss <code>Records due (days)</code>. This is the failure mode that motivates field detectors.</li>
 <li>Click a field card to inspect the crop region.</li>
@@ -817,8 +817,6 @@ What To Try
         ? "Combined noise"
         : variant.id === "phone_photo"
           ? "Phone photo"
-        : variant.id === "lines"
-          ? "Marked-up form"
         : variant.id === "revised"
           ? "Revised form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -841,8 +839,6 @@ What To Try
       ? "Combined Noise"
       : variant.id === "phone_photo"
         ? "Phone Photo"
-      : variant.id === "lines"
-        ? "Marked-up Form"
       : variant.id === "revised"
         ? "Revised Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
