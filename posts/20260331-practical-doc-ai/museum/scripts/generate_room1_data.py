@@ -102,7 +102,7 @@ def clear_generated_outputs() -> None:
                 path.unlink()
 
 
-def render_template(blank: bool = True) -> Image.Image:
+def render_template(blank: bool = True, num_history_rows: int = 2) -> Image.Image:
     image = Image.new("RGB", TEMPLATE_SIZE, "#eee3ca")
     draw = ImageDraw.Draw(image)
 
@@ -200,7 +200,7 @@ def render_template(blank: bool = True) -> Image.Image:
             "reason": "Pursued internal operations role",
         },
     ]
-    for row in history_rows:
+    for row in history_rows[:num_history_rows]:
         y = S(row["y"])
         draw.text((S(110), y), "Employer name", font=FONT_BODY, fill="#6b6557")
         draw.text((S(280), y), "Employer address", font=FONT_BODY, fill="#6b6557")
@@ -224,33 +224,36 @@ def render_template(blank: bool = True) -> Image.Image:
             draw.text((S(360), y + S(52)), row["supervisor"], font=FONT_BODY, fill="#2f2b23")
             draw.text((S(110), y + S(84)), row["reason"], font=FONT_BODY, fill="#2f2b23")
 
-    draw.rectangle((S(104), S(760), S(596), S(790)), fill="#e5ddca", outline="#9d9278", width=1)
-    draw.text((S(116), S(767)), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
+    # Shift Section 3+ up when the form has fewer history rows.
+    s3_shift = 0 if num_history_rows >= 2 else 100
 
-    draw.text((S(110), S(800)), "Earliest start date", font=FONT_BODY, fill="#6b6557")
-    draw.text((S(335), S(800)), "Available weekends?", font=FONT_BODY, fill="#6b6557")
-    draw.text((S(486), S(800)), "Badge renewal date", font=FONT_BODY, fill="#6b6557")
-    draw.line((S(110), S(822), S(260), S(822)), fill="#b0a58f", width=1)
-    draw.rectangle((S(335), S(818), S(349), S(832)), outline="#b0a58f", width=1)
-    draw.rectangle((S(412), S(818), S(426), S(832)), outline="#b0a58f", width=1)
-    draw.text((S(358), S(819)), "Yes", font=FONT_TINY, fill="#6b6557")
-    draw.text((S(435), S(819)), "No", font=FONT_TINY, fill="#6b6557")
-    draw.line((S(486), S(822), S(586), S(822)), fill="#b0a58f", width=1)
+    draw.rectangle((S(104), S(760 - s3_shift), S(596), S(790 - s3_shift)), fill="#e5ddca", outline="#9d9278", width=1)
+    draw.text((S(116), S(767 - s3_shift)), "Section 3. Availability and Certification", font=FONT_SECTION, fill="#413828")
+
+    draw.text((S(110), S(800 - s3_shift)), "Earliest start date", font=FONT_BODY, fill="#6b6557")
+    draw.text((S(335), S(800 - s3_shift)), "Available weekends?", font=FONT_BODY, fill="#6b6557")
+    draw.text((S(486), S(800 - s3_shift)), "Badge renewal date", font=FONT_BODY, fill="#6b6557")
+    draw.line((S(110), S(822 - s3_shift), S(260), S(822 - s3_shift)), fill="#b0a58f", width=1)
+    draw.rectangle((S(335), S(818 - s3_shift), S(349), S(832 - s3_shift)), outline="#b0a58f", width=1)
+    draw.rectangle((S(412), S(818 - s3_shift), S(426), S(832 - s3_shift)), outline="#b0a58f", width=1)
+    draw.text((S(358), S(819 - s3_shift)), "Yes", font=FONT_TINY, fill="#6b6557")
+    draw.text((S(435), S(819 - s3_shift)), "No", font=FONT_TINY, fill="#6b6557")
+    draw.line((S(486), S(822 - s3_shift), S(586), S(822 - s3_shift)), fill="#b0a58f", width=1)
 
     if not blank:
-        draw.text((S(110), S(808)), "04/27/2026", font=FONT_BODY, fill="#2f2b23")
-        draw.text((S(494), S(808)), "05/15/2026", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(110), S(808 - s3_shift)), "04/27/2026", font=FONT_BODY, fill="#2f2b23")
+        draw.text((S(494), S(808 - s3_shift)), "05/15/2026", font=FONT_BODY, fill="#2f2b23")
 
-    draw.text((S(110), S(844)), "Disciplinary action within last 24 months?", font=FONT_BODY, fill="#6b6557")
-    draw.rectangle((S(420), S(840), S(434), S(854)), outline="#b0a58f", width=1)
-    draw.rectangle((S(486), S(840), S(500), S(854)), outline="#b0a58f", width=1)
-    draw.text((S(444), S(841)), "Yes", font=FONT_TINY, fill="#6b6557")
-    draw.text((S(510), S(841)), "No", font=FONT_TINY, fill="#6b6557")
+    draw.text((S(110), S(844 - s3_shift)), "Disciplinary action within last 24 months?", font=FONT_BODY, fill="#6b6557")
+    draw.rectangle((S(420), S(840 - s3_shift), S(434), S(854 - s3_shift)), outline="#b0a58f", width=1)
+    draw.rectangle((S(486), S(840 - s3_shift), S(500), S(854 - s3_shift)), outline="#b0a58f", width=1)
+    draw.text((S(444), S(841 - s3_shift)), "Yes", font=FONT_TINY, fill="#6b6557")
+    draw.text((S(510), S(841 - s3_shift)), "No", font=FONT_TINY, fill="#6b6557")
     if not blank:
-        draw.text((S(110), S(860)), "Explain if yes on attached page.", font=FONT_TINY, fill="#6b6557")
+        draw.text((S(110), S(860 - s3_shift)), "Explain if yes on attached page.", font=FONT_TINY, fill="#6b6557")
 
     # Dense local context around the hard target with several distractor numbers nearby.
-    dense_y = S(878)
+    dense_y = S(878 - s3_shift)
     draw.text((S(110), dense_y), "After a written offer, payroll records and I-9 support must be submitted within", font=FONT_MICRO, fill="#6b6557")
     prefix = "the shorter of 30 calendar days, 7 orientation days, or "
     draw.text((S(110), dense_y + S(16)), prefix, font=FONT_MICRO, fill="#6b6557")
@@ -615,6 +618,14 @@ PROFILES = [
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.02, "camera_shadow": 0.0},
     ),
     CorruptionProfile(
+        id="revised",
+        description="Shorter form revision with only one employment history row. Section 3 shifts up, breaking template crop coordinates.",
+        print_artifacts={"ink_fade": 0.0, "stroke_breakage": 0.0, "toner_band": 0.0},
+        paper_artifacts={"paper_texture": 0.0, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
+        geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
+        capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
+    ),
+    CorruptionProfile(
         id="combo",
         description="Phone-photo style capture with low ink, stains, warp, blur, compression, and scribbles.",
         print_artifacts={"ink_fade": 0.16, "stroke_breakage": 0.12, "toner_band": 0.08},
@@ -941,8 +952,11 @@ def generate_manifest() -> dict:
 
     variants = []
 
+    revised_filled = render_template(blank=False, num_history_rows=1)
+
     for index, profile in enumerate(PROFILES):
-        variant_image = apply_profile(profile, filled, seed=400 + index * 13)
+        base_image = revised_filled if profile.id == "revised" else filled
+        variant_image = apply_profile(profile, base_image, seed=400 + index * 13)
         variant_path = OUTPUT_DIR / "variants" / f"{profile.id}.png"
         variant_image.save(variant_path)
         match_path = OUTPUT_DIR / "matching" / f"{profile.id}-matches.png"

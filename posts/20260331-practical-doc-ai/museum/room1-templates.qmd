@@ -529,6 +529,9 @@ The assets here come from a real offline generator in the same folder: synthetic
     if (variant.id === "clean") {
       return "On a stable form, registration plus fixed crops and OCR can work surprisingly well.";
     }
+    if (variant.id === "revised") {
+      return "Registration succeeds because most of the page still matches. But the form revision shifted Section 3 up, so the template's crop coordinates silently miss the target field. A detector would find the field wherever it moved.";
+    }
     if (variant.all_fields_correct) {
       return "Matching still succeeds and the fixed crops stay usable. This is why template stacks survived for years in narrow workflows.";
     }
@@ -677,6 +680,8 @@ The assets here come from a real offline generator in the same folder: synthetic
           ? "Phone photo"
         : variant.id === "lines"
           ? "Marked-up form"
+        : variant.id === "revised"
+          ? "Revised form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
       button.addEventListener("click", () => {
         state.currentVariant = variant;
@@ -699,6 +704,8 @@ The assets here come from a real offline generator in the same folder: synthetic
         ? "Phone Photo"
       : variant.id === "lines"
         ? "Marked-up Form"
+      : variant.id === "revised"
+        ? "Revised Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
     profileDescription.textContent = variant.description;
     diagnosis.textContent = diagnosisText(variant);
