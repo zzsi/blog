@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html><head><style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 10pt 0; line-height: 1.45; }
+ul { margin: 0; padding-left: 24pt; list-style: disc; }
+li { color: %%BODY_TEXT%%; font-size: 11pt; margin-bottom: 8pt; padding-left: 6pt; line-height: 1.4; }
+.note { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt 10pt; margin-top: 6pt; }
+.note p { font-size: 10pt; margin: 0; }
+</style></head><body>
+<div class="header"><h1>What We Will Cover</h1></div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">Agenda</p>
+    <ul>
+      <li>OLMo paper overview</li>
+      <li>The architecture: how GDN + attention layers are combined</li>
+      <li>History: from delta rule to gated delta net</li>
+      <li>The broader landscape: multiple teams converging on hybrid architectures</li>
+      <li>Scaling laws and the theory of why expressivity improves efficiency</li>
+      <li>Practical implications: what changes in a training stack</li>
+    </ul>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">What you will take away</p>
+    <p>Frontier LLM architectures are moving beyond pure transformers. Multiple teams (Allen AI, NVIDIA, Alibaba, Moonshot) have independently shown real gains by mixing recurrent layers with attention.</p>
+    <p>This talk covers what these hybrid models are, why they work, and what the math behind them looks like.</p>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

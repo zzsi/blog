@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html><head><style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 14pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 13pt; font-weight: bold; margin: 0 0 8pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0 0 8pt 0; line-height: 1.45; }
+.card { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 10pt 12pt; margin: 6pt 0; }
+.card p { font-size: 10pt; margin: 0 0 4pt 0; }
+.code-box { background: #263238; color: #ECEFF1; border-radius: 4pt; padding: 10pt 12pt; margin: 6pt 0; font-family: monospace; font-size: 10pt; line-height: 1.5; }
+</style></head><body>
+<div class="header"><h1>flash-linear-attention (fla)</h1></div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">What is it?</p>
+    <p>An open-source library of efficient GPU kernels for linear attention and DeltaNet-family models. The key enabler for training GDN layers at scale.</p>
+    <p class="section-title">Who maintains it?</p>
+    <p>Maintained by the lead authors of the DeltaNet training and GDN papers. Used by OLMo Hybrid, and referenced by multiple hybrid LLM teams.</p>
+    <div class="card">
+      <p><b>GitHub:</b> fla-org/flash-linear-attention</p>
+      <p><b>Supports:</b> DeltaNet, Gated DeltaNet, GLA, linear attention, and more</p>
+      <p><b>Backend:</b> Triton kernels (no custom CUDA needed)</p>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Why it matters</p>
+    <p>Without fla, DeltaNet training would be sequential (one token at a time). fla implements <b>chunk-parallel algorithms</b> that make training throughput competitive with FlashAttention.</p>
+    <p class="section-title">How it works (high level)</p>
+    <div class="card">
+      <p><b>1. Chunk the sequence</b> into blocks of size C (64-256)</p>
+      <p><b>2. Within each chunk:</b> compute all outputs via dense matmuls (fully parallel)</p>
+      <p><b>3. Across chunks:</b> propagate a single state update per boundary</p>
+      <p><b>Result:</b> sequential depth drops from L to L/C</p>
+    </div>
+    <p>OLMo Hybrid slightly outperforms OLMo 3 in early training throughput benchmarks, despite the recurrent layers.</p>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

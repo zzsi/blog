@@ -1,0 +1,311 @@
+---
+title: "OLMo Hybrid: Why Mixing Attention and Recurrence Beats Pure Transformers"
+date: 2026-03-30
+categories: [ai, deep learning, llm, architecture]
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+I've been following the hybrid LLM trend for a while, but the [OLMo Hybrid paper from Allen AI](https://allenai.org/papers/olmo-hybrid) is the one that made me sit down and really trace the math. Their model, [**OLMo Hybrid 7B**](https://huggingface.co/allenai/Olmo-Hybrid-7B), matches OLMo 3 7B on MMLU with **49% fewer training tokens** and outperforms it across the board after mid-training. More interesting than the numbers is *why* it works, and that story goes back to a 1960s learning rule you probably learned in a machine learning textbook.
+
+This post is my attempt to unpack that story. (See also: [Allen AI blog post](https://allenai.org/blog/olmohybrid), [model weights](https://huggingface.co/allenai/Olmo-Hybrid-7B), [training code](https://github.com/allenai/OLMo).)
+
+::: {.callout-note appearance="simple"}
+## TL;DR
+
+- **OLMo Hybrid** replaces 75% of attention layers in OLMo 3 with Gated DeltaNet (GDN) recurrent layers, keeping every 4th layer as full attention.
+- It reaches the same MMLU accuracy as OLMo 3 7B using **49% fewer tokens** (and thus 49% fewer FLOPs).
+- Hybrid models are **more expressive** than either pure transformers or pure RNNs: they can solve tasks neither can alone.
+- A theoretical framework explains *why*: more expressive architectures learn more "tasks" from the same data, improving scaling efficiency.
+- Long-context performance jumps by **14.1%** on RULER 64K over OLMo 3.
+- Inference KV-cache per recurrent layer is **485x smaller** than full attention.
+:::
+
+## The problem with pure transformers
+
+[Transformers](https://arxiv.org/abs/1706.03762) have two well-known limitations:
+
+1. **Quadratic inference cost.** The KV-cache grows linearly with sequence length, and attention computation is $O(n^2)$ per layer. Long-context inference gets expensive fast.
+2. **Limited state tracking.** Transformers cannot maintain and update state sequentially. Consider tracking variable assignments through a sequence: `x=1, y=x+1, z=y*2, ...`. Each step depends on the previous result, and a fixed-depth transformer has no mechanism for this kind of sequential composition. This is a fundamental expressivity gap, not a training data issue (Merrill & Sabharwal, 2023).
+
+Modern linear RNNs ([Mamba](https://arxiv.org/abs/2312.00752), GDN, etc.) fix both problems: $O(n)$ time and the ability to express state-tracking tasks. But they have their own weakness: they struggle with **recall and copying** because their hidden state is bounded. You can't look up an arbitrary earlier token the way attention can.
+
+The natural solution: use both.
+
+## The road to Gated DeltaNet
+
+Before diving into the architecture, it helps to understand where OLMo Hybrid's recurrent component comes from. The lineage goes back further than you might expect.
+
+### The delta rule (1960)
+
+[Widrow and Hoff's **delta rule**](https://www-isl.stanford.edu/~widrow/papers/c1960adaptiveswitching.pdf) (1960) is one of the earliest gradient-based learning rules. For a linear predictor with weight vector $w$, input $x$, and target $y$:
+
+$$\Delta w = \eta (y - w^\top x) \, x$$
+
+The update corrects the weight in proportion to the prediction error $\delta = y - w^\top x$. This is an **online** update: one training example arrives, weights change immediately. No batch needed.
+
+Simple as it is, this rule already contains the pattern that keeps reappearing: a **stored state** is corrected by an **error-driven outer-product update**.
+
+### From scalar weights to matrix memory
+
+The key conceptual step: lift from a weight vector to a matrix-valued associative memory $S \in \mathbb{R}^{d_v \times d_k}$ that maps keys to values. Given a key $k$ and a target value $v$, the delta-rule update becomes:
+
+$$S \leftarrow S + \beta(v - Sk)k^\top$$
+
+Expanding and refactoring:
+
+$$S \leftarrow S(I - \beta k k^\top) + \beta v k^\top$$
+
+This is already the core DeltaNet recurrence, just without time indices.
+
+### DeltaNet: the delta rule as a sequence layer (Schlag et al., 2021)
+
+Here is where the meaning of $t$ changes. In the delta rule, $t$ indexed training examples. [Schlag, Irie, and Schmidhuber (2021)](https://arxiv.org/abs/2102.11174) repurposed the same math as a **per-token layer computation**: now $t$ indexes tokens in a sequence. At each token, the model produces key $k_t$, value $v_t$, query $q_t$, and gate $\beta_t$ (all linear projections of the input $x_t$, just as in attention). The recurrent state update is:
+
+$$S_t = S_{t-1}(I - \beta_t k_t k_t^\top) + \beta_t v_t k_t^\top$$
+
+The output is $o_t = S_t q_t$: write uses key $k_t$, read uses a separate query $q_t$.
+
+Compare this to [linear attention](https://arxiv.org/abs/2006.16236), which simply accumulates: $M_t = M_{t-1} + \phi(k_t) v_t^\top$. Linear attention is a wiki where you can only append pages. DeltaNet is a wiki where you can **edit and overwrite** existing pages. The term $(I - \beta_t k_t k_t^\top)$ erases memory along $k_t$ before writing, which is why retrieval error stays bounded as sequence length grows.
+
+[Yang et al. (2024)](https://arxiv.org/abs/2406.06484) later developed efficient chunk-parallel training algorithms for DeltaNet, making it practical for large-scale language modeling.
+
+### Gated DeltaNet (Yang et al., 2025)
+
+[Gated DeltaNet](https://arxiv.org/abs/2412.06464) (ICLR 2025) makes two changes:
+
+$$S_t = \alpha_t \cdot S_{t-1}(I - \beta_t k_t k_t^\top) + v_t k_t^\top$$
+
+First, the gate $\alpha_t \in (0, 1)$ is a **scalar per head** that decays the entire state uniformly. It's computed as $\alpha_t = \exp(-A \cdot \text{softplus}(W_\alpha x_t + b))$ where $A$ is a learned scalar per head, borrowed from Mamba-2's SSM discretization. This gives the model a way to forget: in DeltaNet, a memory stored for some old key persists forever if that key never reappears. With $\alpha_t < 1$, stale memories decay automatically.
+
+Second, the write term $v_t k_t^\top$ is no longer scaled by $\beta_t$, decoupling erasure strength from write strength.
+
+### GDN with negative eigenvalues (Grazzi et al., 2025)
+
+The version used in OLMo Hybrid makes one further change from [Grazzi et al. (2025)](https://arxiv.org/abs/2411.12537): replacing $\beta_t$ with $2\beta_t$ in the erasure term:
+
+$$S_t = S_{t-1} \cdot \alpha_t (I - 2\beta_t k_t k_t^\top) + v_t k_t^\top$$
+
+This looks minor but has outsized consequences. Since $k_t k_t^\top$ is a rank-1 matrix with eigenvalue $\|k_t\|^2$ along $k_t$ and 0 elsewhere, the transition matrix $I - 2\beta_t k_t k_t^\top$ has eigenvalue $1 - 2\beta_t$ along $k_t$. When $\beta_t > 0.5$, that eigenvalue goes **negative**: the state component along $k_t$ flips sign rather than just shrinking.
+
+Why does this matter? Consider parity tracking (is the running count of 1s even or odd?). Represent even as $s = +1$, odd as $s = -1$. Without the factor of 2, the eigenvalue along $k_t$ is $1 - \beta_t \in (0,1)$, so the state can only decay: $+1 \to +0.2 \to +0.04 \to \ldots$ The signal is lost. With negative eigenvalues, $\beta_t = 1$ gives a factor of $-1$, so the state cleanly toggles: $+1 \to -1 \to +1 \to \ldots$ Parity is the simplest state-tracking task. [Sarrof et al. (2024)](https://arxiv.org/abs/2405.17394) proved that LRNNs with only positive eigenvalues **provably cannot solve it** for arbitrary-length sequences. If you can't toggle, you can't track state. Grazzi et al. showed that GDN with negative eigenvalues can simulate **arbitrary finite automata**, a much stronger result.
+
+Mamba-3 solves the same problem differently: rotation matrices (data-dependent RoPE on B and C projections) achieve equivalent "rotational" capability without explicitly negative eigenvalues. Two competing solutions to the same fundamental limitation.
+
+### How training stays efficient: chunk-parallel computation
+
+A natural concern: isn't a recurrence like $S_t = f(S_{t-1}, x_t)$ inherently sequential? For autoregressive **inference**, yes. Each token must update the state before the next can be decoded. But for **training**, DeltaNet-family models use [chunk-parallel algorithms](https://arxiv.org/abs/2406.06484) (implemented in the [flash-linear-attention](https://github.com/fla-org/flash-linear-attention) library) that recover most of the hardware efficiency of attention.
+
+The key insight is that the recurrence can be decomposed within fixed-size chunks. Split the sequence into chunks of size $C$. Within chunk $[t]$, the state at position $r$ can be written:
+
+$$S^r_{[t]} = S[t] \cdot P^r_{[t]} + H^r_{[t]}$$
+
+where $P^r_{[t]}$ captures how incoming memory is transformed and $H^r_{[t]}$ captures what the chunk writes. Because the transition matrices $I - \beta_t k_t k_t^\top$ are rank-1 perturbations of identity, both $P$ and $H$ admit structured representations that can be computed via dense matrix multiplications.
+
+The result:
+
+- **Within a chunk**: all outputs are computed together using batched matmuls, fully parallel.
+- **Across chunks**: only a single state update $S[t+1] = S[t] P_{[t]} + H_{[t]}$ per boundary, reducing sequential depth from $L$ to $L/C$.
+
+This reduces sequential depth by a factor of $C$ (typically 64–256), making training throughput competitive with attention. OLMo Hybrid slightly outperforms OLMo 3 in early training throughput benchmarks.
+
+## The landscape: recurrent layers converging to hybrid
+
+OLMo Hybrid is part of a broader wave. Multiple teams have independently arrived at the same conclusion: pure attention for 100% of layers is suboptimal. The recurrent components come from two distinct lineages (delta-rule memory and state space models), both now pairing with attention in production-scale LLMs.
+
+```{mermaid}
+%%| fig-cap: "Two research lineages (delta-rule memory and state space models) converge with attention in modern hybrid LLMs. Every hybrid also uses transformer attention (not drawn to reduce clutter)."
+%%| label: fig-lineage
+flowchart TB
+    subgraph delta["Delta-Rule Lineage"]
+        direction TB
+        DR["Delta Rule<br/><small>Widrow & Hoff, 1960</small>"]
+        LA["Linear Attention<br/><small>Katharopoulos et al. 2020</small>"]
+        DN["DeltaNet<br/><small>Schlag et al. 2021</small>"]
+        GDN["Gated DeltaNet<br/><small>Yang et al. 2025</small>"]
+        GDNE["GDN + Neg. Eigenvalues<br/><small>Grazzi et al. 2025</small>"]
+        KDA["Kimi Delta Attention<br/><small>Kimi Team 2025</small>"]
+        DR --> LA --> DN --> GDN --> GDNE
+        GDN --> KDA
+    end
+
+    subgraph ssm["State Space Model Lineage"]
+        direction TB
+        S4["S4<br/><small>Gu et al. 2022</small>"]
+        M1["Mamba<br/><small>Gu & Dao 2024</small>"]
+        M2["Mamba-2<br/><small>Dao & Gu 2024</small>"]
+        M3["Mamba-3<br/><small>Lahoti, Dao, Gu et al. 2026</small>"]
+        S4 --> M1 --> M2 --> M3
+    end
+
+    subgraph attn["Attention"]
+        direction TB
+        TF["Transformer<br/><small>Vaswani et al. 2017</small>"]
+        MLA["Multi-Head Latent Attn<br/><small>DeepSeek 2024</small>"]
+        TF --> MLA
+    end
+
+    subgraph hybrids["Hybrid LLMs (2024-2026)"]
+        direction TB
+        RG["RecurrentGemma / Griffin<br/><small>Google 2024</small>"]
+        SB["Samba<br/><small>Microsoft 2025</small>"]
+        NH["Nemotron-H 8B<br/><small>NVIDIA 2025</small>"]
+        FH["Falcon H1 7B<br/><small>TII 2025</small>"]
+        KL["Kimi Linear 48B<br/><small>Moonshot 2025</small>"]
+        QW["Qwen 3.5<br/><small>Alibaba 2026</small>"]
+        OH["<b>OLMo Hybrid 7B</b><br/><small>Allen AI 2026</small>"]
+    end
+
+    GDNE --> OH
+    GDN --> QW
+    KDA --> KL
+    M2 --> NH
+    M2 --> FH
+    M1 --> SB
+    S4 --> RG
+    MLA --> KL
+
+    style OH fill:#4a9eff,color:#fff,stroke:#2a7edf
+    style KL fill:#9b59b6,color:#fff,stroke:#7d3c98
+    style M3 fill:#e67e22,color:#fff,stroke:#d35400
+    style GDNE fill:#2ecc71,color:#fff,stroke:#27ae60
+    style KDA fill:#9b59b6,color:#fff,stroke:#7d3c98
+```
+
+Every hybrid in the diagram also uses transformer attention (edges omitted for clarity). Other notable hybrids include [RecurrentGemma/Griffin](https://arxiv.org/abs/2404.07839) (Google), [Samba](https://arxiv.org/abs/2406.07522) (Microsoft), [Nemotron-H](https://arxiv.org/abs/2504.03624) (NVIDIA), and [Falcon H1](https://arxiv.org/abs/2507.22448) (TII). A few details:
+
+- **OLMo Hybrid** uses GDN with negative eigenvalues. [**Qwen 3.5**](https://github.com/QwenLM/Qwen3.5) uses standard GDN without the negative eigenvalue extension.
+- [**Kimi Linear**](https://arxiv.org/abs/2510.26692) extends GDN with channel-wise gating (per-feature-dimension rather than per-head), calling their variant **Kimi Delta Attention (KDA)**. It pairs KDA with [DeepSeek's Multi-Head Latent Attention (MLA)](https://arxiv.org/abs/2405.04434) in a 3:1 ratio, with MoE for the MLP layers.
+- [**Mamba-3**](https://arxiv.org/abs/2603.15569) (ICLR 2026) addresses the state-tracking weakness of earlier Mamba models through rotation matrices and a MIMO formulation. Different mechanism, same goal as negative eigenvalues: enable state tracking.
+- OLMo's ablations compared GDN against Mamba-2 at 7 model sizes (60M to 1B). **GDN won at every scale**, even in hybrid configurations.
+
+## Architecture: 3 parts GDN, 1 part attention
+
+OLMo Hybrid takes [OLMo 3](https://arxiv.org/abs/2512.13961) 7B and replaces its sliding-window attention layers with GDN layers (with negative eigenvalues), keeping every 4th layer as full multi-head attention. The result: a 3:1 ratio of GDN-to-attention layers, interleaved uniformly.
+
+### Why this specific configuration?
+
+The paper ran extensive ablations at 7 model sizes (60M to 1B) to justify three design decisions:
+
+| Decision | Winner | Why |
+|---|---|---|
+| RNN type | GDN over Mamba2 | Mamba2 performed worse at every scale, even in hybrid configurations |
+| Layer placement | Interleaved over middle-clustered | Distributing attention uniformly lets every part of the network access global context |
+| Attention ratio | 3:1 over 1:1 or 7:1 | 3:1 gives the best trade-off; all hybrid ratios beat pure transformer at large scale |
+
+### Inference efficiency
+
+The per-layer state size comparison is striking:
+
+| Layer Type | FP16 Size | vs. GDN |
+|---|---|---|
+| Full Attention (32K seq, 32 KV heads) | 512 MiB | 485x |
+| GQA (32K seq, 8 KV heads) | 128 MiB | 121x |
+| SWA (4096 window, 8 KV heads) | 16.0 MiB | 15.2x |
+| **GDN (30 heads)** | **1.05 MiB** | **1x** |
+
+Since 75% of layers use GDN, the total inference state is dramatically smaller than a pure transformer.
+
+## Pretraining results
+
+The headline numbers from pretraining on 6T tokens:
+
+- **35% fewer tokens** to match OLMo 3's Common Crawl loss
+- **49% fewer tokens** to match OLMo 3's MMLU accuracy
+- Since OLMo Hybrid has roughly the same throughput as OLMo 3, token savings translate directly to compute savings
+
+After mid-training, OLMo Hybrid outperforms OLMo 3 7B on **every evaluation domain** in OlmoBaseEval: math (+1.4%), code (+0.8%), STEM MC (+3.6%), non-STEM MC (+3.1%), GenQA (+2.3%).
+
+### Long-context performance
+
+After long-context extension, OLMo Hybrid shows large gains on RULER, a standard long-context benchmark:
+
+| Context Length | OLMo 3 (YaRN) | OLMo Hybrid (DroPE) |
+|---|---|---|
+| 4K | 95.8 | 92.2 |
+| 8K | 89.3 | 89.8 |
+| 16K | 83.2 | 88.4 |
+| 32K | 78.9 | 86.2 |
+| 64K | 70.9 | **85.0** |
+
+The gap widens with context length. At 64K tokens, OLMo Hybrid scores 85.0 vs. 70.9, a **14.1 point improvement**. The recurrent layers provide implicit positional encoding, reducing reliance on RoPE extrapolation.
+
+The paper also explores **DroPE** (dropping RoPE after mid-training), which works especially well with hybrid architectures because the GDN layers already provide positional information through their recurrent structure.
+
+## Why hybrids are more expressive: the theory
+
+For me, the most interesting part of the paper is the theoretical argument for *why* hybrid models scale better, not just *that* they do.
+
+### Complementary strengths
+
+Prior work established that:
+
+- **Transformers** can recall/copy from arbitrary positions but cannot track state sequentially (e.g., tracking variable assignments: `x=1, y=x+1, ...`).
+- **Linear RNNs** (with sufficient expressivity, like GDN with negative eigenvalues) can track state but struggle with recall from arbitrary positions (bounded state).
+
+### Hybrids are more than the sum of their parts
+
+The paper proves something stronger: hybrid models can express tasks that **neither** pure transformers **nor** pure GDN can solve alone. The key example is **state-based recall**, a task that requires:
+
+1. Tracking state through a sequence (needs recurrence)
+2. Retrieving a value associated with the current state (needs attention)
+
+Neither primitive alone can solve this, but a hybrid with even one alternation between GDN and attention layers can. The paper validates this on synthetic tasks, showing that hybrid models learn state-based recall perfectly while pure transformers and pure RNNs fail.
+
+### From expressivity to scaling laws
+
+The more subtle question: why should expressivity on synthetic tasks predict better loss on natural language? The paper adapts the [**quantization model** of neural scaling laws](https://arxiv.org/abs/2303.13506) (Michaud et al., NeurIPS 2023) to answer this.
+
+The quantization model views language modeling as a collection of many discrete "tasks" (quanta), each of which the model either learns or doesn't. The key assumptions are:
+
+1. Tasks follow a Zipfian frequency distribution in the data
+2. Each task requires a threshold of relevant training tokens before it becomes learnable
+3. Each task costs a fixed number of parameters to represent
+
+The paper adds a new dimension: **expressibility**. For a given architecture, each task is either expressible or inexpressible, with probability $1 - \epsilon$ and $\epsilon$ respectively. Inexpressible tasks either can't be learned at all, or require more parameters and more data to approximate.
+
+This leads to a modified scaling law:
+
+$$L(N) - L_\infty^\epsilon \propto A_\epsilon \cdot N^{-\alpha}$$
+
+where the coefficient $A_\epsilon$ and irreducible loss $L_\infty^\epsilon$ depend on the expressivity parameter $\epsilon$. The key prediction: **decreasing $\epsilon$ (more expressivity) shifts the loss curve down**, improving scaling efficiency without changing the power-law exponent.
+
+The paper validates this by fitting Chinchilla-style scaling laws $L(N, D) = E + A/N^\alpha + B/D^\beta$ across 7 model sizes (60M to 1B). The results match the theory's predictions:
+
+- The hybrid's **data coefficient** $B$ is significantly lower than the transformer's (83.7 vs. 94.9, non-overlapping 95% CIs). More expressive models extract more value from each training token.
+- The **scaling exponents** $\alpha$ and $\beta$ are indistinguishable across architectures, consistent with the prediction that expressivity shifts the constants, not the power-law exponents.
+- The fitted laws predict the actual 7B model losses with <0.3% error, validating extrapolation.
+
+Projected token savings grow with model size: ~1.3x at 1B, ~1.7x at 7B, and ~1.9x at 70B parameters.
+
+## Post-training
+
+The paper applies OLMo 3's post-training pipeline (Think SFT, Instruct SFT, DPO) to OLMo Hybrid without hybrid-specific tuning. The hybrid model is competitive: it tends to outperform OLMo 3 on reasoning-heavy tasks but performs slightly worse on tasks that benefit from more stochastic generation. Since the recipe was reused as-is, there's likely room for further gains with hybrid-aware tuning.
+
+## What this means for the field
+
+I think this paper makes a strong case for hybrid architectures as the default for language modeling. The argument works at three levels:
+
+1. **Theory**: hybrids are strictly more expressive, and this expressivity mathematically predicts better scaling.
+2. **Controlled experiments**: in scaling studies with identical data and training recipes, hybrids consistently beat transformers.
+3. **Large-scale validation**: OLMo Hybrid 7B outperforms OLMo 3 7B at the same scale, with the same data.
+
+The practical benefits add up:
+
+- **Training cost**: ~1.7x fewer tokens at 7B scale, growing to ~1.9x at 70B
+- **Inference cost**: 485x smaller per-layer state for recurrent layers
+- **Long context**: much better performance at 32K+ tokens
+
+What makes me most confident is convergence. Multiple independent teams (Allen AI, NVIDIA, Alibaba, Moonshot) have arrived at the same conclusion through different architectural paths. The delta-rule lineage (DeltaNet, GDN) and the SSM lineage (Mamba) both arrive at: **mix recurrence with attention**.
+
+Open questions remain:
+
+- **Optimal ratios at larger scale.** The 3:1 ratio works well at 7B, but may shift at 70B+.
+- **Post-training recipes** tuned specifically for hybrid architectures.
+- **Which recurrent layer wins long-term.** GDN with negative eigenvalues, Kimi Delta Attention, and Mamba-3 represent actively competing approaches.
+- **Hardware optimization.** Custom kernels for linear RNNs are still less mature than attention kernels, though chunk-parallel algorithms close much of the gap.
+
+Attention isn't going away. It's essential for recall and global context. But using it for 100% of layers looks increasingly hard to justify when cheaper, more expressive primitives can handle most of the work.
+

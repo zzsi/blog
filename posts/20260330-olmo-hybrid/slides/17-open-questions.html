@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 10pt 30pt; flex: 1; display: flex; gap: 16pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 12pt; font-weight: bold; margin: 0 0 6pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+.card { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 6pt; padding: 10pt 12pt; margin-bottom: 8pt; }
+.card h3 { color: %%ACCENT%%; font-size: 11pt; margin: 0 0 4pt 0; }
+.card p { color: %%BODY_TEXT%%; font-size: 10pt; margin: 0 0 3pt 0; line-height: 1.35; }
+.eq-box { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 8pt; margin: 6pt 0; text-align: center; }
+.bottom-line { padding: 8pt 30pt 14pt 30pt; }
+.bottom-line p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0; text-align: center; font-style: italic; }
+</style></head><body>
+<div class="header"><h1>Open Questions</h1></div>
+<div class="content">
+  <div class="col">
+    <div class="card">
+      <h3>What other formula tweaks feel natural?</h3>
+      <p>The current GDN recurrence:</p>
+    </div>
+    <div class="eq-box">
+      $S_t = \alpha_t S_{t-1}(I - 2\beta_t k_t k_t^\top) + v_t k_t^\top$
+    </div>
+    <p style="color: %%BODY_TEXT%%; font-size: 9.5pt; margin: 0 0 4pt 0;">Small changes have had outsized impact (neg eigenvalues, decoupled write). What's the next tweak? Per-channel gating (Kimi)? Higher-rank updates? Different decay structures?</p>
+    <div class="card">
+      <h3>Does hybrid help downstream SFT/RL?</h3>
+      <p>OLMo reused OLMo 3's post-training recipe with no tuning. Are hybrid models more fine-tunable? Does the recurrent state give RL signals a different optimization landscape?</p>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <div class="card">
+      <h3>Optimal ratio at 70B+ scale</h3>
+      <p>3:1 works at 7B. Kimi Linear also uses 3:1, Nemotron-H uses ~12:1. Does the optimal GDN-to-attention ratio shift as you scale up?</p>
+    </div>
+    <div class="card">
+      <h3>Which linear RNN wins long-term?</h3>
+      <p>GDN+neg eigenvalues, Kimi Delta Attention, and Mamba-3 are all competitive. Active research area. The winner may not exist yet.</p>
+    </div>
+    <div class="card">
+      <h3>Kernel & hardware maturity</h3>
+      <p>fla is functional but less optimized than FlashAttention. Custom hardware (Groq-style) or future CUDA kernels could widen the gap further.</p>
+    </div>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

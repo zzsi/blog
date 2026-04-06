@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><head><style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 12pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 14pt; font-weight: bold; margin: 0 0 10pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+.layer-stack { display: flex; flex-direction: column; gap: 3pt; margin-top: 8pt; }
+.layer { padding: 6pt 10pt; border-radius: 3pt; font-size: 10pt; text-align: center; font-weight: bold; }
+.layer-gdn { background: #E8F5E9; color: #2E7D32; border: 1pt solid #A5D6A7; }
+.layer-attn { background: #E3F2FD; color: #1565C0; border: 1pt solid #90CAF9; }
+.layer-mlp { background: %%CARD_BG%%; color: %%BODY_TEXT%%; border: 1pt solid %%CARD_BORDER%%; font-weight: normal; font-size: 9pt; }
+ul { margin: 0; padding-left: 24pt; list-style: disc; }
+li { color: %%BODY_TEXT%%; font-size: 11pt; margin-bottom: 8pt; padding-left: 6pt; line-height: 1.4; }
+.brace { color: %%BODY_TEXT%%; font-size: 10pt; opacity: 0.5; text-align: center; margin: 2pt 0; }
+</style></head><body>
+<div class="header"><h1>Architecture: 3 Parts GDN, 1 Part Attention</h1></div>
+<div class="content">
+  <div class="col" style="flex: 0.7;">
+    <p class="section-title">Layer Stack (repeating block)</p>
+    <div class="layer-stack">
+      <div class="layer layer-gdn"><p style="margin:0;font-size:10pt;">GDN Layer + MLP</p></div>
+      <div class="layer layer-gdn"><p style="margin:0;font-size:10pt;">GDN Layer + MLP</p></div>
+      <div class="layer layer-gdn"><p style="margin:0;font-size:10pt;">GDN Layer + MLP</p></div>
+      <div class="layer layer-attn"><p style="margin:0;font-size:10pt;">Full Attention Layer + MLP</p></div>
+      <div class="brace"><p style="margin:0;font-size:10pt;">repeat x8 for 32 layers total</p></div>
+    </div>
+    <p style="color: %%BODY_TEXT%%; font-size: 9pt; margin-top: 10pt; opacity: 0.6;">Replaces OLMo 3's sliding-window attention layers with GDN. Full attention layers kept at every 4th position.</p>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">Design Decisions (Ablations)</p>
+    <ul>
+      <li><b>GDN over Mamba-2:</b> Mamba-2 performed worse at every scale, even in hybrid configs</li>
+      <li><b>Interleaved over clustered:</b> distributing attention uniformly lets every part of the network access global context</li>
+      <li><b>3:1 ratio over 1:1 or 7:1:</b> best trade-off; all hybrid ratios beat pure transformer at scale</li>
+      <li><b>Parameter budget:</b> GDN layers have more params per head than attention, so they reduced heads from 32→30 and shrunk head dims to keep total at ~7B and match OLMo 3 throughput</li>
+    </ul>
+  </div>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

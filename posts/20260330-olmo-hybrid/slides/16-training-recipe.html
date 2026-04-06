@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><head><style>
+body { width: 720pt; height: 405pt; margin: 0; padding: 0; background: %%BG%%; font-family: %%FONT%%; display: flex; flex-direction: column; }
+.header { background: %%HEADER_BG%%; padding: 18pt 30pt; }
+.header h1 { color: %%HEADER_TEXT%%; font-size: 24pt; margin: 0; }
+.content { padding: 12pt 30pt; flex: 1; display: flex; gap: 20pt; }
+.col { flex: 1; }
+.section-title { color: %%ACCENT%%; font-size: 14pt; font-weight: bold; margin: 0 0 10pt 0; }
+.divider { width: 1pt; background: %%CODE_BORDER%%; }
+ul { margin: 0; padding-left: 24pt; list-style: disc; }
+li { color: %%BODY_TEXT%%; font-size: 11pt; margin-bottom: 8pt; padding-left: 6pt; line-height: 1.4; }
+.badge-same { display: inline-block; background: #E3F2FD; color: #1565C0; font-size: 8pt; padding: 1pt 5pt; border-radius: 2pt; font-weight: bold; }
+.badge-new { display: inline-block; background: #FFF3E0; color: #E65100; font-size: 8pt; padding: 1pt 5pt; border-radius: 2pt; font-weight: bold; }
+.takeaway { background: %%CARD_BG%%; border: 1pt solid %%CARD_BORDER%%; border-radius: 4pt; padding: 12pt; margin: 0 90pt 14pt 30pt; }
+.takeaway p { color: %%BODY_TEXT%%; font-size: 11pt; margin: 0; }
+</style></head><body>
+<div class="header"><h1>What Changes in Your Training Stack?</h1></div>
+<div class="content">
+  <div class="col">
+    <p class="section-title">What stays the same (~95%)</p>
+    <ul>
+      <li><span class="badge-same">SAME</span> AdamW optimizer, WSD-S LR schedule</li>
+      <li><span class="badge-same">SAME</span> Data pipeline (Dolma), 6T tokens</li>
+      <li><span class="badge-same">SAME</span> Pretrain, mid-train, long-context, post-train</li>
+      <li><span class="badge-same">SAME</span> Post-training: Think SFT, Instruct SFT, DPO</li>
+      <li><span class="badge-same">SAME</span> Evaluation suite (OlmoBaseEval)</li>
+    </ul>
+  </div>
+  <div class="divider"></div>
+  <div class="col">
+    <p class="section-title">What's new</p>
+    <ul>
+      <li><span class="badge-new">NEW</span> <b>flash-linear-attention (fla)</b> kernels for GDN layers</li>
+      <li><span class="badge-new">NEW</span> <b>DroPE</b> for long-context (GDN provides implicit positional info)</li>
+      <li><span class="badge-new">NEW</span> <b>Shape tuning</b>: 30 heads, adjusted dims to match throughput</li>
+      <li><span class="badge-new">NEW</span> <b>Doubled mid-training batch size</b></li>
+    </ul>
+  </div>
+</div>
+<div class="takeaway">
+  <p><b>The hybrid architecture gives big gains with minimal recipe changes. The main tooling difference is the fla library for GDN kernels.</b></p>
+</div>
+<img src="%%LOGO%%" style="position: absolute; bottom: 10pt; right: 20pt; width: 50pt; height: auto; opacity: %%LOGO_OPACITY%%;">
+</body></html>

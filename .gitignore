@@ -16,3 +16,6 @@
 *.pyo
 .venv/
 examples/optimizer-bench/toy/outputs/
+
+# Paper PDFs
+**/*.pdf
