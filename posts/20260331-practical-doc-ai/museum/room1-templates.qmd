@@ -19,7 +19,7 @@ The assets here come from a real offline generator in the same folder: synthetic
 ## What To Try
 
 - Start on `Clean`. The full pipeline works: 4/4 fields extracted correctly.
-- Click `Rotation` or `Marked-up form`. Registration still succeeds and extraction stays correct.
+- Click `Rotation`, `Warp`, or `Phone photo`. Registration still succeeds but OCR quality varies.
 - Click `Blur`, `JPEG`, or `Phone photo`. Matching still works, but OCR starts degrading on small fields.
 - Now click `Revised form`. Registration succeeds with *more* inlier matches than clean. But the form has one fewer employment-history row, so Section 3 shifted up. The template's crop coordinates silently miss `Records due (days)`. This is the failure mode that motivates field detectors.
 - Click a field card to inspect the crop region.
@@ -679,8 +679,6 @@ The assets here come from a real offline generator in the same folder: synthetic
         ? "Combined noise"
         : variant.id === "phone_photo"
           ? "Phone photo"
-        : variant.id === "lines"
-          ? "Marked-up form"
         : variant.id === "revised"
           ? "Revised form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -703,8 +701,6 @@ The assets here come from a real offline generator in the same folder: synthetic
       ? "Combined Noise"
       : variant.id === "phone_photo"
         ? "Phone Photo"
-      : variant.id === "lines"
-        ? "Marked-up Form"
       : variant.id === "revised"
         ? "Revised Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);

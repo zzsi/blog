@@ -622,14 +622,6 @@ PROFILES = [
         capture={"blur": 0.45, "jpeg_quality": 22, "lighting_gradient": 0.04, "camera_shadow": 0.0},
     ),
     CorruptionProfile(
-        id="lines",
-        description="Marked-up and dusty paper with pen lines, fold shadows, and scan specks.",
-        print_artifacts={"ink_fade": 0.05, "stroke_breakage": 0.03, "toner_band": 0.03},
-        paper_artifacts={"paper_texture": 0.05, "stain_strength": 0.02, "fold_shadow": 0.22, "random_lines": 22, "random_dots": 180},
-        geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
-        capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.02, "camera_shadow": 0.0},
-    ),
-    CorruptionProfile(
         id="revised",
         description="Shorter form revision with only one employment history row. Section 3 shifts up, breaking template crop coordinates.",
         print_artifacts={"ink_fade": 0.0, "stroke_breakage": 0.0, "toner_band": 0.0},
