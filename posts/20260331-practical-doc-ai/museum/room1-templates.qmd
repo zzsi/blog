@@ -25,6 +25,7 @@ The assets here come from a real offline generator in the same folder: synthetic
 :::
 
 <div id="room1-app"></div>
+<div class="room1-lightbox" id="room1-lightbox"><img id="room1-lightbox-img" alt="Full resolution view" /></div>
 
 <style>
 .room1-shell {
@@ -178,6 +179,37 @@ The assets here come from a real offline generator in the same folder: synthetic
   border-radius: 12px;
   background: #f0ead9;
   margin-top: 0.9rem;
+  cursor: zoom-in;
+}
+
+.room1-matching img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-top: 0.9rem;
+  cursor: zoom-in;
+}
+
+.room1-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+  align-items: center;
+  justify-content: center;
+}
+
+.room1-lightbox.open {
+  display: flex;
+}
+
+.room1-lightbox img {
+  max-width: 95vw;
+  max-height: 95vh;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .room1-focus-body {
@@ -476,6 +508,7 @@ The assets here come from a real offline generator in the same folder: synthetic
     if (state.imageCache.has(src)) return state.imageCache.get(src);
     const promise = new Promise((resolve, reject) => {
       const image = new Image();
+      image.crossOrigin = "anonymous";
       image.onload = () => resolve(image);
       image.onerror = reject;
       image.src = src;
@@ -704,6 +737,37 @@ The assets here come from a real offline generator in the same folder: synthetic
     state.selectedFieldId = "records_days";
     render();
   }
+
+  // Lightbox
+  const lightbox = document.getElementById("room1-lightbox");
+  const lightboxImg = document.getElementById("room1-lightbox-img");
+
+  function openLightbox(src) {
+    lightboxImg.src = src;
+    lightbox.classList.add("open");
+  }
+
+  lightbox.addEventListener("click", () => {
+    lightbox.classList.remove("open");
+    lightboxImg.src = "";
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      lightbox.classList.remove("open");
+      lightboxImg.src = "";
+    }
+  });
+
+  // Click-to-zoom on images
+  incomingImage.addEventListener("click", () => openLightbox(incomingImage.src));
+  cropImage.addEventListener("click", () => openLightbox(cropImage.src));
+  matchingImage.addEventListener("click", () => openLightbox(matchingImage.src));
+
+  // Click-to-zoom on canvas (export to data URL)
+  registeredCanvas.addEventListener("click", () => {
+    openLightbox(registeredCanvas.toDataURL("image/png"));
+  });
 
   init().catch((error) => {
     diagnosis.textContent = "Failed to load Room 1 assets.";
