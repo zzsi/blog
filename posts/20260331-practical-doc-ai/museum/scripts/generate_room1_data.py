@@ -885,27 +885,9 @@ def crop_with_padding(image: np.ndarray, field: Field) -> np.ndarray:
 
 
 def preprocess_for_ocr(crop: np.ndarray, field: Field) -> np.ndarray:
-    """Light preprocessing: upscale + contrast normalize + white border. No binarization."""
-    scale_map = {
-        "name": 3.0,
-        "position": 3.0,
-        "address": 3.5,
-        "records_days": 8.0,
-    }
-    border_map = {
-        "records_days": 80,  # large border helps doctr detect isolated short text
-    }
-    scale = scale_map.get(field.id, 3.0)
-    border = border_map.get(field.id, 24)
-    enlarged = cv2.resize(crop, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
-    # Convert to grayscale, normalize contrast, convert back — helps doctr detect text
-    # on warm paper backgrounds without destroying image with binarization
-    gray = cv2.cvtColor(enlarged, cv2.COLOR_BGR2GRAY)
-    gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
-    enlarged = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+    """Minimal preprocessing: white border only. Doctr handles its own resizing."""
     bordered = cv2.copyMakeBorder(
-        enlarged, border, border, border, border,
-        borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255),
+        crop, 10, 10, 10, 10, borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255)
     )
     return bordered
 
