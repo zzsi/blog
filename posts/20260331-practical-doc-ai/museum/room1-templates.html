@@ -667,7 +667,7 @@ What To Try
     const baseImagePath = state.viewMode === "template"
       ? assetPath(state.manifest.template.blank_image)
       : variant.registration.ok
-        ? assetPath(`generated/variants/${variant.id}-registered.png`)
+        ? assetPath(`variants/${variant.id}-registered.png`)
         : assetPath(variant.image);
 
     loadImage(baseImagePath).then((image) => {
@@ -829,7 +829,7 @@ What To Try
   });
 
   async function init() {
-    const response = await fetch(assetPath("generated/room1-manifest.json"));
+    const response = await fetch(assetPath("room1-manifest.json"));
     state.manifest = await response.json();
     const size = state.manifest.template?.size;
     if (size?.width && size?.height) {
