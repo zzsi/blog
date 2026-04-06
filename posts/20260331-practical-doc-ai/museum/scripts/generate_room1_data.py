@@ -606,6 +606,14 @@ PROFILES = [
         capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
     ),
     CorruptionProfile(
+        id="print",
+        description="Printer artifacts only: ink bleed, vertical roller streaks, toner banding, and faded ink.",
+        print_artifacts={"ink_fade": 0.10, "morph_noise": 0.12, "print_streaks": 0.10, "toner_band": 0.06},
+        paper_artifacts={"paper_texture": 0.0, "stain_strength": 0.0, "fold_shadow": 0.0, "random_lines": 0, "random_dots": 0},
+        geometry={"angle": 0.0, "scale_x": 1.0, "scale_y": 1.0, "perspective": None, "wave_amplitude": 0.0, "wave_length": 240.0},
+        capture={"blur": 0.0, "jpeg_quality": None, "lighting_gradient": 0.0, "camera_shadow": 0.0},
+    ),
+    CorruptionProfile(
         id="rotation",
         description="Mild skewed scan.",
         print_artifacts={"ink_fade": 0.03, "morph_noise": 0.0, "print_streaks": 0.0, "toner_band": 0.02},

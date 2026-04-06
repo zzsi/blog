@@ -679,6 +679,8 @@ The assets here come from a real offline generator in the same folder: synthetic
         ? "Combined noise"
         : variant.id === "phone_photo"
           ? "Phone photo"
+        : variant.id === "print"
+          ? "Printer artifacts"
         : variant.id === "revised"
           ? "Revised form"
           : variant.id[0].toUpperCase() + variant.id.slice(1);
@@ -701,6 +703,8 @@ The assets here come from a real offline generator in the same folder: synthetic
       ? "Combined Noise"
       : variant.id === "phone_photo"
         ? "Phone Photo"
+      : variant.id === "print"
+        ? "Printer Artifacts"
       : variant.id === "revised"
         ? "Revised Form"
         : variant.id[0].toUpperCase() + variant.id.slice(1);
