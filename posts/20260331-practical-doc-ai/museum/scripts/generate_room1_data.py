@@ -53,8 +53,8 @@ class CorruptionProfile:
 FIELDS = [
     Field("name", "Applicant name", "Alexandra Hayes", (S(110), S(224), S(300), S(30))),
     Field("position", "Position desired", "Senior Operations Analyst", (S(110), S(284), S(250), S(30))),
-    Field("address", "Street address", "2714 Red Cedar Lane, Larkhaven, TX", (S(110), S(344), S(225), S(56))),
-    Field("records_days", "Records due (days)", "3", (S(300), S(892), S(24), S(16))),
+    Field("address", "Street address", "2714 Red Cedar Lane Larkhaven, TX 78705", (S(110), S(344), S(225), S(56))),
+    Field("records_days", "Records due (days)", "15", (S(300), S(889), S(26), S(16))),
 ]
 
 
@@ -279,7 +279,7 @@ def render_template(blank: bool = True, num_history_rows: int = 2, swap_name_pos
     draw.text((S(110), dense_y + S(30)), "after supervisor notice.", font=FONT_MICRO, fill="#6b6557")
     draw.text((S(110), dense_y + S(48)), "This deadline is separate from the 90-day review window and the 14-day badge reset.", font=FONT_MICRO, fill="#6b6557")
     if not blank:
-        draw.text((blank_x + S(4), dense_y + S(14)), FIELDS[3].value, font=FONT_TINY, fill="#2f2b23")
+        draw.text((blank_x + S(2), dense_y + S(12)), FIELDS[3].value, font=FONT_VALUE_SMALL, fill="#2f2b23")
 
     return image
 
@@ -874,7 +874,7 @@ def crop_with_padding(image: np.ndarray, field: Field) -> np.ndarray:
         "name": (6, 8, 6, 8),
         "position": (6, 8, 6, 8),
         "address": (0, 12, 12, 12),
-        "records_days": (18, 4, 18, 14),
+        "records_days": (2, 6, 8, 2),
     }
     left, top, right, bottom = pad_map.get(field.id, (8, 8, 8, 8))
     x0 = max(0, x - left)
@@ -885,35 +885,29 @@ def crop_with_padding(image: np.ndarray, field: Field) -> np.ndarray:
 
 
 def preprocess_for_ocr(crop: np.ndarray, field: Field) -> np.ndarray:
+    """Light preprocessing: upscale + contrast normalize + white border. No binarization."""
     scale_map = {
         "name": 3.0,
         "position": 3.0,
         "address": 3.5,
-        "records_days": 7.0,
+        "records_days": 8.0,
+    }
+    border_map = {
+        "records_days": 80,  # large border helps doctr detect isolated short text
     }
     scale = scale_map.get(field.id, 3.0)
+    border = border_map.get(field.id, 24)
     enlarged = cv2.resize(crop, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    # Convert to grayscale, normalize contrast, convert back — helps doctr detect text
+    # on warm paper backgrounds without destroying image with binarization
     gray = cv2.cvtColor(enlarged, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(gray, (3, 3), 0)
     gray = cv2.normalize(gray, None, 0, 255, cv2.NORM_MINMAX)
-    thresh = cv2.adaptiveThreshold(
-        gray,
-        255,
-        cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        cv2.THRESH_BINARY,
-        31,
-        11,
-    )
+    enlarged = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
     bordered = cv2.copyMakeBorder(
-        thresh,
-        24,
-        24,
-        24,
-        24,
-        borderType=cv2.BORDER_CONSTANT,
-        value=255,
+        enlarged, border, border, border, border,
+        borderType=cv2.BORDER_CONSTANT, value=(255, 255, 255),
     )
-    return cv2.cvtColor(bordered, cv2.COLOR_GRAY2BGR)
+    return bordered
 
 
 def save_crop(image: np.ndarray, field: Field, variant_name: str) -> tuple[Path, Path]:
@@ -928,7 +922,13 @@ def save_crop(image: np.ndarray, field: Field, variant_name: str) -> tuple[Path,
 
 
 def normalize_text(value: str) -> str:
+    """Strip non-alphanumeric chars and lowercase for comparison."""
     return re.sub(r"[^a-z0-9]+", "", value.lower())
+
+
+def texts_match(expected: str, ocr_text: str) -> bool:
+    """Check if OCR output matches expected value. Uses exact match after normalization."""
+    return normalize_text(expected) == normalize_text(ocr_text)
 
 
 def doctr_ocr_predictor():
@@ -946,8 +946,19 @@ def doctr_extract_text(predictor, image_paths: list[Path]) -> list[str]:
         result = predictor(doc)
         rendered = result.render()
         text = " ".join(rendered.split()) if rendered else ""
+        # Fallback to tesseract when doctr returns empty (happens with isolated short text)
+        if not text.strip():
+            text = tesseract_extract_text(path)
         results.append(text)
     return results
+
+
+def tesseract_extract_text(image_path: Path) -> str:
+    import pytesseract
+
+    img = cv2.imread(str(image_path))
+    text = pytesseract.image_to_string(img, config="--psm 7")  # single line mode
+    return " ".join(text.split())
 
 
 def generate_manifest() -> dict:
@@ -991,7 +1002,7 @@ def generate_manifest() -> dict:
                 ocr_paths.append(ocr_path)
             ocr_texts = doctr_extract_text(predictor, ocr_paths)
             for field, ocr_text, display_path in zip(FIELDS, ocr_texts, display_paths):
-                correct = normalize_text(field.value) in normalize_text(ocr_text)
+                correct = texts_match(field.value, ocr_text)
                 field_results.append(
                     {
                         "id": field.id,
