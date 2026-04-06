@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-03-30">
+
+<title>OLMo Hybrid: Why Mixing Attention and Recurrence Beats Pure Transformers – Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About this blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/zzsi"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/zhangzhangsi/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">OLMo Hybrid: Why Mixing Attention and Recurrence Beats Pure Transformers</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">ai</div>
+                <div class="quarto-category">deep learning</div>
+                <div class="quarto-category">llm</div>
+                <div class="quarto-category">architecture</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 30, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-problem-with-pure-transformers" id="toc-the-problem-with-pure-transformers" class="nav-link active" data-scroll-target="#the-problem-with-pure-transformers">The problem with pure transformers</a></li>
+  <li><a href="#the-road-to-gated-deltanet" id="toc-the-road-to-gated-deltanet" class="nav-link" data-scroll-target="#the-road-to-gated-deltanet">The road to Gated DeltaNet</a></li>
+  <li><a href="#the-landscape-recurrent-layers-converging-to-hybrid" id="toc-the-landscape-recurrent-layers-converging-to-hybrid" class="nav-link" data-scroll-target="#the-landscape-recurrent-layers-converging-to-hybrid">The landscape: recurrent layers converging to hybrid</a></li>
+  <li><a href="#architecture-3-parts-gdn-1-part-attention" id="toc-architecture-3-parts-gdn-1-part-attention" class="nav-link" data-scroll-target="#architecture-3-parts-gdn-1-part-attention">Architecture: 3 parts GDN, 1 part attention</a></li>
+  <li><a href="#pretraining-results" id="toc-pretraining-results" class="nav-link" data-scroll-target="#pretraining-results">Pretraining results</a></li>
+  <li><a href="#why-hybrids-are-more-expressive-the-theory" id="toc-why-hybrids-are-more-expressive-the-theory" class="nav-link" data-scroll-target="#why-hybrids-are-more-expressive-the-theory">Why hybrids are more expressive: the theory</a></li>
+  <li><a href="#post-training" id="toc-post-training" class="nav-link" data-scroll-target="#post-training">Post-training</a></li>
+  <li><a href="#what-this-means-for-the-field" id="toc-what-this-means-for-the-field" class="nav-link" data-scroll-target="#what-this-means-for-the-field">What this means for the field</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>I’ve been following the hybrid LLM trend for a while, but the <a href="https://allenai.org/papers/olmo-hybrid">OLMo Hybrid paper from Allen AI</a> is the one that made me sit down and really trace the math. Their model, <a href="https://huggingface.co/allenai/Olmo-Hybrid-7B"><strong>OLMo Hybrid 7B</strong></a>, matches OLMo 3 7B on MMLU with <strong>49% fewer training tokens</strong> and outperforms it across the board after mid-training. More interesting than the numbers is <em>why</em> it works, and that story goes back to a 1960s learning rule you probably learned in a machine learning textbook.</p>
+<p>This post is my attempt to unpack that story. (See also: <a href="https://allenai.org/blog/olmohybrid">Allen AI blog post</a>, <a href="https://huggingface.co/allenai/Olmo-Hybrid-7B">model weights</a>, <a href="https://github.com/allenai/OLMo">training code</a>.)</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+TL;DR
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>OLMo Hybrid</strong> replaces 75% of attention layers in OLMo 3 with Gated DeltaNet (GDN) recurrent layers, keeping every 4th layer as full attention.</li>
+<li>It reaches the same MMLU accuracy as OLMo 3 7B using <strong>49% fewer tokens</strong> (and thus 49% fewer FLOPs).</li>
+<li>Hybrid models are <strong>more expressive</strong> than either pure transformers or pure RNNs: they can solve tasks neither can alone.</li>
+<li>A theoretical framework explains <em>why</em>: more expressive architectures learn more “tasks” from the same data, improving scaling efficiency.</li>
+<li>Long-context performance jumps by <strong>14.1%</strong> on RULER 64K over OLMo 3.</li>
+<li>Inference KV-cache per recurrent layer is <strong>485x smaller</strong> than full attention.</li>
+</ul>
+</div>
+</div>
+<section id="the-problem-with-pure-transformers" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem-with-pure-transformers">The problem with pure transformers</h2>
+<p><a href="https://arxiv.org/abs/1706.03762">Transformers</a> have two well-known limitations:</p>
+<ol type="1">
+<li><strong>Quadratic inference cost.</strong> The KV-cache grows linearly with sequence length, and attention computation is <span class="math inline">\(O(n^2)\)</span> per layer. Long-context inference gets expensive fast.</li>
+<li><strong>Limited state tracking.</strong> Transformers cannot maintain and update state sequentially. Consider tracking variable assignments through a sequence: <code>x=1, y=x+1, z=y*2, ...</code>. Each step depends on the previous result, and a fixed-depth transformer has no mechanism for this kind of sequential composition. This is a fundamental expressivity gap, not a training data issue (Merrill &amp; Sabharwal, 2023).</li>
+</ol>
+<p>Modern linear RNNs (<a href="https://arxiv.org/abs/2312.00752">Mamba</a>, GDN, etc.) fix both problems: <span class="math inline">\(O(n)\)</span> time and the ability to express state-tracking tasks. But they have their own weakness: they struggle with <strong>recall and copying</strong> because their hidden state is bounded. You can’t look up an arbitrary earlier token the way attention can.</p>
+<p>The natural solution: use both.</p>
+</section>
+<section id="the-road-to-gated-deltanet" class="level2">
+<h2 class="anchored" data-anchor-id="the-road-to-gated-deltanet">The road to Gated DeltaNet</h2>
+<p>Before diving into the architecture, it helps to understand where OLMo Hybrid’s recurrent component comes from. The lineage goes back further than you might expect.</p>
+<section id="the-delta-rule-1960" class="level3">
+<h3 class="anchored" data-anchor-id="the-delta-rule-1960">The delta rule (1960)</h3>
+<p><a href="https://www-isl.stanford.edu/~widrow/papers/c1960adaptiveswitching.pdf">Widrow and Hoff’s <strong>delta rule</strong></a> (1960) is one of the earliest gradient-based learning rules. For a linear predictor with weight vector <span class="math inline">\(w\)</span>, input <span class="math inline">\(x\)</span>, and target <span class="math inline">\(y\)</span>:</p>
+<p><span class="math display">\[\Delta w = \eta (y - w^\top x) \, x\]</span></p>
+<p>The update corrects the weight in proportion to the prediction error <span class="math inline">\(\delta = y - w^\top x\)</span>. This is an <strong>online</strong> update: one training example arrives, weights change immediately. No batch needed.</p>
+<p>Simple as it is, this rule already contains the pattern that keeps reappearing: a <strong>stored state</strong> is corrected by an <strong>error-driven outer-product update</strong>.</p>
+</section>
+<section id="from-scalar-weights-to-matrix-memory" class="level3">
+<h3 class="anchored" data-anchor-id="from-scalar-weights-to-matrix-memory">From scalar weights to matrix memory</h3>
+<p>The key conceptual step: lift from a weight vector to a matrix-valued associative memory <span class="math inline">\(S \in \mathbb{R}^{d_v \times d_k}\)</span> that maps keys to values. Given a key <span class="math inline">\(k\)</span> and a target value <span class="math inline">\(v\)</span>, the delta-rule update becomes:</p>
+<p><span class="math display">\[S \leftarrow S + \beta(v - Sk)k^\top\]</span></p>
+<p>Expanding and refactoring:</p>
+<p><span class="math display">\[S \leftarrow S(I - \beta k k^\top) + \beta v k^\top\]</span></p>
+<p>This is already the core DeltaNet recurrence, just without time indices.</p>
+</section>
+<section id="deltanet-the-delta-rule-as-a-sequence-layer-schlag-et-al.-2021" class="level3">
+<h3 class="anchored" data-anchor-id="deltanet-the-delta-rule-as-a-sequence-layer-schlag-et-al.-2021">DeltaNet: the delta rule as a sequence layer (Schlag et al., 2021)</h3>
+<p>Here is where the meaning of <span class="math inline">\(t\)</span> changes. In the delta rule, <span class="math inline">\(t\)</span> indexed training examples. <a href="https://arxiv.org/abs/2102.11174">Schlag, Irie, and Schmidhuber (2021)</a> repurposed the same math as a <strong>per-token layer computation</strong>: now <span class="math inline">\(t\)</span> indexes tokens in a sequence. At each token, the model produces key <span class="math inline">\(k_t\)</span>, value <span class="math inline">\(v_t\)</span>, query <span class="math inline">\(q_t\)</span>, and gate <span class="math inline">\(\beta_t\)</span> (all linear projections of the input <span class="math inline">\(x_t\)</span>, just as in attention). The recurrent state update is:</p>
+<p><span class="math display">\[S_t = S_{t-1}(I - \beta_t k_t k_t^\top) + \beta_t v_t k_t^\top\]</span></p>
+<p>The output is <span class="math inline">\(o_t = S_t q_t\)</span>: write uses key <span class="math inline">\(k_t\)</span>, read uses a separate query <span class="math inline">\(q_t\)</span>.</p>
+<p>Compare this to <a href="https://arxiv.org/abs/2006.16236">linear attention</a>, which simply accumulates: <span class="math inline">\(M_t = M_{t-1} + \phi(k_t) v_t^\top\)</span>. Linear attention is a wiki where you can only append pages. DeltaNet is a wiki where you can <strong>edit and overwrite</strong> existing pages. The term <span class="math inline">\((I - \beta_t k_t k_t^\top)\)</span> erases memory along <span class="math inline">\(k_t\)</span> before writing, which is why retrieval error stays bounded as sequence length grows.</p>
+<p><a href="https://arxiv.org/abs/2406.06484">Yang et al.&nbsp;(2024)</a> later developed efficient chunk-parallel training algorithms for DeltaNet, making it practical for large-scale language modeling.</p>
+</section>
+<section id="gated-deltanet-yang-et-al.-2025" class="level3">
+<h3 class="anchored" data-anchor-id="gated-deltanet-yang-et-al.-2025">Gated DeltaNet (Yang et al., 2025)</h3>
+<p><a href="https://arxiv.org/abs/2412.06464">Gated DeltaNet</a> (ICLR 2025) makes two changes:</p>
+<p><span class="math display">\[S_t = \alpha_t \cdot S_{t-1}(I - \beta_t k_t k_t^\top) + v_t k_t^\top\]</span></p>
+<p>First, the gate <span class="math inline">\(\alpha_t \in (0, 1)\)</span> is a <strong>scalar per head</strong> that decays the entire state uniformly. It’s computed as <span class="math inline">\(\alpha_t = \exp(-A \cdot \text{softplus}(W_\alpha x_t + b))\)</span> where <span class="math inline">\(A\)</span> is a learned scalar per head, borrowed from Mamba-2’s SSM discretization. This gives the model a way to forget: in DeltaNet, a memory stored for some old key persists forever if that key never reappears. With <span class="math inline">\(\alpha_t &lt; 1\)</span>, stale memories decay automatically.</p>
+<p>Second, the write term <span class="math inline">\(v_t k_t^\top\)</span> is no longer scaled by <span class="math inline">\(\beta_t\)</span>, decoupling erasure strength from write strength.</p>
+</section>
+<section id="gdn-with-negative-eigenvalues-grazzi-et-al.-2025" class="level3">
+<h3 class="anchored" data-anchor-id="gdn-with-negative-eigenvalues-grazzi-et-al.-2025">GDN with negative eigenvalues (Grazzi et al., 2025)</h3>
+<p>The version used in OLMo Hybrid makes one further change from <a href="https://arxiv.org/abs/2411.12537">Grazzi et al.&nbsp;(2025)</a>: replacing <span class="math inline">\(\beta_t\)</span> with <span class="math inline">\(2\beta_t\)</span> in the erasure term:</p>
+<p><span class="math display">\[S_t = S_{t-1} \cdot \alpha_t (I - 2\beta_t k_t k_t^\top) + v_t k_t^\top\]</span></p>
+<p>This looks minor but has outsized consequences. Since <span class="math inline">\(k_t k_t^\top\)</span> is a rank-1 matrix with eigenvalue <span class="math inline">\(\|k_t\|^2\)</span> along <span class="math inline">\(k_t\)</span> and 0 elsewhere, the transition matrix <span class="math inline">\(I - 2\beta_t k_t k_t^\top\)</span> has eigenvalue <span class="math inline">\(1 - 2\beta_t\)</span> along <span class="math inline">\(k_t\)</span>. When <span class="math inline">\(\beta_t &gt; 0.5\)</span>, that eigenvalue goes <strong>negative</strong>: the state component along <span class="math inline">\(k_t\)</span> flips sign rather than just shrinking.</p>
+<p>Why does this matter? Consider parity tracking (is the running count of 1s even or odd?). Represent even as <span class="math inline">\(s = +1\)</span>, odd as <span class="math inline">\(s = -1\)</span>. Without the factor of 2, the eigenvalue along <span class="math inline">\(k_t\)</span> is <span class="math inline">\(1 - \beta_t \in (0,1)\)</span>, so the state can only decay: <span class="math inline">\(+1 \to +0.2 \to +0.04 \to \ldots\)</span> The signal is lost. With negative eigenvalues, <span class="math inline">\(\beta_t = 1\)</span> gives a factor of <span class="math inline">\(-1\)</span>, so the state cleanly toggles: <span class="math inline">\(+1 \to -1 \to +1 \to \ldots\)</span> Parity is the simplest state-tracking task. <a href="https://arxiv.org/abs/2405.17394">Sarrof et al.&nbsp;(2024)</a> proved that LRNNs with only positive eigenvalues <strong>provably cannot solve it</strong> for arbitrary-length sequences. If you can’t toggle, you can’t track state. Grazzi et al.&nbsp;showed that GDN with negative eigenvalues can simulate <strong>arbitrary finite automata</strong>, a much stronger result.</p>
+<p>Mamba-3 solves the same problem differently: rotation matrices (data-dependent RoPE on B and C projections) achieve equivalent “rotational” capability without explicitly negative eigenvalues. Two competing solutions to the same fundamental limitation.</p>
+</section>
+<section id="how-training-stays-efficient-chunk-parallel-computation" class="level3">
+<h3 class="anchored" data-anchor-id="how-training-stays-efficient-chunk-parallel-computation">How training stays efficient: chunk-parallel computation</h3>
+<p>A natural concern: isn’t a recurrence like <span class="math inline">\(S_t = f(S_{t-1}, x_t)\)</span> inherently sequential? For autoregressive <strong>inference</strong>, yes. Each token must update the state before the next can be decoded. But for <strong>training</strong>, DeltaNet-family models use <a href="https://arxiv.org/abs/2406.06484">chunk-parallel algorithms</a> (implemented in the <a href="https://github.com/fla-org/flash-linear-attention">flash-linear-attention</a> library) that recover most of the hardware efficiency of attention.</p>
+<p>The key insight is that the recurrence can be decomposed within fixed-size chunks. Split the sequence into chunks of size <span class="math inline">\(C\)</span>. Within chunk <span class="math inline">\([t]\)</span>, the state at position <span class="math inline">\(r\)</span> can be written:</p>
+<p><span class="math display">\[S^r_{[t]} = S[t] \cdot P^r_{[t]} + H^r_{[t]}\]</span></p>
+<p>where <span class="math inline">\(P^r_{[t]}\)</span> captures how incoming memory is transformed and <span class="math inline">\(H^r_{[t]}\)</span> captures what the chunk writes. Because the transition matrices <span class="math inline">\(I - \beta_t k_t k_t^\top\)</span> are rank-1 perturbations of identity, both <span class="math inline">\(P\)</span> and <span class="math inline">\(H\)</span> admit structured representations that can be computed via dense matrix multiplications.</p>
+<p>The result:</p>
+<ul>
+<li><strong>Within a chunk</strong>: all outputs are computed together using batched matmuls, fully parallel.</li>
+<li><strong>Across chunks</strong>: only a single state update <span class="math inline">\(S[t+1] = S[t] P_{[t]} + H_{[t]}\)</span> per boundary, reducing sequential depth from <span class="math inline">\(L\)</span> to <span class="math inline">\(L/C\)</span>.</li>
+</ul>
+<p>This reduces sequential depth by a factor of <span class="math inline">\(C\)</span> (typically 64–256), making training throughput competitive with attention. OLMo Hybrid slightly outperforms OLMo 3 in early training throughput benchmarks.</p>
+</section>
+</section>
+<section id="the-landscape-recurrent-layers-converging-to-hybrid" class="level2">
+<h2 class="anchored" data-anchor-id="the-landscape-recurrent-layers-converging-to-hybrid">The landscape: recurrent layers converging to hybrid</h2>
+<p>OLMo Hybrid is part of a broader wave. Multiple teams have independently arrived at the same conclusion: pure attention for 100% of layers is suboptimal. The recurrent components come from two distinct lineages (delta-rule memory and state space models), both now pairing with attention in production-scale LLMs.</p>
+<div class="cell" data-layout-align="default">
+<div class="cell-output-display">
+<div id="fig-lineage" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-lineage">flowchart TB
+    subgraph delta["Delta-Rule Lineage"]
+        direction TB
+        DR["Delta Rule&lt;br/&gt;&lt;small&gt;Widrow &amp; Hoff, 1960&lt;/small&gt;"]
+        LA["Linear Attention&lt;br/&gt;&lt;small&gt;Katharopoulos et al. 2020&lt;/small&gt;"]
+        DN["DeltaNet&lt;br/&gt;&lt;small&gt;Schlag et al. 2021&lt;/small&gt;"]
+        GDN["Gated DeltaNet&lt;br/&gt;&lt;small&gt;Yang et al. 2025&lt;/small&gt;"]
+        GDNE["GDN + Neg. Eigenvalues&lt;br/&gt;&lt;small&gt;Grazzi et al. 2025&lt;/small&gt;"]
+        KDA["Kimi Delta Attention&lt;br/&gt;&lt;small&gt;Kimi Team 2025&lt;/small&gt;"]
+        DR --&gt; LA --&gt; DN --&gt; GDN --&gt; GDNE
+        GDN --&gt; KDA
+    end
+
+    subgraph ssm["State Space Model Lineage"]
+        direction TB
+        S4["S4&lt;br/&gt;&lt;small&gt;Gu et al. 2022&lt;/small&gt;"]
+        M1["Mamba&lt;br/&gt;&lt;small&gt;Gu &amp; Dao 2024&lt;/small&gt;"]
+        M2["Mamba-2&lt;br/&gt;&lt;small&gt;Dao &amp; Gu 2024&lt;/small&gt;"]
+        M3["Mamba-3&lt;br/&gt;&lt;small&gt;Lahoti, Dao, Gu et al. 2026&lt;/small&gt;"]
+        S4 --&gt; M1 --&gt; M2 --&gt; M3
+    end
+
+    subgraph attn["Attention"]
+        direction TB
+        TF["Transformer&lt;br/&gt;&lt;small&gt;Vaswani et al. 2017&lt;/small&gt;"]
+        MLA["Multi-Head Latent Attn&lt;br/&gt;&lt;small&gt;DeepSeek 2024&lt;/small&gt;"]
+        TF --&gt; MLA
+    end
+
+    subgraph hybrids["Hybrid LLMs (2024-2026)"]
+        direction TB
+        RG["RecurrentGemma / Griffin&lt;br/&gt;&lt;small&gt;Google 2024&lt;/small&gt;"]
+        SB["Samba&lt;br/&gt;&lt;small&gt;Microsoft 2025&lt;/small&gt;"]
+        NH["Nemotron-H 8B&lt;br/&gt;&lt;small&gt;NVIDIA 2025&lt;/small&gt;"]
+        FH["Falcon H1 7B&lt;br/&gt;&lt;small&gt;TII 2025&lt;/small&gt;"]
+        KL["Kimi Linear 48B&lt;br/&gt;&lt;small&gt;Moonshot 2025&lt;/small&gt;"]
+        QW["Qwen 3.5&lt;br/&gt;&lt;small&gt;Alibaba 2026&lt;/small&gt;"]
+        OH["&lt;b&gt;OLMo Hybrid 7B&lt;/b&gt;&lt;br/&gt;&lt;small&gt;Allen AI 2026&lt;/small&gt;"]
+    end
+
+    GDNE --&gt; OH
+    GDN --&gt; QW
+    KDA --&gt; KL
+    M2 --&gt; NH
+    M2 --&gt; FH
+    M1 --&gt; SB
+    S4 --&gt; RG
+    MLA --&gt; KL
+
+    style OH fill:#4a9eff,color:#fff,stroke:#2a7edf
+    style KL fill:#9b59b6,color:#fff,stroke:#7d3c98
+    style M3 fill:#e67e22,color:#fff,stroke:#d35400
+    style GDNE fill:#2ecc71,color:#fff,stroke:#27ae60
+    style KDA fill:#9b59b6,color:#fff,stroke:#7d3c98
+</pre>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-lineage-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Two research lineages (delta-rule memory and state space models) converge with attention in modern hybrid LLMs. Every hybrid also uses transformer attention (not drawn to reduce clutter).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Every hybrid in the diagram also uses transformer attention (edges omitted for clarity). Other notable hybrids include <a href="https://arxiv.org/abs/2404.07839">RecurrentGemma/Griffin</a> (Google), <a href="https://arxiv.org/abs/2406.07522">Samba</a> (Microsoft), <a href="https://arxiv.org/abs/2504.03624">Nemotron-H</a> (NVIDIA), and <a href="https://arxiv.org/abs/2507.22448">Falcon H1</a> (TII). A few details:</p>
+<ul>
+<li><strong>OLMo Hybrid</strong> uses GDN with negative eigenvalues. <a href="https://github.com/QwenLM/Qwen3.5"><strong>Qwen 3.5</strong></a> uses standard GDN without the negative eigenvalue extension.</li>
+<li><a href="https://arxiv.org/abs/2510.26692"><strong>Kimi Linear</strong></a> extends GDN with channel-wise gating (per-feature-dimension rather than per-head), calling their variant <strong>Kimi Delta Attention (KDA)</strong>. It pairs KDA with <a href="https://arxiv.org/abs/2405.04434">DeepSeek’s Multi-Head Latent Attention (MLA)</a> in a 3:1 ratio, with MoE for the MLP layers.</li>
+<li><a href="https://arxiv.org/abs/2603.15569"><strong>Mamba-3</strong></a> (ICLR 2026) addresses the state-tracking weakness of earlier Mamba models through rotation matrices and a MIMO formulation. Different mechanism, same goal as negative eigenvalues: enable state tracking.</li>
+<li>OLMo’s ablations compared GDN against Mamba-2 at 7 model sizes (60M to 1B). <strong>GDN won at every scale</strong>, even in hybrid configurations.</li>
+</ul>
+</section>
+<section id="architecture-3-parts-gdn-1-part-attention" class="level2">
+<h2 class="anchored" data-anchor-id="architecture-3-parts-gdn-1-part-attention">Architecture: 3 parts GDN, 1 part attention</h2>
+<p>OLMo Hybrid takes <a href="https://arxiv.org/abs/2512.13961">OLMo 3</a> 7B and replaces its sliding-window attention layers with GDN layers (with negative eigenvalues), keeping every 4th layer as full multi-head attention. The result: a 3:1 ratio of GDN-to-attention layers, interleaved uniformly.</p>
+<section id="why-this-specific-configuration" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-specific-configuration">Why this specific configuration?</h3>
+<p>The paper ran extensive ablations at 7 model sizes (60M to 1B) to justify three design decisions:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Winner</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RNN type</td>
+<td>GDN over Mamba2</td>
+<td>Mamba2 performed worse at every scale, even in hybrid configurations</td>
+</tr>
+<tr class="even">
+<td>Layer placement</td>
+<td>Interleaved over middle-clustered</td>
+<td>Distributing attention uniformly lets every part of the network access global context</td>
+</tr>
+<tr class="odd">
+<td>Attention ratio</td>
+<td>3:1 over 1:1 or 7:1</td>
+<td>3:1 gives the best trade-off; all hybrid ratios beat pure transformer at large scale</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inference-efficiency" class="level3">
+<h3 class="anchored" data-anchor-id="inference-efficiency">Inference efficiency</h3>
+<p>The per-layer state size comparison is striking:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Layer Type</th>
+<th>FP16 Size</th>
+<th>vs.&nbsp;GDN</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Full Attention (32K seq, 32 KV heads)</td>
+<td>512 MiB</td>
+<td>485x</td>
+</tr>
+<tr class="even">
+<td>GQA (32K seq, 8 KV heads)</td>
+<td>128 MiB</td>
+<td>121x</td>
+</tr>
+<tr class="odd">
+<td>SWA (4096 window, 8 KV heads)</td>
+<td>16.0 MiB</td>
+<td>15.2x</td>
+</tr>
+<tr class="even">
+<td><strong>GDN (30 heads)</strong></td>
+<td><strong>1.05 MiB</strong></td>
+<td><strong>1x</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Since 75% of layers use GDN, the total inference state is dramatically smaller than a pure transformer.</p>
+</section>
+</section>
+<section id="pretraining-results" class="level2">
+<h2 class="anchored" data-anchor-id="pretraining-results">Pretraining results</h2>
+<p>The headline numbers from pretraining on 6T tokens:</p>
+<ul>
+<li><strong>35% fewer tokens</strong> to match OLMo 3’s Common Crawl loss</li>
+<li><strong>49% fewer tokens</strong> to match OLMo 3’s MMLU accuracy</li>
+<li>Since OLMo Hybrid has roughly the same throughput as OLMo 3, token savings translate directly to compute savings</li>
+</ul>
+<p>After mid-training, OLMo Hybrid outperforms OLMo 3 7B on <strong>every evaluation domain</strong> in OlmoBaseEval: math (+1.4%), code (+0.8%), STEM MC (+3.6%), non-STEM MC (+3.1%), GenQA (+2.3%).</p>
+<section id="long-context-performance" class="level3">
+<h3 class="anchored" data-anchor-id="long-context-performance">Long-context performance</h3>
+<p>After long-context extension, OLMo Hybrid shows large gains on RULER, a standard long-context benchmark:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Context Length</th>
+<th>OLMo 3 (YaRN)</th>
+<th>OLMo Hybrid (DroPE)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>4K</td>
+<td>95.8</td>
+<td>92.2</td>
+</tr>
+<tr class="even">
+<td>8K</td>
+<td>89.3</td>
+<td>89.8</td>
+</tr>
+<tr class="odd">
+<td>16K</td>
+<td>83.2</td>
+<td>88.4</td>
+</tr>
+<tr class="even">
+<td>32K</td>
+<td>78.9</td>
+<td>86.2</td>
+</tr>
+<tr class="odd">
+<td>64K</td>
+<td>70.9</td>
+<td><strong>85.0</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The gap widens with context length. At 64K tokens, OLMo Hybrid scores 85.0 vs.&nbsp;70.9, a <strong>14.1 point improvement</strong>. The recurrent layers provide implicit positional encoding, reducing reliance on RoPE extrapolation.</p>
+<p>The paper also explores <strong>DroPE</strong> (dropping RoPE after mid-training), which works especially well with hybrid architectures because the GDN layers already provide positional information through their recurrent structure.</p>
+</section>
+</section>
+<section id="why-hybrids-are-more-expressive-the-theory" class="level2">
+<h2 class="anchored" data-anchor-id="why-hybrids-are-more-expressive-the-theory">Why hybrids are more expressive: the theory</h2>
+<p>For me, the most interesting part of the paper is the theoretical argument for <em>why</em> hybrid models scale better, not just <em>that</em> they do.</p>
+<section id="complementary-strengths" class="level3">
+<h3 class="anchored" data-anchor-id="complementary-strengths">Complementary strengths</h3>
+<p>Prior work established that:</p>
+<ul>
+<li><strong>Transformers</strong> can recall/copy from arbitrary positions but cannot track state sequentially (e.g., tracking variable assignments: <code>x=1, y=x+1, ...</code>).</li>
+<li><strong>Linear RNNs</strong> (with sufficient expressivity, like GDN with negative eigenvalues) can track state but struggle with recall from arbitrary positions (bounded state).</li>
+</ul>
+</section>
+<section id="hybrids-are-more-than-the-sum-of-their-parts" class="level3">
+<h3 class="anchored" data-anchor-id="hybrids-are-more-than-the-sum-of-their-parts">Hybrids are more than the sum of their parts</h3>
+<p>The paper proves something stronger: hybrid models can express tasks that <strong>neither</strong> pure transformers <strong>nor</strong> pure GDN can solve alone. The key example is <strong>state-based recall</strong>, a task that requires:</p>
+<ol type="1">
+<li>Tracking state through a sequence (needs recurrence)</li>
+<li>Retrieving a value associated with the current state (needs attention)</li>
+</ol>
+<p>Neither primitive alone can solve this, but a hybrid with even one alternation between GDN and attention layers can. The paper validates this on synthetic tasks, showing that hybrid models learn state-based recall perfectly while pure transformers and pure RNNs fail.</p>
+</section>
+<section id="from-expressivity-to-scaling-laws" class="level3">
+<h3 class="anchored" data-anchor-id="from-expressivity-to-scaling-laws">From expressivity to scaling laws</h3>
+<p>The more subtle question: why should expressivity on synthetic tasks predict better loss on natural language? The paper adapts the <a href="https://arxiv.org/abs/2303.13506"><strong>quantization model</strong> of neural scaling laws</a> (Michaud et al., NeurIPS 2023) to answer this.</p>
+<p>The quantization model views language modeling as a collection of many discrete “tasks” (quanta), each of which the model either learns or doesn’t. The key assumptions are:</p>
+<ol type="1">
+<li>Tasks follow a Zipfian frequency distribution in the data</li>
+<li>Each task requires a threshold of relevant training tokens before it becomes learnable</li>
+<li>Each task costs a fixed number of parameters to represent</li>
+</ol>
+<p>The paper adds a new dimension: <strong>expressibility</strong>. For a given architecture, each task is either expressible or inexpressible, with probability <span class="math inline">\(1 - \epsilon\)</span> and <span class="math inline">\(\epsilon\)</span> respectively. Inexpressible tasks either can’t be learned at all, or require more parameters and more data to approximate.</p>
+<p>This leads to a modified scaling law:</p>
+<p><span class="math display">\[L(N) - L_\infty^\epsilon \propto A_\epsilon \cdot N^{-\alpha}\]</span></p>
+<p>where the coefficient <span class="math inline">\(A_\epsilon\)</span> and irreducible loss <span class="math inline">\(L_\infty^\epsilon\)</span> depend on the expressivity parameter <span class="math inline">\(\epsilon\)</span>. The key prediction: <strong>decreasing <span class="math inline">\(\epsilon\)</span> (more expressivity) shifts the loss curve down</strong>, improving scaling efficiency without changing the power-law exponent.</p>
+<p>The paper validates this by fitting Chinchilla-style scaling laws <span class="math inline">\(L(N, D) = E + A/N^\alpha + B/D^\beta\)</span> across 7 model sizes (60M to 1B). The results match the theory’s predictions:</p>
+<ul>
+<li>The hybrid’s <strong>data coefficient</strong> <span class="math inline">\(B\)</span> is significantly lower than the transformer’s (83.7 vs.&nbsp;94.9, non-overlapping 95% CIs). More expressive models extract more value from each training token.</li>
+<li>The <strong>scaling exponents</strong> <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are indistinguishable across architectures, consistent with the prediction that expressivity shifts the constants, not the power-law exponents.</li>
+<li>The fitted laws predict the actual 7B model losses with &lt;0.3% error, validating extrapolation.</li>
+</ul>
+<p>Projected token savings grow with model size: ~1.3x at 1B, ~1.7x at 7B, and ~1.9x at 70B parameters.</p>
+</section>
+</section>
+<section id="post-training" class="level2">
+<h2 class="anchored" data-anchor-id="post-training">Post-training</h2>
+<p>The paper applies OLMo 3’s post-training pipeline (Think SFT, Instruct SFT, DPO) to OLMo Hybrid without hybrid-specific tuning. The hybrid model is competitive: it tends to outperform OLMo 3 on reasoning-heavy tasks but performs slightly worse on tasks that benefit from more stochastic generation. Since the recipe was reused as-is, there’s likely room for further gains with hybrid-aware tuning.</p>
+</section>
+<section id="what-this-means-for-the-field" class="level2">
+<h2 class="anchored" data-anchor-id="what-this-means-for-the-field">What this means for the field</h2>
+<p>I think this paper makes a strong case for hybrid architectures as the default for language modeling. The argument works at three levels:</p>
+<ol type="1">
+<li><strong>Theory</strong>: hybrids are strictly more expressive, and this expressivity mathematically predicts better scaling.</li>
+<li><strong>Controlled experiments</strong>: in scaling studies with identical data and training recipes, hybrids consistently beat transformers.</li>
+<li><strong>Large-scale validation</strong>: OLMo Hybrid 7B outperforms OLMo 3 7B at the same scale, with the same data.</li>
+</ol>
+<p>The practical benefits add up:</p>
+<ul>
+<li><strong>Training cost</strong>: ~1.7x fewer tokens at 7B scale, growing to ~1.9x at 70B</li>
+<li><strong>Inference cost</strong>: 485x smaller per-layer state for recurrent layers</li>
+<li><strong>Long context</strong>: much better performance at 32K+ tokens</li>
+</ul>
+<p>What makes me most confident is convergence. Multiple independent teams (Allen AI, NVIDIA, Alibaba, Moonshot) have arrived at the same conclusion through different architectural paths. The delta-rule lineage (DeltaNet, GDN) and the SSM lineage (Mamba) both arrive at: <strong>mix recurrence with attention</strong>.</p>
+<p>Open questions remain:</p>
+<ul>
+<li><strong>Optimal ratios at larger scale.</strong> The 3:1 ratio works well at 7B, but may shift at 70B+.</li>
+<li><strong>Post-training recipes</strong> tuned specifically for hybrid architectures.</li>
+<li><strong>Which recurrent layer wins long-term.</strong> GDN with negative eigenvalues, Kimi Delta Attention, and Mamba-3 represent actively competing approaches.</li>
+<li><strong>Hardware optimization.</strong> Custom kernels for linear RNNs are still less mature than attention kernels, though chunk-parallel algorithms close much of the gap.</li>
+</ul>
+<p>Attention isn’t going away. It’s essential for recall and global context. But using it for 100% of layers looks increasingly hard to justify when cheaper, more expressive primitives can handle most of the work.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/zzsi\.github\.io\/blog\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
