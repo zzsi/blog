@@ -1,8 +1,6 @@
 ---
 title: "Doc AI Museum: Room 1"
 subtitle: "Templates, Registration, and OCR"
-resources:
-  - assets/room1/**
 format:
   html:
     toc: false
