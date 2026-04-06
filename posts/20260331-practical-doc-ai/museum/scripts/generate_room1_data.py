@@ -966,7 +966,7 @@ def generate_manifest() -> dict:
                         "expected": field.value,
                         "ocr_text": ocr_text,
                         "correct": bool(correct),
-                        "crop": str(crop_path.relative_to(ASSET_DIR)),
+                        "crop": str(crop_path.relative_to(OUTPUT_DIR)),
                     }
                 )
         else:
@@ -986,8 +986,8 @@ def generate_manifest() -> dict:
             {
                 "id": profile.id,
                 "description": profile.description,
-                "image": str(variant_path.relative_to(ASSET_DIR)),
-                "matching_visualization": str(match_path.relative_to(ASSET_DIR)),
+                "image": str(variant_path.relative_to(OUTPUT_DIR)),
+                "matching_visualization": str(match_path.relative_to(OUTPUT_DIR)),
                 "profile": {
                     "print_artifacts": profile.print_artifacts,
                     "paper_artifacts": profile.paper_artifacts,
@@ -1002,8 +1002,8 @@ def generate_manifest() -> dict:
 
     manifest = {
         "template": {
-            "blank_image": str(blank_path.relative_to(ASSET_DIR)),
-            "filled_image": str(filled_path.relative_to(ASSET_DIR)),
+            "blank_image": str(blank_path.relative_to(OUTPUT_DIR)),
+            "filled_image": str(filled_path.relative_to(OUTPUT_DIR)),
             "size": {"width": TEMPLATE_SIZE[0], "height": TEMPLATE_SIZE[1]},
             "page": PAGE_BOX,
             "fields": [

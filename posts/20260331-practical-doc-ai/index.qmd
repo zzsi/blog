@@ -85,6 +85,8 @@ Templates haven't disappeared. They've been modernized in several ways.
 **OCR itself.** The biggest shift is that OCR engines are increasingly VLMs. Models like [LightOnOCR-2](https://arxiv.org/abs/2601.14251) (1B parameters, under $0.01 per 1,000 pages), [DeepSeek-OCR 2](https://github.com/deepseek-ai/DeepSeek-OCR) (causal visual flow encoder for layout-aware reading order), [Granite-Docling](https://huggingface.co/ibm-granite/granite-docling-258M) (258M parameters), and [olmOCR 2](https://allenai.org/blog/olmocr-2) replace the traditional multi-stage OCR pipeline with a single end-to-end model. OCR is converging with document understanding rather than remaining a separate preprocessing step.
 :::
 
+To see a template-registration-OCR pipeline in action, with synthetic corruptions that show exactly where it breaks, visit [Room 1 of the Doc AI Museum](museum/room1-templates.qmd).
+
 ## Phase 2: detector-first pipelines
 
 By the mid-2010s, convolutional networks had proven they could reliably detect and localize objects in natural images. Models like Faster R-CNN (2015) and [RetinaNet](https://arxiv.org/abs/1708.02002) (2017) made it practical to apply the same ideas to documents: train detectors to find regions of interest like tables, signatures, key-value fields, checkboxes, and headers.
