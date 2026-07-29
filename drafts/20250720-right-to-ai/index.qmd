@@ -1,101 +1,251 @@
 ---
-title: "Beyond Counsel: Why Citizens Deserve a Right to Sufficient AI Advisory"
+title: "Beyond Counsel: A Practical Right to AI Advisory"
 date: "2025-07-20"
-categories: [AI Ethics, Law, Policy]
+categories: [ai, policy, law, digital rights]
+format:
+  html:
+    toc: true
+    toc-depth: 2
 ---
 
-On a gray Tuesday morning, María Alvarez sat at her kitchen table, laptop open, eyes darting between half‑finished coffee and a health‑insurance marketplace she barely understood. She was forty‑nine, newly self‑employed, and one misclick away from locking herself into a plan that could swallow half her annual income—or leave her uncovered when she needed care most. The instructions were written in courteous but opaque prose, the deductible tables hid behind hyperlinks, and actuarial terms—coinsurance, out‑of‑pocket maximum, formulary tiers—bloomed like weeds everywhere she looked.
+On a gray Tuesday morning, Maria Alvarez sat at her kitchen table, laptop open, trying to choose a health-insurance plan. She was forty-nine, newly self-employed, and one bad click away from a plan that could swallow too much of her income or leave her exposed when she needed care.
 
-So María did what many of us do: she guessed. She chose the third cheapest plan, prayed she was healthy enough, and hoped she hadn’t made a catastrophic mistake.
+The portal was polite but not helpful. Deductibles hid behind links. "Coinsurance" and "out-of-pocket maximum" sounded related but not interchangeable. Drug coverage lived in a separate formulary. One plan looked cheaper until she realized her specialist was out of network.
 
-If María had been facing a criminal charge instead of an insurance portal, she would have had the U.S. Constitution at her back. The Sixth Amendment guarantees her the right to competent legal counsel, paid for by the state if she cannot afford it. Society long ago recognized that ordinary citizens cannot possibly match the technical skill, specialized language, and professional resources of prosecutors. We insist on balance—not because every defendant is innocent, but because dignity demands everyone participate meaningfully in decisions that can upend a life.
+So Maria did what many people do. She guessed.
 
-**The digital world has reached a similar tipping point.** Algorithms weigh in on everything from credit limits to college admissions; bureaucracies publish ever‑expanding rulebooks; corporations negotiate contracts in font sizes small enough to dodge notice. The gap between expert knowledge and everyday understanding is now a canyon, and it is widening faster than traditional institutions can respond.
+If Maria had been facing a criminal charge, the legal system would at least recognize the shape of the problem. The Sixth Amendment guarantees assistance of counsel in criminal prosecutions, and [Gideon v. Wainwright](https://tile.loc.gov/storage-services/service/ll/usrep/usrep372/usrep372335/usrep372335.pdf) made that right real for defendants who cannot afford a lawyer. The principle is not that lawyers are magic. It is that some systems are too consequential and too specialized for ordinary people to navigate alone.
 
-That is why I believe we should begin talking seriously about a new civic guarantee: a **right to sufficient AI advisory**.
+Most modern life does not happen in a courtroom. It happens in portals, eligibility screens, insurance forms, benefits letters, student-aid applications, tax software, rental platforms, credit applications, and employment systems. The stakes are often lower than prison, but they are not low. Health care, housing, credit, education, and income support determine the terms on which people live.
 
-> “If technology is a form of power, then access to the best advice it can synthesize is a form of freedom.”
+That is why I think we need a narrower and more practical idea than "a human right to AI": a **right to sufficient AI advisory** in high-stakes public and regulated systems.
 
----
+Not a right to any model. Not a right to ask a chatbot anything. Not a constitutional shortcut around every hard policy question.
 
-### The Counsel Analogy—And Where It Breaks
+The right should mean this: when a person must make or contest a high-stakes decision inside a complex digital system, they should have access to competent, independent, private, accessible, source-grounded AI assistance, with human escalation when the stakes or uncertainty require it.
 
-When Clarence Earl Gideon stood before the Supreme Court in 1963, penniless and accused of burglary, he asked for a lawyer. The Court agreed he had a constitutional right to one, cementing the idea that some forms of expertise are so instrumental to justice that government must help supply them. Today, prosecutors still outnumber public defenders and funding remains tight, but the principle is uncontested: navigating criminal law without a guide is fundamentally unfair.
+::: {.callout-note appearance="simple"}
+## TL;DR
 
-Now replace the courtroom with a mortgage refinancing screen, or a disability‑benefit appeal, or a small‑business tax schedule. We are again asking citizens to decode labyrinthine systems written by specialists, enforced automatically, and outcome‑determinative for livelihoods. The difference is scale: millions more daily interactions, far less theatrical than a trial, but cumulatively just as consequential.
+- The access problem is real: people face increasingly complex digital systems without enough expert help.
+- The legal-counsel analogy is useful but limited. AI advisory is not representation; it is closer to a translator, map, checklist, and first-pass advocate.
+- A broad constitutional right to AI access is unlikely. A statutory and administrative right in specific domains is much more plausible.
+- Existing scaffolding already exists: due process, civil legal aid, ADA effective-communication norms, AI risk-management frameworks, EU high-risk AI rules, access-to-justice work, and public digital assistants.
+- The hard part is defining "sufficient": source citation, calibrated confidence, independence, privacy, accessibility, auditability, and human fallback.
+:::
 
-And yet the modern state offers little beyond PDF instructions and understaffed call centers. Private‑sector tools exist—chatbots that suggest tax deductions, symptom‑checker apps, credit‑card comparison sites—but these come with advertising incentives, hidden data harvesting, or narrow purpose. They owe no fiduciary duty to the user. They are not counsel; they are sales reps wearing AI skins.
+## What Problem Are We Solving?
 
----
+The internet gave people access to information. It did not give them equal access to judgment.
 
-### What Does "Sufficient" Mean?
+That distinction matters. A person trying to choose a health plan, appeal a benefits denial, understand a debt-collection notice, compare student-loan repayment options, or check whether a landlord's demand is lawful does not just need a web page. They need help applying rules to their specific facts.
 
-Lawyers are judged by a standard of competence that evolves as precedent and practice mature. A right to AI advisory would need its own evolving yardstick. Here is a starting sketch:
+The current system mostly offers three bad options:
 
-* **Competence:** The advisor must meet a statistically validated accuracy threshold and surface the provenance of its suggestions. Explaining *why* Plan A is safer than Plan B cannot be optional.
-* **Independence:** It must be structurally insulated from the organizations whose products or rules it critiques—no undisclosed referral fees, no upsells embedded in advice.
-* **Accessibility:** Free at the point of use, multilingual, and designed for people with limited digital literacy or disabilities. In effect, an ADA for algorithms.
-* **Privacy:** User data stays siloed, encrypted, and never sold. Recall how attorney‑client privilege undergirds trust; an AI counterpart needs similar guardrails.
+- Read a long document and hope you interpret it correctly.
+- Call an overwhelmed help line.
+- Pay for professional advice, if you can afford it and know whom to trust.
 
-If those criteria sound ambitious, remember that Gideon did not instantly materialize armies of public defenders; it set an aspiration, forcing institutions to build toward it.
+This is not only inconvenient. It is a justice and capacity problem.
 
----
+The [Legal Services Corporation's 2022 Justice Gap report](https://justicegap.lsc.gov/resource/2022-justice-gap-report/) found that low-income Americans received no or insufficient legal help for 92% of their civil legal problems. Many of those problems involve basic needs: housing, health care, family safety, income, and debt. The gap is not only in courts. It appears wherever rules determine access to important goods.
 
-### Early Glimpses of the Future
+AI does not automatically fix this. A hallucinating chatbot can make the problem worse. But the capability now exists to build systems that read rules, cite sources, ask clarifying questions, compare options, draft forms, explain tradeoffs, and stop when they are uncertain. That is the opening.
 
-You can already see prototypes flickering into existence. Estonia’s nationwide “Kratt” virtual assistant helps residents navigate government services in natural language. Spain’s *Carta de Derechos Digitales* enshrines a right to algorithmic transparency. The European Union’s AI Act, passed in 2024, classifies public‑service AI as “high‑risk,” demanding audits and human oversight. None of these, however, amount to a *right* to personal AI counsel. They regulate providers, not empower citizens.
+## The Counsel Analogy, With Limits
 
-On the commercial side, TurboTax’s AI coach and the NHS’s 111 triage chatbot inch closer, yet both remain company properties, not public assets. Their loyalties are negotiated by terms of service, not constitutional mandate.
+The public-defender analogy is powerful because it names an asymmetry. The state, insurers, lenders, employers, landlords, universities, and platforms often know the rules better than the person affected by them. When the gap becomes too large, participation becomes formal rather than meaningful.
 
----
+But AI advisory is not counsel in the full legal sense.
 
-### Why Enshrine a Right?
+A lawyer can represent you, owe fiduciary duties, exercise professional judgment, negotiate, appear in court, and take responsibility for legal strategy. An AI advisory system should not pretend to do all that. It should be closer to:
 
-**Cognitive Equity** The internet gave us universal publishing; AI promises universal analysis. Leaving that promise to market forces risks entrenching a new knowledge aristocracy—the well advised versus the algorithmically outmatched.
+- a translator that turns institutional language into plain language
+- a map that shows available paths through a process
+- a checklist that catches missing evidence and deadlines
+- a calculator that applies rules to facts
+- a source-grounded explainer that shows why an answer follows
+- a triage system that knows when to bring in a human
 
-**Procedural Justice** Whether you receive cancer treatment, student‑loan forgiveness, or child‑care subsidies increasingly hinges on opaque risk scores and rule checks. A right to AI advisory restores a measure of symmetry between citizen and system.
+That narrower framing is legally stronger and more useful.
 
-**Economic Efficiency** Mistakes are expensive. The 2019 Dutch child‑benefit scandal—where flawed fraud algorithms wrecked thousands of families—will cost billions in reparations and lost productivity. Preventive advice is cheaper than post‑hoc scandal management.
+The better legal analogy is not only [Gideon](https://tile.loc.gov/storage-services/service/ll/usrep/usrep372/usrep372335/usrep372335.pdf). It is also administrative due process. [Goldberg v. Kelly](https://tile.loc.gov/storage-services/service/ll/usrep/usrep397/usrep397254/usrep397254.pdf) recognized that public benefits can be vital enough to require fair procedures before termination. [Mathews v. Eldridge](https://supreme.justia.com/cases/federal/us/424/319/) gave the familiar balancing frame: the private interest, the risk of erroneous deprivation, the value of additional safeguards, and the government's burden.
 
-**Democratic Feedback** Aggregated, anonymized queries can reveal which statutes confuse citizens most, guiding legislators toward clearer drafting—an iterative loop of governance enhanced by data.
+AI advisory fits naturally into that frame. It is not a universal substitute for hearings, lawyers, doctors, or caseworkers. It is an additional safeguard when the risk of error is high and the marginal cost of guided assistance is falling.
 
----
+## The Policy Scaffolding Already Exists
 
-### Common Pushback—and Rebuttals
+The proposal sounds new, but many pieces already exist. The missing move is to connect them into an affirmative access right.
 
-"**Won’t people become dependent on AI?**" Some will; many already rely on GPS. The goal is not to replace human judgment but to scaffold it. Just as a lawyer doesn’t rob you of agency, neither would an advisory model that explains choices, cites evidence, and invites override.
+| Existing scaffold | What it already gives us | What is still missing |
+| --- | --- | --- |
+| Civil legal aid and access-to-justice work | A clear record that people cannot navigate many civil systems alone | Enough scalable assistance for routine problems before crisis |
+| Due-process doctrine | A way to scale procedural safeguards with stakes and error risk | A modern safeguard for digital-first agencies and portals |
+| [ADA effective communication](https://www.ada.gov/resources/effective-communication/) | A principle that access must be usable, not merely available | Comparable expectations for complex digital decision systems |
+| [EU AI Act Annex III](https://ai-act-service-desk.ec.europa.eu/en/ai-act/annex-3) | Recognition that AI in education, employment, credit, public benefits, law enforcement, and justice can be high risk | A citizen-facing right to advice when dealing with those systems |
+| [NIST AI Risk Management Framework](https://www.nist.gov/itl/ai-risk-management-framework) | A practical governance vocabulary: govern, map, measure, manage | A service standard for public-facing advisory systems |
+| [ACUS automated legal guidance recommendations](https://www.acus.gov/recommendation/automated-legal-guidance-federal-agencies) | Best-practice thinking for agencies that publish automated legal guidance | Stronger duties for accuracy, updates, appeal paths, and reliance |
+| [Burokratt](https://www.kratid.ee/en/burokratt) in Estonia | A public-sector model for AI-assisted service navigation | Stronger rights language and domain-specific safeguards |
+| Spain's [Digital Rights Charter](https://www.redipd.org/en/document/carta-derechos-digitales-en.pdf) | A rights vocabulary for digital public life and algorithmic transparency | Personalized assistance at the moment of decision |
+| [UPL modernization work](https://www.ncsc.org/sites/default/files/media/document/AI_UPL_WhitePaper.pdf) | A recognition that unauthorized-practice rules can block useful AI legal help | Carefully bounded carve-outs, certification, and escalation rules |
 
-"**AI is biased; why codify its role?**" Because bias thrives in darkness. A statutory right would come bundled with audit requirements, redress mechanisms, and a public‑interest mandate—the opposite of today’s unregulated chatbots.
+The EU AI Act is especially instructive. It does not create a right to personal AI counsel. But it marks many of the same domains as high risk: education, employment, access to essential services, creditworthiness, law enforcement, migration, and justice. That list is a useful starting point for where advisory rights should be considered first.
 
-"**This sounds expensive.**" Training a domain‑specific language model is orders of magnitude cheaper than staffing equivalent human expertise for every citizen interaction. Moreover, cost‑sharing frameworks—open‑source models, public cloud credits, civic‑tech partnerships—can drive marginal costs toward zero.
+The U.S. path would look different. Constitutional litigation is not the main route. Federal and state statutes, agency rules, procurement standards, court self-help programs, and public-benefit modernization projects are more realistic.
 
-"**Private companies already offer tools.**" Public defenders coexist with private attorneys; both have roles. The right protects those who cannot afford premium services and compels baseline quality across the board.
+## What "Sufficient" Should Mean
 
----
+"Access to AI" is too vague. "Sufficient AI advisory" should be a standard.
 
-### How Might We Get There?
+A useful standard would include at least seven requirements.
 
-1. **Statutory Seeds** Congress or parliaments could graft an advisory clause onto existing consumer‑protection or administrative‑procedure acts, starting with high‑impact domains like healthcare or housing.
-2. **Pilot Sandboxes** Governments partner with universities and civic nonprofits to deploy open‑weight models, testing accuracy, bias, and user experience on opt‑in populations.
-3. **Certification and Liability** An oversight body—think Financial Ombudsman meets Public Defender—licenses advisory systems, rescinds certification for repeated harms, and adjudicates complaints.
-4. **Open Rulebooks** Agencies publish regulations in machine‑readable formats, allowing continuous retraining and independent verification.
+**Source-grounded.** The system should cite the rule, policy, contract term, plan document, notice, or form instruction that supports its answer. If it cannot point to a source, it should say so.
 
-History teaches that rights evolve from practice as much as proclamation. Small pilots snowball into expectations, expectations ossify into precedent, and precedent hardens into law.
+**Competent for the domain.** A generic model is not enough. The advisor needs an evaluated knowledge base, current rules, task-specific testing, and clear boundaries around what it can and cannot do.
 
----
+**Calibrated.** It should show uncertainty, abstain when needed, and distinguish "I know the rule" from "I need a human to interpret this fact pattern." Confidence should be tied to measured performance, not vibes.
 
-### A Global View
+**Independent.** The advisor should not be paid to steer people toward a product, provider, lender, plan, or settlement. If conflicts exist, they should be disclosed and limited.
 
-The conversation won’t unfold only in Washington or Brussels. Kenya’s Huduma number, India’s Aadhaar‑linked welfare portals, and Brazil’s open‑government data initiatives all raise the same question: When digital systems mediate citizenship, what guarantees shield the individual? A right to AI advisory could become a lingua franca of digital rights, traveling across legal cultures the way freedom of expression did in the twentieth century.
+**Accessible.** It should work for people with disabilities, limited digital literacy, limited bandwidth, older devices, and multiple languages. Access that only works for fluent, technically confident users is not access.
 
----
+**Private.** People should be able to ask sensitive questions without creating a data trail that is sold, repurposed, or used against them. For some domains, privilege-like protections may be necessary.
 
-### Closing Thoughts: Choosing the Future We Inhabit
+**Contestable.** The system should create a record the user can inspect, correct, export, and use in an appeal. It should make escalation to a human easy when stakes are high or the user disagrees.
 
-Near the end of *Gideon’s Trumpet*, Anthony Lewis writes that Gideon’s victory mattered not because it freed one man, but because it signaled America’s capacity for self‑correction. The machinery of law bent, however incrementally, toward fairness.
+This is not just a product checklist. It is the difference between a helpful interface and a public-interest safeguard.
 
-We stand at another inflection point. The machinery now is digital, the decisions diffuse, the stakes disguised under user‑agreement click‑boxes. Yet the principle endures: power without accessible counter‑power breeds injustice. Granting every citizen a right to sufficient AI advisory would not make bureaucracy disappear, but it would supply the flashlight, the map, and the translator that modern life increasingly demands.
+## What Would It Actually Do?
 
-María Alvarez should not have to gamble her health on a hunch. Neither should you.
+Take Maria's health-insurance problem.
 
-*If technology is to remain a tool of emancipation rather than domination, counsel by code may be the right whose hour has come.*
+A sufficient advisor would not simply say "Plan B looks good." It would ask for her doctors, prescriptions, expected visits, income, family situation, and risk tolerance. It would read the plan summaries and formularies. It would calculate realistic annual cost under several scenarios. It would flag when a preferred doctor is out of network. It would explain the tradeoff between premium, deductible, coinsurance, and out-of-pocket maximum in plain language. It would cite the plan documents. If a plan exclusion looked ambiguous, it would tell her to confirm with the insurer rather than pretending certainty.
+
+In a benefits-denial context, the same pattern would look different. The advisor would read the notice, identify the reason for denial, list appeal deadlines, ask for missing evidence, draft a first-pass appeal letter, cite the governing rule, and tell the user when the issue requires a legal-aid attorney or caseworker.
+
+In a housing context, it might help a tenant understand a notice, check local deadlines, assemble documentation, and connect to a legal clinic before eviction becomes irreversible.
+
+The common pattern is not "AI makes the decision." The pattern is:
+
+1. Read the relevant documents.
+2. Apply the rules to the user's facts.
+3. Explain the reasoning.
+4. Create a useful next action.
+5. Escalate when confidence or stakes require it.
+
+That is practical advisory.
+
+## Where to Start
+
+The right should begin where the stakes are high, the rules are structured, and the current access gap is obvious.
+
+Good first domains:
+
+- Public benefits eligibility and denial notices.
+- Health-insurance plan choice and coverage appeals.
+- Housing and eviction self-help.
+- Consumer credit, debt collection, and loan disclosures.
+- Student aid and repayment options.
+- Tax-credit and filing assistance for common households.
+
+Bad first domains:
+
+- Open-ended criminal defense strategy.
+- Complex medical diagnosis.
+- High-conflict family law without human supervision.
+- Immigration cases with severe factual and legal consequences.
+- Anything where the tool cannot cite current authoritative sources.
+
+The first wave should be boring on purpose. Start with constrained workflows, clear documents, measurable outcomes, and strong human fallback. A benefits appeal assistant that reduces missed deadlines is more valuable than a grand universal legal chatbot.
+
+## Legal Feasibility
+
+I would not lead with "a human right to AI access" or "a constitutional right to AI." Those phrases are morally appealing, but legally and institutionally too broad.
+
+The human-rights frame has adjacent support. The [Universal Declaration of Human Rights](https://www.un.org/en/about-us/universal-declaration-of-human-rights) says everyone has the right to share in scientific advancement and its benefits, and the [International Covenant on Economic, Social and Cultural Rights](https://www.ohchr.org/en/instruments-mechanisms/instruments/international-covenant-economic-social-and-cultural-rights) recognizes a right to enjoy the benefits of scientific progress and its applications. But that does not mean every important technology should become its own standalone human right.
+
+AI advisory is better understood as an implementation tool for older interests: access to justice, health, education, social security, equality, due process, and meaningful participation in public life. If we call the tool itself the right, the claim becomes unstable. Today's tool is AI; tomorrow's may be a different form of decision support. Rights should usually name the human interest that persists across technologies, not the current technical means.
+
+There is also a resource-allocation problem. A broad human right to AI access would immediately raise questions that rights language alone cannot answer: which domains, which level of model quality, which languages, which devices, which escalation channels, who pays, and who is liable when the advice is wrong? Without those boundaries, the right risks becoming either symbolic or dangerously under-specified. A person does not need a generic entitlement to chat with a model. They need reliable help in specific moments where a system can materially affect housing, health care, benefits, credit, education, or legal status.
+
+The constitutional route is weak for similar reasons. [Gideon v. Wainwright](https://tile.loc.gov/storage-services/service/ll/usrep/usrep372/usrep372335/usrep372335.pdf) is about criminal prosecution, liberty, and the adversarial power of the state. It does not generalize cleanly to health-insurance portals, benefits forms, loan disclosures, or private platforms. Administrative due-process cases such as [Goldberg v. Kelly](https://tile.loc.gov/storage-services/service/ll/usrep/usrep397/usrep397254/usrep397254.pdf) and [Mathews v. Eldridge](https://supreme.justia.com/cases/federal/us/424/319/) help more, but they point to calibrated procedures, not a free-floating right to whatever advisory technology is best available.
+
+U.S. constitutional law is also cautious about affirmative duties. In [DeShaney v. Winnebago County](https://www.law.cornell.edu/supremecourt/text/489/189), the Court held that due process generally does not impose an affirmative duty on the state to provide protection. In [San Antonio Independent School District v. Rodriguez](https://supreme.justia.com/cases/federal/us/411/1/), the Court refused to treat education as a fundamental federal constitutional right. Whether one agrees with those decisions or not, they show the terrain: federal courts are unlikely to constitutionalize a new positive entitlement to AI assistance, especially one requiring ongoing funding, procurement, model evaluation, multilingual access, disability access, privacy controls, and human escalation.
+
+That is not a reason to abandon the proposal. It is a reason to put it in the right legal container.
+
+As statutory and administrative policy, the idea is feasible.
+
+Congress or state legislatures could require advisory assistance in specific benefit programs. Agencies could make it part of service-delivery rules. Courts could certify AI-assisted self-help tools for narrow civil matters. Insurance marketplaces, public universities, housing agencies, and consumer-finance regulators could require plan explanations, appeal assistance, and source-grounded comparison tools as part of regulated digital service.
+
+The harder legal issues are manageable but real.
+
+**Unauthorized practice of law.** A system that gives personalized legal advice can cross state UPL lines. The answer is not to hide behind disclaimers. The answer is certification, narrow task design, attorney-supervised escalation, regulatory sandboxes, and explicit carve-outs for vetted self-help tools.
+
+**Medical and financial advice.** Similar boundaries apply. The advisor should explain documents and options, not replace licensed judgment when a decision requires professional diagnosis, individualized investment advice, or fiduciary discretion.
+
+**Liability.** If people rely on the system and it is wrong, someone must be accountable. A sensible regime would use limited safe harbors conditioned on meeting the sufficiency standard, logging sources, monitoring errors, correcting known defects, and providing escalation.
+
+**Procurement and maintenance.** A stale advisor is dangerous. Rules change, forms change, benefits formulas change, and providers leave networks. The operating model must include source updates, regression tests, audit logs, and public incident reporting for serious failures.
+
+**Equity.** If the system performs worse for non-native speakers, disabled users, rural users, or people with unusual facts, it can deepen the very inequality it aims to reduce. That means subgroup testing is not optional.
+
+None of these problems are trivial. But they are better framed as governance requirements than as reasons to abandon the idea.
+
+## Why It Could Be Beneficial
+
+The biggest benefit is earlier correction.
+
+Many institutional failures are expensive because people discover them late: after a missed deadline, denied claim, unaffordable plan choice, default judgment, lost benefit, or avoidable appeal. A good advisor can move help upstream.
+
+The second benefit is better public administration. If thousands of people ask the same confused question about a form, that is not only a user-support issue. It is evidence that the form or rule is poorly designed. Aggregated, privacy-protected advisory logs could become a feedback loop for agencies and legislators.
+
+The third benefit is more honest automation. We already use digital systems to sort, screen, score, and route people. Giving institutions better automation without giving citizens better advisory tools increases asymmetry. Advisory rights are one way to balance the deployment of automated decision systems with citizen-facing capacity.
+
+The fourth benefit is better use of scarce human experts. AI should handle routine explanation, document triage, checklist creation, and deadline detection. Humans should focus on judgment, contested facts, negotiation, appeals, exceptions, and high-stakes cases.
+
+## Objections Worth Taking Seriously
+
+**People will over-rely on it.** Some will. That is why the system must explain, cite, and escalate rather than merely answer. Over-reliance is a design and governance problem, not an argument for leaving people unaided.
+
+**AI will be biased or wrong.** Yes. So are current systems. The right response is measurement, disclosure, audits, contestability, and fallback. An unmeasured private chatbot is dangerous. A constrained, tested, source-grounded public advisor is a different object.
+
+**This will be too expensive.** It will cost money, especially if done well. But the baseline is also expensive: call centers, erroneous denials, avoidable appeals, delayed care, eviction churn, and legal-aid scarcity. The relevant comparison is not zero cost. It is cost per resolved problem.
+
+**Private tools already exist.** Some are good. Many are conflicted, incomplete, or designed around monetizable users. A right creates a floor. Private providers can still compete above it, just as private lawyers coexist with public defenders and legal aid.
+
+**This turns advice into infrastructure.** Correct. That is the point. When government and markets require ordinary people to navigate machine-readable systems, citizen-facing guidance becomes infrastructure too.
+
+## A Practical Policy Sketch
+
+Here is the one-page version.
+
+**Scope.** Start with high-stakes public and regulated domains: benefits, health coverage, housing, credit, education finance, and common tax credits.
+
+**Service duty.** Covered agencies or regulated platforms must provide or fund access to certified AI-assisted advisory tools for covered decisions.
+
+**Sufficiency standard.** Tools must be source-grounded, domain-tested, calibrated, independent, accessible, private, auditable, and contestable.
+
+**Human escalation.** Users must have a clear path to human review when the tool is uncertain, the stakes are high, or the user contests the output.
+
+**Open rules.** Agencies should publish rules, forms, notices, and eligibility logic in machine-readable formats where possible. Rules-as-code systems such as [OpenFisca](https://openfisca.org/en/) show one practical direction for computable benefits and tax rules.
+
+**Certification.** An independent oversight body should certify tools, publish evaluation results, investigate complaints, and revoke certification after repeated failures.
+
+**Liability.** Providers receive limited safe harbor only if they meet the standard, maintain sources, monitor outcomes, correct defects, and preserve appeal paths.
+
+**Evaluation.** Measure not just chatbot accuracy, but user outcomes: fewer missed deadlines, fewer erroneous denials, faster appeals, lower call-center burden, reduced disparities, and higher user understanding.
+
+This does not require a single national super-app. It requires a floor of competent assistance wherever high-stakes digital systems ask ordinary people to act.
+
+## Closing
+
+The right I am arguing for is intentionally modest.
+
+It is not a right to ask any AI anything. It is not a claim that AI should replace lawyers, doctors, caseworkers, or teachers. It is not a constitutional magic trick.
+
+It is a practical access right for a digital state: when institutions make people navigate complex rules through software, people deserve competent software on their side too.
+
+Maria should not have to gamble her health on a hunch. A tenant should not miss an eviction deadline because a notice was written for lawyers. A parent should not lose benefits because an eligibility rule was hidden in a maze of PDFs. A borrower should not accept a bad option because the comparison was too complex to model.
+
+Power without accessible counter-power breeds dependency and error. A right to sufficient AI advisory would not make bureaucracy disappear. It would give people a map, a translator, a checklist, and a way to ask for help before a mistake becomes permanent.
