@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <rect width="1200" height="620" fill="#fffdf7"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c735f"/>
+    </marker>
+  </defs>
+
+  <style>
+    .box { fill: #fbf7ec; stroke: #c7baa0; stroke-width: 2; rx: 18; }
+    .accent { fill: #f2ead6; }
+    .model { fill: #f9f0da; stroke: #c59a42; stroke-width: 2.5; rx: 22; }
+    .decision { fill: #f9f0da; stroke: #c59a42; stroke-width: 2; }
+    .text { font-family: Verdana, sans-serif; fill: #312814; font-size: 17px; }
+    .small { font-size: 14px; fill: #5b5547; }
+    .arrow { stroke: #7c735f; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    .both { stroke: #7c735f; stroke-width: 2.5; fill: none; marker-end: url(#arrow); marker-start: url(#arrow); }
+    .divider { stroke: #d7ccb4; stroke-width: 2; stroke-dasharray: 8 8; }
+    .head { font-family: Georgia, serif; font-size: 21px; fill: #2f2b23; }
+    .foot { font-family: Verdana, sans-serif; font-size: 14px; fill: #5b5547; }
+  </style>
+
+  <text x="600" y="40" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#2f2b23">
+    Deterministic pipeline vs. agentic control flow
+  </text>
+
+  <line class="divider" x1="600" y1="70" x2="600" y2="560"/>
+
+  <!-- LEFT: deterministic -->
+  <text class="head" x="300" y="92" text-anchor="middle">Deterministic pipeline</text>
+
+  <rect class="box accent" x="190" y="112" width="220" height="52"/>
+  <text class="text" x="300" y="145" text-anchor="middle">Classify page</text>
+
+  <path class="arrow" d="M 300 164 L 300 190"/>
+  <rect class="box" x="190" y="192" width="220" height="52"/>
+  <text class="text" x="300" y="225" text-anchor="middle">Run OCR</text>
+
+  <path class="arrow" d="M 300 244 L 300 270"/>
+  <rect class="box" x="190" y="272" width="220" height="52"/>
+  <text class="text" x="300" y="305" text-anchor="middle">Call detector</text>
+
+  <path class="arrow" d="M 300 324 L 300 350"/>
+  <rect class="box" x="190" y="352" width="220" height="52"/>
+  <text class="text" x="300" y="385" text-anchor="middle">Parse</text>
+
+  <path class="arrow" d="M 300 404 L 300 430"/>
+  <rect class="box" x="190" y="432" width="220" height="52"/>
+  <text class="text" x="300" y="465" text-anchor="middle">Validate</text>
+
+  <path class="arrow" d="M 300 484 L 300 510"/>
+  <rect class="box accent" x="190" y="512" width="220" height="52"/>
+  <text class="text" x="300" y="545" text-anchor="middle">Output</text>
+
+  <text class="foot" x="300" y="598" text-anchor="middle">Fixed sequence, authored by hand. Predictable, easy to debug and audit.</text>
+
+  <!-- RIGHT: agentic -->
+  <text class="head" x="900" y="92" text-anchor="middle">Agentic flow</text>
+
+  <!-- tools ring -->
+  <rect class="box" x="835" y="118" width="130" height="52"/>
+  <text class="text" x="900" y="151" text-anchor="middle">OCR</text>
+
+  <rect class="box" x="1040" y="178" width="120" height="52"/>
+  <text class="text" x="1100" y="211" text-anchor="middle">VLM</text>
+
+  <rect class="box" x="1040" y="372" width="120" height="52"/>
+  <text class="text" x="1100" y="405" text-anchor="middle">Validators</text>
+
+  <rect class="box" x="640" y="372" width="120" height="52"/>
+  <text class="text" x="700" y="405" text-anchor="middle">Retrieval</text>
+
+  <rect class="box" x="640" y="178" width="120" height="52"/>
+  <text class="text" x="700" y="211" text-anchor="middle">Detectors</text>
+
+  <!-- center model -->
+  <rect class="model" x="815" y="250" width="170" height="108"/>
+  <text class="text" x="900" y="282" text-anchor="middle">Model + context</text>
+  <text class="small" x="900" y="306" text-anchor="middle">decides which tool,</text>
+  <text class="small" x="900" y="324" text-anchor="middle">in what order,</text>
+  <text class="small" x="900" y="342" text-anchor="middle">and when to stop</text>
+
+  <!-- bidirectional arrows model <-> tools -->
+  <path class="both" d="M 900 172 L 900 248"/>
+  <path class="both" d="M 1038 222 L 987 262"/>
+  <path class="both" d="M 1038 380 L 987 346"/>
+  <path class="both" d="M 762 380 L 813 346"/>
+  <path class="both" d="M 762 222 L 813 262"/>
+
+  <!-- decision -->
+  <path class="arrow" d="M 900 358 L 900 428"/>
+  <polygon class="decision" points="900,430 970,475 900,520 830,475"/>
+  <text class="text" x="900" y="471" text-anchor="middle">Confident?</text>
+  <text class="small" x="900" y="491" text-anchor="middle">agreement, validators</text>
+
+  <path class="arrow" d="M 970 475 L 1040 475"/>
+  <rect class="box accent" x="1042" y="449" width="118" height="52"/>
+  <text class="text" x="1101" y="482" text-anchor="middle">Commit</text>
+
+  <path class="arrow" d="M 830 475 L 760 475"/>
+  <rect class="box accent" x="640" y="449" width="118" height="52"/>
+  <text class="text" x="699" y="475" text-anchor="middle">Escalate</text>
+  <text class="small" x="699" y="493" text-anchor="middle">human review</text>
+
+  <text class="foot" x="900" y="598" text-anchor="middle">Model picks the tools and the order. Handles edge cases, harder to trace.</text>
+</svg>
