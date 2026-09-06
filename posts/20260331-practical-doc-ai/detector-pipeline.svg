@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430">
+  <rect width="1200" height="430" fill="#fffdf7"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c735f"/>
+    </marker>
+  </defs>
+
+  <style>
+    .box { fill: #fbf7ec; stroke: #c7baa0; stroke-width: 2; rx: 18; }
+    .accent { fill: #f2ead6; }
+    .fail { fill: #fdf3ea; stroke: #b0602d; stroke-width: 1.5; rx: 12; }
+    .text { font-family: Verdana, sans-serif; fill: #312814; font-size: 17px; }
+    .small { font-size: 14px; fill: #5b5547; }
+    .failtext { font-family: Verdana, sans-serif; font-size: 13px; fill: #8a4a1f; }
+    .failtitle { font-family: Verdana, sans-serif; font-size: 13px; font-weight: bold; fill: #b0602d; }
+    .arrow { stroke: #7c735f; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    .tick { stroke: #b0602d; stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }
+  </style>
+
+  <text x="600" y="40" text-anchor="middle" font-family="Georgia, serif" font-size="28" fill="#2f2b23">
+    Detector-first pipeline: three isolated stages
+  </text>
+  <text x="600" y="68" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" fill="#5b5547">
+    Each stage is trained or tuned on its own. Errors compound at the handoffs.
+  </text>
+
+  <!-- pipeline boxes -->
+  <rect class="box accent" x="40" y="130" width="165" height="72"/>
+  <text class="text" x="122.5" y="161" text-anchor="middle">Document page</text>
+  <text class="small" x="122.5" y="183" text-anchor="middle">scan or photo</text>
+
+  <rect class="box" x="285" y="130" width="165" height="72"/>
+  <text class="text" x="367.5" y="161" text-anchor="middle">Field detector</text>
+  <text class="small" x="367.5" y="183" text-anchor="middle">convnet, labeled boxes</text>
+
+  <rect class="box" x="530" y="130" width="165" height="72"/>
+  <text class="text" x="612.5" y="161" text-anchor="middle">OCR</text>
+  <text class="small" x="612.5" y="183" text-anchor="middle">on each cropped region</text>
+
+  <rect class="box" x="775" y="130" width="165" height="72"/>
+  <text class="text" x="857.5" y="161" text-anchor="middle">Parser</text>
+  <text class="small" x="857.5" y="183" text-anchor="middle">rules, normalization</text>
+
+  <rect class="box accent" x="1020" y="130" width="165" height="72"/>
+  <text class="text" x="1102.5" y="161" text-anchor="middle">Schema</text>
+  <text class="small" x="1102.5" y="183" text-anchor="middle">structured output</text>
+
+  <!-- arrows -->
+  <path class="arrow" d="M 205 166 L 283 166"/>
+  <path class="arrow" d="M 450 166 L 528 166"/>
+  <path class="arrow" d="M 695 166 L 773 166"/>
+  <path class="arrow" d="M 940 166 L 1018 166"/>
+
+  <!-- handoff failure notes -->
+  <path class="tick" d="M 490 172 L 490 262"/>
+  <rect class="fail" x="380" y="262" width="220" height="92"/>
+  <text class="failtitle" x="490" y="286" text-anchor="middle">Handoff 1</text>
+  <text class="failtext" x="490" y="308" text-anchor="middle">Box missed or offset</text>
+  <text class="failtext" x="490" y="328" text-anchor="middle">OCR never sees the field</text>
+
+  <path class="tick" d="M 735 172 L 735 262"/>
+  <rect class="fail" x="625" y="262" width="220" height="92"/>
+  <text class="failtitle" x="735" y="286" text-anchor="middle">Handoff 2</text>
+  <text class="failtext" x="735" y="308" text-anchor="middle">Crop garbled by OCR</text>
+  <text class="failtext" x="735" y="328" text-anchor="middle">parser has nothing to match</text>
+
+  <path class="tick" d="M 980 172 L 980 262"/>
+  <rect class="fail" x="870" y="262" width="220" height="92"/>
+  <text class="failtitle" x="980" y="286" text-anchor="middle">Handoff 3</text>
+  <text class="failtext" x="980" y="308" text-anchor="middle">Table structure slightly off</text>
+  <text class="failtext" x="980" y="328" text-anchor="middle">downstream turns into exceptions</text>
+
+  <text x="600" y="400" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" fill="#5b5547">
+    Vision handles localization, OCR handles recognition, rules handle interpretation. None of them sees the others' mistakes.
+  </text>
+</svg>

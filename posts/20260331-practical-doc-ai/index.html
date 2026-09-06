@@ -237,6 +237,12 @@ TL;DR
 <li><strong>automation coverage</strong>: what percentage of work the system handles without human review</li>
 <li><strong>automation precision</strong> (sometimes called straight-through accuracy): among the automated cases, how often the system is right</li>
 </ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="coverage-vs-error.svg" class="img-fluid figure-img" width="700"></p>
+<figcaption>Automation coverage versus error rate. Raising coverage means automating less certain cases, so errors stay flat for a while and then climb steeply. The confidence policy chooses where on this curve the business operates. Illustrative curve, not measured data.</figcaption>
+</figure>
+</div>
 <p>That’s a policy problem as much as a modeling problem. No model is perfect, so the system needs a reliable estimate of when its extraction is wrong. A good confidence score lets the policy say “I’m not sure” and escalate to a human, rather than blindly committing an answer. This matters even more in the age of LLMs, where the model is eager to produce fluent output even when it’s hallucinated.</p>
 <p>I found it useful to think about evaluation in layers. Character- and word-level accuracy is about not losing information. Field-level accuracy is about extracting the right information. Automation coverage and automation precision (how much work the system handles, and how often it’s right when it does) are about economic utility.</p>
 <p>Depending on the task, standard supporting metrics also mattered:</p>
@@ -291,7 +297,12 @@ Modern spin: templates, registration, and OCR
 <li>run OCR on the detected region</li>
 <li>parse and normalize the result</li>
 </ul>
-<!-- TODO: illustration of the 3-step pipeline (detect, OCR, parse) -->
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="detector-pipeline.svg" class="img-fluid figure-img" width="900"></p>
+<figcaption>The detector-first pipeline. Each stage is trained or tuned on its own, and each handoff is a place where an upstream mistake becomes a downstream failure that nothing catches.</figcaption>
+</figure>
+</div>
 <p>The system combined vision and language, but each component worked in isolation. Vision handled localization. OCR handled text recognition. Rules handled interpretation. That split was often right for the tools of the time, but it came with painful handoff boundaries. If the detector missed the box, OCR never had a chance. If OCR garbled the crop, the parser failed. If table structure was slightly off, everything downstream became an exception case.</p>
 <p>Better perception didn’t automatically mean simpler systems. The error propagation across stage boundaries was the fundamental cost of this architecture.</p>
 <section id="a-concrete-example-from-2018-real-estate-contracts" class="level3">
@@ -313,7 +324,12 @@ Modern spin: templates, registration, and OCR
 <section id="phase-3-transformer-models-that-combine-cues" class="level2">
 <h2 class="anchored" data-anchor-id="phase-3-transformer-models-that-combine-cues">Phase 3: transformer models that combine cues</h2>
 <p>Transformer models didn’t make document AI multimodal for the first time. We were already combining visual and text signals. What they changed was how that combination happened. Instead of stitching cues across multiple stages, we could train models that combine OCR text, layout, and image features end to end.</p>
-<!-- TODO: architecture diagram, e.g. LayoutLMv3 Figure 3 (https://ar5iv.labs.arxiv.org/html/2204.08387/assets/x2.png) showing text tokens + image patches + 2D layout → unified Transformer -->
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="layout-transformer.svg" class="img-fluid figure-img" width="900"></p>
+<figcaption>A layout-aware transformer in the style of LayoutLMv3. Image patches, OCR tokens, and each token’s 2D position are embedded and attended jointly, and the output is a per-token decision about whether that token is part of the answer. Supervision comes from labeling the final answer and projecting it back onto tokens.</figcaption>
+</figure>
+</div>
 <p>The model could learn patterns like:</p>
 <ul>
 <li>this token means something different depending on where it appears</li>
@@ -360,7 +376,12 @@ Modern spin: templates, registration, and OCR
 </ul>
 <p>In older stacks, the fragility lived in templates and hand-tuned pipelines. Now it often lives in orchestration and evaluation.</p>
 <p>Another important change: <a href="https://arxiv.org/abs/2210.03629">agentic</a> control flow. In older systems, we wired steps together deterministically: classify the page, run OCR, call the detector, parse, validate, done. The sequence was fixed. In newer systems, we increasingly provide the model with context and tools and let it decide which steps to invoke and in what order.</p>
-<!-- TODO: side-by-side diagram comparing deterministic pipeline (fixed sequence of boxes) vs. agentic flow (LLM + tools with dynamic routing) -->
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="deterministic-vs-agentic.svg" class="img-fluid figure-img" width="900"></p>
+<figcaption>Deterministic pipeline versus agentic control flow. On the left, a hand-authored fixed sequence. On the right, the model holds the context and decides which tools to call and in what order, then commits or escalates based on agreement and validators.</figcaption>
+</figure>
+</div>
 <p>The tools, schemas, validators, and review policy are still designed by us. But the extraction flow no longer has to be a rigid hand-authored pipeline. For messy documents, that flexibility matters. The model can inspect a page more closely, compare OCR output with visual evidence, call retrieval utilities, or reconcile conflicting results before committing to an answer. The tradeoff is predictability: deterministic pipelines are easier to debug and audit, while agentic flows handle edge cases more gracefully but are harder to trace when they go wrong.</p>
 <section id="a-concrete-example-from-2024-to-2026-multi-model-systems-and-post-training" class="level3">
 <h3 class="anchored" data-anchor-id="a-concrete-example-from-2024-to-2026-multi-model-systems-and-post-training">A concrete example from 2024 to 2026: multi-model systems and post-training</h3>
