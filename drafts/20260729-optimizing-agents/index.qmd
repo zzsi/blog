@@ -134,7 +134,15 @@ What separates 2026 practice from 2024 practice is calibration and coverage. Cal
 
 The cheapest place to look smart is the gap between watching and scoring. LangChain's late-2025 survey of around 1,300 practitioners found 89% had adopted observability but only 52% had evals. Most teams are watching their agents without scoring them. Closing that gap is nearly free and compounds on every subsequent layer.
 
-<!-- ANECDOTE SLOT 1 (highest value). Your doc AI post already makes this argument from experience: you learned to audit labels with the model rather than push the benchmark, and found that some of what looked like a model limit was label noise in human-entered ground truth. That is a first-hand version of "you cannot optimize what you have not measured properly," and it would replace a cited survey number with something only you can write. -->
+You also cannot assume the eval itself is correct, and this is the part I underestimated for a long time. Public benchmarks have the problem too. SWE-bench Verified exists because OpenAI put 93 developers through 1,699 samples of the original SWE-bench and kept only the 500 they were willing to vouch for. Researchers keep surfacing similar defects in other public benchmarks, usually on social media rather than in a paper, which tells you something about how systematically anyone is checking.
+
+I hit both sides of this building a small local eval suite while iterating on custom agents. The cases were deliberately simple, a handful of toy repositories and terminal tasks with a verifier each. Most of the bugs I found were not in the agents.
+
+Some verifiers were too loose. They checked an outcome the agent could reach without doing the work, so the agent found the shortcut, which is exactly what a capable agent should be expected to do. The blunt version is editing the tests instead of fixing the code, which is why the verifiers ended up carrying an explicit list of paths the agent is forbidden to touch.
+
+Other verifiers were too strict. A heuristic check would insist on a particular command pattern or a particular file having changed, and a valid solution that took a different route scored as a failure. Those are the more expensive bug, because a false negative looks exactly like a model limitation. You can spend a day tuning a prompt against a defect in your own scoring.
+
+The rule I took away is that a verifier fails in two directions and most people only test one. Ask both questions of every case. Can this be passed without solving it, and can it be solved in a way that fails? The second question is the one that rarely gets asked. It matters more the further up the ladder you go, because at the RL rung the verifier stops being a scorecard and becomes the reward function. A shortcut you left open stops being a measurement error and becomes the behavior you are training into the model.
 
 ### Layer 2: Context engineering
 
