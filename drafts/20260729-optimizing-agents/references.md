@@ -113,6 +113,36 @@ Compiled from the three research rounds behind the deck and blog post. Organized
 
 ---
 
+## Benchmark reliability (added for the evals section)
+
+All four verified against the primary source. Each was fetched and the figures read off the source itself, not from secondary coverage.
+
+1. **"Introducing SWE-bench Verified"** — OpenAI, August 2024. https://openai.com/index/introducing-swe-bench-verified/
+   - 1,699 samples from the original SWE-bench test set annotated by 93 experienced Python developers, three independent reviews per problem
+   - 38.3% flagged for underspecified problem statements
+   - 61.1% flagged for unit tests that may unfairly mark valid solutions incorrect
+   - 68.3% filtered out overall; the surviving 500 became SWE-bench Verified
+2. **SWE-bench Verified dataset page.** https://www.swebench.com/verified.html
+3. **"UTBoost: Rigorous Evaluation of Coding Agents on SWE-Bench"** — arXiv 2506.09289. https://arxiv.org/abs/2506.09289
+   - Generated additional test cases to expose tests too weak to detect a wrong patch
+   - 345 patches recorded as passing that did not resolve the underlying issue
+   - Affected 40.9% of SWE-bench Lite leaderboard entries and 24.4% of Verified entries
+   - Produced 18 ranking changes on Lite and 11 on Verified
+4. **DeepSWE report** — Datacurve. https://deepswe.datacurve.ai/blog/deepswe (paper: https://arxiv.org/abs/2607.07946)
+   - 30 tasks sampled, 3 rollouts across 10 frontier agent configurations, independent LLM judge per trajectory
+   - SWE-bench Pro automated graders: 8.5% false positives, 24.0% false negatives across 789 reviewed rollouts
+   - DeepSWE's own verifiers: 0.3% false positives, 1.1% false negatives across 735 reviewed rollouts
+   - Figures exclude trials with API errors, timeouts, and transient harness failures
+
+### Claims deliberately excluded
+
+Both circulate widely and neither could be confirmed against a primary source, so neither appears in the post.
+
+- A figure of 68.5% for one model's SWE-bench Pro failures being traceable to broken test cases. Not confirmed by either organization involved; treat as an open question.
+- A git-history contamination rate above 12% on reviewed SWE-bench Pro tasks. Reported in secondary coverage; the primary report did not confirm the number on retrieval. The underlying phenomenon, gold patches being reachable from repository history shipped in the task container, is separately documented.
+
+---
+
 ## Notes on using this list
 
 - Sources under each numbered list were directly retrieved with URLs during research and are safe to click through and verify.
