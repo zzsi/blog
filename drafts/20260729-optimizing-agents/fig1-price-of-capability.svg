@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="536" viewBox="0 0 900 536">
+  <rect width="900" height="536" fill="#fffdf7"/>
+  <style>
+    .ttl { font-family: Georgia, serif; font-size: 24px; fill: #2f2b23; }
+    .sub { font-family: Verdana, sans-serif; font-size: 13px; fill: #5b5547; }
+    .ax  { font-family: Verdana, sans-serif; font-size: 12px; fill: #5b5547; }
+    .lab { font-family: Verdana, sans-serif; font-size: 13px; font-weight: bold; }
+    .note{ font-family: Verdana, sans-serif; font-style: italic; font-size: 13px; }
+    .foot{ font-family: Verdana, sans-serif; font-size: 11px; fill: #7c735f; }
+    .grid{ stroke: #e4dcc9; stroke-width: 1; }
+    .axis{ stroke: #5b5547; stroke-width: 2; }
+  </style>
+
+  <text class="ttl" x="450" y="36" text-anchor="middle">The floor collapses. The ceiling wanders.</text>
+  <text class="sub" x="450" y="58" text-anchor="middle">Input price per million tokens, log scale</text>
+
+  <!-- gridlines + y labels -->
+  <g class="grid">
+    <line x1="120" y1="90"  x2="800" y2="90"/>
+    <line x1="120" y1="175" x2="800" y2="175"/>
+    <line x1="120" y1="260" x2="800" y2="260"/>
+    <line x1="120" y1="345" x2="800" y2="345"/>
+    <line x1="120" y1="430" x2="800" y2="430"/>
+  </g>
+  <g class="ax" text-anchor="end">
+    <text x="110" y="94">$100</text>
+    <text x="110" y="179">$10</text>
+    <text x="110" y="264">$1</text>
+    <text x="110" y="349">$0.10</text>
+    <text x="110" y="434">$0.01</text>
+  </g>
+  <line class="axis" x1="120" y1="430" x2="800" y2="430"/>
+  <line class="axis" x1="120" y1="80"  x2="120" y2="430"/>
+  <g class="ax" text-anchor="middle">
+    <text x="140" y="452">2022</text>
+    <text x="271" y="452">2023</text>
+    <text x="402" y="452">2024</text>
+    <text x="534" y="452">2025</text>
+    <text x="665" y="452">2026</text>
+  </g>
+
+  <!-- FLOOR: constant capability, a16z LLMflation -->
+  <polyline fill="none" stroke="#2f9e7e" stroke-width="4" points="123,109 506,364"/>
+  <polyline fill="none" stroke="#2f9e7e" stroke-width="3" stroke-dasharray="7 6" points="506,364 790,364"/>
+  <g fill="#2f9e7e">
+    <circle cx="123" cy="109" r="5"/>
+    <circle cx="506" cy="364" r="5"/>
+  </g>
+  <text class="lab" x="123" y="98"  fill="#2f9e7e" text-anchor="start">$60</text>
+  <text class="lab" x="506" y="384" fill="#2f9e7e" text-anchor="middle">$0.06</text>
+  <text class="note" x="196" y="238" fill="#2f9e7e">about 10x a year at fixed capability</text>
+
+  <!-- CEILING: frontier flagship input price -->
+  <polyline fill="none" stroke="#312814" stroke-width="4" points="297,134 692,226 757,175"/>
+  <g fill="#312814">
+    <circle cx="297" cy="134" r="5"/>
+    <circle cx="692" cy="226" r="5"/>
+    <circle cx="757" cy="175" r="5"/>
+  </g>
+  <text class="lab" x="297" y="124" fill="#312814" text-anchor="middle">$30</text>
+  <text class="lab" x="686" y="246" fill="#312814" text-anchor="middle">$2.50</text>
+  <text class="lab" x="775" y="166" fill="#312814" text-anchor="middle">$10</text>
+  <text class="note" x="560" y="120" fill="#312814" text-anchor="middle">frontier flagship: down, then back up in 2026</text>
+
+  <!-- legend -->
+  <g>
+    <line x1="140" y1="478" x2="176" y2="478" stroke="#2f9e7e" stroke-width="4"/>
+    <circle cx="158" cy="478" r="4.5" fill="#2f9e7e"/>
+    <text class="ax" x="186" y="482">Fixed capability (GPT-3-class)</text>
+    <line x1="450" y1="478" x2="486" y2="478" stroke="#312814" stroke-width="4"/>
+    <circle cx="468" cy="478" r="4.5" fill="#312814"/>
+    <text class="ax" x="496" y="482">Frontier flagship of the day</text>
+  </g>
+
+  <text class="foot" x="450" y="506" text-anchor="middle">Sources: a16z LLMflation (2024). No later update was published, so the line is dashed after the last measurement. Frontier points are provider list prices.</text>
+  <text class="foot" x="450" y="522" text-anchor="middle">Stanford HAI separately measured inference for GPT-3.5-level performance falling more than 280-fold between November 2022 and October 2024.</text>
+</svg>

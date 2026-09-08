@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="496" viewBox="0 0 900 496">
+  <rect width="900" height="496" fill="#fffdf7"/>
+  <style>
+    .ttl { font-family: Georgia, serif; font-size: 24px; fill: #2f2b23; }
+    .sub { font-family: Verdana, sans-serif; font-size: 13px; fill: #5b5547; }
+    .ax  { font-family: Verdana, sans-serif; font-size: 12px; fill: #5b5547; }
+    .val { font-family: Verdana, sans-serif; font-size: 15px; font-weight: bold; }
+    .cap { font-family: Verdana, sans-serif; font-size: 12px; fill: #312814; }
+    .cap2{ font-family: Verdana, sans-serif; font-size: 11px; fill: #7c735f; }
+    .foot{ font-family: Verdana, sans-serif; font-size: 11px; fill: #7c735f; }
+    .grid{ stroke: #e4dcc9; stroke-width: 1; }
+    .axis{ stroke: #5b5547; stroke-width: 2; }
+  </style>
+
+  <text class="ttl" x="450" y="34" text-anchor="middle">The entry price of a weight-level experiment</text>
+  <text class="sub" x="450" y="56" text-anchor="middle">Cost per run, log scale. Not like-for-like artifacts.</text>
+
+  <g class="grid">
+    <line x1="150" y1="80"  x2="820" y2="80"/>
+    <line x1="150" y1="133" x2="820" y2="133"/>
+    <line x1="150" y1="187" x2="820" y2="187"/>
+    <line x1="150" y1="240" x2="820" y2="240"/>
+    <line x1="150" y1="293" x2="820" y2="293"/>
+    <line x1="150" y1="347" x2="820" y2="347"/>
+    <line x1="150" y1="400" x2="820" y2="400"/>
+  </g>
+  <g class="ax" text-anchor="end">
+    <text x="140" y="84">$10M</text>
+    <text x="140" y="137">$1M</text>
+    <text x="140" y="191">$100K</text>
+    <text x="140" y="244">$10K</text>
+    <text x="140" y="297">$1K</text>
+    <text x="140" y="351">$100</text>
+    <text x="140" y="404">$10</text>
+  </g>
+  <line class="axis" x1="150" y1="400" x2="820" y2="400"/>
+  <line class="axis" x1="150" y1="70"  x2="150" y2="400"/>
+
+  <!-- bar 1: bespoke domain model, ~$5M estimated from 1.3M A100-hours -->
+  <rect x="215" y="96" width="140" height="304" fill="#312814" rx="4"/>
+  <text class="val" x="285" y="88" text-anchor="middle" fill="#312814">~$5M</text>
+  <text class="cap"  x="285" y="424" text-anchor="middle">Bespoke domain model</text>
+  <text class="cap2" x="285" y="440" text-anchor="middle">1.3M A100-hours, 2023</text>
+  <text class="cap2" x="285" y="454" text-anchor="middle">cost estimated, never published</text>
+
+  <!-- bar 2: managed agent RL run, low hundreds -->
+  <rect x="415" y="321" width="140" height="79" fill="#2f9e7e" rx="4"/>
+  <text class="val" x="485" y="313" text-anchor="middle" fill="#2f9e7e">~$300</text>
+  <text class="cap"  x="485" y="424" text-anchor="middle">Managed RL run</text>
+  <text class="cap2" x="485" y="440" text-anchor="middle">2026 worked examples,</text>
+  <text class="cap2" x="485" y="454" text-anchor="middle">$200 to $430</text>
+
+  <!-- bar 3: managed LoRA SFT -->
+  <rect x="615" y="380" width="140" height="20" fill="#5fbf9f" rx="4"/>
+  <text class="val" x="685" y="372" text-anchor="middle" fill="#2f9e7e">$24</text>
+  <text class="cap"  x="685" y="424" text-anchor="middle">Managed LoRA SFT</text>
+  <text class="cap2" x="685" y="440" text-anchor="middle">8B model, 50M tokens</text>
+  <text class="cap2" x="685" y="454" text-anchor="middle">full SFT of the same run: $60</text>
+
+  <text class="foot" x="450" y="476" text-anchor="middle">Sources: BloombergGPT paper, which published compute only, so its dollar figure is an estimate at list rates. Managed platform pricing, 2026.</text>
+  <text class="foot" x="450" y="490" text-anchor="middle">These are different kinds of run. The chart shows the falling floor of a useful experiment, not one artifact repriced over time.</text>
+</svg>
