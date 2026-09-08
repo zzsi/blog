@@ -16,7 +16,7 @@ Compiled from the three research rounds behind the deck and blog post. Organized
 8. **"AI Model Fine-Tuning Cost Calculator"** — CalcWolf. https://calcwolf.com/ai-fine-tuning-cost-calculator/
 9. **"How to Fine-Tune LLMs in 2026: Costs, GPUs, and Code"** — Spheron. https://www.spheron.network/blog/how-to-fine-tune-llm-2026/
 10. **"Cost of Fine-Tuning LLM: 2026 Pricing & Budget Guide"** — aisuperior. https://aisuperior.com/cost-of-fine-tuning-llm/
-11. **"Rethinking On-Policy Distillation"** — arXiv, April 2026. https://arxiv.org/pdf/2604.13016
+11. **"Rethinking On-Policy Distillation"** — arXiv 2604.13016, April 2026. https://arxiv.org/abs/2604.13016 — CAUTION: this is a real, on-topic paper but it makes **no compute-cost or GPU-hour claim**, and it questions whether the method scales to long-horizon distillation. Do not cite it as replicating the one-tenth GPU-hours figure. The draft did so and the claim has been withdrawn.
 
 ### Named sources without a captured link (Round 1)
 
@@ -104,7 +104,7 @@ Compiled from the three research rounds behind the deck and blog post. Organized
 - **Highlighter.ai**, closed-vocabulary classification case study (Qwen2.5-7B vs. prompted Claude)
 - **Unsloth**, GRPO VRAM-reduction and long-context training blog posts (2025–2026)
 - **OpenPipe**, ART + RULER framework documentation and Qwen 2.5 14B email-search agent case study
-- Production-agent survey paper, arXiv 2601.09032 (Jan 2026), citing Pan et al. 2025 — 306 practitioners / 20 case studies / 26 domains
+- Pan et al., **"Measuring Agents in Production"** — arXiv **2512.04123** (Dec 2025). https://arxiv.org/abs/2512.04123 — 20 case studies plus **86 practitioners** across 26 domains. CORRECTION: earlier notes in this file cited arXiv 2601.09032 and 306 practitioners. That ID resolves to an unrelated paper and the sample size was inflated roughly 3.5x. Source of the 70%-prompting, 68%-ten-steps and 74%-human-eval figures.
 - **Epoch AI** — inference price-decline data series
 - **a16z**, "LLMflation" analysis (2024, cited as still holding through 2026)
 - **Bridgewater Associates** — reported use of Thinking Machines' Tinker to build a custom Qwen variant
@@ -140,6 +140,19 @@ Both circulate widely and neither could be confirmed against a primary source, s
 
 - A figure of 68.5% for one model's SWE-bench Pro failures being traceable to broken test cases. Not confirmed by either organization involved; treat as an open question.
 - A git-history contamination rate above 12% on reviewed SWE-bench Pro tasks. Reported in secondary coverage; the primary report did not confirm the number on retrieval. The underlying phenomenon, gold patches being reachable from repository history shipped in the task container, is separately documented.
+
+---
+
+## Misattribution corrections
+
+Four attributions in this file and in earlier drafts pointed at the wrong source. Each is corrected above and recorded here so the error is not reintroduced.
+
+1. **The one-tenth GPU-hours figure for on-policy distillation belongs to the Qwen3 technical report**, arXiv 2505.09388, section 4.7: distillation "achieves significantly better performance than reinforcement learning while requiring approximately only 1/10 of the GPU hours." Thinking Machines cite this as inspiration and report different numbers of their own, so they are not its source. The nearest genuine 2026 support is REOPOLD, arXiv 2603.11137, which reports 6.7 to 12x greater sample efficiency, a different quantity in a similar range.
+2. **The 1.2 million rollout figure is NVIDIA's**, describing Nemotron 3 Super post-trained across 21 verifiers and 37 datasets. It is not from Prime Intellect's INTELLECT-3, whose blog and technical report report no total rollout count.
+3. **The production-agent study is arXiv 2512.04123 with 86 practitioners**, not arXiv 2601.09032 with 306.
+4. **The open-versus-closed Arena Elo gap of 3.3% is quoted accurately from Stanford HAI, but its framing was reversed.** Stanford presents it under a widening gap, since the closed lead grew from 0.5% in August 2024. The draft used it to argue the gap was closing.
+
+The general lesson for this list: a citation being real is not the same as a citation supporting the claim attached to it. Items 1 and 4 were both real sources saying something other than what they were cited for, which is the failure mode that survives a link check.
 
 ---
 
