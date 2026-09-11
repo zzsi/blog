@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="470" viewBox="0 0 900 470">
+  <rect width="900" height="470" fill="#fffdf7"/>
+  <defs>
+    <marker id="jarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7c735f"/>
+    </marker>
+  </defs>
+  <style>
+    .ttl  { font-family: Georgia, serif; font-size: 24px; fill: #2f2b23; }
+    .sub  { font-family: Verdana, sans-serif; font-size: 13px; fill: #5b5547; }
+    .ax   { font-family: Verdana, sans-serif; font-size: 12px; fill: #5b5547; }
+    .lab  { font-family: Verdana, sans-serif; font-size: 13px; fill: #312814; }
+    .labg { font-family: Verdana, sans-serif; font-size: 13px; fill: #1f7a5f; }
+    .warn { font-family: Verdana, sans-serif; font-size: 12px; fill: #b0602d; }
+    .foot { font-family: Verdana, sans-serif; font-size: 11px; fill: #7c735f; }
+    .axis { stroke: #5b5547; stroke-width: 2; }
+    .tick { stroke: #d7ccb4; stroke-width: 1; stroke-dasharray: 3 4; }
+  </style>
+
+  <text class="ttl" x="450" y="36" text-anchor="middle">Value does not rise smoothly with sophistication</text>
+  <text class="sub" x="450" y="58" text-anchor="middle">Illustrative shape, not measured data</text>
+
+  <!-- axes -->
+  <line class="axis" x1="120" y1="400" x2="830" y2="400"/>
+  <line class="axis" x1="120" y1="78"  x2="120" y2="400"/>
+  <text class="ax" x="34" y="240" text-anchor="middle" transform="rotate(-90 34 240)">Realized value</text>
+  <text class="ax" x="475" y="440" text-anchor="middle">Use agents &#8594; customize agents &#8594; own the machinery</text>
+
+  <!-- stage dividers -->
+  <line class="tick" x1="330" y1="88" x2="330" y2="400"/>
+  <line class="tick" x1="620" y1="88" x2="620" y2="400"/>
+
+  <!-- the curve -->
+  <path d="M 130,352 C 190,336 245,312 300,306 C 350,301 388,344 424,366 C 470,392 540,318 600,240"
+        fill="none" stroke="#2f9e7e" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- fork, upper branch -->
+  <path d="M 600,240 C 660,198 720,146 800,112"
+        fill="none" stroke="#2f9e7e" stroke-width="4.5" stroke-dasharray="9 7" stroke-linecap="round"/>
+  <!-- fork, lower branch -->
+  <path d="M 600,240 C 665,238 725,236 800,234"
+        fill="none" stroke="#b0602d" stroke-width="4" stroke-dasharray="9 7" stroke-linecap="round"/>
+  <circle cx="600" cy="240" r="6" fill="#2f9e7e"/>
+
+  <!-- the dip -->
+  <circle cx="424" cy="366" r="6" fill="#b0602d"/>
+  <text class="warn" x="398" y="370" text-anchor="end">pilot meets production scale</text>
+  <text class="warn" x="398" y="386" text-anchor="end">the 42% abandonment sits here</text>
+
+  <!-- annotations -->
+  <text class="lab" x="212" y="288" text-anchor="middle">real but shallow</text>
+  <text class="labg" x="658" y="352" text-anchor="middle">a dependable process</text>
+
+  <text class="labg" x="832" y="196" text-anchor="end">moat, or capability</text>
+  <text class="labg" x="832" y="213" text-anchor="end">the frontier lacks</text>
+  <text class="warn" x="812" y="256" text-anchor="end">cost advantage only, and it erodes</text>
+
+  <!-- stage captions -->
+  <text class="ax" x="225" y="102" text-anchor="middle">Use</text>
+  <text class="ax" x="475" y="102" text-anchor="middle">Customize</text>
+  <text class="ax" x="725" y="102" text-anchor="middle">Own</text>
+
+  <text class="foot" x="450" y="462" text-anchor="middle">The dip has a simple cause: scale exposes the weaknesses a pilot concealed. At ten runs a 70% success rate reads as promise and the token bill goes unread.</text>
+</svg>
