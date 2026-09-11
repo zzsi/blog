@@ -19,11 +19,7 @@ This post is about that engineering layer: evals, context, tools, routing, servi
 
 The ladder is not a sophistication ranking. Each rung buys a different kind of value, carries a different maintenance burden, and needs a different gate before you climb. Fine-tuning and reinforcement learning show up near the end, because they matter. But they are not the destination. They are one branch of ownership, and not the branch to reach for first.
 
-The production data points the same way, though less tidily than the retellings suggest. Teams do not abandon agent pilots because they picked weak models. They picked capable models and then hit production reality. S&P Global's 2025 enterprise survey found the share of companies abandoning most of their AI initiatives rose from 17% to 42% in a single year. Handle the much-quoted claim that only four in thirty-three proof-of-concepts reach production with care: it describes AI pilots in general rather than agents, it comes from 2024 fieldwork, and the same research program's 2026 edition puts 46% of proof-of-concepts in production. Attrition was real and it is easing.
-
-The location of the bottleneck is contested. The first systematic study of production agents and MIT's NANDA report both locate it in integration and reliability rather than model quality. But LangChain's survey of about 1,340 practitioners, the largest of the three, puts output quality first at 32%, with latency second. The defensible reading is that context and integration problems are a large and under-priced share of failures, not the dominant one.
-
-The durable question is not which model wins. That answer changes each quarter. The better question is what you should build around the model, and when it is worth taking ownership of the machinery.
+Teams do not abandon agent pilots because they picked weak models. They picked capable models and then hit production reality. S&P Global's 2025 enterprise survey found the share of companies abandoning most of their AI initiatives rose from 17% to 42% in a single year.
 
 ## TL;DR
 
@@ -73,6 +69,8 @@ The evidence fits that shape. Stage one productivity is real but far more variab
 Stage two is where process-level P&L starts to concentrate. Klarna's assistant handled 2.3 million conversations while resolution times fell from 11 minutes to 2, with a company-reported profit improvement around $40M. That is a stage two win: an off-the-shelf model plus heavy workflow integration.
 
 Stage three can be valuable, but it is conditional. The payoff is a different cost structure at volume, an air-gapped or sovereign deployment, or a narrow capability that generalist frontier models do not have. It takes quarters to pay off, and it should not be the default path.
+
+One much-quoted figure deserves handling with care: the claim that only four in thirty-three proof-of-concepts reach production. It describes AI pilots in general rather than agents, it comes from 2024 fieldwork, and the same research program's 2026 edition puts 46% of proof-of-concepts in production. Attrition was real and it is easing, so do not build an argument on the older number.
 
 One caveat on the above. Nearly all maturity-to-returns research is self-reported executive survey data, not audited financials. The convergence across independent surveys strengthens it, but specific ROI multiples should be treated as directional. I had wanted to say that the cost reductions from stacked stage two optimization were the most defensible numbers here, being engineering measurements rather than survey self-reports. Checking them, that is not true. The individual levers hold up, since published cache and batch pricing are verifiable, but the stacked totals people quote are vendor estimates without a study behind them. Treat the direction as solid and the specific percentage as marketing.
 
@@ -129,6 +127,8 @@ The practical failure mode here is forking for something configuration could do.
 Customize decomposes into four layers, worked in this order. Own adds a fifth layer, and it sits behind a gate.
 
 ### Layer 1: Evals and measurement
+
+Where the bottleneck actually sits is contested, and it is worth settling before you spend a quarter on the wrong layer. The first systematic study of production agents and MIT's NANDA report both locate it in integration and reliability rather than model quality. But LangChain's survey of about 1,340 practitioners, the largest of the three, puts output quality first at 32%, with latency second. The defensible reading is that context and integration problems are a large and under-priced share of failures, not the dominant one. Either way you cannot tell which applies to you without measurement, which is why this layer comes first.
 
 Evals come first because everything downstream is unmeasurable without them. The mature practice is three-level. Task-level asks whether the run accomplished the goal, which gives you baselines and regression tests for latency, cost per task, and error rate at no extra effort. Trajectory-level asks whether the path was sound, since step-level scoring catches agents that are right for the wrong reasons. Component-level asks which retriever, tool, or sub-agent broke.
 
