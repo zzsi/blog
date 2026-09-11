@@ -15,7 +15,7 @@ That failure pattern is easy to misdiagnose as a model problem. Sometimes it is.
 
 But within the current frontier tier, the practical question changes. The model sets the ceiling. Engineering decides how much of that ceiling you reach.
 
-This post is about that engineering layer: evals, context, tools, routing, serving, and the point where customizing quietly turns into owning something you now have to maintain. I use one ladder throughout: use agents, then customize agents, then own the machinery.
+This post is about that engineering layer: evals, context, tools, routing, serving, and the point where customizing quietly turns into owning something you now have to maintain. One ladder runs through the whole post: use agents, then customize agents, then own the machinery.
 
 The ladder is not a sophistication ranking. Each rung buys a different kind of value, carries a different maintenance burden, and needs a different gate before you climb. Fine-tuning and reinforcement learning show up near the end, because they matter. But they are not the destination. They are one branch of ownership, and not the branch to reach for first.
 
@@ -58,7 +58,7 @@ Scaling at the customize rung means three distinct things. Volume is the obvious
 
 Do not expect value to rise smoothly with sophistication. Across the 2025 and 2026 evidence base it looks more like a J-curve with a fork at the end. Off-the-shelf adoption creates real but shallow value. Value then dips at the pilot-to-production transition, where the 42% abandonment number lives. Then it rises once the agent becomes a dependable process. The dip has a simple cause: scale exposes the weaknesses a pilot concealed. At ten runs, a 70% success rate reads as promise and the token bill goes unread. At ten thousand runs, both are undeniable. Customizing an agent is the work of surviving contact with scale.
 
-Three independent 2025 surveys converge on a similar small minority. BCG finds 5% of 1,250 firms achieving AI value at scale, McKinsey classes about 6% of 1,993 respondents as high performers on EBIT impact, and MIT finds 5% of pilots delivering measurable return. Three different denominators, namely companies, respondents, and pilots, land on a similar number. None of these studies measures what share of total value that minority holds, so this is a convergence, not a concentration finding. Model customization is not what separates that minority. McKinsey's strongest correlate of EBIT impact, stronger than any technology factor tested, is whether the organization redesigned the workflow the agent operates in. The MIT report's own diagnosis of the 95% that stall is an integration and learning gap, not a model capability gap.
+Three independent 2025 surveys converge on a similar small minority. BCG finds 5% of firms achieving AI value at scale, McKinsey classes about 6% of respondents as high performers on EBIT impact, and MIT finds 5% of pilots delivering measurable return. Three different denominators, namely companies, respondents, and pilots, land on a similar number. None of these studies measures what share of total value that minority holds, so this is a convergence, not a concentration finding. Model customization is not what separates that minority. McKinsey's strongest correlate of EBIT impact, stronger than any technology factor tested, is whether the organization redesigned the workflow the agent operates in. The MIT report's own diagnosis of the 95% that stall is an integration and learning gap, not a model capability gap.
 
 The stage-by-stage value map is easier to read as a table:
 
@@ -68,7 +68,7 @@ The stage-by-stage value map is easier to read as a table:
 | Customize agents | Dependable process at known reliability and cost | Weeks to months | Requires evals, traces, workflow redesign, and ownership of rollout quality |
 | Own the machinery | Different cost structure, moat, or narrow capability the frontier lacks | Quarters | Pays only after specific gates fire, and must be revalidated as models move |
 
-The evidence fits that shape. Stage one productivity is real but far more variable than the headline suggests. The controlled Copilot experiment measured a 55.8% speedup, though on a single scoped task with 95 freelance developers and a confidence interval running from 21% to 89%. Larger field experiments across 4,867 developers pooled to a 26% increase in completed tasks, with per-company estimates from 18% to 54%. And METR's trial with experienced open-source maintainers found the opposite, a 19% slowdown. The effect is real, highly heterogeneous, and occasionally negative. But adoption is not transformation. McKinsey finds 88% of organizations now use AI while only 39% report any enterprise EBIT impact, most of it under 5%.
+The evidence fits that shape. Stage one productivity is real but far more variable than the headline suggests. The controlled Copilot experiment measured a 55.8% speedup, though on a single scoped task with 95 freelance developers and a confidence interval running from 21% to 89%. Larger field experiments across 4,867 developers pooled to a 26% increase in completed tasks. And METR's trial with experienced open-source maintainers found the opposite, a 19% slowdown. The effect is real, highly heterogeneous, and occasionally negative. But adoption is not transformation. McKinsey finds 88% of organizations now use AI while only 39% report any enterprise EBIT impact, most of it under 5%.
 
 Stage two is where process-level P&L starts to concentrate. Klarna's assistant handled 2.3 million conversations while resolution times fell from 11 minutes to 2, with a company-reported profit improvement around $40M. That is a stage two win: an off-the-shelf model plus heavy workflow integration.
 
@@ -126,7 +126,7 @@ The practical failure mode here is forking for something configuration could do.
 
 ## The stack inside the ladder
 
-Here is the implementation order I would use. Customize decomposes into four layers, worked in sequence. Own adds a fifth layer, and it sits behind a gate.
+Customize decomposes into four layers, worked in this order. Own adds a fifth layer, and it sits behind a gate.
 
 ### Layer 1: Evals and measurement
 
@@ -156,7 +156,9 @@ The rule I took away is that a verifier fails in two directions and most builder
 
 The context window is the scarcest resource an agent has. Context rot, the measurable degradation as the window fills with the wrong tokens, is established across all 18 models Chroma tested, spanning the GPT, Claude, Gemini, and Qwen families, which makes "use a bigger window" an anti-pattern rather than a strategy. The working frame is four operations: write, select, compress, isolate.
 
-Two numbers show the leverage. Compaction, which summarizes earlier history when the window approaches its limit and is now a native feature of major agent runtimes rather than custom code, cut input tokens by about 86% in one published assessment, with no measurable change in the aggregate evaluation score. That headline hides a caveat the authors flag themselves: one sub-metric, the model's ability to recover the higher-level objects explaining a behavior, did decline. On memory, Databricks' scaling research found agent accuracy on enterprise data tasks rising from 2.5% to over 50% after 62 memory log records, passing the expert-curated baseline of 33.0%, with reasoning steps dropping from roughly 19 to 4.3. The architectural rule that falls out is to separate working memory, which is compactable, from source-of-truth artifacts, which are stored and retrievable.
+Two numbers show the leverage. Compaction, which summarizes earlier history when the window approaches its limit and is now a native feature of major agent runtimes rather than custom code, cut input tokens by about 86% in one published assessment, with no measurable change in the aggregate evaluation score. That headline hides a caveat the authors flag themselves: one sub-metric, the model's ability to recover the higher-level objects explaining a behavior, did decline. On memory, Databricks' scaling research found agent accuracy on enterprise data tasks rising from 2.5% to over 50% after 62 memory log records, passing the expert-curated baseline of 33.0%. The architectural rule that falls out is to separate working memory, which is compactable, from source-of-truth artifacts, which are stored and retrievable.
+
+I have done this by hand at both ends of the sophistication range. The first time was a coding-agent experiment where the entire memory system was a one-page prompt telling the agent to load context, declare a budget, run two or three experiments, write down what worked and what did not, and plan the next step for the next invocation of itself. No Python at the start, just that file and a shell wrapper. That was enough for the agent to discover multi-seed ensembles and run sixty experiments in under a day on a Mac mini. The second was a document extraction pipeline with a large nested target schema. The schema was the biggest thing in the prompt, so we compacted it before each call, which cut tokens on the affected calls by about two thirds while field-level agreement with the uncompacted version held at 97%. Neither needed a memory framework. Both needed someone to decide what the agent should still know on its next turn, which is the whole of context engineering once the vocabulary is stripped away.
 
 One finding describes what agents do by construction rather than by accident. When information is sharded across turns instead of delivered in a single prompt, which is the normal condition of a multi-step agent, measured performance collapses. In the Microsoft and Salesforce study of this effect, o3 retained 98.1% of its single-turn performance when the same instructions were concatenated, but only 64.1% once they were sharded across turns. The average decline was 39% across the fifteen models tested. This is not a small-model problem, and it means multi-turn degradation is a design constraint of agents rather than an edge case.
 
@@ -172,7 +174,7 @@ There is one exception to the rule that bespoke tools are customization, and it 
 
 Skills are packaged procedural knowledge loaded via progressive disclosure, costing roughly 100 tokens of metadata until invoked. They are best understood as the middle rung of an escalating-persistence ladder running prompt, skill, fine-tune. A skill is versionable, code-reviewable, model-portable, and costs nothing to train, so it is the cheap alternative that makes fine-tuning unnecessary. One hard-won caveat: benchmark studies find curated, human-authored skills consistently help, zero-shot-generated skills provide no benefit on average, and low-quality skills actively degrade performance. Every skill gets an eval.
 
-On architecture, coordination is earned rung by rung: single agent, then subagents, then multi-agent, then swarm. Subagents, meaning orchestrator-worker patterns with isolated contexts, are context engineering by another name and come off-the-shelf in current tooling. Full multi-agent systems carry compounding costs. Five chained agents at 95% reliability each yield roughly 77% combined, and one measurement puts multi-agent systems at 4 to 220 times the prefill tokens and 2 to 12 times the decode tokens of the single-agent equivalent. Apply a four-condition test before adopting multi-agent: the task decomposes into semi-independent subproblems, synthesis adds value beyond its overhead, the single-agent baseline is already optimized and plateaued, and the incremental gain exceeds the full coordination cost. Counter-examples exist in narrow, automatically-verifiable domains, so treat this as a test rather than a ban. Swarms remain a research frontier whose practical bottleneck is human review bandwidth.
+On architecture, coordination is earned rung by rung: single agent, then subagents, then multi-agent, then swarm. Subagents, meaning orchestrator-worker patterns with isolated contexts, are context engineering by another name and come off-the-shelf in current tooling. Full multi-agent systems carry compounding costs. Five chained agents at 95% reliability each yield roughly 77% combined, and one measurement puts multi-agent systems at 4 to 220 times the prefill tokens of the single-agent equivalent. Apply a four-condition test before adopting multi-agent: the task decomposes into semi-independent subproblems, synthesis adds value beyond its overhead, the single-agent baseline is already optimized and plateaued, and the incremental gain exceeds the full coordination cost. Counter-examples exist in narrow, automatically-verifiable domains, so treat this as a test rather than a ban. Swarms remain a research frontier whose practical bottleneck is human review bandwidth.
 
 ### Layer 4: Model and inference strategy
 
@@ -219,7 +221,7 @@ You will underestimate two effects on the agent. Open models differ from the fro
 
 ## Own, branch one: the model
 
-The model branch changed in the last twelve months. This section is about weights and serving. The harness branch has a different gate, and I return to it afterward.
+The model branch changed in the last twelve months. This section is about weights and serving. The harness branch has a different gate and gets its own section afterward.
 
 The case against fine-tuning, as built on 2023 to 2025 evidence, was solid. A bespoke domain model that consumed 1.3 million A100-hours was matched on financial tasks by a general model that had shipped two weeks before the bespoke one was even announced. Enterprise surveys showed declining fine-tuning returns as base models improved. A major lab wound down its self-serve fine-tuning platform, with the stated rationale that newer base models made much of it unnecessary. All of that remains true, and some of it strengthened in 2026: the wind-down proceeded on schedule, and the first systematic study of production agents, covering 20 case studies and 86 practitioners across 26 domains, found 70% rely on prompting off-the-shelf models rather than weight tuning, 68% execute at most ten steps before human intervention, and 74% depend primarily on human evaluation.
 
@@ -343,18 +345,13 @@ One further gap matters for regulated deployments. Capability benchmarks test al
 
 This is a mid-2026 playbook, and the numbers will move. The volume crossovers, the open-closed gap, the cost of an SFT run, and this quarter's benchmark standings all have a shelf life. Several of the models cited launched within days of this writing.
 
-The structure should survive the churn:
+Three things should survive the churn.
 
-- **The model sets the ceiling and the engineering decides how much of it you get.** The balance tips toward engineering within a tier and toward the model across tiers.
-- **Each rung unlocks a different kind of value.** Throughput that scales with headcount, then a dependable process that scales with volume, then a cost structure, a moat, and capability the frontier lacks. Most of the absolute cost saving sits at the customize rung, and the durable part of ownership is capability and moat, not margin.
-- **Climb in order, per workflow.** The ladder repeats fractally inside each layer as instruct, configure, own. One rule covers all of them: take the cheapest, most reversible step that clears your eval bar, and escalate only when it plateaus.
-- **The line between customizing and owning is the supported extension surface, not the file boundary.** Owning a behavior-altering mechanism counts as ownership however much it looks like plumbing, while behavior-transparent levers like caching and batching do not.
-- **Ownership splits into a harness branch and a model branch**, each with its own gate. Owning your inference has three destinations, not two, with self-hosted-but-untuned a legitimate place to stop.
-- **Within the model branch, the rung is set by what supervises it.** Demonstrations, a teacher, or a verifier, because the entry ticket gates you where budget cannot.
-- **The top rungs loop.** Prompt optimization discovers the strategy, tuning bakes it in, then re-optimizing the prompt for the new weights recovers more. Climb-and-return beats climb-and-stop.
+- **The model sets the ceiling and the engineering decides how much of it you get.** Within a tier the balance tips toward engineering. Across tiers it tips toward the model.
+- **Climb in order, per workflow, and gate each rung with an eval.** The line between customizing and owning is the supported extension surface, not the file boundary, and owning a behavior-altering mechanism is ownership however much it looks like plumbing.
 - **One artifact graduates with you.** The eval, from eyeball to harness to environment to reward signal. Your eval failures are your best training set.
 
-Climb in order. Gate each rung with an eval. Re-check quarterly.
+The part of this I trust most is not any of the numbers. It is the shape of the failures I have watched. A verifier the agent could game. A prompt optimizer that learned the test set. A fine-tune that beat the production model and then had no serving benchmark behind its cost claim. Models will keep improving and prices will keep moving, and neither will change what those failures have in common, which is that someone skipped the measurement and went straight to the machinery. Build the eval first. Everything above it on the ladder is optional, and the eval is what tells you which parts.
 
 ---
 
