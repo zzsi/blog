@@ -43,6 +43,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **Rung 3 buys a different cost structure, a moat, and capability the frontier lacks.** Capability is the durable one. Cost advantage erodes as prices fall.
 - One honest line on the evidence: most of this rests on self-reported survey data, so treat direction as solid and specific multiples as directional. [REUSE: caveat para, compressed]
 - **RULE FOR DRAFTING: no figure here, no tables, no more than one number per rung.** The J-curve and the detail belong in the rung sections.
+- **Candidate for the one idea an executive carries out:** a point of reliability is worth the cost multiple between human and agent. At 12x cheaper, one point of reliability is worth twelve points of unit price. Below roughly 80% reliability, rung 2 beats rung 3 whatever rung 3 promises. [SOURCE: business-value.md 2b]
 
 ## 3. Why the rung is the right unit (~450 words)
 
@@ -61,6 +62,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **Layer: guardrails and blast radius.** Permissions, allowlists, sandboxing, audit trails, injection resistance. You cannot let a team point an agent at real systems without this, which is what makes it rung 1 rather than an afterthought. Capability benchmarks test almost none of it, so leaderboard scores say nothing here. [REUSE: the orphaned guardrails para from the anti-pattern gallery, promoted]
 - **Note the escalation, briefly:** guardrails recur higher up. Testing injection resistance is rung 2 measurement work; owning the whole safety stack is rung 3, since quantization and tuning can move refusal behavior. Mention once, do not build a section on it.
 - **Layer: literacy.** Task selection, trust versus verify, security hygiene.
+- **The honest limit, and the best argument in the post.** Rung 1 value is real and dispersed. An hour a day across a hundred people is 23,000 hours a year, and you cannot bank an eighth of a person a hundred times over. If no role changes, the P&L shows the agent spend added and nothing removed. That is why high adoption does not become enterprise impact, and why workflow redesign is the strongest correlate of profit impact: redesign is what converts dispersed hours into a removed cost. [SOURCE: business-value.md 2b, gap 2]
 - **Why teams stall here:** most organizations stall between rung 1 and rung 2, not between 2 and 3. [REUSE]
 - **[NEEDS: a first-hand story. The enablement program is the obvious source.]**
 
@@ -69,7 +71,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 *The breadth-and-depth section. Still calling APIs you do not own.*
 
 - **What it buys:** a dependable process that scales with volume. 70% is a demo; 95% at a known cost per run is a process. [REUSE]
-- **Layer: measurement.** Three-level evals. Where the bottleneck actually sits is contested, and you cannot tell which reading applies to you without measuring. [REUSE: relocated bottleneck para] Verifiers fail in two directions. [REUSE: first-hand verifier story]
+- **Layer: measurement.** The money argument first: without a way to tell a success from a failure you either review everything, which throws away most of the prize, or review nothing, which loses outright once an escaped error costs more than a normal handling. A confidence policy is what turns reliability into realised saving. [SOURCE: business-value.md 2b, gap 1] Then three-level evals. Where the bottleneck actually sits is contested, and you cannot tell which reading applies to you without measuring. [REUSE: relocated bottleneck para] Verifiers fail in two directions. [REUSE: first-hand verifier story]
 - **Layer: context.** Context rot, compaction, memory, multi-turn sharding. [REUSE + first-hand Memento/schema-compaction para]
 - **Layer: capability.** Tools, skills, code execution. The 150k-to-2k result. Extend rather than replace defaults, because defaults are co-trained. [REUSE]
 - **Layer: coordination.** Single agent, subagents, multi-agent. The four-condition test. [REUSE]
@@ -103,7 +105,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 
 ## Figures
 
-- fig3 J-curve — **needs rework**: currently labeled use/customize/own.
+- fig3 J-curve — **needs rework**: relabel to the three rungs, and consider replacing it entirely. The dip now has a mechanism (dispersed unbankable savings, then the cost of not knowing which runs failed), so a figure showing *banked versus theoretical* value may beat an asserted curve shape.
 - fig1 price of capability — rung 3.
 - fig2 cost of customization — rung 3. **Rename: "cost of tuning".**
 - **NEW, maybe:** the three-level diagram (rungs / layers / escalation).
