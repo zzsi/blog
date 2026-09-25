@@ -355,6 +355,48 @@ Rung 2 is the work of getting both.
 
 ---
 
+## 2f. Rung 1 evidence from other companies
+
+Researched 2026-09-25 to answer the author todo about rung 1 results. The evidence splits cleanly in two, and the split *is* the rung 1 argument.
+
+### Gains are real at the level of the person
+
+**Microsoft, Claude Code and Copilot CLI rollout, early 2026. [PRIMARY — Murphy-Hill, Butler, Savelieva, arXiv 2607.01418]**
+Tens of thousands of engineers. Adopters "merged roughly 24% more pull requests than they would have otherwise," sustained over four months. Adoption spread through social networks rather than formal channels. The authors' own caveat: "a merged PR is not the same as the value it delivers." This is the cleanest large-scale rung 1 result: vendor agents, no custom harness, a measurable individual effect.
+
+### Gains mostly fail to reach the company
+
+**Faros AI, "The AI Productivity Paradox," July 2025. [PRIMARY — faros.ai; vendor telemetry]**
+Over 10,000 developers across 1,255 teams. High-adoption teams completed 21% more tasks and merged 98% more pull requests, but review time rose 91%, average PR size 154%, and bugs per developer 9%. At company level: "we observed no significant correlation between AI adoption and improvements at the company level"; the gains "do not scale when aggregated." Mechanism: faster code generation fills a review queue that did not speed up.
+
+**Humlum and Vestergaard, "Large Language Models, Small Labor Market Effects," NBER / Becker Friedman Institute 2025. [PRIMARY]**
+Adoption surveys of over 25,000 workers in 7,000 Danish workplaces linked to administrative records. Average time saved about 3%. "Precise null effects on earnings and recorded hours at both the worker and workplace levels," ruling out effects above 2% two years on. The null held for intensive users, early adopters and heavily investing workplaces. Adoption led to task restructuring and job switching "without net changes in hours or earnings." The time saved was reabsorbed.
+
+**Why this matters:** three independent sources, one at a single large company, one across 1,255 teams, one across an economy, all say the same thing. Rung 1 value is real at the person and mostly invisible at the company. That is the section's claim, now with evidence rather than an illustration. The Faros mechanism adds a detail worth using: the bottleneck moved to review, which is a workflow problem, not a model problem.
+
+### The companies with dramatic results moved to rung 2
+
+**Stripe, Minions, Feb 9 2026. [PRIMARY — stripe.dev]**
+Over a thousand pull requests merged each week are "completely minion-produced," human-reviewed but with no human-written code. Built from a fork of Block's open-source agent Goose. Stripe built its own because vendor agents struggle with "hundreds of millions of lines" of custom Ruby with proprietary libraries, under financial-compliance constraints. What made it work: isolated devboxes, **MCP connectivity to an internal "Toolshed" of 400+ tools**, deterministic test layers, and "the same coding rules humans use in Cursor and Claude Code."
+
+**Ramp, Inspect, 2026. [PRIMARY — builders.ramp.com, "Why We Built Our Own Background Agent"]**
+About 30% of merged pull requests to its frontend and backend repos written by Inspect within a couple of months, with no mandate. Later reports put it at 40% and a single-day peak of 57%. **[SECONDARY for 40% and 57%]** Ramp's reason: "Owning the tooling lets you build something significantly more powerful than an off-the-shelf tool will ever be." Integrated with Sentry, Datadog, LaunchDarkly, Braintrust, GitHub, Slack and Buildkite, with sandboxed full dev environments so it can check its own work.
+
+### What the pair of findings says
+
+1. **The biggest reported agent results come from companies that left rung 1.** Stripe and Ramp both built their own agent. That is the rung 1 to rung 2 transition, documented by the companies themselves, with their reasons stated.
+2. **Their rung 1 work carried over.** Stripe's 400-tool MCP Toolshed and its shared coding rules are exactly the rung 1 investments the post describes, and they became the foundation of the rung 2 agent. Ramp's integrations are the same. Rung 1 is not wasted when you climb; it is what you climb on.
+3. **Both kept humans in review** and both built environments where the agent can verify its own work, which is rung 2's reliability work.
+
+### Status
+
+- Microsoft, Faros, Humlum and Vestergaard, Stripe and Ramp's first-party figures: **[PRIMARY]**.
+- Faros is a vendor selling measurement; its telemetry is still the largest dataset here. Say so.
+- Ramp 40% and 57%: **[SECONDARY]**.
+- **Not used:** a claim that Microsoft discontinued Claude Code licences for most engineers over cost; a "median 6.4 hours per week" figure attributed to McKinsey and Slack; Duolingo's review-time figure; a "21,000 developer hours" figure for Stripe. None confirmed at source.
+
+---
+
 ## 3. Outside views, for comparison
 
 ### a16z: per-seat pricing breaks — **[VERIFIED]**

@@ -11,8 +11,7 @@ Working title: **[DECIDE]**, settle after reading this.
 ## Author todo
 
 - **Rung 1 result.** Did the rung 1 setup (MCP over internal services, scheduled jobs building a knowledge base) produce value you could point to, like time saved or a decision made faster? If yes, rung 1 gets a concrete result. If not, that also fits the section's own claim that rung 1 value is real but hard to measure. Feeds the last paragraph of rung 1.
-
----
+  - **Partly answered by outside evidence (BV §2f).** Rung 1 now has company evidence either way; your own result is a bonus, not a requirement.
 
 ## Opening
 
@@ -64,12 +63,17 @@ Working title: **[DECIDE]**, settle after reading this.
     - Organisational: who may use which agent on which data, what needs sign-off, how incidents are reported. This is the HMT connection.
     - Capability benchmarks test almost none of this [V]. EU AI Act Article 14 requires a person be able to override or stop high-risk systems, from December 2027 and August 2028 [BV §2c, verified].
 
-13. Rung 1 value is real but spread thinly, so it rarely reaches the P&L unless someone redesigns the workflow.
-    - An hour a day across 100 people is 23,000 hours a year, arriving in pieces too small to remove a cost [BV §2b, illustrative].
-    - Workflow redesign is McKinsey's strongest correlate of EBIT impact, stronger than any technology factor [BV, verified].
+13. Rung 1 value is real at the person and mostly invisible at the company.
+    - Microsoft: tens of thousands of engineers on Claude Code and Copilot CLI merged about 24% more PRs [BV §2f, primary].
+    - Faros, 10,000+ developers: 98% more PRs, 91% longer reviews, no company-level improvement; the bottleneck moved to review [BV §2f, primary].
+    - Denmark, 25,000 workers: about 3% time saved, precise null effect on hours and earnings [BV §2f, primary].
+    - Workflow redesign is McKinsey's strongest correlate of EBIT impact [BV, verified]. That is what converts saved hours into removed cost.
 
-14. **[YOU]** What your own setup produced. See the author todo.
-    - If there is a number, use it. If there is not, say so; it illustrates paragraph 13.
+14. The companies with the biggest agent results left rung 1, and their rung 1 work is what they built on.
+    - Stripe: 1,000+ merged PRs a week with no human-written code, from a fork of Goose, on an MCP "Toolshed" of 400+ internal tools and the same coding rules its engineers use in Claude Code [BV §2f, primary].
+    - Ramp: about 30% of merged PRs within months; "owning the tooling lets you build something significantly more powerful than an off-the-shelf tool will ever be" [BV §2f, primary].
+    - Bridge to rung 2.
+    - **[YOU, optional]** One sentence on your own setup and what it produced, if there is a result.
 
 ---
 
