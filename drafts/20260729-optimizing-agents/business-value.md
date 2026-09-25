@@ -215,9 +215,9 @@ The lesson is general. **Whichever side of the error is invisible is the side th
 
 ### A problem for the whole framework
 
-The model needs a usable confidence signal, and that assumption is shakier than it looks. Models trained with reinforcement learning from human feedback are systematically miscalibrated, and their highest stated confidence often correlates with wrong answers. If the number is untrustworthy, outcome 3 is not merely expensive, it is invisible to the mechanism you would naturally reach for.
+The model needs a usable confidence signal, and getting one is the hard part. See 2d.
 
-Which argues for what the document AI post already recommends: confidence from **agreement** across OCR, a vision-language model, an LLM and validators, rather than from any single self-reported score. Production content moderation systems do the same thing, escalating on four independent triggers rather than one: calibrated confidence, novelty, policy match, and contradiction.
+The short version: a single self-reported score is not enough, which is what the document AI post already argues. Confidence should come from **agreement** across OCR, a vision-language model, an LLM and validators, because those fail in less correlated ways than one model asked twice. Production content moderation does the same thing, escalating on four independent triggers rather than one: calibrated confidence, novelty, policy match, and contradiction.
 
 ### Regulation puts a floor under the escalation rate
 
@@ -228,6 +228,56 @@ EU AI Act Article 14 requires that high-risk systems be designed so a person can
 **Correct the date.** Widely repeated secondary sources still give August 2, 2026 for high-risk obligations. They were delayed: **December 2, 2027** for Annex III systems, **August 2, 2028** for Annex I. Deferred because standards and national authorities were not ready, not abandoned. **[VERIFIED]**
 
 Annex III covers creditworthiness assessment, life and health insurance underwriting, employment and worker management, education, and access to essential services. **Those are the same domains where a silent error is most expensive.** The economics and the regulation point the same way, which is a useful thing to be able to tell a client.
+
+---
+
+## 2d. Where the confidence score comes from
+
+Everything in 2b and 2c rests on being able to separate outcome 1 from outcome 3. That separation is a confidence signal, and it is the weakest link in the chain.
+
+### How it is estimated, cheapest first
+
+| Method | What it costs | What it is good for | Catch |
+|---|---|---|---|
+| Ask the model | Nothing | Any API, no internals needed | Clusters on round numbers |
+| Log-probabilities | Nothing, where exposed | Theoretically grounded | Measures fluency, not correctness; no single number for a multi-step agent |
+| Sample N times, measure agreement | Nx inference | Strong signal; for agents, whether it takes the same *path* twice | Correlated errors survive the vote |
+| A second model judges the first | One extra call | Flexible | Moves the calibration problem rather than solving it |
+| **Agreement across heterogeneous components** | Already paid for | OCR vs VLM vs LLM fail in less correlated ways | Needs more than one component |
+| **Deterministic validators** | Near nothing | Checksums, schema, cross-field consistency | Only where the task admits one |
+
+The last two are the ones to build on. The first four all ask one model how it feels.
+
+**[CORRECTION to an earlier version of this note.]** It said RLHF-trained models are systematically miscalibrated and their highest stated confidence often correlates with wrong answers. That was the standard finding and it has partly reversed. Work in 2026 argues the advice to prefer log-probabilities no longer holds on post-2025 models, where verbalized confidence is the better signal, tested across three benchmarks and up to 18 models. **[VERIFIED — arXiv 2609.10996]** Read it precisely: the paper claims *relative* superiority over logprobs and explicitly does not claim verbalized confidence is now well calibrated. Ranking improved. Calibration did not.
+
+### Yes, calibration needs ground truth
+
+"A score of 0.8 means 80% correct" is an empirical claim about your data. Nothing about the model establishes it. But three things make this cheaper than it sounds.
+
+**You need less data than you expect.** Reported practice puts Platt scaling on a couple of hundred labelled examples at cutting expected calibration error by 30 to 60%. That is a week of one person's work, not a data programme. **[UNVERIFIED — secondary source; check before quoting the range]**
+
+**You may not need a calibrated probability at all.** For setting a threshold, what you need is the empirical curve: at each threshold, what coverage you get and what error rate comes with it. That is directly measurable from labelled examples, and it is exactly the coverage-versus-error curve in the document AI post. A score that ranks well but calibrates badly still yields a usable curve.
+
+**The labels have a source you are already paying for.** Every escalated item goes to a human who produces a verdict, and that verdict is a label. **The escalation queue is a labelling pipeline.** Start conservative with high escalation, harvest labels from the reviews, recalibrate, lower the threshold as the curve firms up. The expensive early phase funds the cheap later one.
+
+That last point is worth making loudly in the post. It reframes the cost of early over-escalation from waste into investment, and it is the same move as "your eval failures are your best training set", one layer down.
+
+### The principled version
+
+Conformal risk control states a target error rate **among accepted outputs** and returns the threshold that guarantees it, from a calibration set. That is the formal version of the hand-modelling in 2b, and it fits this problem because the guarantee lands exactly where silent errors live. Worth naming in the post as the rigorous option, without a tutorial.
+
+### Calibration decays
+
+The document mix shifts, the model version changes, someone edits the prompt. Calibration is a standing measurement, not a setup step. Another reason the escalation queue matters: it is the only label source that keeps producing.
+
+### What this adds to the argument
+
+Setting the operating point needs **two** numbers, and most teams have neither:
+
+1. What a silent error costs. A business number, knowable in an afternoon, nobody measures it.
+2. The coverage-versus-error curve for your own data. An engineering number, needs a few hundred labels, and the escalation queue produces them for free.
+
+Rung 2 is the work of getting both.
 
 ---
 
