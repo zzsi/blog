@@ -161,6 +161,7 @@ The general lesson for this list: a citation being real is not the same as a cit
 All verified against the named primary unless marked.
 
 1. **Thinking Machines, "Learning to Replicate Expert Judgment in Financial Tasks"** (Bridgewater). https://thinkingmachines.ai/news/learning-to-replicate-expert-judgment-in-financial-tasks/ — Qwen3-235B base; 84.66% vs Claude Opus 4.8 at 78.2%; 29.8% fewer mistakes; 13.8x lower inference cost per task; six tasks. **Secondary sources wrongly say GPT-5.5.**
+1b. **Harvey, "Harvey Tenet Research Preview,"** Aug 20 2026. https://www.harvey.ai/blog/post-training-update-harvey-tenet — Harvey's own publication. Kimi K3 base, GSPO plus async RL with Fireworks, no customer data; +3.6 answer quality, +12.1 citation quality vs strongest baselines including GPT-5.6 Sol and Fable 5, at ~1/10 cost per cell. Early research results, technical report pending.
 2. **OpenAI, "Reinforcement fine-tuning use cases."** https://developers.openai.com/api/docs/guides/rft-use-cases — Harvey, Ambience, Accordance, SafetyKit, ChipStack, Runloop, Milo, Thomson Reuters. One page, customer-supplied figures.
 3. **arXiv 2603.17673**, PrivEsc-LLM 4B — SFT then RLVR, 93.3% on held-out privilege-escalation benchmark, behind only Claude Opus 4.7. Cost figure not confirmable from abstract.
 4. **OpenAI developer forum, Oct 2023**, quoting GPT-3.5 Turbo fine-tuning at $8.00/M training tokens. https://community.openai.com/t/cost-of-fine-tuned-model-usage/445970 — used because openai.com and the contemporaneous Register article both fail to retrieve.

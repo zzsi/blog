@@ -74,13 +74,18 @@ Qwen3-235B base, fine-tuned on Tinker. Average accuracy **84.66%** across six fi
 
 *Correction recorded:* every secondary source we found said it beat GPT-5.5. The primary says Claude Opus 4.8. Do not repeat the secondary version.
 
+**Harvey Tenet, in Harvey's own words. [VERIFIED — harvey.ai, Aug 20 2026]**
+This is the newer and independently published Harvey result, distinct from the older one on OpenAI's page below. Kimi K3 base, post-trained with Fireworks using group-sequence policy optimisation and asynchronous RL "in realistic legal work settings," with no customer data. Against the strongest baselines named, which include GPT-5.6 Sol and Fable 5, the review-table result is **answer quality up 3.6 points and citation quality up 12.1 points at roughly one-tenth the cost per cell.** Evaluated across LAB, APEX, Redline Bench, PRBench, LegalBench, CUAD and MAUD. Harvey's own caveat: "early research results," technical report forthcoming.
+
+Note what changed between Harvey's two results. The 2025 one tuned an OpenAI model through a vendor's managed RFT. The 2026 one post-trains an **open base** with their own RL partner and beats the vendor's frontier model on their task at a tenth of the cost. That is the rung 3 path in one company's timeline.
+
 **Our own extraction result. [FIRST-HAND]** Tuned 3B and 8B checkpoints at 0.92 against the production model's 0.82 on transcription fields, 0.87 against 0.55 on the full field set including checkboxes. Keep generic, no client detail.
 
 **Eight customer results on OpenAI's reinforcement fine-tuning page. [VERIFIED — one vendor page, customer-supplied figures, not independently audited]**
 
 | Company | Task | Result | Baseline |
 |---|---|---|---|
-| Harvey | Legal citation extraction | F1 0.563 to 0.6765; won or tied 93% of head-to-heads, faster | GPT-4o |
+| Harvey (2025 result) | Legal citation extraction | F1 0.563 to 0.6765; won or tied 93% of head-to-heads, faster | GPT-4o |
 | Ambience | ICD-10 medical coding | From 6 points behind trained physicians to 12 ahead; roughly a quarter fewer coding errors | Physician panel |
 | Accordance | Tax analysis | 38.89% improvement | Base models, own benchmark |
 | SafetyKit | Content moderation | F1 86% to 90%; set to replace dozens of GPT-4o calls per pipeline run | GPT-4o |
