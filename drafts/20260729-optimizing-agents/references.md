@@ -201,6 +201,13 @@ Primaries unless marked.
 11. **OpenAI, research acceleration / automated research intern,** Sept 2026. https://openai.com/index/research-acceleration-view-inside-openai/ — **403; figures REPORTED** via https://www.helpnetsecurity.com/2026/09/07/openai-research-automation-intern/
 12. **Jakub Pachocki, "An Alien Mind,"** OpenAI, Sept 2026. https://openai.com/index/an-alien-mind/ — **403; quote REPORTED** via https://thenextweb.com/news/openai-slowdown-pachocki-alien-mind-research-intern-compute
 13. **Jeff Clune on X.** https://x.com/jeffclune/status/2077179607846199385 — **402; text REPORTED.**
+14a. **RRSI: Regularized Recursive Self-Improvement of Agent Harnesses,** Google Cloud AI Research et al., arXiv 2609.24972. https://arxiv.org/abs/2609.24972 · code https://github.com/google-research/rrsi — evolve set is Harvey LAB.
+14b. **Dream-RSI: Recursive Self-Improvement through Evolving Worlds,** UMD, Google DeepMind, UVA, arXiv 2609.14858. https://arxiv.org/abs/2609.14858
+14c. **Self-Harness: Harnesses That Improve Themselves,** arXiv 2606.09498. https://arxiv.org/abs/2606.09498
+14d. **Self-Improvement Can Self-Regress: The Rise-and-Collapse Failure Mode,** arXiv 2606.21090. https://arxiv.org/abs/2606.21090
+14e. **Iterative Finetuning is Mostly Idempotent,** arXiv 2605.01130. https://arxiv.org/abs/2605.01130
+14f. **Recursive Self-Improvement in AI: From Bounded Self-Refinement to Autonomous Research Loops,** arXiv 2607.07663. https://arxiv.org/abs/2607.07663 — survey.
+14g. Unread at source: SIFT 2609.19526, AREX 2607.21461, Frontis-MA1 2607.28568, ReMiT 2602.03075.
 14. **METR RE-Bench,** 2024. https://metr.org/blog/2024-11-22-evaluating-r-d-capabilities-of-llms/
 
 ---

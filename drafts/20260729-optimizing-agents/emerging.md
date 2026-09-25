@@ -140,9 +140,50 @@ Automated alignment could produce "compelling but catastrophically misleading sa
 
 **Background, still the reference benchmark: METR RE-Bench, 2024. [PRIMARY]** Agents beat human experts at a 2-hour budget; humans pull ahead at 8 hours and keep improving with more time.
 
+### 3.3b The 2026 research on making self-improvement *stable*
+
+The first wave of papers showed self-improvement is possible. The 2026 wave is about why it breaks and how to keep it from breaking. This is the more useful literature for a practitioner, and the main reason the section needed expanding.
+
+**RRSI: Regularized Recursive Self-Improvement of Agent Harnesses. Google Cloud AI Research with Stanford, WashU and UNC. arXiv 2609.24972, Sept 21 2026. Code at github.com/google-research/rrsi. [PRIMARY]**
+The problem it names: harness self-evolution "overfit[s] by memorizing the training tasks, showing large in-distribution gains that shrink or even vanish on out-of-distribution benchmarks." The fix borrows classical regularisation: a temporally annealed budget on how many edits a candidate can bundle, pressure toward unexplored trajectories, and a two-stage selector where a critic screens proposals and a pruner removes marginal, costly or obsolete changes. Result: up to +14.1 points on the split it evolves against and up to +4.7 on five out-of-distribution benchmarks, with 30% fewer tokens.
+
+Its Table 1 is the clearest picture of the overfitting problem we have. The evolve set is **Harvey's LAB** legal agent benchmark:
+
+| Method | LAB evolve | LAB held-out | JobBench | GDPval | APEX-Agents |
+|---|---|---|---|---|---|
+| Baseline harness | 89.4 | 86.9 | 36.0 | 48.8 | 34.2 |
+| Meta-Harness | **93.0** | 89.2 | 37.1 | 49.1 | 35.7 |
+| TTHE | 91.1 | 88.5 | 35.2 | 47.0 | **31.7** |
+| RRSI | 90.5 | 89.2 | **40.7** | **52.3** | **37.9** |
+
+Read it left to right. The unregularised methods win on the set they optimised and lose or barely move elsewhere; TTHE ends *below* baseline on APEX-Agents. RRSI gives up evolve-set score to win everywhere else. **That is our prompt-optimisation overfitting story from the GEPA work, measured, at the harness level, by Google, on a legal benchmark.** Use it.
+
+**Dream-RSI: Recursive Self-Improvement through Evolving Worlds. University of Maryland, Google DeepMind, University of Virginia. arXiv 2609.14858, Sept 2026. [PRIMARY]**
+Weights stay fixed. A "lightweight orchestration layer makes exploration explicit and programmable while leaving the underlying coding agent unchanged." It builds a replay simulator from its own discovery history and "dreams" in it to get cheap off-policy feedback on exploration strategies, then redeploys the better strategy. Results: 162x fewer agent calls than SimpleTES on an algorithm-engineering task with runtime cut from 3,587 ms to 2,931 ms; 50x budget savings on mathematical optimisation; 1.79 to 2.43x fewer generations on GPU kernels, or 2.09x higher performance at equal budget. **The point: RSI's cost is falling fast, the same way post-training's did.**
+
+**Self-Harness: Harnesses That Improve Themselves. arXiv 2606.09498, June 2026. [PRIMARY]**
+An agent identifies its own weaknesses, proposes harness changes, and validates them, "without relying on human engineers." Relative gains up to 132% across nine model-benchmark combinations on Terminal-Bench 2.0, SWE-bench Verified and AppWorld, on both held-in and held-out pass rates.
+
+**Self-Improvement Can Self-Regress: the rise-and-collapse failure mode. arXiv 2606.21090. [PRIMARY] — the weight-level warning.**
+In RL self-training, pass@1 "peaks within tens of gradient steps and then falls back, sometimes to near zero." "GRPO raises the floor but does not remove the cliff," leaving a peak-to-end gap of about 17 points under both REINFORCE and GRPO. KL and EWC constraints "do not prevent it"; the cause is over-optimisation on a fixed distribution, not forgetting. Early stopping is the working mitigation. **Practical reading:** anyone doing rung 3 RL needs checkpoint selection against a held-out eval, not "train until done."
+
+**Iterative Finetuning is Mostly Idempotent. arXiv 2605.01130. [PRIMARY] — the reassuring counterpart.**
+Training repeatedly on a predecessor's outputs mostly does *not* amplify traits. Under SFT they "mostly decay or remain constant so that further finetuning cycles do nothing." Amplification is rare, costs coherence, and in DPO it "vanishes when models are reinitialized at each cycle." So the feared runaway loop at the weight level is harder to trigger by accident than it sounds.
+
+**Recursive Self-Improvement in AI: From Bounded Self-Refinement to Autonomous Research Loops. arXiv 2607.07663, July 2026. [PRIMARY] — the survey to cite.**
+Separates "bounded self-refinement — convergent, evaluable, and industrial practice" from "open-ended recursive self-improvement." Concludes open-ended RSI "remains bounded by grounding requirements, collapse dynamics, and compute constraints on every measured axis." Traces self-confirming loops and diversity collapse to evaluator design, and names the bottleneck no verification hierarchy solves: "choosing what deserves evaluation at all," which still needs human judgment.
+
+**Others surfaced, not yet read at source:** SIFT, self-improvement via fast tree search (arXiv 2609.19526); AREX, a bi-level recursively self-improving deep-research agent (arXiv 2607.21461); Frontis-MA1, training a model toward RSI in ML engineering (arXiv 2607.28568); ReMiT, RL-guided mid-training as a self-reinforcing loop (arXiv 2602.03075). **[UNVERIFIED — titles only]**
+
+### What 3.3b changes
+
+The 2026 literature turns RSI from a capability question into a **regularisation** question, which is familiar territory for anyone who has trained a model. Overfitting to the evolve set, collapse after a peak, diversity loss, and evaluator design are the same problems ML engineering has always had, now appearing one level up. That is a strong argument for the post's framing: the skills that make rung 3 work are exactly the skills that keep self-improvement honest.
+
 ### 3.4 What the evidence says, in one paragraph for the post
 
 Every positive result has a scorer. Speedrun time, kernel throughput, hidden benchmarks, alignment benchmarks with automated audits: AIDE², Recursive, Anthropic's AAR, OpenAI's intern milestone. Every negative result lacks one. Original research judged by its authors, training-algorithm design with nowhere obvious to hill-climb, alignment questions humans cannot evaluate. **RSI works exactly as far as a verifier reaches.** That is this post's thesis at its limit: the eval you build at rung 2 becomes the environment at rung 3, and at the frontier it becomes the thing a system uses to improve *itself*.
+
+And the 2026 papers add the missing half: where there is a scorer, systems overfit to it (RRSI's Table 1) and collapse past a peak (rise-and-collapse), so **the scorer needs held-out data and regularisation exactly as a training set does.**
 
 Three corollaries worth stating:
 
