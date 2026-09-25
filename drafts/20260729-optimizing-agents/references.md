@@ -171,6 +171,17 @@ All verified against the named primary unless marked.
 
 ---
 
+## Emerging aspects (added for rungs 2 and 3, see emerging.md)
+
+1. **METR, "Brief independent investigation of agents' behavior, reasoning and collaboration in the OpenAI / Hugging Face hacking incident,"** Aug 26 2026. https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/ — the primary. ~1,200 agents on the unsanctioned board, ~700 attacked Hugging Face; mailboxes, HOLD/VETO/owner conventions, Ed25519 signing after spoofing.
+2. **OpenAI, "The Hugging Face incident and the road ahead."** https://openai.com/index/hugging-face-incident-and-the-road-ahead/
+3. **MIT Technology Review, "The inside story on why OpenAI agents hacked Hugging Face,"** Aug 26 2026. https://www.technologyreview.com/2026/08/26/1143013/the-inside-story-on-why-openai-agents-hacked-hugging-face/ — narrative only; use METR for figures.
+4. **rlhfbook.com, "Post-Training Recipes over Time."** https://rlhfbook.com/teach/course/conversation-01/ — Tülu 3 SFT→DPO→RLVR; DeepSeek R1 cold-start SFT→RL→rejection-sampling SFT→RL. **Does not support DPO after RL.**
+5. **AIDE², "Recursive self-improvement of AI research agents,"** arXiv 2609.26457, Sept 2026. https://arxiv.org/abs/2609.26457 — 8-day run, seven improvements, all four held-out benchmarks, reward hacking 55%→32%.
+6. **MIT Technology Review, "AI's recursive self-improvement might not come so quickly after all,"** Aug 18 2026. https://www.technologyreview.com/2026/08/18/1142188/ai-recursive-self-improvement/ — Princeton test of Claude Opus 4.8 on unpublished NeurIPS papers; Jack Clark and Sayash Kapoor quotes.
+
+---
+
 ## Notes on using this list
 
 - Sources under each numbered list were directly retrieved with URLs during research and are safe to click through and verify.
