@@ -57,9 +57,78 @@ The catch: high adoption does not become enterprise impact on its own. This is w
 
 ### Rung 3: structural advantage, bound by the frontier
 
-- Cost advantage erodes; capability and moat do not erode the same way. Fixed-capability prices have fallen roughly 10x a year. **[VERIFIED for the a16z measurement in 2024; the continuation through 2026 is extrapolation, not a fresh measurement]**
-- Our own extraction result: tuned 3B and 8B checkpoints at 0.92 against the production model's 0.82 on transcription fields, and 0.87 against 0.55 on the full field set including checkboxes. **[FIRST-HAND — strongest evidence in the post; keep generic, no client detail]**
+- Cost advantage erodes; capability and moat do not erode the same way. Fixed-capability prices have fallen roughly 10x a year. **[VERIFIED for the a16z measurement in 2024; the continuation through 2026 is extrapolation]**
 - The gate: a plateau plus a learnable signal. Volume decides whether the economics work, not whether the technique applies. **[JUDGMENT]**
+- The evidence for the payoff and the evidence that the cost is falling are in 2e below.
+
+---
+
+## 2e. Post-training: the wins and the cost curve
+
+Two questions a sceptical reader asks about rung 3. Does tuning actually beat the frontier in production, and is it getting cheaper? Both now have answers with primary sources.
+
+### The wins, strongest first
+
+**Bridgewater with Thinking Machines. [VERIFIED — thinkingmachines.ai, primary]**
+Qwen3-235B base, fine-tuned on Tinker. Average accuracy **84.66%** across six financial-judgment tasks, against **78.2%** for the best frontier model tested, which was **Claude Opus 4.8**. The custom model "makes 29.8% fewer mistakes than the best frontier model" at a **13.8x reduction in inference cost per task**. The post's explanation of why the frontier lost is the thesis of rung 3 in one sentence: "An explicit prompt can only convey the intuition an expert is able to put into words, while the judgments that matter most are often the hardest to articulate."
+
+*Correction recorded:* every secondary source we found said it beat GPT-5.5. The primary says Claude Opus 4.8. Do not repeat the secondary version.
+
+**Our own extraction result. [FIRST-HAND]** Tuned 3B and 8B checkpoints at 0.92 against the production model's 0.82 on transcription fields, 0.87 against 0.55 on the full field set including checkboxes. Keep generic, no client detail.
+
+**Eight customer results on OpenAI's reinforcement fine-tuning page. [VERIFIED — one vendor page, customer-supplied figures, not independently audited]**
+
+| Company | Task | Result | Baseline |
+|---|---|---|---|
+| Harvey | Legal citation extraction | F1 0.563 to 0.6765; won or tied 93% of head-to-heads, faster | GPT-4o |
+| Ambience | ICD-10 medical coding | From 6 points behind trained physicians to 12 ahead; roughly a quarter fewer coding errors | Physician panel |
+| Accordance | Tax analysis | 38.89% improvement | Base models, own benchmark |
+| SafetyKit | Content moderation | F1 86% to 90%; set to replace dozens of GPT-4o calls per pipeline run | GPT-4o |
+| ChipStack | Binding design interfaces to verification IP | About 12 points on both o1-mini and o3-mini | Same models, untuned |
+| Runloop | Stripe API snippets that compile and pass AST checks | 12% average improvement | o3-mini |
+| Milo | Schedule management: classification, recurrence, conflicts | 0.86 to 0.91 average; 0.46 to 0.71 on hard cases | GPT-4o prompting and SFT |
+| Thomson Reuters | Legal review, comparison, summary | "Consistently better", preliminary, no figures | o3-mini and o1 |
+
+These are one source, not eight. Say so in the post.
+
+**A paper-sourced small-model result. [VERIFIED capability, cost unverified]** A 4B model post-trained with SFT then RL with verifiable rewards reached 93.3% on a held-out Linux privilege-escalation benchmark, "behind only Claude Opus 4.7 at this budget" (arXiv 2603.17673). A circulating figure of about $85 for 104 A100-hours could not be confirmed from the abstract. Use the capability claim, not the dollar figure.
+
+### The pattern in the wins
+
+Every strong result is on **tacit or proprietary judgment**: an investment professional's filter, a physician's coding, a firm's citation standard, a nested schema nobody published. None is on general capability. That is the same finding four times over, and it is what "capability the frontier lacks" means concretely. It also says where rung 3 does *not* pay: anywhere the right answer is public.
+
+### Is the cost coming down? Yes, with two anchors
+
+**Managed fine-tuning, per training token. [VERIFIED at both ends]**
+
+| Date | Offer | Training price |
+|---|---|---|
+| Oct 2023 | OpenAI GPT-3.5 Turbo fine-tuning | $8.00 per million tokens |
+| 2026 | Together AI, LoRA, models up to 16B | $0.48 per million tokens |
+| 2026 | Together AI, full SFT, models up to 16B | $1.20 per million tokens |
+
+Roughly **17x cheaper for LoRA and 7x for full fine-tuning in three years**. Not like-for-like, since 2023 was a closed 175B-class model behind an API and 2026 is an open model you can run, so state it as "the price of getting a model tuned to your task," which is the number a buyer cares about. Sources: OpenAI's own developer forum quoting the 2023 price contemporaneously; together.ai/pricing for 2026.
+
+**Reinforcement learning, by hardware required. [VERIFIED]**
+GRPO on Llama 3.1 8B at 20K context needed 510.8 GB of VRAM on the standard stack. Unsloth's implementation needs 54.3 GB. That moves the run from about seven datacentre GPUs to one, February 2025.
+
+**Reinforcement learning, by orchestration. [VERIFIED — union.ai]**
+Qwen3-8B GRPO on eight L40S GPUs: a 140-second training step run entirely inside the 294-second rollout window it was waiting on anyway, by launching the next rollouts before awaiting the trainer. Trainer marginal cost approaches zero. Sequential execution cost 434 seconds per iteration instead. The lesson is that RL cost is now dominated by rollouts, and rollouts overlap.
+
+**Managed reinforcement fine-tuning, in dollars. [VERIFIED — Microsoft Foundry docs]**
+Worked examples at $200, $400 and $427 per job, with billing capped at $5,000. The cap is a ceiling, not a typical spend.
+
+**On-policy distillation. [VERIFIED — Qwen3 technical report §4.7]**
+Beat reinforcement learning outright at roughly one tenth of the GPU hours on the Qwen3-8B AIME comparison. One team's measurement, not a settled constant; a 2026 follow-up questions its scaling to long horizons.
+
+**Run cost, not train cost. [VERIFIED — Bridgewater]** 13.8x lower inference cost per task for the tuned model. That is the part that compounds with volume.
+
+### What to say in the post
+
+1. The received view against fine-tuning is real and sourced (see the rung 3 outline note). State it first.
+2. Then: tuning wins where the answer is not public, and it wins by margins that survive audit, with Bridgewater as the headline and our own result as the first-hand one.
+3. The cost of trying fell by an order of magnitude at the managed layer and by a hardware class at the RL layer, so the gate is now learnable signal and plateau, not budget.
+4. The evidence base is still narrow: one vendor page, one platform vendor's flagship customer, one paper, and us. Say that too. It is more credible than pretending the field is full of independent replications.
 
 ---
 

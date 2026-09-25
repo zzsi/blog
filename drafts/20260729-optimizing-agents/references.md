@@ -156,6 +156,21 @@ The general lesson for this list: a citation being real is not the same as a cit
 
 ---
 
+## Post-training wins and cost anchors (added for rung 3)
+
+All verified against the named primary unless marked.
+
+1. **Thinking Machines, "Learning to Replicate Expert Judgment in Financial Tasks"** (Bridgewater). https://thinkingmachines.ai/news/learning-to-replicate-expert-judgment-in-financial-tasks/ — Qwen3-235B base; 84.66% vs Claude Opus 4.8 at 78.2%; 29.8% fewer mistakes; 13.8x lower inference cost per task; six tasks. **Secondary sources wrongly say GPT-5.5.**
+2. **OpenAI, "Reinforcement fine-tuning use cases."** https://developers.openai.com/api/docs/guides/rft-use-cases — Harvey, Ambience, Accordance, SafetyKit, ChipStack, Runloop, Milo, Thomson Reuters. One page, customer-supplied figures.
+3. **arXiv 2603.17673**, PrivEsc-LLM 4B — SFT then RLVR, 93.3% on held-out privilege-escalation benchmark, behind only Claude Opus 4.7. Cost figure not confirmable from abstract.
+4. **OpenAI developer forum, Oct 2023**, quoting GPT-3.5 Turbo fine-tuning at $8.00/M training tokens. https://community.openai.com/t/cost-of-fine-tuned-model-usage/445970 — used because openai.com and the contemporaneous Register article both fail to retrieve.
+5. **Together AI pricing**, 2026 — LoRA $0.48/M, full SFT $1.20/M for models up to 16B. https://www.together.ai/pricing
+6. **Unsloth GRPO announcement** — 510.8 GB to 54.3 GB VRAM, Llama 3.1 8B at 20K context. https://x.com/UnslothAI/status/1892640999417250089
+7. **Union.ai, "We Ran Multi-Node GRPO on 8 GPUs and the Trainer Cost Us Nothing."** https://www.union.ai/blog-post/we-ran-multi-node-grpo-on-8-gpus-and-the-trainer-cost-us-nothing — Qwen3-8B, 8x L40S, 140s train inside 294s rollout.
+8. **Microsoft Foundry fine-tuning cost management** — RFT worked examples $200 to $427, $5,000 cap. https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/fine-tuning-cost-management
+
+---
+
 ## Notes on using this list
 
 - Sources under each numbered list were directly retrieved with URLs during research and are safe to click through and verify.
