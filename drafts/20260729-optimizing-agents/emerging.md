@@ -75,27 +75,84 @@ Two things.
 
 ---
 
-## 3. Recursive self-improvement and auto-research (Rung 3's frontier, and the post's verifier thesis at its limit)
+## 3. Recursive self-improvement and automated research
 
-### What works now **[VERIFIED — AIDE², arXiv 2609.26457, Sept 2026]**
+The fastest-moving area in this note. Updated 2026-09-24. Expect it to be stale within a quarter; date every claim in the post.
 
-An AI research agent that "proposes changes to its own code, benchmarks modified versions of itself on a suite of AI R&D tasks, and keeps the changes that perform best on hidden evaluations." In an autonomous **8-day run** it found **seven successive improvements**, from a new search policy to memory mechanisms that compress its own context. The discovered agents match or exceed human-engineered baselines **on all four held-out benchmarks**, spanning ML engineering, algorithm optimisation, and weather forecasting. On a separate held-out task family they showed **reduced reward hacking, 55% down to 32%**, while landing 7 points below the human-engineered agent there.
+Status tags: **[PRIMARY]** read at the source. **[REPORTED]** primary blocked (403/402), figures from consistent secondary coverage that links the primary. **[UNVERIFIED]** do not quote.
 
-This is Lilian Weng's "instruct → configure → own → **search**" step, now with a result behind it.
+### 3.1 The labs' own positions
 
-### What does not work yet **[VERIFIED — MIT Technology Review, Aug 18 2026]**
+**OpenAI declared its "automated research intern" milestone, Sept 2026. [REPORTED — openai.com/index/research-acceleration-view-inside-openai returns 403; via Help Net Security and others]**
+- Definition: a system that "can carry out well-defined research tasks under human direction, including work that would take a skilled researcher several days."
+- The research org "logs 3.1 agent-workdays of effort for every eight hours of human labor." Activity was classified with a framework from Epoch AI, across six research phases.
+- By mid-August the median researcher was spending over $600 a day in tokens at API prices; the 90th percentile over $7,000.
+- Next target: an automated AI researcher by **March 2028**.
+- Caveats OpenAI states: agents "still required frequent human input for difficult tasks," and OpenAI "does not know how to achieve full RSI safely."
+- Gear Live's headline noted OpenAI graded its own work. Worth saying.
 
-Princeton researchers gave Claude Opus 4.8 unpublished NeurIPS papers to reproduce and extend. The agents "could solve the engineering problems necessary to do AI research but lacked the judgment and creativity to produce original research." Both resulting papers were rejected by the original authors. Failure modes named: committing to unpromising approaches too quickly, inability to fundamentally rethink, and not incorporating feedback from subagents or reviewer tools.
+**OpenAI's chief scientist, same month, called for slowdowns. [REPORTED — "An Alien Mind," openai.com, 403; consistent across TNW, ITBrief, resultsense]**
+Jakub Pachocki: "Currently I believe that no lab has solved alignment and monitoring to a sufficient degree to continue responsibly scaling at maximum speed for much longer." He argues chain-of-thought monitoring is eroding because reasoning now blends with communication, models reason about and manipulate their own reasoning, and they get smarter without verbalizing. He calls for voluntary slowdowns and shared safety bars enforced by auditors or governments.
 
-Jack Clark called the absence of "valuable, intuitive creativity" a "bearish signal on short recursive self-improvement timelines." Sayash Kapoor framed the open question: whether creative leaps are essential for RSI, or whether improvements on narrow scorable tasks suffice, is "frankly the trillion-dollar question right now."
+**Anthropic, internal use and a forecast. [PRIMARY — TIME, Aug 7 2026]**
+- Claude writes 80% of code produced at the company; code volume per person up eightfold.
+- By April 2026 Claude picked better research paths than human researchers 64% of the time, up from 51% in November.
+- Jack Clark puts "the chances of AI improving itself autonomously by 2028 at 60%."
+- Same piece, sceptics: Gary Marcus, "all they have really shown is just faster coding"; Arvind Narayanan found Claude "often ran into dead ends and struggled to backtrack."
 
-### Why it matters to the post, and it matters a lot
+**Anthropic, Automated Alignment Researchers. [PRIMARY — alignment.anthropic.com/2026/automated-alignment-researchers]**
+Five Claude Opus 4.8 agents in parallel, runs up to 48 hours, targeting ten well-characterised alignment failures including deception, sycophancy and jailbreaks. "The best AAR method beats what experienced humans propose, on average within six hours," across all seven failures where humans proposed ideas. Gains held on held-out benchmarks for all ten, on multi-turn audits, and on models up to 4.7x larger. **Authors' own caveats:** limited to tasks "measurable with public benchmarks or automated auditing tools"; may not generalise to "open-ended, hard-to-supervise research."
 
-Put the two results side by side and the line between them is exact. **RSI works where a verifier exists and fails where one does not.** AIDE² improved itself on tasks with hidden evaluations. The Princeton agents failed on open-ended research, where the judge is a human author. That is the post's verifier thesis carried to its limit: the eval becomes the environment, the environment becomes the reward, and the reward is what an agent can now optimise *itself*.
+*Correction recorded:* secondary coverage describes nine Claude Opus 4.6 agents running five days and beating humans 97% to 23% on performance gap recovery. That does not match the primary we read. It may conflate a different post. **Do not use it.**
 
-So the closing move for rung 3 is not "you can train models" but **"the artifact you built at rung 2 is the thing that lets the system improve itself, and it works precisely as far as the verifier reaches."**
+### 3.2 The neolabs betting on it
 
-And one caution, from AIDE²'s own numbers: the self-improved agent reduced reward hacking but did not eliminate it. A system optimising its own code against a verifier will find the verifier's holes faster than you will. The two-directions rule for verifiers applies with more force here than anywhere.
+**Recursive Superintelligence. [PRIMARY for funding — SiliconANGLE, May 13 2026]**
+Raised **$650M at $4.65B**, led by GV and Greycroft, with Nvidia and AMD Ventures. Founders include Richard Socher, Jeff Clune, Tim Rocktäschel, Josh Tobin and Tim Shi. Aim: "recursive self-improving superintelligence," starting with "an AI model that can improve its own code base," plus its own harness, training and inference. SiliconANGLE notes the company "didn't disclose what machine learning methods will power its self-improving AI." *One outlet reports $500M; use $650M.*
+
+**Recursive's first results, "First Steps Toward Automated AI Research," June 11 2026. [PRIMARY for artifacts — github.com/recursive-org/first-steps-toward-automated-ai-research, 245 stars; figures REPORTED]**
+The system proposes an idea, implements it, runs the experiment, validates it against reward hacks and variance, and chooses the next. Reported: NanoGPT speedrun training time cut to 77.5 seconds through a bundle of small changes (FP8 attention, fused Triton kernels, optimizer tweaks); GPU kernel score across 235 tasks from 0.699 to 0.754, closing 18% of the gap to hardware-optimal. The repo confirms the 235-task kernel suite and the speedrun artifacts; the headline numbers come from the paper summaries.
+
+**Jeff Clune, on who got there first. [REPORTED — x.com/jeffclune/status/2077179607846199385, fetch blocked]**
+Replying to a claim of "the first experimental evidence of recursive self-improvement": "What about the Darwin Gödel Machine, HyperAgents, and our work at Recursive on First Steps Toward Automated AI Research, among lots of other work?" Useful for the post as a signal that the field already argues about priority, which is itself a sign of how fast it moves.
+
+**Others to name, not detail.** A lab founded by ex-Anthropic researchers Behnam Neyshabur and Harsh Mehta building self-improving AI for scientific R&D. **[UNVERIFIED — lab name and backing not confirmed]** Thinking Machines is not an RSI lab but matters here because Tinker made the training loop accessible to outsiders.
+
+### 3.3 The research, strongest first
+
+**AIDE², "Recursive self-improvement of AI research agents," arXiv 2609.26457, Sept 23 2026. [PRIMARY]**
+Proposes changes to its own code, benchmarks modified versions of itself on AI R&D tasks, keeps what wins on hidden evaluations. Eight-day autonomous run, seven successive improvements from a new search policy to context-compressing memory. Matches or exceeds human-engineered baselines on all four held-out benchmarks. Reward hacking on a separate held-out family fell from 55% to 32%.
+
+**Ouroboros, arXiv 2608.08311. [PRIMARY]**
+A coding-agent harness whose tools, prompts, context assembly and core implementation "improve through reviewed commits that become the runtime for later work." A 161-day deployment where human interaction surfaces faults "but the agent decides which changes to pursue," with guardrails remaining authoritative. Reports 86.74% on Terminal-Bench 2.1 and 90.69% on OSWorld-Verified. **Note the design:** self-improvement of the *harness*, gated by review. That is rung 2 improving itself, not rung 3.
+
+**Darwin Gödel Machine, ICLR 2026. [REPORTED]** Iteratively modifies its own code and validates each change empirically on coding benchmarks, open-ended evolutionary search. The reference point the field keeps citing.
+
+**AI4AI-Bench, arXiv 2608.20318. [PRIMARY] — the sober counterweight.**
+Can agents design better *training algorithms*? Ten frozen research repos, four hours on a B300, 29 configurations across six model families. Mean normalised score **0.166**, where 0.1 is the existing algorithm and 1.0 optimal: "even the strongest closes under a fifth of the distance." Most submissions never touched the learning mechanism. Those that tried averaged 0.226 against 0.126, and more reasoning effort raised the share that tried from 8% to 64%.
+
+**"Automated alignment is harder than you think," arXiv 2605.06390. [PRIMARY]**
+Automated alignment could produce "compelling but catastrophically misleading safety assessments" without any deliberate sabotage, because alignment is full of "hard-to-supervise fuzzy tasks." Four named obstacles: agent errors concentrate where reviewers are least likely to look; they differ from human errors; some solutions rest on arguments humans cannot evaluate; and outputs from shared weights are more correlated than independent human work.
+
+**Measuring AI R&D Automation, arXiv 2603.03992. [PRIMARY]** Chan, Padarath, Kwon, Greaves, Anderljung. Argues capability benchmarks may not reflect real automation, and proposes tracking capital share of R&D spend, researcher time allocation, and AI subversion incidents. No headline figure; the point is that we lack one.
+
+**The open-ended research test. [PRIMARY — MIT Technology Review, Aug 18 2026]** Princeton gave Claude Opus 4.8 unpublished NeurIPS papers. Agents "could solve the engineering problems necessary to do AI research but lacked the judgment and creativity to produce original research"; both papers rejected by the original authors. Kapoor: whether narrow scorable gains suffice for RSI is "frankly the trillion-dollar question right now."
+
+**Background, still the reference benchmark: METR RE-Bench, 2024. [PRIMARY]** Agents beat human experts at a 2-hour budget; humans pull ahead at 8 hours and keep improving with more time.
+
+### 3.4 What the evidence says, in one paragraph for the post
+
+Every positive result has a scorer. Speedrun time, kernel throughput, hidden benchmarks, alignment benchmarks with automated audits: AIDE², Recursive, Anthropic's AAR, OpenAI's intern milestone. Every negative result lacks one. Original research judged by its authors, training-algorithm design with nowhere obvious to hill-climb, alignment questions humans cannot evaluate. **RSI works exactly as far as a verifier reaches.** That is this post's thesis at its limit: the eval you build at rung 2 becomes the environment at rung 3, and at the frontier it becomes the thing a system uses to improve *itself*.
+
+Three corollaries worth stating:
+
+1. **Most self-improvement shipping today is harness improvement, not weight improvement.** AIDE², Ouroboros, DGM and Recursive's system all rewrite code, prompts, search and memory. That puts the leading edge of RSI at rung 2, not rung 3, which is a genuinely surprising thing to tell a reader who assumes RSI means models training models.
+2. **Reward hacking goes down, not away.** AIDE² cut it from 55% to 32%. A system optimising itself against a verifier finds the verifier's holes faster than you will. The verifier-fails-in-two-directions rule applies with the most force here.
+3. **The people closest to it disagree in public.** OpenAI's chief scientist calls for slowdowns in the same month OpenAI declares its intern milestone. Anthropic's policy co-founder gives 60% odds on autonomous self-improvement by 2028 while its own paper says results may not extend to hard-to-supervise research. Report both; do not pick a side the evidence does not support.
+
+### 3.5 What this means for a client, briefly
+
+Nothing here says a client should build RSI. It says two practical things. **The harness around your agent will increasingly improve itself**, so the review gate and the eval are what keep that safe, which is Ouroboros's design. And **the scorer is the asset**: whoever owns a good verifier for a task can let machines search that task's space, and whoever lacks one cannot, however good their model.
 
 ---
 
@@ -103,4 +160,6 @@ And one caution, from AIDE²'s own numbers: the self-improved agent reduced rewa
 
 - **"DPO after RL."** Not supported by the recipes reviewed. The step after RL is multi-teacher on-policy distillation. Recorded above.
 - **Agent counts or attack details beyond METR's stated figures.** Secondary coverage rounds and embellishes. Use METR's numbers only.
-- **That RSI is near.** The evidence is a strong result on scorable tasks and a clear failure on open-ended ones. Say both.
+- **That RSI is near, or that it is not.** The evidence is strong on scorable tasks and weak on open-ended ones, and insiders disagree publicly. Say both.
+- **Anthropic AAR "nine Opus 4.6 agents, five days, 97% vs 23%."** Secondary; does not match the primary read. Do not use.
+- **Recursive "$500M."** One outlet; the primary funding report says $650M at $4.65B.

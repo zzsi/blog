@@ -184,6 +184,27 @@ All verified against the named primary unless marked.
 
 ---
 
+## Recursive self-improvement and automated research (see emerging.md §3)
+
+Primaries unless marked.
+
+1. **AIDE², arXiv 2609.26457**, Sept 2026. https://arxiv.org/abs/2609.26457
+2. **Ouroboros, arXiv 2608.08311.** https://arxiv.org/abs/2608.08311 — reviewed harness self-evolution, 161-day deployment.
+3. **AI4AI-Bench, arXiv 2608.20318.** https://arxiv.org/abs/2608.20318 — mean 0.166; agents rarely change the learning mechanism.
+4. **"Automated alignment is harder than you think," arXiv 2605.06390.** https://arxiv.org/abs/2605.06390
+5. **Measuring AI R&D Automation, arXiv 2603.03992.** https://arxiv.org/abs/2603.03992
+6. **Anthropic, Automated Alignment Researchers.** https://alignment.anthropic.com/2026/automated-alignment-researchers/ — five Opus 4.8 agents, up to 48h, beats humans within ~6h on all seven comparable failures.
+7. **TIME, "What Happens When AI Starts Building AI?"** Aug 7 2026. https://time.com/article/2026/08/07/ai-recursive-self-improvement-anthropic-openai/ — Jack Clark 60% by 2028; Claude writes 80% of Anthropic code; Marcus and Narayanan dissent.
+8. **MIT Technology Review, "AI's recursive self-improvement might not come so quickly after all,"** Aug 18 2026. https://www.technologyreview.com/2026/08/18/1142188/ai-recursive-self-improvement/
+9. **SiliconANGLE, Recursive Superintelligence raises $650M,** May 13 2026. https://siliconangle.com/2026/05/13/recursive-superintelligence-raises-650m-build-self-improving-ai-models/
+10. **Recursive, "First Steps Toward Automated AI Research"** artifacts. https://github.com/recursive-org/first-steps-toward-automated-ai-research — headline numbers REPORTED.
+11. **OpenAI, research acceleration / automated research intern,** Sept 2026. https://openai.com/index/research-acceleration-view-inside-openai/ — **403; figures REPORTED** via https://www.helpnetsecurity.com/2026/09/07/openai-research-automation-intern/
+12. **Jakub Pachocki, "An Alien Mind,"** OpenAI, Sept 2026. https://openai.com/index/an-alien-mind/ — **403; quote REPORTED** via https://thenextweb.com/news/openai-slowdown-pachocki-alien-mind-research-intern-compute
+13. **Jeff Clune on X.** https://x.com/jeffclune/status/2077179607846199385 — **402; text REPORTED.**
+14. **METR RE-Bench,** 2024. https://metr.org/blog/2024-11-22-evaluating-r-d-capabilities-of-llms/
+
+---
+
 ## Notes on using this list
 
 - Sources under each numbered list were directly retrieved with URLs during research and are safe to click through and verify.
