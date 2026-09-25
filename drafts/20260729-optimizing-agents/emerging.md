@@ -34,34 +34,44 @@ Primary: https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investiga
 
 ---
 
-## 2. Post-training is multi-stage, and DPO's place in it (Rung 3, training-signal layer)
+## 2. Post-training is multi-stage, and the step after RL is distillation, not DPO (Rung 3, training-signal layer)
 
-### The claim to check
+### What was meant, and what it is called
 
-The claim was that DPO now runs **after** RL as a training step. **The sources do not support that ordering.** **[VERIFIED — rlhfbook.com, "Post-Training Recipes over Time"]**
+The step to capture is: **RL-train several domain specialists, then merge them into one model by distillation on the student's own rollouts.** The field's name for it is **multi-teacher on-policy distillation, MOPD.** "Self-distillation" is close but not the term; the "self" part is that the student learns on its *own* rollouts, and the teachers share its base, but they are separately RL-trained specialists rather than the student itself.
 
-What the recipes actually show:
+### The recipe **[VERIFIED — arXiv 2606.30406; rlhfbook.com "Post-Training Recipes over Time"]**
 
-| Model | Recipe | Where DPO sits |
-|---|---|---|
-| Tülu 3 | SFT → DPO → RLVR | Before RL |
-| Llama 3 | reward model → rejection sampling → SFT → DPO, per round | Last in each round, but the round is not RLVR |
-| DeepSeek R1 | cold-start SFT → reasoning RL → rejection-sampling **SFT** → final RL | There is a consolidation stage *after* RL, but it is SFT, not DPO |
+1. **Train N domain-specialist teachers**, each with SFT then RL on its own domain (math, code, agentic, and so on).
+2. **Train one general student** by sampling its own trajectories. This is the final model.
+3. **On each rollout, minimise reverse-KL to the relevant teacher's output distribution, token by token.**
 
-So the real pattern is: **a consolidation stage after a big RL run is genuine** (DeepSeek R1 does it), but the consolidation is supervised fine-tuning on rejection-sampled outputs, not preference optimisation. DPO's established role is alignment on preference pairs **before** verifiable-reward RL. And the 2026 frontier is moving away from explicit DPO stages toward multi-teacher on-policy distillation and multi-stage RL with trace distillation.
+The paper's stated reason it works: distilling on the student's own rollouts "eliminates exposure bias and provides a dense optimization signal." The reason it emerged, per rlhfbook: RL became "expensive and conflict-prone" when domains are mixed in one run, while domain specialists are "cheap to make / organizationally scalable."
 
-Write the multi-stage recipe. Do not write "DPO after RL" unless a specific release is found that does it.
+### The evidence
+
+On Qwen3-30B-A3B, MOPD outperforms **Mix-RL, Cascade RL, Off-Policy Finetune, and Param-Merge** baselines, "inheriting nearly all of each teacher's capability." Deployed at industrial scale in MiMo-V2-Flash. Listed at ICML 2026.
+
+**Adoption in 2026 releases [VERIFIED — rlhfbook]:** MiMo Flash v2 (Jan 2026, about six teachers), DeepSeek V4 (Apr 2026, "10+ domain experts"), Nemotron 3 Ultra (Jun 2026, more than ten teachers spanning reasoning, code, math and agentic). Not universal: MAI-Thinking-1, Kimi K2.5 and GLM-5 use staged RL or trace-distillation SFT instead. rlhfbook's phrase: "isn't universal yet but it's surging."
+
+### Where DPO actually sits, for the record
+
+The earlier version of this section chased "DPO after RL." That ordering is not in the recipes reviewed. Tülu 3 runs SFT, then DPO, then RLVR. DeepSeek R1's post-RL consolidation is rejection-sampling SFT. DPO's established role is preference alignment **before** verifiable-reward RL, and the frontier is moving away from explicit DPO stages toward MOPD and multi-stage RL. Keep DPO in the supervision table as the **preference-pairs** row; do not place it after RL.
 
 ### What it adds to the outline
 
-The "three rungs sorted by what supervises them" table has three signal types: demonstrations, a teacher, a verifier. DPO needs a **fourth**: **preference pairs**. That is a different entry ticket, cheaper to collect than demonstrations in some domains (a reviewer picks A or B rather than writing the answer) and the natural output of the escalation queue when a human corrects an agent. Add the row.
+Two things.
+
+**First, the supervision table gets a row for preference pairs** (DPO family: an A-or-B choice per example, the natural output of an escalation queue), and the on-policy distillation row should say the teacher can be *several* RL-trained specialists, not one stronger model.
 
 | Rung | Supervised by | Entry ticket |
 |---|---|---|
 | SFT / off-policy distillation | demonstrations | labelled input–output examples |
-| **DPO family** | **preference pairs** | **an A-or-B choice per example** |
-| On-policy distillation | a teacher model | a stronger model plus the student's rollouts |
+| DPO family | preference pairs | an A-or-B choice per example |
+| On-policy distillation, single or multi-teacher | one stronger model, or N RL-trained specialists | the teacher(s) plus the student's own rollouts |
 | RLVR / GRPO family | reward | an automatic verifier |
+
+**Second, and this is the point for a client:** MOPD changes the economics of rung 3 in a way that matters more than any single price drop. You no longer need one RL run that succeeds across every domain at once, which was the expensive and conflict-prone thing. You can train narrow specialists cheaply, in parallel, by different people, and merge them. That is "organizationally scalable" in rlhfbook's phrase, and it is the same shape as the rest of this post: **decompose, verify each piece, then compose.** It also means a client with three narrow verifiable tasks can build three small teachers and one student, rather than one model that has to be good at everything.
 
 ---
 
@@ -91,6 +101,6 @@ And one caution, from AIDE²'s own numbers: the self-improved agent reduced rewa
 
 ## Claims deliberately not made
 
-- **"DPO after RL."** Not supported by the recipes reviewed. Recorded above with what the sources actually show.
+- **"DPO after RL."** Not supported by the recipes reviewed. The step after RL is multi-teacher on-policy distillation. Recorded above.
 - **Agent counts or attack details beyond METR's stated figures.** Secondary coverage rounds and embellishes. Use METR's numbers only.
 - **That RSI is near.** The evidence is a strong result on scorable tasks and a clear failure on open-ended ones. Say both.
