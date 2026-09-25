@@ -207,7 +207,10 @@ Primaries unless marked.
 14d. **Self-Improvement Can Self-Regress: The Rise-and-Collapse Failure Mode,** arXiv 2606.21090. https://arxiv.org/abs/2606.21090
 14e. **Iterative Finetuning is Mostly Idempotent,** arXiv 2605.01130. https://arxiv.org/abs/2605.01130
 14f. **Recursive Self-Improvement in AI: From Bounded Self-Refinement to Autonomous Research Loops,** arXiv 2607.07663. https://arxiv.org/abs/2607.07663 — survey.
-14g. Unread at source: SIFT 2609.19526, AREX 2607.21461, Frontis-MA1 2607.28568, ReMiT 2602.03075.
+14g. **SIFT: Self Improvement via Fast Tree-search,** Fu, Kulanthaivelu, Yamada, arXiv 2609.19526. https://arxiv.org/abs/2609.19526 — LLM-judge pairwise pruning with Bradley-Terry aggregation; beats tree-search baselines on Polyglot at lower cost.
+14h. **AREX: Towards a Recursively Self-Improving Agent for Deep Research,** arXiv 2607.21461. https://arxiv.org/abs/2607.21461 — inner research loop, outer constraint-checking loop; 4B and 122B MoE.
+14i. **Frontis-MA1,** arXiv 2607.28568. https://arxiv.org/abs/2607.28568 — 35B model trained for ML engineering; MLE-Bench Lite medals 39.39% to 60.61% (71.21% enhanced); weights released.
+14j. **ReMiT: RL-Guided Mid-Training for Iterative LLM Evolution,** arXiv 2602.03075. https://arxiv.org/abs/2602.03075 — RL model reweights mid-training tokens; +3% across ten pre-training benchmarks.
 14. **METR RE-Bench,** 2024. https://metr.org/blog/2024-11-22-evaluating-r-d-capabilities-of-llms/
 
 ---
