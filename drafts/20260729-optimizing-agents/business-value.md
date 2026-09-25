@@ -13,6 +13,8 @@ The three rungs do not buy more of the same thing. Each buys a categorically dif
 |---|---|---|---|
 | 1. Set up to use agents well | Throughput | Labor input | You stop hiring |
 | 2. Harness engineering | A dependable process | Demand reaching the business | The work stops arriving |
+
+Rung 2 has a sharper definition than "make it reliable": move the coverage-versus-error curve, then find the new optimum on it. See 2b.
 | 3. Reduce frontier dependency | Structural advantage | The frontier's rate of advance | A general model catches up |
 
 **Throughput, then process, then structural advantage.** Bound to labor, then to demand, then to time.
@@ -22,7 +24,7 @@ The three rungs do not buy more of the same thing. Each buys a categorically dif
 The limiting factor. The thing you run out of, not merely the thing that drives the value.
 
 - **Rung 1 is bound by labor input.** Value equals hours saved times people. It is a multiplier on existing labor, linear in headcount, and it stops when hiring stops.
-- **Rung 2 is bound by demand.** Once the agent runs without a human on every run, output decouples from headcount and the cap moves to how much work actually arrives.
+- **Rung 2 is bound by demand.** Once the agent runs without a human on every run, output decouples from headcount and the cap moves to how much work actually arrives. It is also bound by what a silent error costs, which sets how much of the work you can let run unsupervised at all. See 2b.
 - **Rung 3 is not unbounded.** Two corrections to the tempting version of this claim. Its cost-structure component still needs volume to amortize, so it inherits rung 2's demand bound rather than escaping it. Only the moat and capability component behaves differently, and even that is bound, by how fast the frontier erodes the advantage.
 
 ### Why unbounded would not be desirable anyway
@@ -65,53 +67,80 @@ The catch: high adoption does not become enterprise impact on its own. This is w
 
 Observed in client work, then modelled. This is the strongest argument we have and it is not in the prior draft.
 
-### The per-task arithmetic does not explain it
+### Three outcomes, not two
 
-Start with the simple model. An agent attempts every task, and failures still reach a human.
+Most cost models for agents have two outcomes: the agent succeeds, or it fails and a human picks it up. That model is too kind, and it cannot explain a negative return. Real deployments have three.
 
-    effective cost = agent attempt + (failure rate x human cost)
+1. **Correct and confident.** Ships. You pay only the agent.
+2. **Escalated.** The agent flags low confidence, or the document is out of scope. A human intervenes. Visible, budgeted, and the thing everyone measures.
+3. **Confidently wrong.** Ships with no flag. The error surfaces later, somewhere that nobody attributes to the agent.
 
-Setting that equal to the human's cost and solving gives a breakeven reliability of exactly A/H, the inverse of the cost multiple. An agent costing a twelfth of a human breaks even above 8.4%.
+The third outcome is invisible in the metric most teams track and it dominates the economics.
 
-**That 8.4% is arithmetic, not evidence.** It is a property of the model, and it is quoted here only to show the model is too permissive to be believed. It holds only if failures cost exactly one human handling and no more, nobody reviews successful output, failure is detected perfectly and for free, there is no build or upkeep cost, and the freed time is actually banked. Every one of those is false in practice.
+    cost per task = agent + (escalation rate x intervention) + (coverage x error rate x cost of a silent error)
 
-Relax them and breakeven moves by an order of magnitude. Same $7.40 human, same $0.62 agent, review costing 30% of a handling:
+**Coverage** is the share handled without a human. **Error rate** is the share of covered work that is wrong. This is the automation coverage and automation precision pair from the document AI post, and the coverage-versus-error figure in that post is the curve used below.
 
-| Model | Breakeven reliability |
-|---|---|
-| Naive, as above | 8.4% |
-| Escaped errors cost 3x a normal handling | 69.5% |
-| You review every output | 38.4% |
-| Review 40% flagged, catch 90%, escapes cost 3x | 33.7% |
-| That, plus $2.00 per task of build and upkeep | 56.2% |
-| That, at volume, upkeep down to $0.08 per task | 34.5% |
+### Worked example: legal form extraction
 
-So the realistic breakeven sits somewhere in the thirties to seventies, not single digits, and the spread is driven by things that have nothing to do with the model: what an error costs you, whether you can detect one, and how much volume you have to amortise the build over.
+100,000 documents a year. A human extracts from scratch for $15. An agent attempt costs $0.30. An escalated review costs $12. Error rates by coverage are read off the published coverage-versus-error curve.
 
-The naive figure's only use is as a reductio. If unit economics were the whole story, agents would pay off almost always. They do not, so the unit economics are not the story.
+Only one thing changes across these three cases: what a confidently wrong extraction costs downstream. The agent is identical.
 
-Two things sit between cost avoided and money returned.
-
-### Gap 1: the cost of not knowing which runs failed
-
-The simple model quietly assumes you can tell a success from a failure, which is what lets you route only failures to a human. Without measurement you cannot, and both fallbacks are expensive.
-
-Illustrative, with a human at $7.40, an agent attempt at $0.62, a review costing about 30% of doing the task yourself, and an agent that is right 60% of the time:
-
-| Posture | Effective cost | Versus the human |
+| Cost of one silent error | Cheapest coverage | Result |
 |---|---|---|
-| Review every output | $5.80 | saves 22% |
-| Review nothing, escaped error costs the same as a normal handling | $3.58 | saves 52% |
-| Review nothing, escaped error costs 3x | $9.50 | **costs 28% more** |
-| Review only what a confidence policy flags: 40% flagged, catching 90% of failures | $4.47 | saves 40% |
+| $30, caught in QA | 90% | saves $1.08M a year |
+| $300, reaches a filing | 50% | saves $645K a year |
+| $3,000, causes exposure | 30% | **loses $90K a year** |
 
-Reviewing everything throws away most of the prize. Reviewing nothing is a gamble on the cost of an escaped error, and loses badly when that cost is above par. A confidence policy is what converts reliability into realised savings, which is why measurement is the first layer of rung 2 rather than a nicety.
+Same agent, same accuracy. A million-dollar saving becomes a loss, and the right operating point moves from 90% coverage to 30%, purely because of a number that sits outside the AI system entirely.
 
-This is the verifier story from the evals section, restated in money.
+### The metric everyone tracks is dangerous on its own
+
+"Amount of human intervention" is the natural business metric and it is the visible one. Optimising it means driving coverage up, which drives outcome 3 up with it. Push coverage to 100%:
+
+| Silent error costs | Result at full coverage |
+|---|---|
+| $30 | saves 70% |
+| $300 | **costs 182% more than the human** |
+| $3,000 | **costs 2,702% more than the human** |
+
+The metric points the same way in all three cases. The economics point in opposite directions. A team can hit its intervention target and destroy value doing it, and the damage lands downstream where nobody connects it to the agent.
+
+### Reliability is still the highest-leverage lever
+
+Two moves get confused, and separating them resolves the apparent contradiction above.
+
+**Move along the curve.** Pick a confidence threshold. Free, instant, reversible, and it has an optimum you can overshoot. This is where the danger above lives.
+
+**Move the curve.** Make the agent better, so the error rate falls at every coverage level. Costs engineering. Raises the ceiling instead of trading against it.
+
+Each agent operated at its own best threshold:
+
+| Silent error costs | Today | 2x better | 4x better | 10x better |
+|---|---|---|---|---|
+| $30 | $1.08M | $1.26M | $1.37M | $1.43M |
+| $300 | $645K | $766K | $900K | $1.08M |
+| $3,000 | $240K | $330K | $454K | $645K |
+
+**Read the rows.** Where errors are cheap, the first doubling adds $180K and later ones add less, because you start near the ceiling. Where errors are expensive, each doubling adds *more* than the last, $90K then $124K then $191K, and ten times better still has room.
+
+**The mechanism is coverage unlocked.** At $3,000 a silent error, today's agent can be trusted with 10% of documents. Ten times better earns 50%. The gain is not fewer mistakes on work already automated. It is work that could not be automated at all.
+
+So the value of reliability **rises** with the stakes, which is the opposite of the intuition that high-stakes work is where agents cannot help.
+
+### What this means for rung 2
+
+Rung 2 is not "make the agent reliable enough to remove the human." It is two things together:
+
+1. **Move the curve**, which is the engineering: evals, context, tools, model selection.
+2. **Find the new optimum on it**, which needs one number almost nobody measures: what a silent error costs.
+
+Without the first you stay stuck at low coverage. Without the second you blow past the optimum chasing an intervention target. This is the calibrated-reliability argument from the document AI post, with the economics attached.
 
 ### Gap 2: the saving is real and nobody banks it
 
-A saving reaches the P&L two ways only. You pay for less labour, or you serve more demand. Neither happens on its own, and this is where the rungs diverge sharply.
+Even a correctly-tuned agent produces nothing unless the saving reaches the P&L, and it reaches it two ways only. You pay for less labour, or you serve more demand.
 
 **Rung 1 value is dispersed.** An hour a day back for a hundred people is 23,000 hours a year, close to $2M at a loaded rate. But it arrives one hour at a time across a hundred people, and you cannot bank an eighth of a person a hundred times over.
 
@@ -121,7 +150,7 @@ A saving reaches the P&L two ways only. You pay for less labour, or you serve mo
 | Some capacity redeployed to revenue work | ~$293K |
 | Team restructured around the new capacity | ~$782K |
 
-Against roughly $48K a year of licences and tokens for a hundred seats. If no role changes, the P&L shows $48K of cost added and nothing removed. **The value is real and unbankable at the same time.** That is the honest limit of rung 1 and it should be stated there.
+Against roughly $48K a year of licences and tokens for a hundred seats. If no role changes, the P&L shows $48K added and nothing removed. **The value is real and unbankable at the same time.** That is the honest limit of rung 1.
 
 **Rung 2 value is concentrated.** One workflow at 50,000 tasks a month saving $2.85 a task is a similar theoretical figure, but it lands on a single queue.
 
@@ -131,21 +160,21 @@ Against roughly $48K a year of licences and tokens for a hundred seats. If no ro
 | Team of 12 reviewers becomes 7 | ~$1.03M |
 | Human removed from the loop | ~$1.54M |
 
-The difference is not the arithmetic. It is that a concentrated saving is visible and someone can act on it.
+The difference is not the arithmetic. A concentrated saving is visible and someone can act on it.
 
 ### Why this matters to the post
 
 1. It gives rung 1 an honest limit, which the frame currently lacks.
 2. It supplies a **mechanism** for the pilot-to-production dip, replacing an asserted curve shape.
-3. It explains why workflow redesign is the strongest correlate of profit impact: redesign is what converts dispersed hours into a removed cost. Our HMT hook stops being a citation and becomes an argument.
-4. It says which rung a stalled client is actually on. Reviewing everything means the measurement layer is missing. Dispersed unbanked hours mean the workflow was never redesigned. Neither is fixed by a better model.
+3. It explains why workflow redesign is the strongest correlate of profit impact: redesign is what converts dispersed hours into a removed cost. The HMT hook stops being a citation and becomes an argument.
+4. It makes a stalled client diagnosable. Reviewing everything means the measurement layer is missing. An intervention target with unexplained downstream rework means outcome 3 is unpriced. Dispersed unbanked hours mean the workflow was never redesigned. None of the three is fixed by a better model.
 
 ### Status and cautions
 
-- **[FIRST-HAND observation, MODELLED illustration.]** The pattern is observed. Every number above is assumed, and the conversion rates in particular are the weakest input.
-- Present as a worked example with stated assumptions, or better, run it on a client's own two figures: what a human handling costs, and what share of runs the agent gets right.
-- **Do not** dress the assumed inputs as measured. The circulating per-task figures are disowned by the sources that carry them, see the excluded claims.
-- The leverage result is the durable part and survives any inputs: **a point of reliability is worth the cost multiple between human and agent.** At 12x cheaper, one point of reliability is worth twelve points of unit price. Below roughly 80% reliability, rung 2 beats rung 3 regardless of how attractive rung 3 looks.
+- **[FIRST-HAND observation, MODELLED illustration.]** The pattern is observed. Every number is assumed. The error-rate curve comes from our own published figure, which is itself labelled illustrative.
+- Run it on a client's own three numbers: what a human handling costs, what an escalated review costs, and **what a silent error costs**. The third is the one nobody has and the one that decides the answer.
+- **Do not** dress assumed inputs as measured. See the excluded claims.
+- **Superseded:** an earlier version of this note used a two-outcome model and claimed breakeven reliability of 8.4% and that a point of reliability is worth the human-to-agent cost multiple. Both were artefacts of ignoring outcome 3. The real multiplier is the ratio between a silent error and a handling, which at $3,000 against $15 is two hundred to one, not twelve.
 
 ---
 

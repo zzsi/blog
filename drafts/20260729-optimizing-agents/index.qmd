@@ -43,7 +43,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **Rung 3 buys a different cost structure, a moat, and capability the frontier lacks.** Capability is the durable one. Cost advantage erodes as prices fall.
 - One honest line on the evidence: most of this rests on self-reported survey data, so treat direction as solid and specific multiples as directional. [REUSE: caveat para, compressed]
 - **RULE FOR DRAFTING: no figure here, no tables, no more than one number per rung.** The J-curve and the detail belong in the rung sections.
-- **Candidate for the one idea an executive carries out:** a point of reliability is worth the cost multiple between human and agent. At 12x cheaper, one point of reliability is worth twelve points of unit price. Below roughly 80% reliability, rung 2 beats rung 3 whatever rung 3 promises. [SOURCE: business-value.md 2b]
+- **Candidate for the one idea an executive carries out:** you cannot price an agent without pricing its silent errors. The same agent on the same documents is a million-dollar saving or a loss, decided by a number that sits outside the AI system. And reliability pays *more* where the stakes are higher, because it unlocks coverage you could not previously afford. [SOURCE: business-value.md 2b]
 
 ## 3. Why the rung is the right unit (~450 words)
 
@@ -71,7 +71,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 *The breadth-and-depth section. Still calling APIs you do not own.*
 
 - **What it buys:** a dependable process that scales with volume. 70% is a demo; 95% at a known cost per run is a process. [REUSE]
-- **Layer: measurement.** The money argument first: without a way to tell a success from a failure you either review everything, which throws away most of the prize, or review nothing, which loses outright once an escaped error costs more than a normal handling. A confidence policy is what turns reliability into realised saving. [SOURCE: business-value.md 2b, gap 1] Then three-level evals. Where the bottleneck actually sits is contested, and you cannot tell which reading applies to you without measuring. [REUSE: relocated bottleneck para] Verifiers fail in two directions. [REUSE: first-hand verifier story]
+- **Layer: measurement.** Lead with the three outcomes: correct and confident, escalated, and confidently wrong. The third is invisible in the metric teams track and it decides the economics. Worked legal-extraction example: the same agent saves $1.08M a year or loses $90K depending only on what a silent error costs. [SOURCE: business-value.md 2b] Then three-level evals and the verifier-fails-in-two-directions story. Where the bottleneck actually sits is contested, and you cannot tell which reading applies to you without measuring. [REUSE: relocated bottleneck para] Verifiers fail in two directions. [REUSE: first-hand verifier story]
 - **Layer: context.** Context rot, compaction, memory, multi-turn sharding. [REUSE + first-hand Memento/schema-compaction para]
 - **Layer: capability.** Tools, skills, code execution. The 150k-to-2k result. Extend rather than replace defaults, because defaults are co-trained. [REUSE]
 - **Layer: coordination.** Single agent, subagents, multi-agent. The four-condition test. [REUSE]
@@ -105,7 +105,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 
 ## Figures
 
-- fig3 J-curve — **needs rework**: relabel to the three rungs, and consider replacing it entirely. The dip now has a mechanism (dispersed unbankable savings, then the cost of not knowing which runs failed), so a figure showing *banked versus theoretical* value may beat an asserted curve shape.
+- fig3 J-curve — **probably replace.** Two stronger candidates: (a) cost per document against coverage, three curves for three silent-error costs, showing the optimum move from 90% to 30%; (b) the same curve shifting as the agent improves, showing coverage unlocked. Both come straight from business-value.md 2b and both show a mechanism rather than asserting a shape. Reuse the coverage-vs-error style from the doc AI post.
 - fig1 price of capability — rung 3.
 - fig2 cost of customization — rung 3. **Rename: "cost of tuning".**
 - **NEW, maybe:** the three-level diagram (rungs / layers / escalation).
