@@ -71,7 +71,24 @@ Start with the simple model. An agent attempts every task, and failures still re
 
     effective cost = agent attempt + (failure rate x human cost)
 
-Breakeven reliability is just the inverse of the cost multiple. If the agent costs a twelfth of a human, it breaks even above about 8% reliability. So almost any working agent avoids *some* cost, and the unit economics cannot be what produces a negative return. The model is not wrong, it is incomplete.
+Setting that equal to the human's cost and solving gives a breakeven reliability of exactly A/H, the inverse of the cost multiple. An agent costing a twelfth of a human breaks even above 8.4%.
+
+**That 8.4% is arithmetic, not evidence.** It is a property of the model, and it is quoted here only to show the model is too permissive to be believed. It holds only if failures cost exactly one human handling and no more, nobody reviews successful output, failure is detected perfectly and for free, there is no build or upkeep cost, and the freed time is actually banked. Every one of those is false in practice.
+
+Relax them and breakeven moves by an order of magnitude. Same $7.40 human, same $0.62 agent, review costing 30% of a handling:
+
+| Model | Breakeven reliability |
+|---|---|
+| Naive, as above | 8.4% |
+| Escaped errors cost 3x a normal handling | 69.5% |
+| You review every output | 38.4% |
+| Review 40% flagged, catch 90%, escapes cost 3x | 33.7% |
+| That, plus $2.00 per task of build and upkeep | 56.2% |
+| That, at volume, upkeep down to $0.08 per task | 34.5% |
+
+So the realistic breakeven sits somewhere in the thirties to seventies, not single digits, and the spread is driven by things that have nothing to do with the model: what an error costs you, whether you can detect one, and how much volume you have to amortise the build over.
+
+The naive figure's only use is as a reductio. If unit economics were the whole story, agents would pay off almost always. They do not, so the unit economics are not the story.
 
 Two things sit between cost avoided and money returned.
 
