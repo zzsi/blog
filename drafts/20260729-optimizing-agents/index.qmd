@@ -15,13 +15,23 @@ format:
 
 ## The spine
 
-Three rungs, defined by what the client depends on.
+Three rungs, defined by **what you own**. The dependency framing is the criterion; the engineering names are the labels.
 
-| Rung | Name | Dependency | Service line |
-|---|---|---|---|
-| 1 | Set up to use agents well | Vendor defaults + your systems | Enablement, integration |
-| 2 | Harness engineering | Frontier APIs you do not own | Engineering |
-| 3 | Reduce frontier dependency | Weights you run | Fine-tuning, RL, serving |
+| Rung | What you own | What is the vendor's | Name | Service line |
+|---|---|---|---|---|
+| 1 | The integration | The agent and the model | Integration and adoption | Enablement, integration |
+| 2 | The harness | The model | Harness engineering | Engineering |
+| 3 | The weights | Nothing you depend on | Model engineering | Fine-tuning, RL, serving |
+
+- At rung 1 you deploy a **vendor's agent** against your systems.
+- At rung 2 you build **your own agent** on a vendor's model.
+- At rung 3 the **model is yours** too.
+
+This settles the MCP question. A server connecting a vendor agent to your data is rung 1. The same server inside an agent you built is rung 2. What moved is ownership of the harness, not the server.
+
+**Rung 1 deliberately has no engineering name.** It is integration plus guardrails plus enablement plus workflow, and the last two are organisational. That is where HMT lives. An engineering label would hide it.
+
+**Say once in the post:** model engineering means engineering the model itself, weights and serving. Choosing which vendor model to route to is rung 2. Model engineering is what ML engineering meant before the generative era, so rung 3 is not new work, it is old work coming back.
 
 Within each rung: **layers** (where you intervene). Within each layer: **instruct, configure, own** (how far you go). Three levels, each doing one job.
 
@@ -30,8 +40,8 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 ## 1. Opening (~350 words)
 
 - Demos look good in week one; the hard part starts at production contact. [REUSE: opening]
-- Across generations the model dominates. Within the frontier tier, what you build decides how much of the ceiling you get. [REUSE]
-- Thesis: the useful question is not which model, but **what you depend on**, and the answer changes what you build.
+- **An agent is a model working inside a system.** When it fails, the cause could be the model, the context someone filled, the tools someone wired, the workflow it was dropped into, or the check that was meant to catch the mistake. The post exists to help locate it. **Do not strawman "everyone blames the model."** Across generations the model does dominate; within a tier it usually does not; either way the instinct skips the diagnosis.
+- Thesis: the useful question is **what you own**, and the answer decides what you build and what you are on the hook for.
 - Name the three rungs. One line each. No ladder metaphor beyond this.
 
 ## 2. What each rung buys (~450 words)
@@ -52,7 +62,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - What a client actually decides is what to depend on. That is the rung.
 - **OPEN QUESTION: is this section needed, or does it belong in a footnote?**
 
-## 4. Rung 1: set up so teams can use agents well (~1,200 words)
+## 4. Rung 1: integration and adoption (~1,200 words)
 
 *This is the differentiated section. No other framework has it.*
 
@@ -65,12 +75,12 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **Note the escalation, briefly:** guardrails recur higher up. Testing injection resistance is rung 2 measurement work; owning the whole safety stack is rung 3, since quantization and tuning can move refusal behavior. Mention once, do not build a section on it.
 - **Layer: literacy.** Task selection, trust versus verify, security hygiene.
 - **The honest limit, and the best argument in the post.** Rung 1 value is real and dispersed. An hour a day across a hundred people is 23,000 hours a year, and you cannot bank an eighth of a person a hundred times over. If no role changes, the P&L shows the agent spend added and nothing removed. That is why high adoption does not become enterprise impact, and why workflow redesign is the strongest correlate of profit impact: redesign is what converts dispersed hours into a removed cost. [SOURCE: business-value.md 2b, gap 2]
-- **Why teams stall here:** most organizations stall between rung 1 and rung 2, not between 2 and 3. [REUSE]
+- **Everyone starts here.** Do not claim most organisations *are* here; we have no data for where they currently sit. What the evidence does support is that the pilot-to-production dip lives at the rung 1 to rung 2 boundary. [REUSE, reworded]
 - **[NEEDS: a first-hand story. The enablement program is the obvious source.]**
 
 ## 5. Rung 2: harness engineering (~2,800 words)
 
-*The breadth-and-depth section. Still calling APIs you do not own.*
+*The breadth-and-depth section. Your agent, the vendor's model.*
 
 - **What it buys:** a dependable process that scales with volume. 70% is a demo; 95% at a known cost per run is a process. [REUSE]
 - **Where the confidence score comes from.** The whole three-outcome model rests on separating a correct answer from a confidently wrong one. Build confidence from agreement across heterogeneous components and deterministic validators, not from asking one model how it feels. Calibration needs ground truth, but only a few hundred labels, and **the escalation queue is the labelling pipeline** you are already paying for. That reframes early over-escalation from waste into investment. [SOURCE: business-value.md 2d]
@@ -80,10 +90,12 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **Layer: coordination.** Single agent, subagents, multi-agent. The four-condition test. [REUSE]
 - **Layer: model selection and routing.** Which brain, and traffic shaping. Still not owning weights. [REUSE parts of Layer 4]
 - **The escalation rule, stated once:** instruct, configure, own. Take the cheapest reversible step that clears your eval bar. The line between configuring and owning is the supported extension surface, not the file boundary. [REUSE: compressed classification test]
-- **Owning harness internals lands here, not at rung 3** — you still depend on the same APIs. Carries maintenance, revalidation, upgrade tax. [REUSE: harness branch]
+- **Owning harness internals lands here, not at rung 3** — you still depend on the same model. Carries maintenance, revalidation, upgrade tax. [REUSE: harness branch]
+- **The rung 1 / rung 2 line is whether the harness is yours.** Configuring a vendor agent, however elaborately, is rung 1. The moment you own the loop, the memory, the compaction policy, or the tool-calling mechanism, you are at rung 2 and you carry it on every upgrade.
 
-## 6. Rung 3: reduce dependency on frontier APIs (~1,800 words)
+## 6. Rung 3: model engineering (~1,800 words)
 
+- **Name the discipline.** This is ML engineering as it was understood before the generative era: training signal, tuning method, serving. Not new work. Old work coming back, with cheaper entry.
 - **What it buys:** a different cost structure at volume, a moat, and capability the frontier lacks. Capability is the durable one; cost advantage erodes. [REUSE]
 - **Three destinations, not two.** Hosted APIs, self-hosted untuned, self-hosted tuned. Destination 2 is a legitimate place to stop. [REUSE]
 - **Layer: training signal.** Demonstrations, a teacher, or a verifier. The entry ticket gates you where budget cannot. [REUSE: supervision table]
