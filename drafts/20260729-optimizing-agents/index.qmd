@@ -33,7 +33,7 @@ This settles the MCP question. A server connecting a vendor agent to your data i
 
 **Say once in the post:** model engineering means engineering the model itself, weights and serving. Choosing which vendor model to route to is rung 2. Model engineering is what ML engineering meant before the generative era, so rung 3 is not new work, it is old work coming back.
 
-Within each rung: **layers** (where you intervene). Within each layer: **instruct, configure, own** (how far you go). Three levels, each doing one job.
+**Two levels of structure, one rule.** Rungs, defined by what you own. Layers inside each, defined by where you intervene. The rule, stated once and applied everywhere: take the cheapest reversible step that clears your eval, escalate when it plateaus. It is not a third level. The word "fractal" does not appear.
 
 ---
 
@@ -43,6 +43,7 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **An agent is a model working inside a system.** When it fails, the cause could be the model, the context someone filled, the tools someone wired, the workflow it was dropped into, or the check that was meant to catch the mistake. The post exists to help locate it. **Do not strawman "everyone blames the model."** Across generations the model does dominate; within a tier it usually does not; either way the instinct skips the diagnosis.
 - Thesis: the useful question is **what you own**, and the answer decides what you build and what you are on the hook for.
 - Name the three rungs. One line each. No ladder metaphor beyond this.
+- **Three sentences for the reader arriving with a different frame.** This is build versus buy with two things to buy, the agent and the model. Prompting and retrieval live inside rung 2. Autonomy is a dial, not a rung: how far you let any system run unsupervised is set by what a silent error costs, not by how sophisticated the system is.
 
 ## 2. What each rung buys (~450 words)
 
@@ -86,15 +87,17 @@ Within each rung: **layers** (where you intervene). Within each layer: **instruc
 - **Where the confidence score comes from.** The whole three-outcome model rests on separating a correct answer from a confidently wrong one. Build confidence from agreement across heterogeneous components and deterministic validators, not from asking one model how it feels. Calibration needs ground truth, but only a few hundred labels, and **the escalation queue is the labelling pipeline** you are already paying for. That reframes early over-escalation from waste into investment. [SOURCE: business-value.md 2d]
 - **Layer: measurement.** Lead with the three outcomes: correct and confident, escalated, and confidently wrong. The third is invisible in the metric teams track and it decides the economics. Worked legal-extraction example: the same agent saves $1.08M a year or loses $90K depending only on what a silent error costs. [SOURCE: business-value.md 2b] Then three-level evals and the verifier-fails-in-two-directions story. Where the bottleneck actually sits is contested, and you cannot tell which reading applies to you without measuring. [REUSE: relocated bottleneck para] Verifiers fail in two directions. [REUSE: first-hand verifier story]
 - **Layer: context.** Context rot, compaction, memory, multi-turn sharding. [REUSE + first-hand Memento/schema-compaction para]
+- **Where retrieval went.** Say it once for the reader who knows RAG: retrieval did not disappear, it became something the agent does rather than something you do to the agent. Agentic search, memory stores, code over a filesystem are all retrieval with the agent as the retriever. That is why it is a harness concern and not a pipeline. [REUSE: 150k-to-2k result, Databricks memory result]
 - **Layer: capability.** Tools, skills, code execution. The 150k-to-2k result. Extend rather than replace defaults, because defaults are co-trained. [REUSE]
 - **Layer: coordination.** Single agent, subagents, multi-agent. The four-condition test. [REUSE]
 - **Layer: model selection and routing.** Which brain, and traffic shaping. Still not owning weights. [REUSE parts of Layer 4]
-- **The escalation rule, stated once:** instruct, configure, own. Take the cheapest reversible step that clears your eval bar. The line between configuring and owning is the supported extension surface, not the file boundary. [REUSE: compressed classification test]
+- **The rule, stated once for the whole post:** take the cheapest reversible step that clears your eval bar, escalate when it plateaus. The line between configuring and owning is the supported extension surface, not the file boundary. [REUSE: compressed classification test]
 - **Owning harness internals lands here, not at rung 3** — you still depend on the same model. Carries maintenance, revalidation, upgrade tax. [REUSE: harness branch]
 - **The rung 1 / rung 2 line is whether the harness is yours.** Configuring a vendor agent, however elaborately, is rung 1. The moment you own the loop, the memory, the compaction policy, or the tool-calling mechanism, you are at rung 2 and you carry it on every upgrade.
 
 ## 6. Rung 3: model engineering (~1,800 words)
 
+- **State the received view first.** In 2026 the standard advice is not to fine-tune, and it has evidence: 70% of production agents prompt off-the-shelf models [VERIFIED 2512.04123], OpenAI closed self-serve fine-tuning to new users in May 2026 [VERIFIED], prompt optimisation beats GRPO on several agentic tasks at 35x fewer rollouts [VERIFIED, GEPA], and facts belong in retrieval while stable form belongs in weights. Acknowledge it before departing from it, or a reader who holds it assumes you have not heard it. **Drop** the old draft's claim that enterprise surveys showed declining fine-tuning returns; no primary source survived.
 - **Name the discipline.** This is ML engineering as it was understood before the generative era: training signal, tuning method, serving. Not new work. Old work coming back, with cheaper entry.
 - **What it buys:** a different cost structure at volume, a moat, and capability the frontier lacks. Capability is the durable one; cost advantage erodes. [REUSE]
 - **Three destinations, not two.** Hosted APIs, self-hosted untuned, self-hosted tuned. Destination 2 is a legitimate place to stop. [REUSE]
