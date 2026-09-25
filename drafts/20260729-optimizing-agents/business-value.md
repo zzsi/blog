@@ -178,6 +178,59 @@ The difference is not the arithmetic. A concentrated saving is visible and someo
 
 ---
 
+## 2c. Where the pattern generalises
+
+The document extraction case is not a document problem. It is the shape of a whole class of work.
+
+### The signature
+
+All four have to be present:
+
+1. **High volume of per-item decisions.** One judgement per document, claim, ticket, or transaction.
+2. **A confidence signal exists**, so escalation can be selective rather than all-or-nothing.
+3. **A human fallback exists** and is cheaper than living with the error.
+4. **Asymmetric error cost.** A silent error costs far more than an escalation.
+
+Where all four hold, the three-outcome model applies and the operating point is a business decision, not a modelling one.
+
+### Domains that fit
+
+| Domain | Coverage decision | What the silent error costs |
+|---|---|---|
+| Document and form extraction | Which fields auto-post | Downstream rework, filing error, exposure |
+| Insurance claims, straight-through processing | Which claims skip an adjuster | Wrong payout, leakage, regulatory finding |
+| Medical coding | Which codes submit unreviewed | Denied claim, audit, clawback |
+| Content moderation | What publishes without review | Harm, brand damage, regulatory penalty |
+| Underwriting and credit decisioning | Which applications auto-decide | Bad book, discrimination exposure |
+| Invoice and accounts payable | Which invoices auto-approve | Duplicate or fraudulent payment |
+| Customer support deflection | Which tickets resolve unaided | Churn, escalation, reputational cost |
+
+Reported straight-through processing rates in insurance moved from 10-15% in 2022 to 70-90% on standard lines, with 30-50% of standard claims running without human intervention. **[UNVERIFIED — vendor and SEO content only; useful for choosing examples, not for quoting]**
+
+### The inverted case is worth studying
+
+In fraud detection the asymmetry is mirrored. The **visible** cost is the false positive, a legitimate claim you flagged and investigated. The **silent** cost is the fraud you missed. Reported figures: 60-85% false positive rates for rules-based systems, under 10% for ML scoring, and investigation teams confirming only 15-40% of referrals. **[UNVERIFIED — same caveat]**
+
+The lesson is general. **Whichever side of the error is invisible is the side that eats the return.** In extraction it is the confident mistake. In fraud it is the miss. Teams instrument the visible side because it is the side that generates tickets.
+
+### A problem for the whole framework
+
+The model needs a usable confidence signal, and that assumption is shakier than it looks. Models trained with reinforcement learning from human feedback are systematically miscalibrated, and their highest stated confidence often correlates with wrong answers. If the number is untrustworthy, outcome 3 is not merely expensive, it is invisible to the mechanism you would naturally reach for.
+
+Which argues for what the document AI post already recommends: confidence from **agreement** across OCR, a vision-language model, an LLM and validators, rather than from any single self-reported score. Production content moderation systems do the same thing, escalating on four independent triggers rather than one: calibrated confidence, novelty, policy match, and contradiction.
+
+### Regulation puts a floor under the escalation rate
+
+In some domains the operating point is not purely an economic choice.
+
+EU AI Act Article 14 requires that high-risk systems be designed so a person can "disregard, override or reverse the output" and can stop the system. For biometric identification under Annex III point 1(a), no action may be taken unless the identification "has been separately verified and confirmed by at least two natural persons." **[VERIFIED — artificialintelligenceact.eu/article/14]**
+
+**Correct the date.** Widely repeated secondary sources still give August 2, 2026 for high-risk obligations. They were delayed: **December 2, 2027** for Annex III systems, **August 2, 2028** for Annex I. Deferred because standards and national authorities were not ready, not abandoned. **[VERIFIED]**
+
+Annex III covers creditworthiness assessment, life and health insurance underwriting, employment and worker management, education, and access to essential services. **Those are the same domains where a silent error is most expensive.** The economics and the regulation point the same way, which is a useful thing to be able to tell a client.
+
+---
+
 ## 3. Outside views, for comparison
 
 ### a16z: per-seat pricing breaks — **[VERIFIED]**
@@ -226,7 +279,8 @@ Recorded so they do not creep back in.
 
 1. **Agentic AI is ~17% of enterprise AI value today, rising to ~29% by 2028.** Attributed to BCG by aggregators. Not present in either BCG source checked. **Do not use.**
 2. **An agent resolves a task for $0.62 versus $7.40 for a human, with median tier-1 deflection at 41.2%.** The article carrying these figures says of the underlying numbers: "Circulating numbers range from $6.00 to $13.50 and credit Gartner, Forrester and SQM variously, yet none of those firms publishes the number under its own name." The deflection rate is described as internally calculated, not a published benchmark. **Do not use as measured figures.** The structural argument survives as an illustration with assumed inputs.
-3. **Stacked cost reductions of 60 to 80%.** Vendor blogs with no study; competing vendors publish incompatible ranges. Already cut from the prior draft.
+3. **EU AI Act high-risk obligations apply from August 2, 2026.** Still asserted across secondary sources. Wrong. Delayed to December 2, 2027 (Annex III) and August 2, 2028 (Annex I). **Do not use the 2026 date.**
+4. **Stacked cost reductions of 60 to 80%.** Vendor blogs with no study; competing vendors publish incompatible ranges. Already cut from the prior draft.
 
 Two Gartner items are attributable by date but have no retrievable link: agentic models using 5 to 30 times more tokens per task than a standard chatbot (March 2026), and agentic routing raising provider inference costs at least fivefold (August 2026). **Use only if a primary link is found.**
 
