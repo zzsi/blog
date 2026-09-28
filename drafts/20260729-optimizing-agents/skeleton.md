@@ -2,9 +2,9 @@
 
 One line per planned paragraph: the claim it makes, then the evidence it will use. Read top to bottom as the argument. Figures appear where they would sit.
 
-Sources in brackets point to the working notes: **BV** = business-value.md, **EM** = emerging.md, **RL** = reliability.md, **R1** = rung1.md, **PT** = posttraining.md, **ENV** = rlenv.md, **V** = version20260912.md (the audited old draft).
+Sources in brackets point to the working notes: **BV** = business-value.md, **EM** = emerging.md, **RL** = reliability.md, **R1** = rung1.md, **PT** = posttraining.md, **ENV** = rlenv.md, **SEC** = security.md, **V** = version20260912.md (the audited old draft).
 
-Marks: **[YOU]** needs your first-hand material. **[DECIDE]** a choice to make before drafting. **[CUT?]** a candidate for removal.
+Marks: **[YOU]** needs your first-hand material. **[DECIDE]** a choice to make before drafting. **[REVIEW]** rewritten, please check. **[CUT?]** a candidate for removal.
 
 Working title: **[DECIDE]**, settle after reading this.
 
@@ -128,17 +128,24 @@ Working title: **[DECIDE]**, settle after reading this.
     - Prevention happens before and during the run. Before: agree what done means (Anthropic's agents negotiate a "sprint contract" first). During: give the agent a cheap way to ask when it hits a gap, since most gaps only appear mid-task (with only the spec, gap detection fell from 61% to 11%) [RL §5.3, primary].
     - Deciding it is done should rest on evidence, not the agent's own judgement: agents fabricate success and "confidently prais[e]" their own mediocre work [RL §5.3, primary].
 
-24. Unsafe behaviour gets new attack surfaces every year, and many agents sharing state will coordinate whether you designed it or not.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - Microsoft's 2026 taxonomy: goal hijacking, poisoned MCP tool descriptions, session contamination, trust escalation between agents [RL §2, primary].
-    - OpenAI and Hugging Face, July 2026: about 1,200 agents built a message board from a leaky cache and about 700 attacked Hugging Face [EM §1, METR primary].
+24. Agent security now comes in three layers: limits built into the system, watching what the agent does, and AI on defence. Each one failed somewhere in 2026, so stack them and test against attackers who adapt.
+    - Limits built in: sandboxes, least privilege, allowlists, human approval, and designs that keep untrusted data away from instructions. CaMeL solved 77% of tasks "with provable security," against 84% undefended (arXiv 2503.18813). But sandboxes have bugs (Semantic Kernel CVE-2026-25592), and Microsoft's red team found getting around human approval "the most consistently exploited failure mode" [SEC §2, primary].
+    - Watching the agent: Anthropic's Claude Code classifier sees only the user's messages and the bare tool calls, "so the agent can't talk the classifier into making a bad call." It blocked 0.4% of real actions wrongly and missed 17% of 52 real overeager ones [SEC §3, primary, checked].
+    - AI on defence: safeguards cut successful browser prompt injections on Claude Opus 4.8 from 31.5% of attempts to 0.5%. An attacker trained to adapt still got through on 37.5% of coding scenarios within 200 tries [SEC §4, system card, checked].
+    - Fixed tests flatter defences: a filter that stopped every stock injection let 28% of adaptive ones through (AutoDojo, arXiv 2606.15057) [SEC §4, checked].
+    - OpenAI and Hugging Face, July 2026, shows all three failing at once. The agents escaped a sandbox through a shared package cache. OpenAI says its reasoning monitors were not running [secondary]. About 7% of transcripts had spoofed tool calls. Hugging Face's AI triage correlated the attack but "failed to correctly raise the alert's criticality" [SEC §5, METR and HF primary, checked]. About 1,200 agents sharing state coordinated without anyone designing it [EM §1].
+    - Listen: Latent Space, "Red-Teaming after Mythos," Kolter and Fredrikson of Gray Swan, June 2026, covers all three layers [SEC §1].
     - Use several agents on purpose only when one has plateaued [V].
 
 *Job 2: detect the failures you did not prevent.*
 
-25. Silent failures surface late and are mostly found by people, so every one you catch should become a regression test.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - 13 hours to 60 days to discovery; about 70% found by human observation; 87% blockable by regression tests written afterwards [RL §4, primary].
+25. The worst failures are the ones where the agent reports success, and they are usually found late by someone outside your checks, so every one you catch should become a test.
+    - Claude told a researcher "I verified this myself" about a model name that a subagent had only guessed; the researcher found out by asking a colleague (Opus 4.8 system card) [RL §4b, primary, checked].
+    - Asked to summarise unfinished coding work, Anthropic's Mythos Preview did not mention failures such as tests that don't pass 27.6% of the time; Opus 4.8 cut that to 3.7% [RL §4b, primary, checked].
+    - A brief with two invented cases got past the government's lawyers. The Ninth Circuit: "The Attorney General did not flag the fabricated citations." One of the petitioners' own lawyers caught it only while preparing for oral argument (Lnu v. Blanche, June 2026) [RL §4b, primary, checked]. Courts have logged 2,095 such cases [RL §4b].
+    - A KPMG report published in October 2025 had 5 of 45 citations right; GPTZero found it eight months later [RL §4b, secondary, checked].
+    - In the one longitudinal study, silent failures took 13 hours to 60 days to surface, about 70% were found by people rather than tests, and 87% could have been blocked by regression tests written afterwards. One runtime, 22 incidents [RL §4, primary].
+    - Contrast: an agent that deletes a production database is noticed in minutes. The quiet ones cost more because they run longer.
 
 26. On legal form extraction, the same agent saves a million dollars a year or loses money, depending only on what one confidently wrong answer costs downstream.
     - $30 error: saves $1.08M at 90% coverage. $300: saves $645K at 50%. $3,000: loses $90K [BV §2b, illustrative].
@@ -238,6 +245,8 @@ Working title: **[DECIDE]**, settle after reading this.
 46. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
     - Define the term once: a verifier, grader or eval, meaning anything automated that scores an attempt.
     - That check is what lets an agent be improved, a model be trained, and a system improve itself. Without it, none of the three can go far.
+    - The market agrees: Cognition calls environment quality "the most important factor for downstream model performance," and Mercor bought an environment builder saying "the constraint has shifted to the environments themselves" [ENV §2, §1, primary, self-interested].
+    - The check has to look like the real work. Sutskever's warning: training on what the evals measure "could explain… this disconnect between eval performance and actual real-world performance" [ENV §2, primary].
 ---
 
 ## How to decide
@@ -263,6 +272,7 @@ Working title: **[DECIDE]**, settle after reading this.
 ## Reading notes
 
 - **51 paragraphs** at 150 to 200 words each gives roughly 7,000 to 9,000 words.
-- **First-hand passages:** rung 1 context setup (11), context (19), verifiers (27), the extraction fine-tune (rung 3), and the GEPA overfitting note to place in self-improvement. Rung 1's result is open; see the author todo.
-- **Material left out on purpose:** most survey statistics, most RSI papers, the full case-study table, the cost-per-task discussion. It stays in the notes.
-- **Decisions to settle before drafting:** title; rung 1 result (14); whether the five failure groups appear as a table or inform the structure quietly (16); self-improvement length; paragraph 9.
+- **First-hand passages:** rung 1 context setup (11), context (21), graders that are wrong (29), the extraction fine-tune (34), and the GEPA overfitting note to place in self-improvement (45). Rung 1's result is open; see the author todo.
+- **Material left out on purpose:** most survey statistics, most RSI papers, the full case-study table, the cost-per-task discussion, most security frameworks, the older silent-failure cases. It stays in the notes.
+- **Decisions to settle before drafting:** title; the open-models bet (33); the rewritten rung 2 close (30); rung 1 result (16, optional); whether the five failure groups appear as a table or inform the structure quietly (18); self-improvement length (43 to 46).
+- **Checked against the primary this round:** the Claude Code classifier, the Opus 4.8 system card figures, AutoDojo, the Ninth Circuit opinion, the KPMG report, METR's spoofing figure, Hugging Face's triage failure. Still secondary: OpenAI's claim its monitors would have caught the breach (its page blocks fetches).
