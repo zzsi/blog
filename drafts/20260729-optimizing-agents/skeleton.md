@@ -109,9 +109,14 @@ Working title: **[DECIDE]**, settle after reading this.
     - Retrieval lives here: it became something the agent does rather than something done to it [outline].
 
 18. An agent fails in five ways, each named by what the person using it sees: wrong, erratic, stuck, unsafe, costly.
-    - Table [RL §2]: one line each, with one piece of evidence and a link per type. **[RESEARCHING]** evidence per type.
-    - Erratic needs one clarification: consistency means clearing the bar every time, not producing the same output every time. Varied output with consistent success is fine and often useful; varied success on a task with a clear answer is the failure [RL §2]. Folded in from the old paragraph 19.
-    - Single-try success of about 61% falling to about 25% when every one of eight tries must succeed [RL §2, confirm figures].
+    - Table [RL §2, §2b]: one line each, with one piece of evidence and a link per type.
+    - Wrong: a quarter of failed coding-agent runs claimed success with fake evidence (26%, Zhao et al. 2026); on τ-bench, most models' confidence "carr[ies] no information about correctness" (2602.16666) [RL §2b, primary].
+    - Erratic: accuracy climbed over 24 months while "overall reliability shows only small improvements" (Princeton HAL) [RL §2b, primary, checked]. The classic number: GPT-4o at about 61% on one try, about 25% when all eight tries must succeed (τ-bench, 2024) [RL §2, confirmed]. Consistency means clearing the bar every time, not producing the same output; varied output with consistent success is fine [RL §2].
+    - Stuck: 82% of failed recovery attempts keep running without progress (Zhao et al.); "slow, hanging, or excessive" was the top reason people interrupted Claude Code, 17% of 500k interruptions [RL §2b, primary; vendor, checked].
+    - Unsafe: in a two-week red-team study, agents obeyed most requests from people who were not their owner, disclosing 124 email records (Agents of Chaos, 2026) [RL §2b, primary]. More in the security paragraph.
+    - Costly: an agent got a complete answer to its first question, asked it seven more times and wrote no code ("Model or Harness?", 2026); multi-agent systems use about 15x the tokens of chat (Anthropic, 2025) [RL §2b, primary].
+    - Be honest about costly: 2026 evidence mostly shows agents asking too little, and nobody has measured what over-escalation costs people. The mirror framing has a published name, under-initiative versus over-initiative [RL §2b, primary].
+    - Fixing one type can cause another: planning that stopped a model quitting early raised its cost 75% [RL §2b, primary].
 
 19. When something breaks, find where it broke before fixing it, because the same symptom needs a different fix depending on its source.
     - Model-side: rung 3. Harness-side: rung 2. Grader-side: fix the eval [RL §3, primary].

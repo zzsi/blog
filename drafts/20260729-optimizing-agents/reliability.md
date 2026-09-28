@@ -33,7 +33,7 @@ Varied output with consistent success is fine and often useful. Five different s
 
 So measure **consistency of clearing the bar**, not sameness of output. For a task with a right answer, the bar is correctness. For a creative task, the bar is a floor (facts right, brand rules followed, constraints respected) that should be cleared every time while what sits above it varies.
 
-**Evidence:** on τ-bench retail, GPT-4o succeeds about 61% on one try and about 25% when it must succeed on all of eight tries (pass^8). **[SECONDARY — widely cited from the τ-bench paper, arXiv 2406.12045; confirm the exact figures before quoting]**
+**Evidence:** on τ-bench retail, GPT-4o succeeds about 61% on one try and about 25% when it must succeed on all of eight tries (pass^8). **[PRIMARY, confirmed 2026-09-28: "∼61% on τ-retail… to as low as ∼25% for pass^8 on τ-retail", arXiv 2406.12045, June 2024]** A 2024 model; see §2b for 2026 evidence.
 
 ### On "costly": over-escalation is the mirror of confidently wrong
 
@@ -46,11 +46,51 @@ Both are the agent misjudging its own reliability, in opposite directions, and b
 
 ### On "wrong": misreading the task is common
 
-MAST ("Why Do Multi-Agent LLM Systems Fail?", arXiv 2503.13657) sorts 14 failure modes into system design, inter-agent misalignment, and task verification. **[PRIMARY for the categories]** Specification problems are reported as the largest share, about 42%, with step repetition, reasoning-action mismatch and not knowing when to terminate among the top modes. **[SECONDARY — percentages not on the abstract page]**
+MAST ("Why Do Multi-Agent LLM Systems Fail?", arXiv 2503.13657) sorts 14 failure modes into system design, inter-agent misalignment, and task verification. **[PRIMARY for the categories]** **Corrected 2026-09-28:** the "about 42% specification" figure is from MAST v2 (Apr 2025, "Specification Issues" 41.77%). In v3 (Oct 2025) that category is renamed "System Design Issues" at 44.2% and includes looping and termination modes. Pure specification modes are 11.8% (task) plus 1.5% (role), about 13%. **[PRIMARY, v2 and v3 PDFs, via research agent]** Do not quote 42% as "specification."
 
 ### On "unsafe": the attack surface grew in 2026
 
 **Microsoft, "Taxonomy of Failure Modes in Agentic AI Systems" v2.0, June 4 2026. [PRIMARY]** Seven new failure modes from a year of red-teaming deployed agents: agentic supply-chain compromise; goal hijacking; inter-agent trust escalation, where a compromised agent inflates its permissions to an orchestrator; visual attacks on computer-use agents; session context contamination, where early data biases later steps; MCP and plugin abuse, including tool-description poisoning; and capability or architecture disclosure. Plus the Hugging Face incident (emerging.md §1) as the out-of-scope extreme. For the three defence layers and where each failed in 2026, see security.md.
+
+### 2b. Evidence per failure group (research round 2026-09-28)
+
+| Group | Best evidence | Number | Tag |
+|---|---|---|---|
+| **Wrong** | Zhao et al., arXiv 2607.09510 (Jul 2026) | "Fabricated success, where the agent claims results or completion with fake evidence, appears in 26% of failed trajectories." | PRIMARY |
+| Wrong | "Towards a Science of AI Agent Reliability," arXiv 2602.16666 v3 (Jun 2026) | On τ-bench, "most models produce curves indistinguishable from the random baseline, indicating confidence scores carry no information about correctness." | PRIMARY |
+| **Erratic** | Princeton HAL reliability dashboard, hal.cs.princeton.edu/reliability | "Despite 24 months of model development, overall reliability shows only small improvements over time while accuracy steadily climbs." | PRIMARY, checked |
+| Erratic | arXiv 2602.16666 | "outcome consistency remains low across all models … agents that can solve a task often fail to do so consistently." | PRIMARY |
+| Erratic | τ-bench (2024) | GPT-4o about 61% pass^1 → about 25% pass^8, retail | PRIMARY, confirmed |
+| Erratic | Sierra τ-bench leaderboard raw data (Feb 2026) | GPT-5.2 retail pass^1 81.58 → pass^4 51.75; Claude Opus 4.5 79.61 → 51.75 | **Not confirmed by me.** The research agent read raw JSON, whose notes field contradicts its own contents. The leaderboard page shows pass^1 only. |
+| **Stuck** | Zhao et al. | "Only 18% of failed recoveries terminate immediately; the remaining 82% continue executing without actual progress." Fixing the wrong cause is 39% of wasted execution. | PRIMARY |
+| Stuck | Anthropic, "Measuring AI agent autonomy in practice," Feb 18 2026 | Top interruption reason: "Claude was slow, hanging, or excessive (17%)," from "500k human interruptions and 500k completed turns" | PRIMARY, vendor, checked |
+| Stuck | MAST v3 (Oct 2025) | Step repetition 15.7%, unaware of termination conditions 12.4%, premature termination 6.2% | PRIMARY, 2025 |
+| **Unsafe** | "Agents of Chaos," arXiv 2602.20021 (Feb 23 2026) | Twenty researchers over two weeks, agents on OpenClaw. Full text: "Agents complied with most non-owner requests, including disclosing 124 email records." 11 case studies, not a prevalence rate. | PRIMARY, abstract checked |
+| Unsafe | security.md | Three layers, all failed in 2026 | see there |
+| **Costly** | "Model or Harness?", arXiv 2607.28802 (Jul 2026) | Claude Opus 4.8 on a HiL-Bench task: "got a complete answer on its first question, then asked the same question seven more times and wrote no code." | PRIMARY |
+| Costly | Agents of Chaos | A conversational loop "spanned at least nine days"; background jobs never stopped. The tokens were modest (about 60k), so this shows the behaviour, not a large bill. | PRIMARY |
+| Costly | Anthropic multi-agent research (Jun 2025) | Multi-agent systems "use about 15× more tokens than chats"; early versions spawned "50 subagents for simple queries" | PRIMARY, vendor, 2025 |
+
+**Over-escalation is the weakest-evidenced group.**
+- The 2026 data mostly show agents asking too little. HiL-Bench: "it rarely asks for help and jumps straight into implementation," and MAST lists "Fail to Ask for Clarification."
+- No study measures the human time that over-escalation costs.
+- Anthropic presents Claude Code's asking "more than twice as often" as humans interrupt it as a strength.
+- The mirror framing is supported by name: "Model or Harness?" pairs **under-initiative** ("over-deferring, or repeatedly demanding confirmation on matters it could and should have resolved itself") with **over-initiative** ("taking a consequential action it should have first confirmed").
+- Our legal model's review cost stands in for this; the post should say the cost of over-escalation is modelled, not measured.
+
+**Do published taxonomies cover the five?** Partly, and none covers all five.
+- MAST covers wrong and stuck.
+- Microsoft v1 (Apr 2025) is mostly unsafe. I could not locate the v2.0 PDF itself; security.md cites Microsoft's June 2026 blog post.
+- 2602.16666's four dimensions map to erratic (consistency and robustness), wrong and over-deferral (predictability), and unsafe (safety). None of them covers stuck.
+- "Model or Harness?" argues that symptom groups can send fixes to the wrong component. That is why §3 (find where it broke) follows the table.
+
+**Possible gaps in the five:**
+- faked success, which fits wrong but needs its own detection (covered in job 2);
+- multi-agent coordination (MAST: 32.3% inter-agent misalignment);
+- drift over long sessions;
+- environment and grader failures, which are not agent behaviour (covered by the graders paragraph).
+
+**Trade-off between groups:** "by preventing premature termination, planning increases cost by 75%" (arXiv 2609.20804, Nemotron-3 30B). Fixing stuck can create costly.
 
 ---
 
