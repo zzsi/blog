@@ -109,7 +109,7 @@ Every strong result is on **tacit or proprietary judgment**: an investment profe
 | Date | Offer | Training price |
 |---|---|---|
 | Oct 2023 | OpenAI GPT-3.5 Turbo fine-tuning | $8.00 per million tokens |
-| 2026 | Together AI, LoRA, models up to 16B | $0.48 per million tokens |
+| 2026 | Together AI, LoRA, models up to 16B | $0.48 per million tokens, cut to $0.34 for Qwen3.5-9B on Sep 11 2026 (see posttraining.md) |
 | 2026 | Together AI, full SFT, models up to 16B | $1.20 per million tokens |
 
 Roughly **17x cheaper for LoRA and 7x for full fine-tuning in three years**. Not like-for-like, since 2023 was a closed 175B-class model behind an API and 2026 is an open model you can run, so state it as "the price of getting a model tuned to your task," which is the number a buyer cares about. Sources: OpenAI's own developer forum quoting the 2023 price contemporaneously; together.ai/pricing for 2026.
