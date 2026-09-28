@@ -2,7 +2,7 @@
 
 One line per planned paragraph: the claim it makes, then the evidence it will use. Read top to bottom as the argument. Figures appear where they would sit.
 
-Sources in brackets point to the working notes: **BV** = business-value.md, **EM** = emerging.md, **RL** = reliability.md, **R1** = rung1.md, **PT** = posttraining.md, **V** = version20260912.md (the audited old draft).
+Sources in brackets point to the working notes: **BV** = business-value.md, **EM** = emerging.md, **RL** = reliability.md, **R1** = rung1.md, **PT** = posttraining.md, **ENV** = rlenv.md, **V** = version20260912.md (the audited old draft).
 
 Marks: **[YOU]** needs your first-hand material. **[DECIDE]** a choice to make before drafting. **[CUT?]** a candidate for removal.
 
@@ -211,9 +211,12 @@ Working title: **[DECIDE]**, settle after reading this.
     - Nemotron 3 Ultra's merged model beat its own terminal-coding teacher, 54.0 vs 50.0 [PT §2, primary]. Papers on on-policy distillation went from 10 in 2025 to 234 in 2026 so far.
     - For a client: three narrow tasks can become three small teachers and one student.
 
-42. The eval you built at rung 2 is what makes rung 3 possible, because it becomes the training environment.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - Train on your failures [V].
+42. If you train, your environment, meaning the tasks plus the check that scores them, is the main lever you control, and the evals you built for your agent are most of one already.
+    - It decides which skills improve: DeepSeek found RL on code and search alone did not help agent tasks until it added 1,827 synthetic agent environments; NVIDIA found training on one environment caused "severe regressions" elsewhere [ENV §3, primary].
+    - It decides which shortcuts get learned: Claude 3.7's habit of special-casing tests "emerged as a result of 'reward hacking' during reinforcement learning training" [ENV §3, primary].
+    - Harvey builds its training environments in the same format as its public legal benchmark [ENV §5, primary]. The market prices good environments as scarce: Anthropic reportedly discussed spending over $1B on them in a year [ENV §1, secondary].
+    - Two costs: a check built to measure must be hardened before a model optimises against it, and once you train on your eval you need a fresh one to know if you improved [ENV, verdict].
+    - Limits: the base model sets the ceiling, and distillation can skip the reward entirely [ENV, verdict].
 
 ---
 
