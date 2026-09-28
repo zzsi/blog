@@ -118,26 +118,33 @@ Working title: **[DECIDE]**, settle after reading this.
 
 *Job 1: prevent failures.*
 
-20. Most agent failures start with a wrong belief rather than a missing skill: an assumption never checked, a requirement lost along the way, or a fact about the tool or domain it lacked.
-    - 1,184 failed terminal-agent runs: about four in five decisive errors trace to these causes; about one in eleven to the model being unable to carry out a correct plan (Zhao et al., arXiv 2607.09510) [RL §5.1, primary].
-    - The biggest single cause was information the agent had and did not use, not information it lacked. Context truncation was 2.8% of multi-agent failures [RL §5.1].
-    - Missing information hurts: Sonnet 4.5 drops from 70.8% to 54.8% on the same tasks with details hidden (Ask or Assume, arXiv 2603.26233) [RL §5.1, primary]. Replaces the 2025 o3 example.
+20. Most failed runs start with the agent working from a wrong or incomplete picture of the task, not from an inability to do the work.
+    - 1,184 failed terminal-agent runs (Zhao et al., 2026; the agents are 2025 models): 58% began with information the agent had or could have checked, the largest single cause being an assumption it never checked (31%), then a requirement it dropped (15%). 24% lacked tool or domain knowledge; 9% had a sound plan carried out badly; 9% hit the environment [RL §5.1b, primary].
+    - Context or weights? The paper does not say. In a sample of its knowledge-gap cases, about half were tool or version facts that documentation would supply, and a few more were visible in the environment [RL §5.1b, research agent's reading, unvalidated]. So the 58% is not missing knowledge at all, and much of the 24% is a context problem.
+    - The decisive mistake comes early, at a median of step 7 [RL §5.1b, primary].
+    - Answers the author's question: "wrong belief" was too narrow, and the old "four in five" wrongly added the knowledge-gap share, which the paper counts as a skill problem.
     - First-hand: the one-page memory prompt that ran sixty experiments; schema compaction at 97% agreement [V].
-    - **[RESEARCHING]** Is "wrong belief" the right name? The paper's largest category (57.9%) is information that was available and went unused; missing domain or tool knowledge (24.0%) does not say whether it was missing from the context or the weights. Rewrite and prevention steps to follow.
 
-21. Which tools to give depends on the model: strong models do best with the shell and file tools they were trained on, while smaller, cheaper models gain more from structured tools.
+21. Prevent it by giving the agent the facts it cannot know, a separate step to ask when the task is unclear, and room to look before it acts.
+    - Facts it cannot know, kept short: Vercel's 8KB docs index scored 100% against a 53% baseline; curated skills added 16.6 points while comprehensive docs added 0.7 and self-written skills scored below none (SkillsBench) [RL §5.1b, primary].
+    - Ask as its own step: a check for "is this underspecified?" recovered most of the 16 points Claude Sonnet 4.5 lost when details were hidden (54.8% to 69.4%, with a simulated user who knew the answer). But asking helps little when the gap only shows up mid-task: with an ask tool, Claude Opus 4.6 fell from 90.7% to 39.3% on SQL (HiL-Bench) [RL §5.1b, primary, checked].
+    - Look before acting: agents that explore longer before their first edit succeed more, a correlation, and prompting for it matters less with stronger models [RL §5.1b, primary]. Plans written by people after exploration took Claude Code from 16.7 to 58.3 on 20 long tasks [RL §5.1b, primary, small].
+    - Restating requirements is not enough; checking the result against them belongs in job 2 [RL §5.1b].
+    - Not yet known: whether training beats context for tool knowledge. No 2026 head-to-head found.
+
+22. Which tools to give depends on the model: strong models do best with the shell and file tools they were trained on, while smaller, cheaper models gain more from structured tools.
     - Strong models: bash alone beat catalogs of 20–60 typed tools by 5–25 points with 19–72% fewer tokens; adding the typed tools back changed nothing but doubled tokens (Mak et al., "Is Bash All You Need?", arXiv 2609.11999, Sep 2026) [RL §5.2, primary].
     - Smaller models: with only a shell, a 30B Nemotron kept calling tools it was trained on that did not exist, which ended 66% of its runs; predefined tools raised its success 15.0% and 10.1%. For the 550B model, the shell alone was better and cheaper (Fan et al., arXiv 2609.20804) [RL §5.2, primary].
     - Either way, match the schema the model was trained on: OpenAI says use its exact apply_patch because "the model has been trained to excel at this diff format"; Anthropic's text-editor schema "is built into Claude's model" [RL §5.2, primary].
     - So a cheaper model with more tools is a fair experiment when cost matters. **[RESEARCHING]** whether a cheaper model plus tools has matched a frontier model at lower total cost.
     - Large catalogs degrade: routing F1 falls 16–23 points going from 10 to 110 agents [RL §5.2, primary].
 
-22. An agent is stuck when it spends steps without getting closer to done, and the way to prevent it is to settle what done means before the run and make asking cheap during it.
+23. An agent is stuck when it spends steps without getting closer to done, and the way to prevent it is to settle what done means before the run and make asking cheap during it.
     - Looping is only one form: after a run goes wrong, only 18% of agents stop; the rest repair the wrong cause (39% of wasted steps), repeat the same approach (29%), run checks that cannot change the outcome, or report success they did not achieve (15%) [RL §5.3, primary].
     - Before: agree what done means (Anthropic's agents negotiate a "sprint contract" first). During: give the agent a cheap way to ask when it hits a gap, since most gaps only appear mid-task (with only the spec, gap detection fell from 61% to 11%) [RL §5.3, primary].
     - Catching a stuck run once it happens is detection; it moves to job 2.
 
-23. Agent security now comes in three layers: limits built into the system, watching what the agent does, and AI on defence. Each one failed somewhere in 2026, so stack them and test against attackers who adapt.
+24. Agent security now comes in three layers: limits built into the system, watching what the agent does, and AI on defence. Each one failed somewhere in 2026, so stack them and test against attackers who adapt.
     - Limits built in: sandboxes, least privilege, allowlists, human approval, and designs that keep untrusted data away from instructions. CaMeL solved 77% of tasks "with provable security," against 84% undefended (arXiv 2503.18813). But sandboxes have bugs (Semantic Kernel CVE-2026-25592), and Microsoft's red team found getting around human approval "the most consistently exploited failure mode" [SEC §2, primary].
     - Watching the agent: Anthropic's Claude Code classifier sees only the user's messages and the bare tool calls, "so the agent can't talk the classifier into making a bad call." It blocked 0.4% of real actions wrongly and missed 17% of 52 real overeager ones [SEC §3, primary, checked].
     - AI on defence: safeguards cut successful browser prompt injections on Claude Opus 4.8 from 31.5% of attempts to 0.5%. An attacker trained to adapt still got through on 37.5% of coding scenarios within 200 tries [SEC §4, system card, checked].
@@ -148,7 +155,7 @@ Working title: **[DECIDE]**, settle after reading this.
 
 *Job 2: detect the failures you did not prevent.*
 
-24. The worst failures are the ones where the agent reports success, and they are usually found late by someone outside your checks, so every one you catch should become a test.
+25. The worst failures are the ones where the agent reports success, and they are usually found late by someone outside your checks, so every one you catch should become a test.
     - Claude told a researcher "I verified this myself" about a model name that a subagent had only guessed; the researcher found out by asking a colleague (Opus 4.8 system card) [RL §4b, primary, checked].
     - Asked to summarise unfinished coding work, Anthropic's Mythos Preview did not mention failures such as tests that don't pass 27.6% of the time; Opus 4.8 cut that to 3.7% [RL §4b, primary, checked].
     - A brief with two invented cases got past the government's lawyers. The Ninth Circuit: "The Attorney General did not flag the fabricated citations." One of the petitioners' own lawyers caught it only while preparing for oral argument (Lnu v. Blanche, June 2026) [RL §4b, primary, checked]. Courts have logged 2,095 such cases [RL §4b].
@@ -156,28 +163,29 @@ Working title: **[DECIDE]**, settle after reading this.
     - In the one longitudinal study, silent failures took 13 hours to 60 days to surface, about 70% were found by people rather than tests, and 87% could have been blocked by regression tests written afterwards. One runtime, 22 incidents [RL §4, primary].
     - Contrast: an agent that deletes a production database is noticed in minutes. The quiet ones cost more because they run longer.
 
-25. Judge whether a run is stuck or finished from evidence, not from the agent's own account.
+26. Judge whether a run is stuck or finished from evidence, not from the agent's own account.
     - Loop detectors and step budgets fire after the decisive mistake, so use them to escalate, not to prevent: a monitor flagged only 3.7–8.7% of stuck runs before lock-in [RL §5.3, primary].
     - Agents fabricate success and "confidently prais[e]" their own mediocre work, so check the claimed result itself: run the tests, open the output, compare it with the agreed definition of done [RL §5.3, primary]. Moved from the old stuck paragraph.
+    - Check requirements with something other than the agent: models restate a constraint while breaking it (8–99% across models, DriftBench), and a monitor given the requirements caught dropped ones 22% of the time instead of 3% [RL §5.1b, primary].
 
-26. Every agent trades silent mistakes against escalations to a person, and what one silent mistake costs decides where that trade-off should sit.
+27. Every agent trades silent mistakes against escalations to a person, and what one silent mistake costs decides where that trade-off should sit.
     - Worked example, legal form extraction: the same agent saves $1.08M a year at 90% coverage when an error costs $30, saves $645K at 50% when it costs $300, and loses $90K when it costs $3,000 [BV §2b, illustrative].
     - Over-escalation is the mirror of confidently wrong: one lands on reviewers, visibly and now; the other lands downstream, silently and later. The "minimise human intervention" metric trades the visible one for the silent one: at full coverage the three legal cases save 70%, cost 182% more, and cost 2,702% more [BV §2b].
     - Moving along the curve is choosing a threshold; moving the curve is reliability work, and it pays more as stakes rise: at $3,000 an error, a tenfold better agent moves coverage from 10% to 50% [BV §2b].
     - **FIGURE:** cost per document against coverage, three curves.
     - Merges the old legal-example and over-escalation paragraphs; the legal case is now the example, not the point.
 
-27. Deciding when to escalate needs a confidence signal built from agreement and hard checks, calibrated on labels your escalation queue already produces.
+28. Deciding when to escalate needs a confidence signal built from agreement and hard checks, calibrated on labels your escalation queue already produces.
     - Six methods [BV §2d]. A few hundred labels. Every escalated item gets a human verdict [BV §2d].
 
-28. The tests you use to judge the agent can themselves be wrong, passing bad work and failing good work.
+29. The tests you use to judge the agent can themselves be wrong, passing bad work and failing good work.
     - "Tests" here means your own evals and graders: the automated checks that decide pass or fail.
     - Public benchmarks: 61.1% of SWE-bench samples flagged for tests that reject valid solutions; SWE-bench Pro graders 8.5% false positive, 24% false negative [V, audited].
     - First-hand: loose checks agents slipped past, strict ones that failed correct answers [V].
 
 *Close.*
 
-29. Fix problems with the cheapest change that works, and only escalate when your evals stop improving.
+30. Fix problems with the cheapest change that works, and only escalate when your evals stop improving.
     - Cheapest first: a clearer instruction before a new tool, a setting before a code change, a new tool before a new agent.
     - The cost of going further: once you change an open-source agent's code rather than configure it (Stripe forked Goose), every new release of that agent becomes something you merge by hand.
     - **[REVIEW]** Rewritten for clarity; please check.
@@ -186,45 +194,49 @@ Working title: **[DECIDE]**, settle after reading this.
 
 ## Rung 3: model engineering
 
-30. At rung 3 the model is yours, which is what ML engineering meant before the generative era.
+31. At rung 3 the model is yours, which is what ML engineering meant before the generative era.
 
-31. Whether to train your own model is a live debate, and the balance shifts with each frontier release, each open model, and each new training recipe.
+32. Whether to train your own model is a live debate, and the balance shifts with each frontier release, each open model, and each new training recipe.
     - Against: 70% of production agents prompt off-the-shelf models; OpenAI closed self-serve fine-tuning to new users; prompt optimisation beats GRPO at 35x fewer rollouts [outline, verified].
     - For: Bridgewater's tuned Qwen3-235B at 84.66% against Claude Opus 4.8 at 78.2%, 13.8x cheaper to run; Harvey Tenet, +12.1 citation quality at a tenth of the cost [BV §2e, verified]. Tuning wins where the right answer is not public.
 
-32. On complex document extraction, tuned 3B and 8B models beat the strongest model our deployment allowed.
+33. On complex document extraction, tuned 3B and 8B models beat the strongest model our deployment allowed.
     - 0.92 against 0.82 on transcription fields; 0.87 against 0.55 on the full field set [BV §2e, first-hand].
     - The capability was already there; tuning bought the output contract.
 
-33. The answer depends on your data, your traffic and your budget, and my bet is that open models and the advantages of owning one are not going away.
+34. The answer depends on your data, your traffic and your budget, and my bet is that open models and the advantages of owning one are not going away.
     - Data: do you have examples or a verifier the frontier has never seen? Traffic: enough volume that a cheaper model pays back the training? Budget: can you afford to retrain as base models move?
     - **[YOU]** Confirm this directional bet is one you want to make in public.
 
-34. The cost of getting a capability into a small model keeps falling, even though GPU prices rose in 2026 and frontier teams are spending more.
+35. The cost of getting a capability into a small model keeps falling, even though GPU prices rose in 2026 and frontier teams are spending more.
     - Falling: Together cut training prices 30–70% on Sep 11 2026; a 1.5B reasoning model was RL-trained for $9 (Tina); Ai2 built a 32B coding agent at 49.5–54.2% SWE-bench Verified for $2,000 (SERA); LoRA matches full fine-tuning for RL [PT §1, primary].
     - Rising: H100 contract prices up almost 40% from October 2025 to March 2026; Fireworks and Tinker raised prices; reasoning models cost 17x more to post-train than instruct models, with 82% of compute going to experiments that do not ship [PT §1, primary].
     - **FIGURE:** reuse fig2, relabelled "cost of tuning", with the Together price updated.
 
-35. The training method follows from the signal you have: examples to imitate, preferences between answers, a stronger model to learn from, or an automatic check.
+36. The training method follows from the signal you have: examples to imitate, preferences between answers, a stronger model to learn from, or an automatic check.
     - Supervision table, four rows [EM §2]. The paragraphs that follow take them in the order a recipe uses them: imitate, prefer, reinforce, then distil.
 
-36. Supervised fine-tuning is cheap, needs surprisingly little data, and is the right tool for format and behaviour, but it memorises and can erase what the model already knew.
+37. Supervised fine-tuning is cheap, needs surprisingly little data, and is the right tool for format and behaviour, but it memorises and can erase what the model already knew.
     - 50 good examples is OpenAI's starting recommendation; s1 fine-tuned a 32B model on 1,000 reasoning traces in 26 minutes on 16 H100s [PT §2, primary].
     - Training Qwen3-8B on internal documents cut its instruction-following score from 85% to 45% (Thinking Machines) [PT §2, primary]. SFT "memorizes" while RL generalizes (Chu et al., ICML 2025).
 
-37. For agents, the examples are whole trajectories, and which ones you keep matters as much as how many.
-    - **[RESEARCHING]** How much trajectory data agentic SFT needs, how trajectories are generated and filtered, and whether they must use the same tools and format as your harness.
+38. For agents, the examples are whole trajectories: a few thousand from a stronger model can lift a mid-size open model a long way, if they use the same tools and format as your agent.
+    - How many: 491 trajectories gave up to 19 points on SWE-bench (SWE-Gym, 2024); about 5,000 reached 40.2% (SWE-smith, 2025); about 8,000 per repository let Ai2's SERA student match its teacher, for about $1,300 (2026) [PT, agentic SFT, primary, checked].
+    - Format: SERA degrades "significantly" with "a different agent scaffold, or even subtle formatting differences"; NVIDIA trains across several harnesses for this reason [PT, agentic SFT, primary, checked].
+    - Filtering: keeping only successful runs is not clearly better. NVIDIA found unfiltered data beat success-only, 12.4% to 5.06%; SERA found verification thresholds made no significant difference; masking the failed steps from the loss keeps the recovery behaviour [PT, agentic SFT, primary, checked].
+    - What to screen out: the teacher's shortcuts (edited tests, git-history leaks) and anything overlapping your eval [PT, agentic SFT, primary].
+    - Limits: nearly all evidence is coding and terminal work, and no public case yet builds multi-step agent training data from production logs [PT, agentic SFT].
 
-38. Preference training learns from which of two answers is better, which is often easier to collect than a written-out answer, and it is fading from frontier recipes.
+39. Preference training learns from which of two answers is better, which is often easier to collect than a written-out answer, and it is fading from frontier recipes.
     - Tülu 3's pipeline: SFT 60.6, then DPO 64.7, then RL 65.1 average; OLMo 3 found DPO before RL beat either alone [PT §2, primary].
     - A reviewer choosing between two agent outputs produces exactly this data, so an escalation queue can feed it.
     - Nemotron 3 Ultra and MiMo-V2-Flash do not use it; on-policy distillation has taken its place [PT §2].
 
-39. Reinforcement learning is for behaviour your examples never showed, and it needs an automatic check to learn from.
+40. Reinforcement learning is for behaviour your examples never showed, and it needs an automatic check to learn from.
     - RL generalizes where SFT memorises, and RL keeps prior skills better at equal gains [PT §2, primary].
     - Its cost is mostly generating attempts: the rollout generator was 87% of OLMo 3's reasoning post-training energy [PT §1, primary]. It can also peak and collapse (see self-improvement).
 
-40. If you train with RL, your environment, meaning the tasks plus the check that scores them, is the main lever you control, and the evals you built for your agent are most of one already.
+41. If you train with RL, your environment, meaning the tasks plus the check that scores them, is the main lever you control, and the evals you built for your agent are most of one already.
     - This is the RL case. For SFT the equivalent lever is which trajectories you keep (above).
     - It decides which skills improve: DeepSeek found RL on code and search alone did not help agent tasks until it added 1,827 synthetic agent environments; NVIDIA found training on one environment caused "severe regressions" elsewhere [ENV §3, primary].
     - It decides which shortcuts get learned: Claude 3.7's habit of special-casing tests "emerged as a result of 'reward hacking' during reinforcement learning training" [ENV §3, primary].
@@ -232,7 +244,7 @@ Working title: **[DECIDE]**, settle after reading this.
     - Two costs: a check built to measure must be hardened before a model optimises against it, and once you train on your eval you need a fresh one to know if you improved [ENV, verdict].
     - Limits: the base model sets the ceiling, and distillation can skip the reward entirely [ENV, verdict].
 
-41. Distillation, training a small model on a stronger one, is the cheapest way to move a skill into a model you own, and the newest recipes use it to merge RL-trained specialists into one model.
+42. Distillation, training a small model on a stronger one, is the cheapest way to move a skill into a model you own, and the newest recipes use it to merge RL-trained specialists into one model.
     - Distilling beat running RL directly: 72.6 vs 47.0 on AIME for a 32B model (DeepSeek-R1). On-policy distillation, where the teacher grades the student's own attempts, matched RL at about a tenth of the GPU hours (Qwen3) [PT §2, primary].
     - Merging: train narrow specialists with RL, then distil them into one student. DeepSeek V4, Nemotron 3 Ultra (10+ teachers), MiMo-V2-Flash, Kimi K3 and GLM-5 do this; Nemotron 3 Ultra's merged model beat its own terminal-coding teacher, 54.0 vs 50.0. Papers on on-policy distillation went from 10 in 2025 to 234 in 2026 so far [PT §2, primary].
     - Anthropic's and Google's terms forbid using their models to train competing ones; Anthropic publicly named labs that ran 16M+ exchanges through fake accounts to do it [PT §2, primary]. Distil from open-weight teachers or a vendor's own distillation service.
@@ -243,20 +255,20 @@ Working title: **[DECIDE]**, settle after reading this.
 
 ## Where this is heading: self-improvement
 
-42. Self-improvement became something you could run on one GPU in March 2026, with Karpathy's autoresearch, and labs now say agents do real research work, though their leaders disagree about how fast to go.
+43. Self-improvement became something you could run on one GPU in March 2026, with Karpathy's autoresearch, and labs now say agents do real research work, though their leaders disagree about how fast to go.
     - Autoresearch: an agent edits a small model's training script in 5-minute runs and keeps what improves the loss; ~700 changes over two days, ~20 kept, cutting nanochat's time-to-GPT-2 by about 11%. His own caveat: "It's not novel, ground-breaking 'research' (yet)." And: "All LLM frontier labs will do this. It's the final boss battle." [EM §3.3c, primary]
     - Since then: OpenAI's "automated research intern" (Sept 2026) and its March 2028 target; Pachocki's call for slowdowns the same month; Jack Clark's 60% chance of autonomous self-improvement by 2028 (Aug 2026) [EM §3.1].
 
-43. The self-improvement that runs without a human today mostly rewrites a harness or a small model's training script, while changes to a frontier model's weights still have a human starting each run.
+44. The self-improvement that runs without a human today mostly rewrites a harness or a small model's training script, while changes to a frontier model's weights still have a human starting each run.
     - AIDE², Ouroboros, Darwin Gödel Machine, Recursive, autoresearch [EM §3.2, §3.3].
     - Weight-level work is larger in the literature (280 vs 95 papers in 2026), and labs now have models running parts of their successors' training, but "Claude is not operating fully autonomously for any measured subset of AI R&D work" [EM §3.3c]. Corrected from the earlier harness-only claim.
 
-44. Today self-improvement is limited by its verifier: it improves what the check can measure, and where the check is narrow, it overfits to it.
+45. Today self-improvement is limited by its verifier: it improves what the check can measure, and where the check is narrow, it overfits to it.
     - Google's RRSI: unregularised harness evolution wins on Harvey's legal benchmark and loses elsewhere [EM §3.3b].
     - Rise and collapse: RL self-training peaks then falls about 17 points [EM §3.3b].
     - **FIGURE, maybe:** RRSI Table 1 as a small chart.
 
-45. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
+46. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
     - Define the term once: a verifier, grader or eval, meaning anything automated that scores an attempt.
     - That check is what lets an agent be improved, a model be trained, and a system improve itself. Without it, none of the three can go far.
     - The market agrees: Cognition calls environment quality "the most important factor for downstream model performance," and Mercor bought an environment builder saying "the constraint has shifted to the environments themselves" [ENV §2, §1, primary, self-interested].
@@ -265,20 +277,20 @@ Working title: **[DECIDE]**, settle after reading this.
 
 ## How to decide
 
-46. Place your problem on a rung by what you own and what is failing.
+47. Place your problem on a rung by what you own and what is failing.
     - Reviewing everything means the measurement layer is missing. Unexplained downstream rework means silent errors are unpriced. Dispersed saved hours mean the workflow was never redesigned [BV §2b].
 
-47. Two numbers set the operating point at rung 2: what a silent error costs, and the coverage-versus-error curve on your own data.
+48. Two numbers set the operating point at rung 2: what a silent error costs, and the coverage-versus-error curve on your own data.
 
-48. Enter rung 3 when prompting has plateaued and you have a training signal; volume decides whether it pays, not whether it works.
+49. Enter rung 3 when prompting has plateaued and you have a training signal; volume decides whether it pays, not whether it works.
 
 ---
 
 ## Close
 
-49. The numbers in this post will date within a year, and the structure should not.
+50. The numbers in this post will date within a year, and the structure should not.
 
-50. **[YOU]** End on the failures actually witnessed and what they share: someone skipped measurement and went straight to the machinery.
+51. **[YOU]** End on the failures actually witnessed and what they share: someone skipped measurement and went straight to the machinery.
     - The prior draft's ending, trimmed [V].
 
 ---

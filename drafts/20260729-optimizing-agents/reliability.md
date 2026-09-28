@@ -120,6 +120,48 @@ Researched 2026-09-28. [PRIMARY] read in full text or company page; [PRIMARY-abs
 
 **Verdict:** "what the agent knew" holds at about 82% (57.9 + 24.0) only if it includes unchecked assumptions, lost requirements and missing domain knowledge. If it means "what was in the context window," the evidence points the other way: the biggest cause is information that was available and went unused.
 
+### 5.1b What "wrong belief" means, and how to prevent it (research round 2026-09-28)
+
+**Re-read of Zhao et al. at the primary.** Paper: arXiv 2607.09510. Codebook and labels: github.com/xz-Sean/cli_trajectory_analysis. **[PRIMARY]**
+- **Scope.** The models are from 2025: Claude Sonnet 4, GPT-5, Gemini 2.5 Pro, Qwen3 Coder 480B, DeepSeek V3.2, Kimi K2 and Devstral 2. The data is 89 Terminal-Bench tasks with 1,794 valid trajectories (1,184 failed). Claude Opus 4.6 drafted the labels and two humans finalised them (κ=0.83 on root causes). The study is observational.
+- **Epistemic, 57.9%:** "arise when the information needed to avoid the error is already available but is ignored, forgotten, or misinterpreted."
+  - False premise (30.7%): "Acts on an unverified assumption about the task or environment." Example: after `sudo: not found`, the agent assumes it lacks permission instead of checking its execution context.
+  - Specification neglect (14.9%): "Ignores or forgets an explicitly stated requirement."
+  - Output misreading (4.4%), ignored signal (4.1%), premature action (3.7%).
+- **Competence, 32.8%:** "occur when the agent genuinely lacks the knowledge or capability required."
+  - Knowledge gap (24.0%): "Lacks the required domain, tool, or API knowledge."
+  - Capability limitation (8.8%): "Chooses a reasonable strategy but fails to execute it correctly."
+- **Environment, 9.4%.**
+- **Context or weights? The paper does not say.** "Genuinely lacks" implies the model itself, but the agents had a shell and could often have looked things up. The research agent read a sample of 25 of the 284 knowledge-gap labels (single reader, not validated):
+  - 13 were tool, library or version facts that documentation would supply;
+  - 4 were harness or evaluator facts visible in the environment;
+  - 7 were deeper domain knowledge;
+  - 1 was behaviour, not knowledge.
+- **The draft wording was wrong.** The skeleton's "about four in five" came from adding 57.9 and 24.0, but the paper puts knowledge gap under *competence*, the "missing skill" side of its own contrast. "Skill" also collides with Agent Skills in this post.
+- **Authors' recommendations (untested in the paper):**
+  - catch decisive errors early (median at step 7);
+  - validate assumptions about the environment before planning on them;
+  - validate the diagnosed cause before repairing it;
+  - cap recovery effort (successful recoveries take a median 5 steps, failed ones 12);
+  - verify claimed success independently (26% of failed runs fabricate success).
+  The only measured effect: giving a monitor the requirements raised recall on ignored requirements "from 3% to 22%" at 2–3% false positives.
+- **Computed from the released labels by the research agent:** 85.8% of specification-neglect runs were "never aware", the quietest kind.
+
+**Interventions, with evidence**
+- **Asking works when the gap is visible up front** (Ask or Assume, arXiv 2603.26233, v3 Sep 2026, checked). Claude Sonnet 4.5 scored 70.80% with the full issue and 54.80% with details hidden. An uncertainty-aware multi-agent setup scored 69.40%, and a forced ask-first baseline 70.40%. The simulated user was GPT-5.1 holding the full issue, so this is a best case. Forced ask-first hurt Kimi K2.6 (47.20%) through "instruction-following failures."
+- **Asking helps little when gaps appear mid-task** (HiL-Bench, arXiv 2604.09408, checked; pass@3). Models score "75–89% pass@3 with complete information but only 4–24% when they must judge when to ask." For Claude Opus 4.6: SQL 90.7% vs 39.3%, SWE 69.1% vs 9.4%. With only the spec, blocker recall drops "from 61% … to 11%."
+- **Restating a requirement is not following it** (DriftBench, arXiv 2604.28031). Final-turn recall of constraints was 97.3%, yet models violated constraints they could restate at rates from 8% to 99%. Structured checkpoints cut non-compliance only from 54% to 47%. This is scientific ideation under user pressure, not coding.
+- **Constraint violation is the top symptom in real sessions** (arXiv 2605.29442): 38.33% of 20,574 sessions, labelled by an LLM.
+- **Facts the model can't know: compact and curated beats comprehensive.**
+  - Vercel's 8KB docs index scored 100% against a 53% baseline, and the skill was never invoked in 56% of cases (vendor eval, n not stated).
+  - SkillsBench: curated skills added +16.6 pp and comprehensive docs +0.7 pp. Self-generated skills scored −8 to −12 pp.
+  - ETH: generated context files changed resolution by −0.5 to −2% and raised cost 20–23%.
+- **Explore before editing: a correlation only.** Agents that delay their first edit succeed more (ρ=+0.68, arXiv 2604.02547). Prompt-level steering matters less for stronger models (20 pp on claude-3.5-sonnet vs 4 pp on claude-4-sonnet).
+- **Plans written by people help on long tasks** (LongCLI-Bench, arXiv 2602.14337, 20 tasks). Claude Code with Opus 4.6 went from 16.7 to 58.3; Codex with GPT-5.3-Codex from 15.0 to 41.7.
+- **Not found:** any 2026 head-to-head comparison of fine-tuning versus context for tool or API knowledge.
+
+**Revised claim for the post:** most failed runs start with the agent working from a wrong or incomplete picture of the task, not from an inability to do the work. The largest single cause is acting on an assumption it never checked. Prevention means cheap checks before acting, facts the model can't know supplied compactly, a separate step to ask when the task is unclear up front, and a requirement check done by something other than the agent.
+
 ### 5.2 Default tools versus more tools: supported for cost, conditional for capability
 
 - **Mak et al., "Is Bash All You Need?", arXiv 2609.11999, Sep 10 2026. [PRIMARY]** Opus-4.8 and GPT-5.5 on TheAgentCompany and APEX-Agents. **Bash alone beats typed tool catalogs by 21.8–24.5 points (TAC) and 4.8–7.4 (APEX) with 19–72% fewer tokens.** Adding the typed tools back on top of bash: −0.6 pp (CI −3.0 to +1.9), tokens roughly doubled. Exact repeated calls: 16.2% typed-only vs 0.3% with bash. Caveat: reward hacking seen in shell setups (agents reading evaluator scripts).

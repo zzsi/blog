@@ -75,3 +75,42 @@ Research round, 2026-09-28. **[PRIMARY]** vendor page, paper or official post re
 | Distillation | Teacher-level skill in a small model, cheaply | Closed-model terms forbid competing models |
 | MOPD | Merging several specialist teachers | Student must already be able to follow the teacher |
 | RL | Behaviour the demonstrations never showed | Needs a verifier; rollouts dominate cost; can collapse past a peak |
+
+## Agentic SFT: how much data, and how to filter it (research round 2026-09-28)
+
+**Verdict:** a few hundred to a few thousand trajectories from a stronger model can lift a mid-size open model a lot. They must use the same tools and format as the harness the model will run in, or be spread across several harnesses. Keeping only successful runs is not clearly better. Almost all the evidence is from coding and terminal work.
+
+**How much data**
+- **SWE-Gym** (Dec 2024): "only 491 agent-environment interaction trajectories" gave "up to 19% absolute gains" on SWE-bench Verified and Lite. Performance was still rising at 491. **[PRIMARY, 2024]**
+- **SWE-smith** (Apr 2025): 5,016 training trajectories, kept from a pool with a 36% resolve rate, reached 40.2% on SWE-bench Verified. It capped each task at 3 trajectories. **[PRIMARY, 2025]**
+- **R2E-Gym** (Apr 2025): 3,321 trajectories reached 34.4%. Reasoning traces helped (34.2% vs 30.4%). **[PRIMARY, 2025]**
+- **LIMI** (Sep 2025): "only 78 carefully designed training samples," averaging 42.4k tokens each. Its comparison against 10,000 samples used a different dataset, not a controlled test, and most of the gain disappears without the training CLI. **[PRIMARY, caveated]**
+- **SWE-Lego** (Jan 2026): 18,000 validated trajectories reached 42.2% (8B) and 52.6% (32B). **[PRIMARY]**
+- **Ai2 SERA** (report May 29 2026, checked): "Effectively specializing to a single repository requires approximately 8,000 trajectories ($1,300)," at which point the student matches its teacher. **[PRIMARY, author]**
+- **Nemotron 3 Super** (Apr 2026): over 7M SFT samples, including 84,864 terminal samples and 1.5M tool-calling trajectories. **[PRIMARY, vendor]**
+
+**Generation:** mostly teacher rollouts (Claude 3.7 Sonnet, Qwen3-Coder-480B, DeepSeek-V3.2, GLM-4.6). Some use humans with a model (LIMI), and some use synthetic tools (Kimi K2 used 20,000+).
+
+**Filtering: what is used and what is measured**
+- **In use:**
+  - success only, via rejection sampling (SWE-Gym, SWE-smith, R2E-Gym, DeepSeek-V3.2);
+  - rules on format and completion (Qwen3-Coder-Next);
+  - LLM judges (Kimi K2, Nemotron);
+  - decontamination: SWE-smith removed the 12 SWE-bench repos, and Nemotron-Terminal applies a 14-gram overlap filter.
+- **Measured, 2026:**
+  - Nemotron-Terminal (arXiv 2602.21193, Feb 24 2026, checked): "no filtering (12.4%) significantly surpasses both complete-only (6.74%) and success-only (5.06%) strategies," and "retaining unsuccessful trajectories appears to provide valuable supervision, exposing the model to realistic error states and recovery patterns."
+  - SERA (checked): "no statistically significant difference between verification thresholds, H(3)=7.19, p=.066."
+  - SWE-Lego: removing low-quality resolved runs gave a small gain (40.4 to 41.0, table value).
+- **No ablations found** for LLM-judge filtering or deduplication.
+
+**Failed trajectories and masking**
+- GLM-5: "Erroneous segments within trajectories are retained but masked out in the loss function, allowing the model to learn error correction behaviors without reinforcing incorrect actions." **[PRIMARY, vendor]**
+- SWE-Lego: masking error steps "improves model performance by over 2 points"; adding semi-resolved runs added +1.2%. **[PRIMARY]**
+
+**Risks**
+- **Format mismatch.** SERA (checked): "Deploying the model with a different agent scaffold, or even subtle formatting differences, degrades performance significantly." Nemotron 3 Super scored 60.47 on SWE-Bench in OpenHands and 53.73 in Codex, and trains across several harnesses for that reason. Qwen3-Coder-Next: more tool-call templates in training give more robustness.
+- **Teacher habits and reward hacks.** SWE-Lego filters out runs that edit tests and removes git history. SWE-smith students loop far more than their teacher (over 25% vs under 4% of trajectories with a repeated sequence of length 10 or more). SFT on reward-hacking examples generalises the hacking (School of Reward Hacks, 2025).
+- **Contamination.** SWE-Bench Illusion: models locate buggy files from the issue text alone "up to 76%" on SWE-bench, versus 53% elsewhere.
+- **Forgetting.** NVIDIA: SFT "often degrades performance outside of the target domain." This agrees with the SFT section above.
+
+**Enterprise practice:** no rigorous public case of multi-step agentic SFT built from production logs. The public cases use single-step distillation (NVIDIA Data Flywheel, 1B model at about 98% of a 70B on tool routing), RL on user accept/reject signals (Cursor Tab), memory (Databricks), or synthetic data from the company's own code (SERA: "Closed models haven't seen your internal code").
