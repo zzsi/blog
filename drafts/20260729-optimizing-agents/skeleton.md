@@ -62,10 +62,13 @@ Working title: **[DECIDE]**, settle after reading this.
     - It stops scaling as-is: Uber's gateway covers 1,000+ MCP servers, and loading every tool description cost 50K–70K tokens a session, so Uber and Cloudflare now expose tools as command-line calls or code instead [R1, primary].
     - Your own setup (MCP over internal services, scheduled jobs building a knowledge base) matches the two most common patterns.
 
-12. The second most common practice, instruction files in each repo, is also the least proven.
+12. The second most common practice, instruction files and skills, is also the least proven, and each new model generation means checking them again.
     - Cloudflare generated AGENTS.md for ~3,900 repos; Intercom runs a weekly job that fact-checks every CLAUDE.md [R1, primary].
     - Evidence is split: Vercel's docs index scored 100% vs 53% baseline; ETH Zurich found context files do not generally improve success and add over 20% cost [R1, primary]. They help most with conventions the model would not guess.
-    - **[RESEARCHING]** Files and skills written for one model generation may need rewriting for the next: checking Anthropic's guidance for Fable and similar guidance from others.
+    - Vendors now say so themselves. Anthropic, for Fable 5: "Skills developed for prior models are often too prescriptive for Claude Fable 5 and can degrade output quality." OpenAI, for GPT-6 Astra: "overly specific guidance can now hinder results where it previously helped." Anthropic suggests a configuration review "every three to six months" and after major releases [R1, model releases, primary, checked].
+    - Not always simpler: more literal models need scope stated more explicitly, and skills a model wrote for itself scored below no skills at all (SkillsBench). The durable habit is a small test per file or skill, re-run on each new model [R1, model releases].
+    - Files also go stale as code changes: across 2,303 context files, teams mostly add instructions and rarely delete them [R1, model releases, primary].
+    - Correction to the recollection: the "too prescriptive" guidance is for Fable 5 and is about skills; for Fable 5.1 Anthropic says Fable 5 prompts work "without changes."
 
 13. Extra agent output piles up at code review, so the best-measured rung 1 practice is putting an AI reviewer in CI.
     - Spotify: 76% more PRs, and "76% more PRs to review"; "the bottleneck moves from coding to decision-making" [R1, primary].

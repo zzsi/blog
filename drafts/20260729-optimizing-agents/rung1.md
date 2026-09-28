@@ -43,6 +43,48 @@ This is a count within a sample, not a survey.
 
 **Reading:** the most common rung 1 practice has the weakest independent evidence. Instruction files help most for non-standard conventions, and for cost and speed more than correctness.
 
+## Instruction files and skills across model releases (research round 2026-09-28)
+
+**Verdict on the author's recollection:** the author recalled that Fable needs much simpler CLAUDE.md files and skills. That is **partly right but misattributed**.
+- Anthropic's "too prescriptive" guidance is for **Fable 5** (released June 9 2026), and it is about **skills**, not CLAUDE.md.
+- For **Fable 5.1** (Sept 1 2026) Anthropic says Fable 5 prompts "should perform well on Claude Fable 5.1 without changes." Only a few narrow removals are listed, such as lines telling the model to hold back progress updates.
+- Anthropic's CLAUDE.md advice about model releases is generic and predates Fable.
+
+**The general point is well supported, but almost entirely by vendors:** re-check instruction files and skills at each model generation. **[PRIMARY]** throughout; I checked the quotes marked ✓ against the saved copies.
+
+- **Anthropic**
+  - Prompting Claude Fable 5 (docs, undated): "Skills developed for prior models are often too prescriptive for Claude Fable 5 and can degrade output quality. Review and consider removing older instructions if default performance is better." ✓
+  - "How Claude Code works in large codebases" (May 14 2026): "CLAUDE.md files that guided Claude through patterns it used to struggle with may either become unnecessary or actively constraining when the next model ships." It recommends "a meaningful configuration review every three to six months, but it's also worth doing one whenever performance feels like it's plateaued after major model releases." ✓
+  - Claude Code docs: "Revisit after major model releases." Claude Code v2.1.283 (Sept 25 2026) added `/doctor prompt-audit` "to audit your CLAUDE.md files, skills, agents and commands for prompting patterns written for older models."
+  - Prompting best practices, on Opus 4.5 and 4.6: "If your prompts were designed to reduce undertriggering on tools or skills, these models may now overtrigger… Where you might have said 'CRITICAL: You MUST use this tool when...', you can use more normal prompting."
+  - Prompting Claude Opus 5: remove explicit verification instructions, because they "cause over-verification." This is a vendor claim with no numbers given.
+  - "Improving skill-creator" (Mar 3 2026): "Capability uplift skills may become less necessary as models improve. Evals tell you when that's happened."
+  - Cowork guide (Jul 16 2026): "Saved instructions, like Skills and memory files, written for an earlier model often carry corrections that model needed. Carried forward, old corrections can constrain a new model."
+- **OpenAI**
+  - "Rethinking skills and prompts for GPT-6 Astra" (Sep 11 2026): "overly specific guidance can now hinder results where it previously helped." ✓ And: "Because AGENTS.md applies whenever the model works in your repository, you should frequently revisit each instruction."
+  - GPT-5.5 guide: "Begin migration with a fresh baseline instead of carrying over every instruction from an older prompt stack."
+  - GPT-5.6 Sol guide, **vendor-internal**: leaner system prompts "improved evaluation scores by roughly 10–15% while reducing total tokens by 41–66% and cost by 33–67%."
+- **Google, Gemini 3.5:** "Verbose or complex prompt engineering techniques designed for older models may cause the model to over-analyze."
+- **Cursor:** "We spend weeks customizing our harness to a model's strengths and quirks" (Apr 30 2026). Cursor says per-model tuning is the product's job, not the user's.
+- **Anthropic's own harness, "Harness design for long-running apps" (Mar 24 2026):** it dropped context resets with Opus 4.5 and the sprint construct with Opus 4.6. The April 23 postmortem: one system-prompt line cost 3% on Opus 4.6 and 4.7 and was reverted. Anthropic now gates model-specific instructions to the targeted model.
+
+**Not always simpler**
+- Fable 5.1 needs more prompting for progress updates, and GPT-6 Astra needs a push to keep going.
+- The Opus 4.8 and Sonnet 5 guides note "more literal instruction following," so scope must be stated more explicitly.
+- Letting a model write its own files is not a fix:
+  - ETH: "stronger models do not necessarily generate superior context files."
+  - SkillsBench (arXiv 2602.12670): "Self-generated Skills land below the no-Skills baseline on all three configurations."
+- Skills that encode team preferences ("encoded preference" skills) are described as durable. It is skills that make up for missing model ability ("capability uplift" skills) that fade.
+- SkillsBench, one pair and my comparison: the same skills added +11.1 on Opus 4.7 and +8.4 on Opus 4.8.
+
+**Staleness from codebase change:** in 2,303 agent context files (arXiv 2511.12884), "a majority (59% to 67%) are modified in multiple commits." Deletions appear in only 19 of 100 sampled commits, and the authors see "a meaningful tendency to add new instructions rather than remove existing ones." Anthropic: CLAUDE.md "grows the way any unowned config file does: every team appends its own instructions and nothing gets deleted."
+
+**Not found:**
+- no independent before/after measurement of the same CLAUDE.md across a model upgrade;
+- no named non-vendor company reporting rewrites with numbers.
+
+**Defensible line for the post:** the major vendors now tell customers to re-check prompts, instruction files and skills at each model generation. Crutches written for an older model, such as forceful wording, step-by-step recipes and verification reminders, can make a newer one over-trigger or over-verify. The evidence is mostly vendor guidance, so the practical rule is a small eval per file or skill, re-run on each new model, deleting what no longer helps.
+
 ## Enablement
 
 - **Microsoft**, arXiv 2607.01418: first use spread through social networks; an engineer whose skip-level peers mostly used Copilot CLI "had +216% higher odds of trying it." **[PRIMARY]**
