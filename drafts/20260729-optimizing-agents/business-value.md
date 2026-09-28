@@ -407,6 +407,31 @@ Rung 2 is the work of getting both.
   - Anthropic's advisor setup (Apr 9 2026, checked): "Haiku with an Opus advisor trails Sonnet solo by 29% in score but costs 85% less per task." Eve Legal, a customer, reports "matching frontier-model quality at 5× lower cost" on structured document extraction. That is a vendor-published customer quote.
 - **Defensible:** giving a cheaper model more structure is a sound cost experiment, and the gain from tools is largest for weaker models. Whether it clears your bar is something you measure, not assume.
 
+## 2h. The "one company in twenty" studies: dates, definitions, 2026 (research round 2026-09-28)
+
+**Verdict:** "about one in twenty" holds only for surveys fielded in the first half of 2025. The three figures measure different things, all self-reported. No 2026 study measures the same bar again. Lower bars give far higher numbers.
+
+- **BCG, "The Widening AI Value Gap"** (Sept 2025; n=1,250 CxOs and senior executives, 68 countries; fielding dates not stated) **[PRIMARY, checked]**
+  - "Only 5% of companies in our 2025 study of more than 1,250 firms worldwide are achieving AI value at scale."
+  - The 5% is the share scoring "future-built" (above 75 of 100) on a self-rated maturity score across 41 capabilities.
+  - Its own caveats: "We drew insights on AI maturity and value from self-reported data… Results reflect the business area that the respondents know best—not always the full company. Unless explicitly stated as realized… reported numbers reflect expected future impact."
+  - Trend: 4% in 2024, 5% in 2025.
+- **McKinsey, "The state of AI in 2025"** (Nov 2025). The site blocked every fetch this round. The earlier audit had the figures about 6% of 1,993 respondents; fielding in mid-2025 is recalled but not confirmed. The Stanford AI Index 2026 calls McKinsey's data "self-reported and should be viewed as directional." **[PRIMARY for the AI Index quote]**
+- **MIT NANDA, "The GenAI Divide"** (July 2025, "Preliminary Findings") **[PRIMARY]**
+  - "Research Period: January – June 2025."
+  - Sample: 300+ public initiatives, 52 interviews and 153 survey responses. That is **not a large study**; drop "large."
+  - It uses three different denominators: 95% of organizations get "zero return," 5% of integrated pilots extract "millions in value," and 5% of task-specific tools "reached production."
+  - It calls its own figures "directionally accurate based on individual interviews rather than official company reporting."
+- **2026 evidence**
+  - NBER w34836, the only independent source: fielded Nov 2025 to Jan 2026, nearly 6,000 executives, "89% report no impact on labor productivity." Already in paragraph 8. **[PRIMARY]**
+  - Deloitte 2026 (fielded Aug–Sep 2025, n=3,235): "25% of leaders now reporting that AI is having a transformative effect… more than double from 12% a year ago"; 20% are already increasing revenue. **[PRIMARY, vendor]**
+  - BCG, Jul 22 2026: "Nine in ten CEOs say they are starting to see initial value from AI." It gives no share clearing its own high-performer bar. **[PRIMARY via summary, vendor]**
+  - Wharton/GBK (fielded Jun–Jul 2025, n=801): "Most already report positive ROI (74%)." **[PRIMARY]**
+- **Agents specifically:** none of the 2026 studies measures realized financial value from agents separately. They report use and expectations only.
+- **Not confirmed:** McKinsey's fielding dates and definitions; PwC's 29th CEO Survey "56%" (403); any McKinsey 2026 edition.
+
+**Defensible line:** surveys fielded in the first half of 2025 put the share of companies getting substantial value from AI at about one in twenty. Each measures value differently, all are self-reported, and none has been repeated in 2026. The one independent 2026 survey found nine in ten executives saw no productivity impact.
+
 ## 2f. Rung 1 evidence from other companies
 
 Researched 2026-09-25 to answer the author todo about rung 1 results. The evidence splits cleanly in two, and the split *is* the rung 1 argument.
