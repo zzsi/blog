@@ -91,7 +91,7 @@ Working title: **[DECIDE]**, settle after reading this.
     - Workflow redesign is McKinsey's strongest correlate of EBIT impact [BV, verified]. That is what converts saved hours into removed cost.
 
 16. The companies with the biggest agent results left rung 1, and their rung 1 work is what they built on.
-    - Stripe: 1,000+ merged PRs a week with no human-written code, from a fork of Goose, on an MCP "Toolshed" of 400+ internal tools and the same coding rules its engineers use in Claude Code [BV §2f, primary].
+    - Stripe: 1,300+ merged PRs a week with no human-written code (Feb 2026), from a fork of Goose, on an MCP "Toolshed" of 400+ internal tools and the same coding rules its engineers use in Claude Code [BV §2f, primary].
     - Ramp: about 30% of merged PRs within months; "owning the tooling lets you build something significantly more powerful than an off-the-shelf tool will ever be" [BV §2f, primary].
     - Bridge to rung 2.
     - **[YOU, optional]** One sentence on your own setup and what it produced, if there is a result.
@@ -100,12 +100,15 @@ Working title: **[DECIDE]**, settle after reading this.
 
 ## Rung 2: harness engineering
 
-**The thread:** the return on building your own agent is work that runs without a person checking each step. How much work you can hand over is set by reliability, and reliability fails in five distinct ways. Rung 2 is two jobs: prevent failures, and detect the ones you did not prevent.
+**The thread:** the return on building your own agent is work that runs unattended, inside your own systems, on the model you choose. How much work you can hand over is set by reliability, and reliability fails in five distinct ways. Rung 2 is two jobs: prevent failures, and detect the ones you did not prevent.
 
-17. At rung 2 you build the agent yourself on a vendor's model, and the return is work that runs without a person checking each step, at an error rate you choose.
-    - Stripe's and Ramp's results at the end of rung 1 are rung 2 returns: agents they built, running inside their own systems [BV §2f].
-    - Harness changes alone move the same model 8 to 13 points in controlled studies [V, audited]. **[RESEARCHING]** 2026 evidence on what the harness adds and what companies got back from building their own.
-    - Owning the loop means owning reliability, and capability gains have produced only small reliability gains across 15 models [RL §1, primary]. A better model will not do this for you.
+17. At rung 2 you build the agent yourself on a vendor's model, and the return is work that runs unattended, inside your own systems, on the model you choose.
+    - Unattended: Stripe says off-the-shelf coding agents are built "as a companion to engineers," while its own "are fully unattended"; over 1,300 PRs a week are agent-written, human-reviewed, with no human-written code (Feb 2026) [BV §2g, primary, checked].
+    - Inside your systems: Ramp's agent writes about 30% of merged PRs and is wired into Sentry, Datadog, LaunchDarkly and others; Stripe's reaches nearly 500 internal tools [BV §2g, primary].
+    - On the model you choose: Harvey built its own runtime to run "on essentially any model" under zero data retention, and reports "3-5x cost reductions versus a frontier-only approach" [BV §2g, primary, checked].
+    - The harness alone moves results: LangChain went from 52.8% to 66.5% on Terminal-Bench 2.0 changing only the harness (vendor, tuned on the same tasks); swapping typed tools for the shell took Opus 4.8 from 44.9% to 69.4% at a third of the cost per task [BV §2g, primary, checked]. Infrastructure alone moves that benchmark 6 points, so small gaps mean little.
+    - The cost: harness gains decay as models improve ("Harnesses encode assumptions that go stale," Anthropic; Manus rebuilt its framework four times), and no public study compares an in-house agent with a vendor agent on the same work [BV §2g].
+    - How much work you can hand over is set by reliability, and capability gains have produced only small reliability gains across 15 models [RL §1, primary]. Hence the rest of this section.
     - Retrieval lives here: it became something the agent does rather than something done to it [outline].
 
 18. An agent fails in five ways, each named by what the person using it sees: wrong, erratic, stuck, unsafe, costly.
@@ -139,9 +142,9 @@ Working title: **[DECIDE]**, settle after reading this.
 
 22. Which tools to give depends on the model: strong models do best with the shell and file tools they were trained on, while smaller, cheaper models gain more from structured tools.
     - Strong models: bash alone beat catalogs of 20–60 typed tools by 5–25 points with 19–72% fewer tokens; adding the typed tools back changed nothing but doubled tokens (Mak et al., "Is Bash All You Need?", arXiv 2609.11999, Sep 2026) [RL §5.2, primary].
-    - Smaller models: with only a shell, a 30B Nemotron kept calling tools it was trained on that did not exist, which ended 66% of its runs; predefined tools raised its success 15.0% and 10.1%. For the 550B model, the shell alone was better and cheaper (Fan et al., arXiv 2609.20804) [RL §5.2, primary].
+    - Smaller models: with only a shell, a 30B Nemotron kept calling tools it was trained on that did not exist, which ended 66% of its runs; predefined tools raised its SWE-Bench success from 10.2% to 25.2%. For the 550B model, the shell alone was better (65.8% to 69.4%) and cut cost 53% (Fan et al., arXiv 2609.20804) [BV §2g, primary, checked].
     - Either way, match the schema the model was trained on: OpenAI says use its exact apply_patch because "the model has been trained to excel at this diff format"; Anthropic's text-editor schema "is built into Claude's model" [RL §5.2, primary].
-    - So a cheaper model with more tools is a fair experiment when cost matters. **[RESEARCHING]** whether a cheaper model plus tools has matched a frontier model at lower total cost.
+    - So a cheaper model with more tools is a fair experiment when cost matters, but no study yet shows one matching a frontier model: the 30B with tools reached 25.2% against 69.4% for the 550B. The closest is Anthropic's advisor setup, where Haiku consulting Opus scored 29% below Sonnet alone at 85% lower cost per task (vendor) [BV §2g, primary, checked]. Measure it on your task.
     - Large catalogs degrade: routing F1 falls 16–23 points going from 10 to 110 agents [RL §5.2, primary].
 
 23. An agent is stuck when it spends steps without getting closer to done, and the way to prevent it is to settle what done means before the run and make asking cheap during it.

@@ -355,6 +355,58 @@ Rung 2 is the work of getting both.
 
 ---
 
+## 2g. The return on rung 2 (research round 2026-09-28)
+
+**Verdict:** the return on building your own agent is work that runs **unattended**, **inside your own systems**, on **the model you choose**. With the model held fixed, the harness moves benchmark scores by about 5 to 25 points and can cut cost per task by half or more. The company figures are all self-reported. **No public study compares an in-house agent with a vendor agent on the same work.**
+
+**Why companies built their own**
+- **Stripe Minions**, Feb 19 2026 **[PRIMARY, checked]**:
+  - "Over 1,300 Stripe pull requests (up from 1,000 as of Part 1) merged each week are completely minion-produced, human-reviewed, but containing no human-written code."
+  - Why build: "Off-the-shelf local coding agents are usually optimized for working through code changes as a companion to engineers, typically with one 'looking over its shoulder'… Minions, however, are fully unattended, so our agent harness can't use human-facing features such as interruptibility."
+  - Toolshed has "nearly 500 MCP tools."
+  - Stripe forked Goose in late 2024 and developed it toward its own needs, which means it diverges from upstream rather than keeping in sync.
+  - https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents-part-2
+- **Ramp Inspect**, Jan 12 2026: "~30% of all pull requests merged to our frontend and backend repos are written by Inspect." It is built on OpenCode, "supports all frontier models," and is "wired into Sentry, Datadog, LaunchDarkly, Braintrust, GitHub, Slack, and Buildkite." https://builders.ramp.com/post/why-we-built-our-background-agent **[PRIMARY]**
+- **Harvey**, Jun 1 2026 **[PRIMARY, checked]**:
+  - Built its own runtime because "a firm that wants to serve a broad client base will need to be able to run on essentially any model," and because of zero data retention.
+  - Reports "3-5x cost reductions versus a frontier-only approach, depending on model and workload." No method is given.
+  - https://www.harvey.ai/blog/why-we-built-our-own-cloud-agent-infrastructure
+- **Shopify Dispatch** (a security harness), Jul 29 2026: "over 300 findings" across "over 80 unique applications" in about six weeks. Shopify values them at "over $400,000 in equivalent bug bounty payouts." A full scan costs $50–300. https://shopify.engineering/building-an-agentic-harness-that-outlasts-the-model **[PRIMARY]**
+- **Fin (formerly Intercom)** has since moved to rung 3: its latest gain came from its own model.
+- **Sierra and Decagon customers** buy a harness rather than own one, so for them this is rung 1.
+
+**The harness alone, same model**
+- **LangChain**, Feb 17 2026: "improve deepagents-cli… 13.7 points from 52.8 to 66.5 on Terminal Bench 2.0. We only tweaked the harness and kept the model fixed, gpt-5.2-codex." Caveat: tuned on the same 89 tasks it reports, and LangChain itself warns "Changes that overfit to a task are bad for generalization." **[PRIMARY, vendor, checked]**
+- **Mak et al.**, arXiv 2609.11999, Table 1, Opus-4.8 on TheAgentCompany: typed tools 44.9% at $1.20 a task; bash alone 69.4% at $0.37. **[PRIMARY]**
+- **Fan et al.**, arXiv 2609.20804 **[PRIMARY, checked]**:
+  - Context management matters most on tight budgets: the gap is 35.7 points at the tightest budget, falling to 2.7 at the loosest.
+  - Planning adds 11.6 points for Nemotron-3 30B. For the strong models it mostly cuts cost, by about 30%.
+- **Xu et al.**, arXiv 2608.11386: resolve rate is "similar across tool architectures," but structured interfaces improve consistency "by up to 4.7×." **[PRIMARY]**
+- **Terminal-Bench 2.0**, Wayback snapshot of Apr 26 2026, same model under different agents:
+  - Verified spreads: Opus 4.6 4.9 points (Terminus 2 62.9% vs Claude Code 58.0%); GPT-5.3-Codex 10.4; GPT-5.2 8.9.
+  - Larger spreads depend on unverified entries.
+  - Anthropic: infrastructure alone moved Terminal-Bench 2.0 by "6 percentage points," so "leaderboard differences below 3 percentage points deserve skepticism." **[PRIMARY]**
+- **OpenAI "Harness engineering"**, Feb 11 2026: about 1,500 PRs from three engineers, a million lines of code, runs of up to six hours. There is no baseline. **[PRIMARY via Wayback, vendor]**
+
+**What it costs**
+- **Team sizes** are not disclosed. OpenAI's team grew from three to seven engineers.
+- **Harness gains decay:**
+  - "Harnesses encode assumptions that go stale as models improve" (Anthropic, Apr 2026).
+  - Vercel: "every model update meant re-calibrating our constraints."
+  - Manus: "we've rebuilt our agent framework four times" (2025).
+- **Upstream churn** (research agent's GitHub API count, 2026 to date): goose had 55 releases, OpenCode 230.
+- **Run cost can rise.** Anthropic's full harness cost $200 over 6 hours against $9 over 20 minutes solo, on the same model, and the solo run's central feature "simply didn't work." Anthropic's rule: "worth the cost when the task sits beyond what the current model does reliably solo."
+
+**Cheaper model plus tools (the author's view)**
+- **Supported: weaker models gain more from tools.**
+  - Fan et al. (checked): predefined tools raised Nemotron-3 30B from 10.2% to 25.2% on SWE-Bench. For the 550B model, bash alone was better (65.8% to 69.4%) and cut cost 53%.
+  - Xu et al.: the largest consistency gain went to the weakest model.
+  - Anthropic tool search: +25 points on Opus 4 and +8.6 on Opus 4.5.
+- **Not shown: a cheaper model with tools matching a frontier model.**
+  - In Fan et al., 30B with tools reached 25.2% against 69.4% for the 550B with bash.
+  - Anthropic's advisor setup (Apr 9 2026, checked): "Haiku with an Opus advisor trails Sonnet solo by 29% in score but costs 85% less per task." Eve Legal, a customer, reports "matching frontier-model quality at 5× lower cost" on structured document extraction. That is a vendor-published customer quote.
+- **Defensible:** giving a cheaper model more structure is a sound cost experiment, and the gain from tools is largest for weaker models. Whether it clears your bar is something you measure, not assume.
+
 ## 2f. Rung 1 evidence from other companies
 
 Researched 2026-09-25 to answer the author todo about rung 1 results. The evidence splits cleanly in two, and the split *is* the rung 1 argument.
