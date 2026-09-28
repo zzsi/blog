@@ -189,6 +189,25 @@ Reverses the usual one-way pipeline: an RL-tuned model reweights tokens during t
 
 The 2026 literature turns RSI from a capability question into a **regularisation** question, which is familiar territory for anyone who has trained a model. Overfitting to the evolve set, collapse after a peak, diversity loss, and evaluator design are the same problems ML engineering has always had, now appearing one level up. That is a strong argument for the post's framing: the skills that make rung 3 work are exactly the skills that keep self-improvement honest.
 
+### 3.3c Karpathy's autoresearch, and whether RSI reaches the weights
+
+**autoresearch, March 2026. [PRIMARY — github.com/karpathy/autoresearch; Karpathy's tweets read via mirror]**
+An agent edits a ~630-line single-GPU nanochat `train.py` in fixed 5-minute runs and keeps a change only if validation bits-per-byte improves; data and eval are read-only. "The human iterates on the prompt (.md) / the AI agent iterates on the training code (.py)." About 12 experiments an hour, "approx 100 experiments while you sleep." Repo created Mar 6 2026; about 97,000 stars and 13,500 forks.
+- **Results.** Over about two days, ~700 changes tried, ~20 kept, all of which transferred from depth 12 to depth 24; nanochat "time to GPT-2" fell from 2.02 hours to 1.80 (about 11%), then to 1.65 after a second round. Finds included a missing scaler on QK-norm and "AdamW betas were all messed up." Karpathy: "It's not novel, ground-breaking 'research' (yet)." And: "All LLM frontier labs will do this. It's the final boss battle."
+- **Spread.** Shopify's Tobi Lütke ran about 120 autoresearch experiments on the Liquid template engine: 53% faster parse+render, 61% fewer allocations (PR still open). Fortune called it "the Karpathy Loop."
+- **Counterpoint.** Within a fixed search space, classical hyperparameter optimisers (CMA-ES, TPE) "consistently outperform LLM-based agents"; a hybrid did best (arXiv 2603.24647, Hutter et al.).
+- **Karpathy joined Anthropic May 19 2026**, reportedly to lead work on using Claude to accelerate pre-training research. [PRIMARY tweet; team description SECONDARY]
+- **Do not use** "Recursive self-improvement has already begun a long time ago…" as a 2026 quote. It is from June 30, 2025.
+- **Note:** autoresearch changes a *small separate* model's training code. The agent's own weights never change.
+
+**Does self-improvement reach model weights? Partly, with a human in the loop.**
+- **In papers, weight-level work outnumbers harness work.** The RSI survey (arXiv 2607.07663) classified 1,250 papers from 2024–2026; recomputed from its released data, 2026 has 280 papers updating weights versus 95 on the harness. The harness share is the one growing (seed sample: 9% to 15%). [PRIMARY data]
+- **At the labs, models now run parts of their successors' training.** OpenAI described GPT-5.3-Codex as its "first model that was instrumental in creating itself" and reportedly had GPT-5.6 Sol post-train GPT-5.6 Luna from an adapted recipe. [SECONDARY, openai.com 403] Anthropic says over 80% of merged code is written by Claude, training-code speedups rose from about 3x (Opus 4) to about 52x (Mythos Preview), and "Claude is not operating fully autonomously for any measured subset of AI R&D work"; its roadmap puts a model building and training models itself at "20XX?". [PRIMARY — anthropic.com/institute/recursive-self-improvement] DeepMind's AlphaEvolve sped up a Gemini kernel and cut Gemini's training time about 1%. [PRIMARY]
+- **Weight-level research examples:** Tool-R0, zero-data self-play RL (arXiv 2602.21320); ReMiT; Frontis-MA1, whose improver is trained but improves *external* artifacts; NeoHorse-1, routing logs becoming the next training mix, which its authors call "harness-mediated RSI" (arXiv 2609.08183).
+- **Richard Socher (Recursive), Latent Space, Sep 14 2026:** "Some people think auto research is already recursive self-improvement. It's … Completely different." [PRIMARY transcript]
+
+**Revised claim for the post:** the loops that close without a human today rewrite a harness or a small model's training script. Weight-level loops exist, and labs now have models running parts of their successors' training, but at every lab that has reported on it a human still starts each training run and decides what ships.
+
 ### 3.4 What the evidence says, in one paragraph for the post
 
 Every positive result has a scorer. Speedrun time, kernel throughput, hidden benchmarks, alignment benchmarks with automated audits: AIDE², Recursive, Anthropic's AAR, OpenAI's intern milestone. Every negative result lacks one. Original research judged by its authors, training-algorithm design with nowhere obvious to hill-climb, alignment questions humans cannot evaluate. **RSI works exactly as far as a verifier reaches.** That is this post's thesis at its limit: the eval you build at rung 2 becomes the environment at rung 3, and at the frontier it becomes the thing a system uses to improve *itself*.
@@ -197,7 +216,7 @@ And the 2026 papers add the missing half: where there is a scorer, systems overf
 
 Three corollaries worth stating:
 
-1. **Most self-improvement shipping today is harness improvement, not weight improvement.** AIDE², Ouroboros, DGM and Recursive's system all rewrite code, prompts, search and memory. That puts the leading edge of RSI at rung 2, not rung 3, which is a genuinely surprising thing to tell a reader who assumes RSI means models training models.
+1. **The self-improvement that runs without a human is mostly harness improvement.** AIDE², Ouroboros, DGM, Recursive's system and autoresearch rewrite code, prompts, search, memory or a small model's training script. Weight-level work is larger in the literature, and labs have models running parts of their successors' training, but a human still starts each run and signs off (see 3.3c). *Corrected 2026-09-28: the earlier version overstated this.*
 2. **Reward hacking goes down, not away.** AIDE² cut it from 55% to 32%. A system optimising itself against a verifier finds the verifier's holes faster than you will. The verifier-fails-in-two-directions rule applies with the most force here.
 3. **The people closest to it disagree in public.** OpenAI's chief scientist calls for slowdowns in the same month OpenAI declares its intern milestone. Anthropic's policy co-founder gives 60% odds on autonomous self-improvement by 2028 while its own paper says results may not extend to hard-to-supervise research. Report both; do not pick a side the evidence does not support.
 

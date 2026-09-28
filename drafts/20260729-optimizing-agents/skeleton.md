@@ -110,18 +110,23 @@ Working title: **[DECIDE]**, settle after reading this.
 
 *Job 1: prevent failures.*
 
-21. Most wrong and erratic behaviour traces to what the agent knew, or did not, when it acted.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - Compaction 86% fewer tokens with one sub-metric declining; memory taking accuracy from 2.5% to over 50%; o3 keeping 64.1% of its performance when instructions are split across turns [V, audited].
+21. Most agent failures start with a wrong belief rather than a missing skill: an assumption never checked, a requirement lost along the way, or a fact about the tool or domain it lacked.
+    - 1,184 failed terminal-agent runs: about four in five decisive errors trace to these causes; about one in eleven to the model being unable to carry out a correct plan (Zhao et al., arXiv 2607.09510) [RL §5.1, primary].
+    - The biggest single cause was information the agent had and did not use, not information it lacked. Context truncation was 2.8% of multi-agent failures [RL §5.1].
+    - Missing information hurts: Sonnet 4.5 drops from 70.8% to 54.8% on the same tasks with details hidden (Ask or Assume, arXiv 2603.26233) [RL §5.1, primary]. Replaces the 2025 o3 example.
     - First-hand: the one-page memory prompt that ran sixty experiments; schema compaction at 97% agreement [V].
 
-22. Using the default tools better beats building more tools, for both cost and capability.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - 150,000 tokens to 2,000 [V, verified]. Defaults are co-trained with the model, so replacing them costs capability [V].
+22. Start with the tools the model was trained on, and add custom tools only when the shell cannot reach something.
+    - Bash alone beat catalogs of 20–60 typed tools by 5–25 points with 19–72% fewer tokens; adding the typed tools back changed nothing but doubled tokens (Mak et al., "Is Bash All You Need?", arXiv 2609.11999, Sep 2026) [RL §5.2, primary].
+    - Models are trained on specific tool schemas: OpenAI says use its exact apply_patch because "the model has been trained to excel at this diff format"; Anthropic's text-editor schema "is built into Claude's model" [RL §5.2, primary].
+    - Exceptions: weaker models do better with structured file tools, and security rules can require a fixed catalog [RL §5.2].
+    - Large catalogs degrade: routing F1 falls 16–23 points going from 10 to 110 agents [RL §5.2, primary].
 
-23. Being stuck is a harness problem: give the agent termination conditions, step budgets, and a way to notice it is looping.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - Not knowing when to stop and repeating steps are among the most common modes in multi-agent traces [RL §2, secondary percentages].
+23. An agent is stuck when it spends steps without getting closer to done, and looping is only one way that happens.
+    - After a run goes wrong, only 18% of agents stop; the rest repair the wrong cause (39% of wasted steps), repeat the same approach (29%), run checks that cannot change the outcome, or report success they did not achieve (15%) [RL §5.3, primary].
+    - Loop detectors and step budgets catch it after the decisive mistake, so they are for escalation, not prevention: a monitor flagged only 3.7–8.7% of stuck runs before lock-in [RL §5.3, primary].
+    - Prevention happens before and during the run. Before: agree what done means (Anthropic's agents negotiate a "sprint contract" first). During: give the agent a cheap way to ask when it hits a gap, since most gaps only appear mid-task (with only the spec, gap detection fell from 61% to 11%) [RL §5.3, primary].
+    - Deciding it is done should rest on evidence, not the agent's own judgement: agents fabricate success and "confidently prais[e]" their own mediocre work [RL §5.3, primary].
 
 24. Unsafe behaviour gets new attack surfaces every year, and many agents sharing state will coordinate whether you designed it or not.
     - **[RESEARCHING]** Evidence under review; this line may change.
@@ -199,12 +204,12 @@ Working title: **[DECIDE]**, settle after reading this.
 ## Where this is heading: self-improvement
 
 39. Labs now report agents doing real research work, and the people running those labs disagree in public about how fast to go.
-    - **[RESEARCHING]** Evidence under review; this line may change.
     - OpenAI's automated research intern and March 2028 target; Pachocki's call for slowdowns the same month; Jack Clark's 60% by 2028 [EM §3.1].
+    - Karpathy's autoresearch, March 2026: an agent edits a small model's training script in 5-minute runs and keeps what improves the loss; ~700 changes over two days, ~20 kept, cutting nanochat's time-to-GPT-2 by about 11%. "All LLM frontier labs will do this. It's the final boss battle." [EM §3.3c, primary]
 
-40. Most self-improvement shipping today rewrites the harness, not the model weights, which puts its leading edge at rung 2.
-    - **[RESEARCHING]** Evidence under review; this line may change.
-    - AIDE², Ouroboros, Darwin Gödel Machine, Recursive [EM §3.2, §3.3].
+40. The self-improvement that runs without a human today mostly rewrites a harness or a small model's training script, while changes to a frontier model's weights still have a human starting each run.
+    - AIDE², Ouroboros, Darwin Gödel Machine, Recursive, autoresearch [EM §3.2, §3.3].
+    - Weight-level work is larger in the literature (280 vs 95 papers in 2026), and labs now have models running parts of their successors' training, but "Claude is not operating fully autonomously for any measured subset of AI R&D work" [EM §3.3c]. Corrected from the earlier harness-only claim.
 
 41. It works exactly as far as a verifier reaches, and where there is a verifier, it overfits to it.
     - Google's RRSI: unregularised harness evolution wins on Harvey's legal benchmark and loses elsewhere [EM §3.3b].
