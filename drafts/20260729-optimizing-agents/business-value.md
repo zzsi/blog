@@ -432,6 +432,57 @@ Rung 2 is the work of getting both.
 
 **Defensible line:** surveys fielded in the first half of 2025 put the share of companies getting substantial value from AI at about one in twenty. Each measures value differently, all are self-reported, and none has been repeated in 2026. The one independent 2026 survey found nine in ten executives saw no productivity impact.
 
+## 2i. Rung 2 build paths: open-source agent, framework, or your own loop (research round 2026-09-28)
+
+**Verdict:** both frameworks and hand-written loops are common in production. A framework or vendor SDK gives you the loop, state and tool plumbing on day one. In exchange, you follow its release schedule, and a vendor harness ties you to that vendor's models and data rules. Writing your own loop gives full control, and you re-tune it as models change. No study measures the upkeep of any path in hours.
+
+**How common each path is**
+- **Pan et al., "Measuring Agents in Production"**, arXiv 2512.04123 (v4 Jun 2026; data Apr–Nov 2025) **[PRIMARY, checked]**
+  - Interviews: "85% (17/20) build custom in-house implementations with direct API calls; only 3 use external frameworks (LangChain/LangGraph, DSPy)."
+  - Survey: "two-thirds (60.7%) use third-party agentic frameworks." LangChain/LangGraph leads at 25.0% and CrewAI follows at 10.7%, from about 28–29 respondents.
+  - Two teams "report starting with frameworks like CrewAI during the experimental prototyping phase but migrating to custom in-house solutions for production deployment to reduce dependency overhead."
+  - The reasons given are flexibility and simplicity: "core agent loops are straightforward to implement directly."
+- **LangChain, State of Agent Engineering** (Nov–Dec 2025, n=1,340): no framework-versus-custom figure. **[V]**
+- **Stack Overflow 2025:** "Among developers building agents, Ollama (51%) and LangChain (33%) are the most-used frameworks."
+- **PyPI downloads** (pypistats, fetched Sep 28 2026, last month): langgraph 43.7M, claude-agent-sdk 28.9M, openai-agents 12.1M, google-adk 9.9M, pydantic-ai 5.3M, crewai 2.4M.
+  - Over the last six months, claude-agent-sdk and google-adk rose, langgraph held steady, and openai-agents, crewai and pydantic-ai fell.
+  - **These are not adoption measures:** the counts are driven by CI, inflated by dependencies (langchain requires langgraph), and volatile.
+
+**Advice**
+- **Anthropic, "Building effective agents"** (Dec 2024) **[PRIMARY, checked]**
+  - "the most successful implementations weren't using complex frameworks or specialized libraries."
+  - "We suggest that developers start by using LLM APIs directly: many patterns can be implemented in a few lines of code. If you do use a framework, ensure you understand the underlying code."
+  - The live post has been edited to list the Claude Agent SDK instead of LangGraph, and now points readers to Managed Agents.
+- **OpenAI Agents SDK docs:** "Use the Responses API directly when: you want to own the loop, tool dispatch, and state handling yourself." Also: "You do not need to choose one globally." **[PRIMARY]**
+- **HumanLayer, 12-factor agents** (2025): founders "Get to 70-80% quality bar… Realize that getting past 80% requires reverse-engineering the framework… Start over from scratch." Factor 8 is "Own your control flow." **[PRIMARY, vendor]**
+
+**Who switched, and why**
+- **Octomind** (2024) removed LangChain after 12 months in production: "our team began spending as much time understanding and debugging LangChain as it did building features." That was pre-1.0 LangChain.
+- **Manus** (2025): "rebuilt our agent framework four times."
+- **Vercel** (Dec 2025), its own code: "every model update meant re-calibrating our constraints." It then removed 80% of its tools, reporting 100% success on only 5 queries.
+- **Harvey** (Jun 2026) built its own layer to be multi-model and keep zero data retention: "A frontier lab's runtime ties you to that lab's models — maximum lock-in."
+- **Shopify Dispatch** (Jul 2026) is "a thin Ruby client" orchestrating child processes labelled "pi coding agent" (the MIT-licensed Pi agent). Its rationale: "build a harness that allows you to quickly migrate to the latest model."
+- **Stripe** forked Goose in late 2024 and "focused our feature development of goose on the needs of minions."
+
+**Upkeep**
+- **Framework churn**
+  - OpenAI Agents SDK: breaking changes go in minor versions. It shipped 22 minor versions from Jun 2025 to Aug 2026, 14 with migration notes (research agent's count). Some changes alter behaviour without any API change, for example switching the default model.
+  - LangGraph: "no breaking changes until 2.0" (Oct 2025), kept so far at 1.2.x.
+  - Pydantic AI: 1.0 to 2.0 in about 9.5 months.
+  - Google ADK: 2.0 in May 2026.
+- **Framework bugs.** Across AutoGen, CrewAI, LangChain and LangGraph, "API Incompatibility (12.00%)" of 1,000 sampled bug reports, against 2.9% in deep-learning frameworks (arXiv 2602.21806).
+- **Forks.** Upstream goose shipped 86 releases in 2025 and 55 so far in 2026; each is merged or skipped. Stripe publishes no fork-maintenance cost.
+- **Your own loop.** No measured hours. Anthropic: "Harnesses encode assumptions that go stale as models improve"; its context resets "had become dead weight" one model later.
+
+**Vendor harness as a library or service: between rung 1 and rung 2**
+- **Claude Agent SDK:** "A library that runs the Claude Code binary" **[checked]**.
+  - You control your infrastructure, tools, MCP servers, hooks, permissions, subagents and skills.
+  - You don't control the loop internals (a closed binary), the model family (Claude only), or the pace of change (133 releases in 2026 so far).
+- **OpenAI Codex SDK:** drives the Codex app-server. The Codex CLI is Apache-2.0, so it can be forked.
+- **Anthropic Managed Agents** (hosted): "Pre-built, configurable agent harness that runs in managed infrastructure." It is in beta. It stores history and sandbox state server-side, so it "is not currently eligible for Zero Data Retention" **[checked]**. Anthropic pitches it as keeping the harness current for you; Harvey's objection is lock-in to one lab's models and data rules.
+
+**Defensible line:** a framework or vendor SDK is the fastest way to a working agent, and you pay by following someone else's releases and, for a vendor harness, its models and data rules. Your own loop costs more to start and keeps needing re-tuning as models change, but most deployed teams in the one interview study chose it for the control.
+
 ## 2f. Rung 1 evidence from other companies
 
 Researched 2026-09-25 to answer the author todo about rung 1 results. The evidence splits cleanly in two, and the split *is* the rung 1 argument.

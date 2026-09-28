@@ -115,10 +115,12 @@ Working title: **[DECIDE]**, options in the author todo.
     - Retrieval lives here: it became something the agent does rather than something done to it [outline].
 
 17. You can build on an open-source agent, on a framework, or directly on the model's API, and the choice is how much you inherit against how much you must keep up with.
-    - Build on an open-source agent: Stripe forked Goose; Ramp built on OpenCode [BV §2g, primary].
-    - Use a framework: LangGraph, CrewAI, OpenAI Agents SDK, Claude Agent SDK, Google ADK, Pydantic AI.
-    - Write the loop yourself on the model API; Harvey built its own runtime [BV §2g, primary].
-    - **[RESEARCHING]** How common each path is, what vendors and practitioners advise, who switched and why, and what each costs to maintain. Added after author review: the draft only covered forking.
+    - Both are common in production: 17 of 20 deployed teams interviewed wrote their own loop on direct API calls, while about 60% of a small survey subset used a framework, LangGraph most often (Pan et al., data from 2025). Two teams prototyped on CrewAI and moved to their own code for production [BV §2i, primary, checked].
+    - Vendor advice points the same way: "start by using LLM APIs directly," and with a framework, "ensure you understand the underlying code" (Anthropic); use the raw API "when you want to own the loop" (OpenAI's own SDK docs) [BV §2i, primary, checked].
+    - A framework gives you the loop, state and tool plumbing on day one, and you follow its releases: OpenAI's Agents SDK shipped 22 minor versions in 14 months, most with migration notes, while LangGraph has kept a no-breaking-changes promise since its 1.0 [BV §2i, primary]. An open-source agent gives you a working agent, and then upstream moves: Goose shipped 86 releases in 2025 [BV §2i]. Your own loop gives full control, and you re-tune it as models change (Vercel: "every model update meant re-calibrating our constraints") [BV §2i, primary].
+    - A vendor's harness offered as a library or service sits between rung 1 and rung 2. The Claude Agent SDK runs the Claude Code binary: you control tools, hooks and permissions, not the loop or the model family. Anthropic's hosted Managed Agents is not eligible for zero data retention, one reason Harvey built its own [BV §2i, primary, checked].
+    - Recommendation: prototype on whatever reaches a working eval fastest, then own the parts where reliability is decided: context, checks and escalation ("own your control flow," 12-factor agents) [BV §2i].
+    - **[REVIEW]** New paragraph after author review; also check it matches how your team builds client agents.
 
 18. An agent fails in five ways, each named by what the person using it sees: wrong, erratic, stuck, unsafe, costly.
     - **Shown as a table** (decided): type, what the person sees, one piece of evidence with its link, and where in this section it is handled [RL §2, §2b].
@@ -204,7 +206,7 @@ Working title: **[DECIDE]**, options in the author todo.
 
 30. Fix problems with the cheapest change that works, and only escalate when your evals stop improving.
     - Cheapest first: a clearer instruction before a new tool, a setting before a code change, a new tool before a new agent.
-    - The cost of going further depends on how you built: a forked agent means merging its new releases by hand (or diverging, as Stripe did), a framework means tracking its changes, and your own loop means maintaining all of it. **[RESEARCHING]** evidence for each; see the build-paths paragraph.
+    - The cost of going further depends on how you built: an open-source agent means merging its releases or diverging from them, as Stripe did; a framework means following its release notes; your own loop means re-tuning it as models change. In every case the harness's assumptions go stale: Anthropic's context resets "had become dead weight" one model later [BV §2i, primary].
     - **[REVIEW]** Rewritten for clarity; please check.
 
 ---
