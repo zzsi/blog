@@ -21,31 +21,33 @@ Working title: **[DECIDE]**, settle after reading this.
 2. An agent is a model working inside a system, so a failure can sit in the model, the context, the tools, the workflow, or the check that should have caught it.
    - No evidence needed; this is the framing.
 
-3. Across model generations the model dominates, but within the current top tier the system around it decides how much of the model's ability you actually get.
+3. Between model generations, the model decides what is possible; within the current top tier, the system around it decides how much of that you actually get.
+   - This is about capability, not cost. Token cost is a separate axis, and it is part of the rung 3 argument.
    - SWE-bench from under 5% in late 2023 to over 80% by late 2025 [V, audited].
    - Harness changes alone move the same model 8 to 13 points in controlled studies [V, audited].
 
-4. The first question is which parts of the system are yours: the connections to your data, the agent itself, or the model too.
+4. A useful way to sort this work is by how much of the system you own: the connections to your data, the agent itself, or the model as well.
    - Deploy a vendor's agent. Build your own agent on a vendor's model. Make the model yours too.
 
 5. If you think in build versus buy, this is that, with two things to buy: the agent and the model.
 
-6. Autonomy is not a fourth rung. It is a dial set at every rung by what a silent error costs.
+6. Autonomy is a dial, and at every rung it should be set by what a silent error costs.
    - Forward reference to the legal extraction example in rung 2.
 
 ---
 
 ## What each rung buys
 
-7. The three rungs buy different kinds of value, each limited by something different.
-   - Throughput, limited by how many people you have. A dependable process, limited by how much work arrives. Structural advantage, limited by how fast the frontier catches up [BV §1].
+7. Each rung buys a different kind of value, and each runs into a different bottleneck.
+   - Throughput, bottlenecked by how many people you have. A dependable process, bottlenecked by how much work arrives. Structural advantage, bottlenecked by how fast the frontier catches up [BV §1].
 
-8. Most of what gets reported as agent value is rung 1 value, and it is the hardest kind to bank.
-   - Forward reference to where rung 1 value stalls.
+8. Most reported agent gains are individual productivity gains, and those rarely show up as company results.
+   - **[RESEARCHING]** Evidence that individual productivity dominates reported value is being checked. Soften or cut if it does not hold.
+   - Replaces "hard to bank", which is jargon.
 
-9. The evidence behind these claims is mostly self-reported survey data, so treat the direction as solid and any specific multiple as marketing.
-   - BCG 5%, McKinsey ~6%, MIT 5%: three denominators, a convergence, not a concentration finding [V, audited].
-   - **[CUT?]** Could be one sentence rather than a paragraph.
+9. Three large studies agree that only about one company in twenty gets significant value from AI, and most of that evidence is self-reported.
+   - BCG 5% of 1,250 firms, McKinsey about 6% of 1,993 respondents, MIT 5% of pilots [V, audited]. Three different denominators landing on a similar number.
+   - Kept as one short paragraph: the named sources are worth having.
 
 ---
 
@@ -55,6 +57,7 @@ Working title: **[DECIDE]**, settle after reading this.
     - A server connecting a vendor agent to your data is rung 1; the same server inside an agent you built is rung 2 [outline spine].
 
 11. The first job is getting your context in front of the agent: wrap internal services in MCP so it can reach them, and run scheduled jobs that turn raw data into a knowledge base it can read.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - This is context engineering done before the agent runs. At rung 2 the same work moves inside the harness.
     - First-hand: this is how you work. The compaction repo, described generically, is the example.
 
@@ -98,16 +101,20 @@ Working title: **[DECIDE]**, settle after reading this.
 *Job 1: prevent failures.*
 
 19. Most wrong and erratic behaviour traces to what the agent knew, or did not, when it acted.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - Compaction 86% fewer tokens with one sub-metric declining; memory taking accuracy from 2.5% to over 50%; o3 keeping 64.1% of its performance when instructions are split across turns [V, audited].
     - First-hand: the one-page memory prompt that ran sixty experiments; schema compaction at 97% agreement [V].
 
 20. Using the default tools better beats building more tools, for both cost and capability.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - 150,000 tokens to 2,000 [V, verified]. Defaults are co-trained with the model, so replacing them costs capability [V].
 
 21. Being stuck is a harness problem: give the agent termination conditions, step budgets, and a way to notice it is looping.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - Not knowing when to stop and repeating steps are among the most common modes in multi-agent traces [RL §2, secondary percentages].
 
 22. Unsafe behaviour gets new attack surfaces every year, and many agents sharing state will coordinate whether you designed it or not.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - Microsoft's 2026 taxonomy: goal hijacking, poisoned MCP tool descriptions, session contamination, trust escalation between agents [RL §2, primary].
     - OpenAI and Hugging Face, July 2026: about 1,200 agents built a message board from a leaky cache and about 700 attacked Hugging Face [EM §1, METR primary].
     - Use several agents on purpose only when one has plateaued [V].
@@ -115,6 +122,7 @@ Working title: **[DECIDE]**, settle after reading this.
 *Job 2: detect the failures you did not prevent.*
 
 23. Silent failures surface late and are mostly found by people, so every one you catch should become a regression test.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - 13 hours to 60 days to discovery; about 70% found by human observation; 87% blockable by regression tests written afterwards [RL §4, primary].
 
 24. On legal form extraction, the same agent saves a million dollars a year or loses money, depending only on what one confidently wrong answer costs downstream.
@@ -128,14 +136,17 @@ Working title: **[DECIDE]**, settle after reading this.
 26. Deciding when to escalate needs a confidence signal built from agreement and hard checks, calibrated on labels your escalation queue already produces.
     - Six methods [BV §2d]. A few hundred labels. Every escalated item gets a human verdict [BV §2d].
 
-27. Your checks can be wrong too, in both directions.
+27. The tests you use to judge the agent can themselves be wrong, passing bad work and failing good work.
+    - "Tests" here means your own evals and graders: the automated checks that decide pass or fail.
     - Public benchmarks: 61.1% of SWE-bench samples flagged for tests that reject valid solutions; SWE-bench Pro graders 8.5% false positive, 24% false negative [V, audited].
     - First-hand: loose checks agents slipped past, strict ones that failed correct answers [V].
 
 *Close.*
 
-28. Take the cheapest reversible step that passes your eval, and know that owning the harness's internals keeps you at rung 2 but makes every upgrade your problem.
-    - Upgrade test: when the next version ships, do you install it or merge it? [V]
+28. Fix problems with the cheapest change that works, and only escalate when your evals stop improving.
+    - Cheapest first: a clearer instruction before a new tool, a setting before a code change, a new tool before a new agent.
+    - The cost of going further: once you modify an agent framework's code rather than configure it, every vendor update becomes something you have to merge by hand.
+    - **[REVIEW]** Rewritten for clarity; please check.
 
 ---
 
@@ -143,29 +154,34 @@ Working title: **[DECIDE]**, settle after reading this.
 
 29. At rung 3 the model is yours, which is what ML engineering meant before the generative era.
 
-30. The received advice in 2026 is not to fine-tune, and it rests on real evidence.
-    - 70% of production agents prompt off-the-shelf models; OpenAI closed self-serve fine-tuning to new users; prompt optimisation beats GRPO at 35x fewer rollouts [outline, verified].
+30. Whether to train your own model is a live debate, and the balance shifts with each frontier release, each open model, and each new training recipe.
+    - Against: 70% of production agents prompt off-the-shelf models; OpenAI closed self-serve fine-tuning to new users; prompt optimisation beats GRPO at 35x fewer rollouts [outline, verified].
+    - For: Bridgewater's tuned Qwen3-235B at 84.66% against Claude Opus 4.8 at 78.2%, 13.8x cheaper to run; Harvey Tenet, +12.1 citation quality at a tenth of the cost [BV §2e, verified]. Tuning wins where the right answer is not public.
 
-31. Tuning wins where the right answer is not public.
-    - Bridgewater: tuned Qwen3-235B at 84.66% against Claude Opus 4.8 at 78.2%, 29.8% fewer mistakes, 13.8x cheaper to run [BV §2e, verified].
-    - Harvey Tenet: Kimi K3 post-trained with RL, +12.1 citation quality at a tenth of the cost [BV §2e, verified].
+31. The answer depends on your data, your traffic and your budget, and our bet is that open models and the advantages of owning one are not going away.
+    - Data: do you have examples or a verifier the frontier has never seen? Traffic: enough volume that a cheaper model pays back the training? Budget: can you afford to retrain as base models move?
+    - **[YOU]** Confirm this directional bet is one you want to make in public.
 
 32. On complex document extraction, tuned 3B and 8B models beat the strongest model our deployment allowed.
     - 0.92 against 0.82 on transcription fields; 0.87 against 0.55 on the full field set [BV §2e, first-hand].
     - The capability was already there; tuning bought the output contract.
 
 33. The cost of trying fell by an order of magnitude.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - Managed fine-tuning $8.00 per million training tokens in 2023 to $0.48 in 2026; GRPO from seven GPUs to one [BV §2e, verified].
     - **FIGURE:** reuse fig2, relabelled "cost of tuning".
 
-34. What you can train depends on what supervises the training, and budget cannot substitute for having the right signal.
-    - Supervision table, four rows: demonstrations, preference pairs, teacher, verifier [EM §2].
+34. The training method follows from the signal you have: examples to imitate, preferences between answers, a stronger model to learn from, or an automatic check.
+    - Supervision table, four rows [EM §2].
+    - **[RESEARCHING]** Dedicated paragraphs on SFT, preference methods (DPO), and RL to follow.
 
 35. Post-training is now several steps, and the newest step lets you train narrow specialists separately and merge them.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - Multi-teacher on-policy distillation: DeepSeek V4, Nemotron 3 Ultra [EM §2, verified].
     - For a client: three narrow tasks become three small teachers and one student.
 
 36. The eval you built at rung 2 is what makes rung 3 possible, because it becomes the training environment.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - Train on your failures [V].
 
 ---
@@ -173,9 +189,11 @@ Working title: **[DECIDE]**, settle after reading this.
 ## Where this is heading: self-improvement
 
 37. Labs now report agents doing real research work, and the people running those labs disagree in public about how fast to go.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - OpenAI's automated research intern and March 2028 target; Pachocki's call for slowdowns the same month; Jack Clark's 60% by 2028 [EM §3.1].
 
 38. Most self-improvement shipping today rewrites the harness, not the model weights, which puts its leading edge at rung 2.
+    - **[RESEARCHING]** Evidence under review; this line may change.
     - AIDE², Ouroboros, Darwin Gödel Machine, Recursive [EM §3.2, §3.3].
 
 39. It works exactly as far as a verifier reaches, and where there is a verifier, it overfits to it.
@@ -183,9 +201,9 @@ Working title: **[DECIDE]**, settle after reading this.
     - Rise and collapse: RL self-training peaks then falls about 17 points [EM §3.3b].
     - **FIGURE, maybe:** RRSI Table 1 as a small chart.
 
-40. For a client, the practical lesson is that the scorer is the asset.
-    - **[DECIDE]** Whether this section is three paragraphs or a short coda.
-
+40. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
+    - Define the term once: a verifier, grader or eval, meaning anything automated that scores an attempt.
+    - That check is what lets an agent be improved, a model be trained, and a system improve itself. Without it, none of the three can go far.
 ---
 
 ## How to decide
@@ -193,7 +211,7 @@ Working title: **[DECIDE]**, settle after reading this.
 41. Place your problem on a rung by what you own and what is failing.
     - Reviewing everything means the measurement layer is missing. Unexplained downstream rework means silent errors are unpriced. Dispersed saved hours mean the workflow was never redesigned [BV §2b].
 
-42. Two numbers set the operating point at rung 2, and most teams have neither: what a silent error costs, and the coverage-versus-error curve for their own data.
+42. Two numbers set the operating point at rung 2: what a silent error costs, and the coverage-versus-error curve on your own data.
 
 43. Enter rung 3 when prompting has plateaued and you have a training signal; volume decides whether it pays, not whether it works.
 
