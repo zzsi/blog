@@ -70,10 +70,12 @@ Working title: **[DECIDE]**, settle after reading this.
     - Files also go stale as code changes: across 2,303 context files, teams mostly add instructions and rarely delete them [R1, model releases, primary].
     - Correction to the recollection: the "too prescriptive" guidance is for Fable 5 and is about skills; for Fable 5.1 Anthropic says Fable 5 prompts work "without changes."
 
-13. Extra agent output piles up at code review, so the best-measured rung 1 practice is putting an AI reviewer in CI.
-    - Spotify: 76% more PRs, and "76% more PRs to review"; "the bottleneck moves from coding to decision-making" [R1, primary].
-    - Uber reviews 90%+ of ~65,000 weekly diffs, 75% of comments rated useful; Cloudflare's reviewer averages $1.19 a review [R1, primary].
-    - **[RESEARCHING]** Whether AI review works: bugs caught, false positives, comments acted on, effect on production defects.
+13. Extra agent output piles up at code review, and AI reviewers help as a first pass, but nobody has shown they reduce the bugs that reach production.
+    - The pile-up: Spotify has "76% more PRs to review," and its answer is auto-merging what is safe, not an AI reviewer [R1, code review, primary, checked]. Corrected: the old line implied Spotify used AI review.
+    - What AI review does: at Anthropic, PRs with substantive review comments went from 16% to 54%, with under 1% of findings marked incorrect, at $15–25 a review [vendor on own use, checked]. Cloudflare averages $1.19 a review and says "This isn't a replacement for human code review, at least not yet" [R1, code review, primary]. Uber's 90% coverage figure is from August 2025.
+    - Its comments get acted on less than a person's: 39–74% lead to a change in tuned in-house systems, 1–36% in independent open-source studies, and human suggestions are adopted at "a significantly higher rate" wherever the two are compared [R1, code review, primary].
+    - It catches a minority of what people catch: about 15–33% of human-flagged issues on 2026 benchmarks [R1, code review, primary].
+    - Gaps: no controlled study of production defects; security was 2.0% of Meta's AI review comments against 19.1% of human ones; crafted PR descriptions got known vulnerabilities past AI review in 32 of 33 tries [R1, code review, primary].
 
 14. Then govern it, technically, organisationally, and on cost.
     - Technical: Intercom's hook sorts every shell command into green, yellow or red from two weeks of transcripts; Cloudflare keeps API keys off every laptop; Pinterest allows only registered MCP servers in production [R1].

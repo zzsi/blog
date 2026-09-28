@@ -85,6 +85,54 @@ This is a count within a sample, not a survey.
 
 **Defensible line for the post:** the major vendors now tell customers to re-check prompts, instruction files and skills at each model generation. Crutches written for an older model, such as forceful wording, step-by-step recipes and verification reminders, can make a newer one over-trigger or over-verify. The evidence is mostly vendor guidance, so the practical rule is a small eval per file or skill, re-run on each new model, deleting what no longer helps.
 
+## Does AI code review work? (research round 2026-09-28)
+
+**Verdict:** AI review works as a cheap first-pass bug finder. It is not a replacement reviewer, and nobody has shown that it reduces defects in production.
+
+**Corrections to what the skeleton said**
+- **Spotify's post never mentions an AI reviewer** (checked). Its answer to "76% more PRs to review" is "auto-merging what's safe, focusing review where it matters most." It has also merged more than 2.5 million automated maintenance PRs, "the vast majority auto-merged with no human in the loop." https://engineering.atspotify.com/2026/6/code-with-claude-coding-is-no-longer-the-constraint (Jun 3 2026) **[PRIMARY, checked]**
+- **Uber's uReview figures date from Aug 12 2025, not 2026.** "uReview today analyzes over 90% of the weekly ~65,000 diffs." "75% of its comments as useful" counts only engineers who chose to rate comments; "over 65% of its posted comments addressed." Human comments for comparison: "only 51%… addressed in the same changeset." The time savings are estimated from an assumed 10 minutes per commit. https://www.uber.com/blog/ureview/ **[PRIMARY, company, 2025]**
+
+**Company reports** (all self-reported)
+- **Cloudflare**, Apr 20 2026: "the average review costs $1.19 and the median is $0.98." That covers 131,246 review runs across 48,095 merge requests. Engineers overrode the reviewer on 0.6% of merge requests. Their own caveat: "This isn't a replacement for human code review, at least not yet with today's models." https://blog.cloudflare.com/ai-code-review/ **[PRIMARY]**
+- **Anthropic Code Review**, Mar 9 2026: "Before, 16% of PRs got substantive review comments. Now 54% do." "Less than 1% of findings are marked incorrect." Reviews "generally average $15–25." Also: "Code output per Anthropic engineer has grown 200% in the last year." https://claude.com/blog/code-review **[PRIMARY, checked, vendor on own use]**
+- **GitHub Copilot code review**, Mar 5 2026: "more than one in five code reviews on GitHub." It "surfaces actionable feedback" in 71% of reviews and says nothing in the other 29%. No acceptance rate is given. **[PRIMARY]**
+- **Cursor Bugbot**, Jan 15 2026: resolution rate rose "from 52% to over 70%." Resolution is judged by an AI at merge time. **[PRIMARY, vendor]**
+- **OpenAI Codex review**, Dec 1 2025: "authors address it with a code change in 52.7% of cases." **[PRIMARY, vendor]**
+- **Faros AI**, Sep 18 2026: heavy agentic-review use goes with "faster first reviews and lower change failure rates. The findings are correlational." Unreviewed merges rose 76.3%. No effect size is given. **[PRIMARY, analytics vendor]**
+
+**Independent and academic studies: how often AI comments lead to a change**
+- **Tuned in-house systems: 39–74%.**
+  - Atlassian RovoDev (ICSE'26): 38.70% versus 44.45% for human comments. **[PRIMARY]**
+  - Beko: 73.8% (2024). **[PRIMARY]**
+  - Google AutoCommenter: about 40% (2024). **[PRIMARY]**
+- **Tools on open-source projects: 1–36%.**
+  - CodeRabbit on 239 repos: "36.4% were accepted" (arXiv 2607.03316, Jul 2026). **[PRIMARY]**
+  - 16 GitHub Actions: 0.9–19.2% versus 60% for human comments (arXiv 2508.18771). **[PRIMARY]**
+- **Head to head, human suggestions win.** From 278,790 review conversations: AI suggestions "are adopted into the codebase at a significantly lower rate than suggestions proposed by human reviewers" (full text: 56.5% versus 16.6%). When adopted, they "produce significantly larger increases in code complexity and code size" (arXiv 2603.15911, Mar 2026). **[PRIMARY, abstract checked]**
+
+**Benchmarks:** AI reviewers catch about 15–33% of the issues human reviewers flagged.
+- SWE-PRBench: 15–31% across 8 models.
+- c-CRAB: Claude Code 32.1%.
+- CR-Bench: GPT-5.2 recall 27–33%.
+- Precision is understated because the answer keys are incomplete. **[PRIMARY]**
+
+**Review time:** results point both ways, and no randomized trial of an AI reviewer exists.
+- Beko: closure time rose from 5h52m to 8h20m.
+- Atlassian: median cycle time 30.8% faster (observational).
+- 1.02M PRs: faster decisions, "these efficiency gains do not translate into better review quality" (arXiv 2607.13196). **[PRIMARY]**
+
+**Gaps and risks**
+- **No controlled study of the effect on production defects.**
+- **Security coverage.** At Meta, security is "19.1% in human reviews to just 2.0% in AI reviews" (arXiv 2607.29516). **[PRIMARY]**
+- **Manipulation.** Crafted PR metadata got known vulnerabilities past Claude Code and CodeRabbit review in "32/33 (97%) cases" (arXiv 2603.18740). **[PRIMARY]**
+- **Self-review.** "31.7% are silently endorsed by the same model that produced them" (arXiv 2605.21537). **[PRIMARY]**
+- **Habituation.** Human approval of agent PRs rose while review latency went up 3.5x and inline comments fell 22% (arXiv 2606.22721). **[PRIMARY]**
+
+**Not confirmed:** Martian leaderboard scores; the "80% of PRs without human involvement" claim; the size of Faros's change-failure effect; the method behind Microsoft's 10–20% figure. No 2026 update from Uber, Google or Datadog was found.
+
+**Defensible line:** AI reviewers find some real bugs cheaply, at about $1 to $25 a review, and a good share of their comments lead to changes. That share is lower than for human comments. They catch a minority of what human reviewers flag, and their effect on production defects has not been measured. Use AI review as a first pass that frees people for design and risk, not as the fix for the review bottleneck.
+
 ## Enablement
 
 - **Microsoft**, arXiv 2607.01418: first use spread through social networks; an engineer whose skip-level peers mostly used Copilot CLI "had +216% higher odds of trying it." **[PRIMARY]**
