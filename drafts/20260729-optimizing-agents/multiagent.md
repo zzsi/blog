@@ -156,3 +156,24 @@ Otherwise one agent is cheaper and fails in fewer ways.
 5. **Duplicated context.** Gao et al. (arXiv 2505.18286, 2025): "MAS consumes 4–220× more input (prefill) tokens than its SAS counterpart." That is the old draft's source, found. The 220× is one outlier (AIME math debate), on academic frameworks with Gemini-2.0-Flash. **Quote as 4x to over 200x at most, or not at all.**
 
 **Counter-evidence:** some gains are large (Anthropic +90.2%, Google +80.8% on finance), so "sublinear per token" does not mean "not worth it." Pairing a frontier planner with cheap workers cuts dollars sharply at similar quality (Cursor). Stronger models shrink the advantage.
+
+## 8. From the author's saved reading list (kungfu-compaction, 2026-09-29)
+
+These papers came from about 30 multi-agent and RL papers found among 592 arXiv links saved in the author's notes. Abstracts were read through the arXiv API. **[PRIMARY, abstract]**
+
+- **"Multi-Agent Teams Hold Experts Back"** (arXiv 2602.01011, Feb 2026)
+  - Self-organising LLM teams "consistently fail to match their expert agent's performance, even when explicitly told who the expert is, incurring performance losses of up to 41.1% on ML benchmarks."
+  - The cause is "integrative compromise": the team averages expert and non-expert views. This "increases with team size and correlates negatively with performance."
+  - It does improve robustness to adversarial agents.
+- **MAFBench, "Architectural Design, Not Only Model Intelligence, Governs Multi-Agent LLM Performance"** (arXiv 2602.03128, Feb 2026). Nine frameworks were compared on the same LLM.
+  - "Orchestration alone increases latency by over 60x", and a minimal implementation shows that cost comes from the implementation, not the paradigm.
+  - "Schema-constrained planning interfaces reduce accuracy by up to 32 points through formatting failures, not reasoning errors."
+  - "Communication topology drops coordination success from above 90% to below 30% under mismatched structure."
+  - **Relevance:** framework choice matters, not only model choice.
+- **MAS-ProVe** (arXiv 2602.03053, Feb 2026): "process-level verification does not consistently improve performance and frequently exhibits high variance" across six multi-agent frameworks. Checking intermediate steps of a multi-agent run is unreliable; checking the outcome against something external is the safer bet.
+- **"Channel Fracture"** (arXiv 2606.04896, Jun 2026) reports silent failures at agent boundaries in one production deployment. Information routed between agents is blocked without error. Single deployment, so notes only.
+- **Rung 3 candidates, handed to the MARL research:**
+  - ToolOrchestra: an 8B orchestrator trained with RL scores 37.1% on HLE vs 35.1% for GPT-5, "2.5x more efficient" (arXiv 2511.21689).
+  - "Compiling Agentic Workflows into LLM Weights": compiles a multi-step procedure into a small fine-tuned model, reporting "near-frontier quality at two orders of magnitude less cost" (arXiv 2605.22502).
+  - Agent Q-Mix (arXiv 2604.00344) and Harness-RL (arXiv 2608.29641).
+- **Internal material not used:** notes on a colleague's internal "Research Swarm" project appear in the same repo. It is internal, names colleagues, and is not public, so it stays out of the post unless the author decides otherwise.
