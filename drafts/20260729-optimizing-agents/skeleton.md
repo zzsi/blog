@@ -2,7 +2,7 @@
 
 One line per planned paragraph: the claim it makes, then the evidence it will use. Read top to bottom as the argument. Figures appear where they would sit.
 
-Sources in brackets point to the working notes: **BV** = business-value.md, **EM** = emerging.md, **RL** = reliability.md, **R1** = rung1.md, **PT** = posttraining.md, **ENV** = rlenv.md, **SEC** = security.md, **V** = version20260912.md (the audited old draft).
+Sources in brackets point to the working notes: **BV** = business-value.md, **EM** = emerging.md, **RL** = reliability.md, **R1** = rung1.md, **PT** = posttraining.md, **ENV** = rlenv.md, **SEC** = security.md, **MA** = multiagent.md, **V** = version20260912.md (the audited old draft).
 
 Marks: **[YOU]** needs your first-hand material. **[DECIDE]** a choice to make before drafting. **[REVIEW]** rewritten, please check. **[CUT?]** a candidate for removal.
 
@@ -59,7 +59,7 @@ Working title: **[DECIDE]**, options in the author todo.
 
 9. At rung 1 you use someone else's agent, such as Claude Code or Codex, and your job is everything around it.
     - A server connecting a vendor agent to your data is rung 1; the same server inside an agent you built is rung 2 [outline spine].
-    - Vendor agents now ship their own ways to run several agents (subagents, parallel tasks); switching those on is still rung 1 [RESEARCHING: current features and vendor guidance].
+    - Vendor agents now ship their own ways to run several agents: Claude Code subagents and agent teams (preview, Feb 2026), Codex parallel tasks and subagents, Cursor's parallel agents and subagents. Switching them on is still rung 1. Their docs agree: parallel agents cost more tokens, suit independent or read-heavy work, and should not edit the same files; Cursor: "The benefit is context isolation, not speed" [MA §4, primary, checked].
 
 10. The first job is getting your company's context in front of the agent, and the most common way is internal tools exposed over MCP.
     - Seven of ten companies studied do it: LinkedIn's CAPT pairs MCP with 500+ playbooks and reports triage time down about 70% "in many areas" [R1, primary].
@@ -123,12 +123,14 @@ Working title: **[DECIDE]**, options in the author todo.
     - Recommendation: prototype on whatever reaches a working eval fastest, then own the parts where reliability is decided: context, checks and escalation ("own your control flow," 12-factor agents) [BV §2i].
     - **[REVIEW]** New paragraph after author review; also check it matches how your team builds client agents.
 
-18. Use several agents when the work splits into parts that do not need each other's context, or when an independent check is worth paying for; otherwise one agent is cheaper and fails in fewer ways.
-    - Moved here from the security paragraph: use several agents on purpose only when one has plateaued [V].
-    - The earlier draft's four-condition test: the task splits into semi-independent parts; combining the results adds more than it costs; the single agent is already tuned and has plateaued; the gain beats the full coordination cost [V]. **[RESEARCHING]** re-checking each condition against 2026 evidence.
-    - Errors compound when agents are chained: five steps at 95% each succeed together about 77% of the time (0.95^5; arithmetic, not a finding).
-    - Cost against speed: **[RESEARCHING]** whether output grows more slowly than token spend (Anthropic's research system, its parallel C-compiler build, Cursor's many-agent runs, Kimi's agent swarm, a Google study of when adding agents helps).
-    - Added after author review: the coordination content from the outline and the Sept 12 draft had dropped out when rung 2 was reorganised around reliability.
+18. Use several agents when the parts of the work do not need each other's context, or when a checker can test against something the writer cannot see; otherwise one agent is cheaper and fails in fewer ways.
+    - With compute held equal, Google's study of 260 setups ranged from +80.8% on financial analysis that splits cleanly to −70.0% on sequential planning, and averaged about zero. Once one agent already scores above about 45%, adding agents hurt (arXiv 2512.08296, v3 Apr 2026) [MA §1, primary, checked].
+    - Anthropic's 2026 guidance: several agents "consistently outperform" one only when context pollution degrades performance, when tasks can run in parallel, or when specialisation improves tool choice. They "typically use 3-10x more tokens," and teams have spent months on multi-agent designs "only to discover that improved prompting on a single agent achieved equivalent results" [MA §1, primary, checked, vendor].
+    - The sceptics narrowed their view rather than reversing it: Cognition, author of "Don't Build Multi-Agents" (2025), now uses setups where "multiple agents contribute intelligence to a task while writes stay single-threaded" (Apr 2026) [MA §1, primary, checked].
+    - In the big 2026 runs, a planner with workers worked, or flat peers backed by a near-perfect external check. Agents editing the same files or chasing the same bug broke them. Cursor: without hierarchy, "Twenty agents would slow down to the effective throughput of two or three." Anthropic's 16-agent C compiler depended on a verifier that is "nearly perfect" [MA §5, primary, checked].
+    - The old four-condition test, revised against this evidence: the parts do not need each other's context; the single agent hits a limit several agents address (context overflow, breadth, too many tools, lenient self-grading); writes stay with one agent or in separate files; and the gain beats the cost on the same token budget. "Plateaued" was risky: a strong single agent is exactly where extra agents hurt [MA §6].
+    - Chained steps compound errors (five at 95% succeed together about 77%), but that applies to one agent doing five steps as well: an illustration, not a multi-agent finding [MA §2].
+    - Cost against speed: **[RESEARCHING]** whether output grows more slowly than token spend.
 
 19. An agent fails in five ways, each named by what the person using it sees: wrong, erratic, stuck, unsafe, costly.
     - **Shown as a table** (decided): type, what the person sees, one piece of evidence with its link, and where in this section it is handled [RL §2, §2b].
@@ -139,7 +141,7 @@ Working title: **[DECIDE]**, options in the author todo.
     - Costly: an agent got a complete answer to its first question, asked it seven more times and wrote no code ("Model or Harness?", 2026); multi-agent systems use about 15x the tokens of chat (Anthropic, 2025) [RL §2b, primary].
     - Be honest about costly: 2026 evidence mostly shows agents asking too little, and nobody has measured what over-escalation costs people. The mirror framing has a published name, under-initiative versus over-initiative [RL §2b, primary].
     - Fixing one type can cause another: planning that stopped a model quitting early raised its cost 75% [RL §2b, primary].
-    - Several agents add a failure that is not a sixth type but multiplies the five: agents misreading or ignoring each other. MAST attributes 32.3% of multi-agent failures to inter-agent misalignment [RL §2b, primary; RESEARCHING: confirm].
+    - Several agents add a failure that is not a sixth type but multiplies the five: agents misreading or ignoring each other, and making the same mistake together. MAST found inter-agent misalignment in 32.3% of observed failures across 1,642 multi-agent traces (older frameworks); in Anthropic's tests, 18 of 30 agents independently created a git branch with the same name [MA §2, primary, checked].
 
 20. When something breaks, find where it broke before fixing it, because the same symptom needs a different fix depending on its source.
     - Model-side: rung 3. Harness-side: rung 2. Grader-side: fix the eval [RL §3, primary].
@@ -194,7 +196,7 @@ Working title: **[DECIDE]**, options in the author todo.
     - Loop detectors and step budgets fire after the decisive mistake, so use them to escalate, not to prevent: a monitor flagged only 3.7–8.7% of stuck runs before lock-in [RL §5.3, primary].
     - Agents fabricate success and "confidently prais[e]" their own mediocre work, so check the claimed result itself: run the tests, open the output, compare it with the agreed definition of done [RL §5.3, primary]. Moved from the old stuck paragraph.
     - Check requirements with something other than the agent: models restate a constraint while breaking it (8–99% across models, DriftBench), and a monitor given the requirements caught dropped ones 22% of the time instead of 3% [RL §5.1b, primary].
-    - The strongest case for a second agent is as the checker, ideally on a different model: Shopify's security harness verifies findings with a different model from the one that found them [BV §2i, primary]; a model reviewing its own output silently endorsed 31.7% of its flaws [R1, code review, primary]. **[RESEARCHING]** cross-model review results.
+    - The strongest case for a second agent is as the checker, but its independence comes from what it tests against and how capable it is, not from being a different model. Shopify's verifier writes and runs tests against each finding, on a different model; in one audit all 30+ candidate vulnerabilities were downgraded or false positives. In a cross-model study, a stronger reviewer raised a weaker model's pass rate from 71.6% to 89.7%, while a weaker reviewer lowered a stronger model's from 91.4% to 82.8%. Errors also correlate across providers. A model reviewing its own output silently endorsed 31.7% of its flaws [MA §3, primary, checked].
 
 28. Every agent trades silent mistakes against escalations to a person, and what one silent mistake costs decides where that trade-off should sit.
     - Worked example, legal form extraction: the same agent saves $1.08M a year at 90% coverage when an error costs $30, saves $645K at 50% when it costs $300, and loses $90K when it costs $3,000 [BV §2b, illustrative].
