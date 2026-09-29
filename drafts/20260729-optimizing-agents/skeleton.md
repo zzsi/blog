@@ -352,17 +352,12 @@ Working title: **[DECIDE]**, options in the author todo.
 
 ## Reading notes
 
-- **53 paragraphs** at 150 to 200 words each gives roughly 8,000 to 10,000 words.
-- **Changed in this round, from your comments and seven research threads:**
-  - Section 2 renamed. The old paragraph 9 folded into 8 as dated context (no 2026 study re-measures one in twenty).
-  - Rung 1: 11 adds re-checking files and skills at each model release; 12 corrects Spotify and now says AI review is a first pass, not a proven defect reducer.
-  - Rung 2: opens on its return (16). The five failure types each have evidence (17). "Wrong belief" is replaced by a diagnosis (19) and prevention steps (20). Tools depend on the model (21). Stuck is split (22, 25). The legal case is the worked example inside the trade-off (26).
-  - Rung 3: runs debate, first-hand result, then the bet (31 to 33). Agentic SFT data is new (37). RL is called out (40). Distillation is merged and placed after RL (41).
-  - Self-improvement opens with autoresearch (42) and loses "exactly" (44).
-- **Corrections found this round:** Spotify never used an AI reviewer; Uber's review figures are from 2025; the "four in five wrong beliefs" figure added a category the paper counts as skill; MAST's 42% is v2, not v3; the Fable guidance is for Fable 5 and about skills; the small model's tool gain is points, not percent.
-- **First-hand passages:** rung 1 context setup (10), context (20), graders that are wrong (29), the extraction fine-tune (33), and prompt optimisation overfitting (46, now its own paragraph). Rung 1's result is open; see the author todo.
-- **Material left out on purpose:** most survey statistics, most RSI papers, the full case-study table, the cost-per-task discussion, most security frameworks, the older silent-failure cases, most code-review studies. It stays in the notes.
-- **Decided:** the five failure types appear as a table (18).
-- **Proposed, please check:** build paths as a new paragraph (17, researching); self-improvement grows from four paragraphs to six (43 to 48), adding your prompt-optimisation experience (46) and what to do about it (47).
-- **Decisions to settle before drafting:** title (options at the top); whether the old paragraph 9 comes back as its own paragraph (8); the open-models bet (34); the rung 2 close (30); rung 1 result (15, optional).
-- **Weakest evidence, say so in the prose:** over-escalation's cost to people is modelled, not measured (18, 27); no public study compares an in-house agent with a vendor agent on the same work (16); AI review's effect on production defects is unmeasured (12).
+- **55 paragraphs** at 150 to 200 words each gives roughly 8,000 to 11,000 words.
+- **Multi-agent, added this round:** vendor features as rung 1 (9); one agent or several, with cost against speed (18); coordination failure in the failure table (19); a second agent as checker (27); multi-agent RL in rung 3 (43); research run by teams of agents (45). Evidence in multiagent.md, including papers from your saved reading list (§8).
+- **Earlier this round:** build paths (17); failure types decided as a table (19); self-improvement grown to six paragraphs (45 to 50), with your prompt-optimisation experience as its own paragraph (48).
+- **Corrections found:** Spotify never used an AI reviewer; Uber's review figures are from 2025; "four in five wrong beliefs" added a category the paper counts as skill; MAST's 42% is v2; the Fable guidance is for Fable 5 and about skills; the small model's tool gain is points; Google's multi-agent study is 260 configurations in v3; on-policy distillation titles are now 271 in 2026; the old draft's 4 to 220x prefill figure is real but the 220x is one outlier.
+- **First-hand passages:** rung 1 context setup (10), context (21), graders that are wrong (30), the extraction fine-tune (34), prompt optimisation overfitting (48). Rung 1's result is open; see the author todo.
+- **Material left out on purpose:** most survey statistics, most RSI papers, the full case-study table, most security frameworks, the older silent-failure cases, most code-review studies, most multi-agent and MARL papers, the internal Research Swarm notes. It stays in the notes.
+- **Proposed, please check:** build paths (17) and one agent or several (18); self-improvement at six paragraphs (45 to 50).
+- **Decisions to settle before drafting:** title (options at the top); whether the old paragraph 9 comes back as its own paragraph (8); the open-models bet (35); the rung 2 close (31); rung 1 result (15, optional).
+- **Weakest evidence, say so in the prose:** over-escalation's cost to people is modelled, not measured (19, 28); no public study compares an in-house agent with a vendor agent on the same work (16); AI review's effect on production defects is unmeasured (12); most multi-agent cost and speed figures are vendor self-reports (18).
