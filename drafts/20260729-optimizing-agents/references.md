@@ -31,7 +31,7 @@ Compiled from the three research rounds behind the deck and blog post. Organized
 - SentinelOne evaluation of compaction (86% input-token reduction)
 - UIUC study on multi-agent token consumption (4–220× single-agent): Gao et al., "Single-agent or Multi-agent Systems? Why Not Both?", arXiv 2505.18286, https://arxiv.org/abs/2505.18286 (the 220× is one outlier, AIME debate; see multiagent.md §7)
 - Cognition AI, **"Don't Build Multi-Agents"** blog post (Jun 12 2025), https://cognition.ai/blog/dont-build-multi-agents; partial reversal "Multi-Agents: What's Actually Working" (Apr 22 2026), https://cognition.com/blog/multi-agents-working
-- Kim et al., evaluation across 260 multi-agent configurations (OpenAI/Google/Anthropic model families): "Towards a Science of Scaling Agent Systems", arXiv 2512.08296 (v3 Apr 2026), https://arxiv.org/abs/2512.08296
+- Kim et al., evaluation across 260 multi-agent configurations (OpenAI/Google/Anthropic model families): "Towards a Science of Scaling Agent Systems", arXiv 2512.08296 (v3 Apr 2026), https://arxiv.org/abs/2512.08296 — 260 configurations in v3; 180 in v1 and in v3's cost-tracked subset
 - NVIDIA developer blog — GRPO/RLVR guidance for agents; Nemotron 3 post-training report
 - Prime Intellect — Environments Hub, Verifiers library, prime-rl framework documentation
 - Meta/Hugging Face — OpenEnv framework documentation

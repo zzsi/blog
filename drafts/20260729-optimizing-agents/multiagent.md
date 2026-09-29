@@ -177,3 +177,77 @@ These papers came from about 30 multi-agent and RL papers found among 592 arXiv 
   - "Compiling Agentic Workflows into LLM Weights": compiles a multi-step procedure into a small fine-tuned model, reporting "near-frontier quality at two orders of magnitude less cost" (arXiv 2605.22502).
   - Agent Q-Mix (arXiv 2604.00344) and Harness-RL (arXiv 2608.29641).
 - **Internal material not used:** notes on a colleague's internal "Research Swarm" project appear in the same repo. It is internal, names colleagues, and is not public, so it stays out of the post unless the author decides otherwise.
+
+## 9. Multi-agent RL for LLMs: trend and production use (research round 2026-09-29)
+
+**Verdict:** multi-agent RL for LLMs is a real, steady research area, not a 2026 breakthrough.
+- **Production:** only one piece has reached it: RL-training a single orchestrator while the agents it calls stay frozen (Kimi K2.5, Sakana Fugu).
+- **Not in production:** joint training of several LLMs, self-play and debate training appear in no production recipe found.
+- **The mainstream recipe** remains RLVR/GRPO specialists merged by multi-teacher on-policy distillation.
+
+**Trend, from arXiv API counts (reproduced)**
+
+LLM terms = `(abs:LLM OR abs:LLMs OR abs:"language model" OR abs:"language models")`.
+
+| Query | 2025 | 2026 to Sep 29 |
+|---|---|---|
+| `abs:"multi-agent" AND abs:"reinforcement learning" AND` LLM terms | 199 | 182 |
+| `abs:"reinforcement learning" AND` LLM terms (denominator) | 3,316 | 3,471 |
+| `abs:"multi-agent" AND abs:GRPO` | 23 | 53 |
+| `ti:"on-policy distillation"` (comparison) | 10 | 271 |
+
+- The multi-agent share of LLM RL papers is flat: 4.8% (2024), 6.0% (2025), 5.2% (2026 to date).
+- Multi-agent+GRPO monthly counts in 2026 show no acceleration.
+- Hand-screening titles suggests roughly 55–80 genuine multi-agent LLM-RL papers in 2026 to date, similar to 2025. The rest is classic MARL (robotics, UAVs), LLM-helps-MARL, benchmarks and data synthesis.
+- OpenAlex (arXiv-hosted) cross-checks: multi-agent+GRPO 18 → 62, on-policy distillation 31 → 419, GRPO 739 → 1,947.
+- Counts from the research agent, re-run and matched on 2026-09-29. **[own queries]**
+
+**Main approaches**
+- **Several LLMs trained jointly: research only.**
+  - MAPoRL (2025): "training individual LLMs alone is insufficient to induce effective collaboration."
+  - AT-GRPO (Oct 2025): planning accuracy from 14–47% to 96–99.5%.
+  - Dr. MAS (Feb 2026): +5.6 avg@16 on math, +15.2 on search over vanilla GRPO.
+  - "When Does Multi-Agent RL Improve LLM Workflows?" (May 2026, 0.6B–4B models): gains "depend jointly on workflow, task, and scale"; separate-weights training "more often falls off a terminal accuracy cliff."
+  - "GRPO Does Not Close the Multi-Agent Coordination Gap" (2606.07845).
+- **One orchestrator trained, workers frozen: the production pattern.**
+  - **Kimi K2.5** (arXiv 2602.02276) **[PRIMARY, checked]**
+    - "During training, sub-agents are frozen and their execution trajectories are excluded from the optimization objective; only the orchestrator is updated via reinforcement learning. This decoupling circumvents two challenges of end-to-end co-optimization: credit assignment ambiguity and training instability."
+    - The reward includes terms against "serial collapse" and "spurious parallelism."
+    - BrowseComp: 78.4% vs 60.6% single agent, but 74.9% for the single agent with good context management.
+  - **Sakana Fugu** (2606.21228, Jun 2026): orchestrators over frontier workers, trained with SFT then evolutionary strategies (Fugu-Ultra with GRPO). The paper calls it "a production system."
+  - **NVIDIA ToolOrchestra** (2511.21689): an 8B orchestrator trained with RL scored 37.1% on HLE vs 35.1% for GPT-5, "2.5x more efficient"; on τ²-Bench and FRAMES it beat GPT-5 at about 30% of the cost. **[PRIMARY, abstract]**
+  - **Harness-RL** (Aug 2026): ablations "favor central-only optimization." **[PRIMARY]**
+- **Self-play and proposer/solver: research only.** SPIRAL (+8.6 math from Kuhn Poker alone), R-Zero, Multi-Agent Evolve, Tool-R0, SPADE. MiniMax uses self-play only to *synthesise data*.
+- **Generator/verifier.** CURE and MALT are research. MiniMax M3 trains Proof, Verifier and Fixer experts against a *frozen* verifier, then merges them; that is production, but not co-training.
+- **Debate training: research only.** "Debate Training Reduces Reward Hacking in RLAIF" (Aug 2026).
+- **Distilling a multi-agent system or workflow into one model**
+  - Chain-of-Agents / AFM (OPPO, 2025): 32B at 55.3% on GAIA.
+  - **"Compiling Agentic Workflows into LLM Weights"** (Dennis et al., arXiv 2605.22502, May 21 2026) **[PRIMARY, full text, checked]**
+    - "An 8B compiled model achieves 87–98% of in-context frontier quality."
+    - "Compiled models are 128–462× cheaper per conversation than the in-context baseline."
+    - The one-time cost is about $50–80, with break-even within 500 conversations.
+    - "Low-rank methods fail to approach full fine-tuning on procedural tasks."
+    - Judged by Claude Sonnet 4.5, checked with GPT-4.1.
+    - Caveat: SFT on a LangGraph flowchart around one LLM, not a multi-agent team.
+- **Role-specialised agents in one model:** Frontis-MA1 trains four operator roles into one 35B model (MLE-Bench Lite medals 39.39% → 60.61%).
+
+**Lab reports, 2026**
+- **Kimi K3** (Jul 2026): SFT, then RL-trained domain experts consolidated by MOPD. Its RL harnesses include "subagents," but it does not mention PARL.
+- **MiniMax-M2 series:** trains one policy inside multi-agent harnesses, with a completion-time reward that counts "sub-agent invocation overhead."
+- **No multi-agent RL:** DeepSeek-V4, Nemotron 3 Ultra and Super, MiMo-V2-Flash, GLM-5.
+- **Qwen3.5 card:** "Reinforcement learning scaled across million-agent environments." Ambiguous, and there is no tech report.
+- **OpenAI, Anthropic, Google:** no disclosures.
+
+**Tooling**
+- **prime-rl / verifiers:** a multi-agent API merged in July 2026. Per-agent rewards are still open, and "Cross-agent credit assignment is an open question."
+- **slime:** has a multi-agent example.
+- **verl, OpenRLHF, AReaL, NeMo Gym, OpenEnv:** none, or only forks, RFCs and open PRs.
+- **TRL and SkyRL:** nothing found.
+
+**For a company training its own agent**
+- **Usable now:**
+  - compile a fixed workflow into a small model with SFT (cheapest);
+  - distil traces from your multi-agent system into one model;
+  - RL-train a small orchestrator over fixed models and tools, if you have outcome rewards;
+  - train your one agent inside your real harness, subagents included.
+- **Lab work:** joint multi-policy training, zero-data self-play, debate training.
