@@ -76,7 +76,7 @@ Otherwise one agent is cheaper and fails in fewer ways.
 - **Claude Code**
   - Custom subagents (Jul 2025). Docs: use them when "The work is self-contained and can return a summary."
   - Agent teams: research preview, Feb 5 2026, "token-intensive." Docs: "For sequential tasks, same-file edits, or work with many dependencies, a single session or subagents are more effective." And: "Start with 3-5 teammates."
-  - The "7x tokens" figure was not found in saved copies. Do not use it.
+  - Costs page: "Agent teams use approximately 7x more tokens than standard sessions when teammates run in plan mode." Agent-teams page: "Token costs scale linearly" and "beyond a certain point, additional teammates don't speed up work proportionally." **[checked, living docs accessed Sep 29 2026]**
 - **OpenAI Codex**
   - Cloud tasks run "many tasks in parallel" (May 2025).
   - Subagent docs: "consume more tokens than comparable single-agent runs"; "use parallel agents for read-heavy tasks… Be more careful with parallel write-heavy workflows."
@@ -115,3 +115,44 @@ Otherwise one agent is cheaper and fails in fewer ways.
 | *(missing)* | | A checker needs something external to test against, or must be at least as capable as the writer |
 
 **Watch:** stronger models shrink the case for extra agents (Google's 45% ceiling; Anthropic dropped its evaluator on Opus 4.6 for tasks within the model's reach). Kimi's trained orchestrator suggests the balance could shift again.
+
+## 7. Token cost against speed and output (research round 2026-09-29)
+
+**Verdict:** the author's hunch holds. Token spend rises at least in proportion to the number of agents, and often faster, because each agent re-reads shared context and coordination adds turns. Wall-clock speedup and useful output grow more slowly.
+- **Breadth-first search:** about 2x the speed for 4 agents (OpenAI); Kimi reports 3 to 4.5x.
+- **Tightly coupled coding:** returns flatten or turn negative.
+- **No public study** measures dollars against useful merged output for parallel coding agents.
+
+**Speed against cost**
+- **Noam Brown (OpenAI), Dwarkesh podcast, Sep 17 2026** **[PRIMARY transcript, checked, VENDOR]**
+  - "if you have four agents working on the problem, it is done twice as fast. Because there are four agents working for half as long, you're paying 2x more to get an answer twice as quick."
+  - Asked whether the speedup is sublinear: "It's slightly sublinear, though it does depend a lot on the problem. Math, for example, is quite parallelizable."
+- **OpenAI GPT-5.6 "ultra"** (Jul 2026) runs "four agents in parallel by default, trading higher token use for stronger results and faster time-to-result." Single agent vs Ultra: Terminal-Bench 2.1 88.8% → 91.9%, BrowseComp 90.4% → 92.2%. Token multiples appear only in charts. **[PRIMARY via Wayback, VENDOR]**
+- **Kimi K2.5** (arXiv 2602.02276): the swarm "reduces the execution time required to reach target performance by 3× ∼ 4.5×" on WideSearch. **No token cost is reported.** It measures critical steps, not total work. **[PRIMARY, checked, VENDOR]**
+- **Anthropic research system** (2025): 3–5 subagents in parallel "cut research time by up to 90% for complex queries." "~15x" is against chat, not against a single agent (agents use about 4x chat). **[PRIMARY, VENDOR]**
+- **CAID** (arXiv 2603.21489, Commit0-Lite, Sonnet 4.5): 4 agents scored 59.1 vs 53.1 for one, took 1583 s vs 693 s, and cost 8.1 vs 1.9. Performance fell at 8 agents. **[PRIMARY]**
+
+**Output against number of agents**
+- **CooperBench** (arXiv 2601.13295): "performance drops from 68.6% with 2 agents to 46.5% with 3 agents and further to 30.0% with 4 agents." **[PRIMARY, checked]**
+- **Google** (2512.08296 v3): "SAS achieves 67.7 successes/1K tokens; Centralized drops to 21.5 (3.1× worse)… Hybrid to 13.6 (5.0× worse)." Multi-agent needs "1.6–6.2× token budgets relative to single-agent at matched performance." Turns grow as "T = 2.72 × (n + 0.5)^1.724." **[PRIMARY, checked]**
+- **Claude Code docs:** "Token costs scale linearly"; "additional teammates don't speed up work proportionally"; agent teams use about 7x the tokens. **[PRIMARY, checked, VENDOR]**
+- **Cursor** (Feb 2026): "Could we spend 10x more on compute to get 10x more meaningful throughput?" Flat coordination: "20 agents would slow to the throughput of 1-3." Their "linear scaling of token throughput" is linear in tokens, not in verified output. **[PRIMARY, checked, VENDOR]**
+- **Cursor, "Agent swarms and the new model economics"** (Jul 20 2026) **[PRIMARY, checked, VENDOR]**
+  - Similar quality at costs "from $1,339 for the Opus 4.8 hybrid to $10,565 for GPT-5.5 alone."
+  - The old harness made 68,000 commits in two hours and 70,000+ conflicts.
+  - Their conclusion: swarms scale through "context efficiency, more than… parallelism itself."
+- **Anthropic C compiler** (Feb 2026): "2 billion input tokens and generated 140 million output tokens, a total cost just under $20,000." "Having 16 agents running didn't help because each was stuck solving the same task" on the kernel. Chris Lattner: "a competent textbook implementation." **[PRIMARY, checked, VENDOR]**
+- **Practitioners**
+  - Boris Cherny (Lenny's, Feb 2026): "at the moment I have, like, five agents running."
+  - Yegge (Gas Town, Jan 2026): "20–30 at once, productively," but "typically I'll only have a dozen or so active," and "Do not use Gas Town if you care about money."
+  - **[PRIMARY, VENDOR/practitioner]**
+- **Company level:** DX, AI usage +65% but PR throughput +7.76%. OpenAI: "our bottleneck became human QA capacity" **[checked]**.
+
+**Where the ceiling comes from, strongest evidence first**
+1. **The serial part of the task:** C-compiler kernel stall, Google's −39 to −70% on sequential planning, Cursor's "slowest worker."
+2. **Coordination overhead:** Cursor's lock contention, Google's turn exponent, the CooperBench decline.
+3. **Merge conflicts and duplicated work.**
+4. **Human review and QA capacity.**
+5. **Duplicated context.** Gao et al. (arXiv 2505.18286, 2025): "MAS consumes 4–220× more input (prefill) tokens than its SAS counterpart." That is the old draft's source, found. The 220× is one outlier (AIME math debate), on academic frameworks with Gemini-2.0-Flash. **Quote as 4x to over 200x at most, or not at all.**
+
+**Counter-evidence:** some gains are large (Anthropic +90.2%, Google +80.8% on finance), so "sublinear per token" does not mean "not worth it." Pairing a frontier planner with cheap workers cuts dollars sharply at similar quality (Cursor). Stronger models shrink the advantage.
