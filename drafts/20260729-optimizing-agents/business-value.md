@@ -161,13 +161,13 @@ The third outcome is invisible in the metric most teams track and it dominates t
 
 Only one thing changes across these three cases: what a confidently wrong extraction costs downstream. The agent is identical.
 
-| Cost of one silent error | Cheapest coverage | Result |
-|---|---|---|
-| $30, caught in QA | 90% | saves $1.08M a year |
-| $300, reaches a filing | 50% | saves $645K a year |
-| $3,000, causes exposure | 30% | **loses $90K a year** |
+| Cost of one silent error | Best coverage | Result at best coverage | At 30% coverage |
+|---|---|---|---|
+| $30, caught in QA | 90% | saves $1.08M a year | saves about $623K |
+| $300, reaches a filing | 50% | saves $645K a year | saves about $558K |
+| $3,000, causes exposure | 10% | saves $240K a year | **loses $90K a year** |
 
-Same agent, same accuracy. A million-dollar saving becomes a loss, and the right operating point moves from 90% coverage to 30%, purely because of a number that sits outside the AI system entirely.
+**[CORRECTION 2026-10-01]** An earlier version of this table labelled 30% as the cheapest coverage for the $3,000 case and gave its result as the optimum. Recomputing from the model's own inputs (error rate 0.5% at 10% coverage, 0.8% at 30%, 1.5% at 50%, 10% at 90%, 14% at 100%) puts the $3,000 optimum at 10% coverage, saving $240K, which matches the reliability table below. The $90K loss is what happens one notch past the optimum. Corrected claim: the same agent's best operating point moves from 90% coverage to 10%, and its savings fall from $1.08M to $240K, purely because of a number that sits outside the AI system; pushing coverage past the optimum turns the saving into a loss.
 
 ### The metric everyone tracks is dangerous on its own
 
