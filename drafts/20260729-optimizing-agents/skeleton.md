@@ -214,8 +214,7 @@ Title: **How to Customize Agents, and When to Own Them** (decided).
 31. The tests you use to judge the agent can themselves be wrong, passing bad work and failing good work.
     - "Tests" here means your own evals and graders: the automated checks that decide pass or fail.
     - Public benchmarks: 61.1% of SWE-bench samples flagged for tests that reject valid solutions; SWE-bench Pro graders 8.5% false positive, 24% false negative [V, audited].
-    - First-hand, from a small local eval suite used while building custom agents: some checks were loose enough that the agent could pass without solving the task, and some heuristic checks failed valid solutions [author].
-    - One concrete too-strict case from the run log (June 2026): a check that banned certain commands also scanned the agent's memory notes, so a run failed for writing down the very constraint it was obeying. Limiting the check to commands the agent actually ran fixed it [author's repo, run log and commit]. **[YOU]** OK to describe this publicly?
+    - First-hand, from a small eval suite I used while building agents: some checks were loose enough to pass without doing the task, others too strict. In one, a check that blocked a forbidden command also searched the agent's notes, so the agent failed for writing down the rule it was obeying [author's repo log, June 2026]. **[YOU]** OK to share?
     - Do not carry over the old draft's unconfirmed details: "most of the bugs I found were not in the agents," agents editing tests to pass, and "spend a day tuning a prompt." The forbidden-path lists in the repo were there from the first commit, as a precaution, not added after an incident [checked against the repo].
 
 *Close.*
