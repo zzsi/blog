@@ -6,16 +6,11 @@ Sources in brackets point to the working notes: **BV** = business-value.md, **EM
 
 Marks: **[YOU]** needs your first-hand material. **[DECIDE]** a choice to make before drafting. **[REVIEW]** rewritten, please check. **[CUT?]** a candidate for removal.
 
-Working title: **[DECIDE]**, options in the author todo.
+Title: **How to Customize Agents, and When to Own Them** (decided).
 
 ## Author todo
 
-- **Title.** Options, recommended first:
-  - How to Customize Agents, and When to Own Them
-  - Customizing Agents: What to Own, and When
-  - What You Own Decides What You Fix
-  - Use, Build, Train: Three Ways to Customize Agents
-  - From Claude Code to Your Own Model: Customizing Agents for Real Work
+- **Title: decided.** How to Customize Agents, and When to Own Them.
 - **Rung 1 result.** Did the rung 1 setup (MCP over internal services, scheduled jobs building a knowledge base) produce value you could point to, like time saved or a decision made faster? If yes, rung 1 gets a concrete result. If not, that also fits the section's own claim that rung 1 value is real but hard to measure. Feeds the last paragraph of rung 1.
   - **Partly answered by outside evidence (BV §2f).** Rung 1 now has company evidence either way; your own result is a bonus, not a requirement.
 
@@ -118,7 +113,7 @@ Working title: **[DECIDE]**, options in the author todo.
 17. You can build on an open-source agent, on a framework, or directly on the model's API, and the choice is how much you inherit against how much you must keep up with.
     - Both are common in production: 17 of 20 deployed teams interviewed wrote their own loop on direct API calls, while about 60% of a small survey subset used a framework, LangGraph most often (Pan et al., data from 2025). Two teams prototyped on CrewAI and moved to their own code for production [BV §2i, primary, checked].
     - Vendor advice points the same way: "start by using LLM APIs directly," and with a framework, "ensure you understand the underlying code" (Anthropic); use the raw API "when you want to own the loop" (OpenAI's own SDK docs) [BV §2i, primary, checked].
-    - A framework gives you the loop, state and tool plumbing on day one, and you follow its releases: OpenAI's Agents SDK shipped 22 minor versions in 14 months, most with migration notes, while LangGraph has kept a no-breaking-changes promise since its 1.0 [BV §2i, primary]. An open-source agent gives you a working agent, and then upstream moves: Goose shipped 86 releases in 2025 [BV §2i]. Your own loop gives full control, and you re-tune it as models change (Vercel: "every model update meant re-calibrating our constraints") [BV §2i, primary].
+    - A framework gives you the loop, state and tool plumbing on day one, and you follow its releases: OpenAI's Agents SDK shipped 22 minor versions in 14 months, most with migration notes, while LangGraph has kept a no-breaking-changes promise since its 1.0 [BV §2i, primary]. An open-source agent gives you a working agent, and then upstream moves: Goose shipped 86 releases in 2025 [BV §2i]. Your own loop gives full control, and you re-tune it as models change (Vercel: "every model update meant re-calibrating our constraints") [BV §2i, primary]. In every case the harness's assumptions go stale after launch: Anthropic's context resets "had become dead weight" one model later [BV §2i, primary]. Moved here from the rung 2 close: this is upkeep, not development.
     - A vendor's harness offered as a library or service sits between rung 1 and rung 2. The Claude Agent SDK runs the Claude Code binary: you control tools, hooks and permissions, not the loop or the model family. Anthropic's hosted Managed Agents is not eligible for zero data retention, one reason Harvey built its own [BV §2i, primary, checked].
     - The framework's design matters, not only the model: with the model fixed across nine frameworks, orchestration added over 60x latency (an implementation cost, not the pattern's), schema-constrained planning cut accuracy by up to 32 points through formatting failures, and a mismatched communication structure dropped coordination success from above 90% to below 30% (MAFBench, arXiv 2602.03128) [MA §8, primary, abstract].
     - Recommendation: prototype on whatever reaches a working eval fastest, then own the parts where reliability is decided: context, checks and escalation ("own your control flow," 12-factor agents) [BV §2i].
@@ -219,58 +214,66 @@ Working title: **[DECIDE]**, options in the author todo.
 
 *Close.*
 
-31. Fix problems with the cheapest change that works, and only escalate when your evals stop improving.
-    - Cheapest first: a clearer instruction before a new tool, a setting before a code change, a new tool before a new agent.
-    - The cost of going further depends on how you built: an open-source agent means merging its releases or diverging from them, as Stripe did; a framework means following its release notes; your own loop means re-tuning it as models change. In every case the harness's assumptions go stale: Anthropic's context resets "had become dead weight" one model later [BV §2i, primary].
-    - **[REVIEW]** Rewritten for clarity; please check.
+31. While you build, climb your eval with the cheapest change that works: a clearer instruction before a new tool, a setting before a code change, a new tool before a new agent.
+    - What climbing looks like: LangChain moved its agent from 52.8% to 66.5% on Terminal-Bench 2.0 by iterating on the harness alone, and warns that "Changes that overfit to a task are bad for generalization" [BV §2g, primary, checked].
+    - So climb on one set and confirm on another you never tune on; the prompt-optimisation overfitting in the self-improvement section is what happens otherwise.
+    - Each failure you fix should leave a test behind, so the climb only goes up (the silent-failures paragraph).
+    - **[REVIEW]** Rewritten after author review: this paragraph is now the development loop; upkeep after launch moved to the build-paths paragraph.
+
+32. When harness changes stop moving your eval, what is left usually needs a more capable model on your task, and you can wait for the next frontier release or make one yourself: that is rung 3.
+    - Most failure modes are of this kind: a 2026 taxonomy counts a failure as model-side when "a more capable model could have prevented it or recovered from it," and assigns 36 of 41 modes that way ("Model or Harness?", Scale AI) [BV §2g, primary, checked]. Its authors name these as "targets for post-training."
+    - Two more reasons a harness cannot fix: the token bill at your volume, and data that cannot leave your walls. The extraction fine-tune and Harvey's zero-data-retention runtime are examples [BV §2e, §2i].
+    - The teams with the most mature harnesses went on to train: Cursor trains Composer inside its production harness, Cognition trained SWE-1.5, and Fin now runs its own model and reports a higher resolution rate than with Sonnet 4.6 [ENV §2, §5; BV §2g, primary, vendor].
+    - What carries over: the eval you climbed is most of a training environment already. Hand it to rung 3 with a fresh held-out set [ENV].
+    - **[REVIEW]** New bridge paragraph after author review.
 
 ---
 
 ## Rung 3: model engineering
 
-32. At rung 3 the model is yours, which is what ML engineering meant before the generative era.
+33. At rung 3 the model is yours, which is what ML engineering meant before the generative era.
 
-33. Whether to train your own model is a live debate, and the balance shifts with each frontier release, each open model, and each new training recipe.
+34. Whether to train your own model is a live debate, and the balance shifts with each frontier release, each open model, and each new training recipe.
     - Against: 70% of production agents prompt off-the-shelf models; OpenAI closed self-serve fine-tuning to new users; prompt optimisation beats GRPO at 35x fewer rollouts [outline, verified].
     - For: Bridgewater's tuned Qwen3-235B at 84.66% against Claude Opus 4.8 at 78.2%, 13.8x cheaper to run; Harvey Tenet, +12.1 citation quality at a tenth of the cost [BV §2e, verified]. Tuning wins where the right answer is not public.
 
-34. On complex document extraction, tuned 3B and 8B models beat the strongest model our deployment allowed.
+35. On complex document extraction, tuned 3B and 8B models beat the strongest model our deployment allowed.
     - 0.92 against 0.82 on transcription fields; 0.87 against 0.55 on the full field set [BV §2e, first-hand].
     - The capability was already there; tuning bought the output contract.
 
-35. The answer depends on your data, your traffic and your budget, and my bet is that open models and the advantages of owning one are not going away.
+36. The answer depends on your data, your traffic and your budget, and my bet is that open models and the advantages of owning one are not going away.
     - Data: do you have examples or a verifier the frontier has never seen? Traffic: enough volume that a cheaper model pays back the training? Budget: can you afford to retrain as base models move?
     - **[YOU]** Confirm this directional bet is one you want to make in public.
 
-36. The cost of getting a capability into a small model keeps falling, even though GPU prices rose in 2026 and frontier teams are spending more.
+37. The cost of getting a capability into a small model keeps falling, even though GPU prices rose in 2026 and frontier teams are spending more.
     - Falling: Together cut training prices 30–70% on Sep 11 2026; a 1.5B reasoning model was RL-trained for $9 (Tina); Ai2 built a 32B coding agent at 49.5–54.2% SWE-bench Verified for $2,000 (SERA); LoRA matches full fine-tuning for RL [PT §1, primary].
     - Rising: H100 contract prices up almost 40% from October 2025 to March 2026; Fireworks and Tinker raised prices; reasoning models cost 17x more to post-train than instruct models, with 82% of compute going to experiments that do not ship [PT §1, primary].
     - **FIGURE:** reuse fig2, relabelled "cost of tuning", with the Together price updated.
 
-37. The training method follows from the signal you have: examples to imitate, preferences between answers, a stronger model to learn from, or an automatic check.
+38. The training method follows from the signal you have: examples to imitate, preferences between answers, a stronger model to learn from, or an automatic check.
     - Supervision table, four rows [EM §2]. The paragraphs that follow take them in the order a recipe uses them: imitate, prefer, reinforce, then distil.
 
-38. Supervised fine-tuning is cheap, needs surprisingly little data, and is the right tool for format and behaviour, but it memorises and can erase what the model already knew.
+39. Supervised fine-tuning is cheap, needs surprisingly little data, and is the right tool for format and behaviour, but it memorises and can erase what the model already knew.
     - 50 good examples is OpenAI's starting recommendation; s1 fine-tuned a 32B model on 1,000 reasoning traces in 26 minutes on 16 H100s [PT §2, primary].
     - Training Qwen3-8B on internal documents cut its instruction-following score from 85% to 45% (Thinking Machines) [PT §2, primary]. SFT "memorizes" while RL generalizes (Chu et al., ICML 2025).
 
-39. For agents, the examples are whole trajectories: a few thousand from a stronger model can lift a mid-size open model a long way, if they use the same tools and format as your agent.
+40. For agents, the examples are whole trajectories: a few thousand from a stronger model can lift a mid-size open model a long way, if they use the same tools and format as your agent.
     - How many: 491 trajectories gave up to 19 points on SWE-bench (SWE-Gym, 2024); about 5,000 reached 40.2% (SWE-smith, 2025); about 8,000 per repository let Ai2's SERA student match its teacher, for about $1,300 (2026) [PT, agentic SFT, primary, checked].
     - Format: SERA degrades "significantly" with "a different agent scaffold, or even subtle formatting differences"; NVIDIA trains across several harnesses for this reason [PT, agentic SFT, primary, checked].
     - Filtering: keeping only successful runs is not clearly better. NVIDIA found unfiltered data beat success-only, 12.4% to 5.06%; SERA found verification thresholds made no significant difference; masking the failed steps from the loss keeps the recovery behaviour [PT, agentic SFT, primary, checked].
     - What to screen out: the teacher's shortcuts (edited tests, git-history leaks) and anything overlapping your eval [PT, agentic SFT, primary].
     - Limits: nearly all evidence is coding and terminal work, and no public case yet builds multi-step agent training data from production logs [PT, agentic SFT].
 
-40. Preference training learns from which of two answers is better, which is often easier to collect than a written-out answer, and it is fading from frontier recipes.
+41. Preference training learns from which of two answers is better, which is often easier to collect than a written-out answer, and it is fading from frontier recipes.
     - Tülu 3's pipeline: SFT 60.6, then DPO 64.7, then RL 65.1 average; OLMo 3 found DPO before RL beat either alone [PT §2, primary].
     - A reviewer choosing between two agent outputs produces exactly this data, so an escalation queue can feed it.
     - Nemotron 3 Ultra and MiMo-V2-Flash do not use it; on-policy distillation has taken its place [PT §2].
 
-41. Reinforcement learning is for behaviour your examples never showed, and it needs an automatic check to learn from.
+42. Reinforcement learning is for behaviour your examples never showed, and it needs an automatic check to learn from.
     - RL generalizes where SFT memorises, and RL keeps prior skills better at equal gains [PT §2, primary].
     - Its cost is mostly generating attempts: the rollout generator was 87% of OLMo 3's reasoning post-training energy [PT §1, primary]. It can also peak and collapse (see self-improvement).
 
-42. If you train with RL, your environment, meaning the tasks plus the check that scores them, is the main lever you control, and the evals you built for your agent are most of one already.
+43. If you train with RL, your environment, meaning the tasks plus the check that scores them, is the main lever you control, and the evals you built for your agent are most of one already.
     - This is the RL case. For SFT the equivalent lever is which trajectories you keep (above).
     - It decides which skills improve: DeepSeek found RL on code and search alone did not help agent tasks until it added 1,827 synthetic agent environments; NVIDIA found training on one environment caused "severe regressions" elsewhere [ENV §3, primary].
     - It decides which shortcuts get learned: Claude 3.7's habit of special-casing tests "emerged as a result of 'reward hacking' during reinforcement learning training" [ENV §3, primary].
@@ -278,14 +281,14 @@ Working title: **[DECIDE]**, options in the author todo.
     - Two costs: a check built to measure must be hardened before a model optimises against it, and once you train on your eval you need a fresh one to know if you improved [ENV, verdict].
     - Limits: the base model sets the ceiling, and distillation can skip the reward entirely [ENV, verdict].
 
-43. Training several agents together is a steady research area rather than a 2026 breakthrough, and the only piece in production trains one orchestrator while the agents it calls stay fixed.
+44. Training several agents together is a steady research area rather than a 2026 breakthrough, and the only piece in production trains one orchestrator while the agents it calls stay fixed.
     - Papers combining multi-agent and RL for language models held at about 5% of LLM RL papers (199 of 3,316 in 2025; 182 of 3,471 in 2026 to late September), while titles on on-policy distillation went from 10 to 271 [MA §9, own arXiv counts, reproduced].
     - The production case: Kimi K2.5 trains only the orchestrator; "sub-agents are frozen," which "circumvents two challenges of end-to-end co-optimization: credit assignment ambiguity and training instability" [MA §9, primary, checked]. Sakana's Fugu orchestrates frontier models in production [MA §9, primary].
     - Training several models jointly, self-play and debate training remain research. The 2026 reports for Kimi K3, DeepSeek V4, Nemotron 3 and GLM-5 describe RL specialists merged by distillation, not multi-agent RL. Mainstream RL tooling added multi-agent support only in July 2026 (prime-rl) [MA §9, primary].
     - What a company can use: RL-train a small orchestrator over fixed models and tools (NVIDIA's 8B ToolOrchestra scored 37.1% on HLE against GPT-5's 35.1% at 2.5x the efficiency); train your one agent inside your real harness, subagents included; or compile a fixed multi-step workflow into a small model with SFT, where an 8B model reached 87–98% of in-context frontier quality at 128–462x lower cost per conversation, for $50–80 of training (arXiv 2605.22502) [MA §9, primary, checked].
     - The last option is the same move as the document-extraction fine-tune earlier in this rung: put the procedure in the weights of a small model you own.
 
-44. Distillation, training a small model on a stronger one, is the cheapest way to move a skill into a model you own, and the newest recipes use it to merge RL-trained specialists into one model.
+45. Distillation, training a small model on a stronger one, is the cheapest way to move a skill into a model you own, and the newest recipes use it to merge RL-trained specialists into one model.
     - Distilling beat running RL directly: 72.6 vs 47.0 on AIME for a 32B model (DeepSeek-R1). On-policy distillation, where the teacher grades the student's own attempts, matched RL at about a tenth of the GPU hours (Qwen3) [PT §2, primary].
     - Merging: train narrow specialists with RL, then distil them into one student. DeepSeek V4, Nemotron 3 Ultra (10+ teachers), MiMo-V2-Flash, Kimi K3 and GLM-5 do this; Nemotron 3 Ultra's merged model beat its own terminal-coding teacher, 54.0 vs 50.0. Papers with on-policy distillation in the title went from 10 in 2025 to 271 in 2026 by late September [PT §2, primary].
     - Anthropic's and Google's terms forbid using their models to train competing ones; Anthropic publicly named labs that ran 16M+ exchanges through fake accounts to do it [PT §2, primary]. Distil from open-weight teachers or a vendor's own distillation service.
@@ -296,34 +299,34 @@ Working title: **[DECIDE]**, options in the author todo.
 
 ## Where this is heading: self-improvement
 
-45. Self-improvement became something you could run on one GPU in March 2026, with Karpathy's autoresearch, and labs now say agents do real research work, though their leaders disagree about how fast to go.
+46. Self-improvement became something you could run on one GPU in March 2026, with Karpathy's autoresearch, and labs now say agents do real research work, though their leaders disagree about how fast to go.
     - Autoresearch: an agent edits a small model's training script in 5-minute runs and keeps what improves the loss; ~700 changes over two days, ~20 kept, cutting nanochat's time-to-GPT-2 by about 11%. His own caveat: "It's not novel, ground-breaking 'research' (yet)." And: "All LLM frontier labs will do this. It's the final boss battle." [EM §3.3c, primary]
     - Since then: OpenAI's "automated research intern" (Sept 2026) and its March 2028 target; Pachocki's call for slowdowns the same month; Jack Clark's 60% chance of autonomous self-improvement by 2028 (Aug 2026) [EM §3.1].
     - Research is itself run by teams of agents: Anthropic's automated alignment researchers are five Claude Opus 4.8 agents working in parallel for up to 48 hours, and the OpenAI evaluation behind the Hugging Face incident ran about 1,200 agents [EM §3.1, §1, primary].
 
-46. The self-improvement that runs without a human today mostly rewrites a harness or a small model's training script, while changes to a frontier model's weights still have a human starting each run.
+47. The self-improvement that runs without a human today mostly rewrites a harness or a small model's training script, while changes to a frontier model's weights still have a human starting each run.
     - AIDE², Ouroboros, Darwin Gödel Machine, Recursive, autoresearch [EM §3.2, §3.3].
     - Weight-level work is larger in the literature (280 vs 95 papers in 2026), and labs now have models running parts of their successors' training, but "Claude is not operating fully autonomously for any measured subset of AI R&D work" [EM §3.3c]. Corrected from the earlier harness-only claim.
 
-47. Today self-improvement is limited by its verifier: it improves what the check can measure, and where the check is narrow, it overfits to it.
+48. Today self-improvement is limited by its verifier: it improves what the check can measure, and where the check is narrow, it overfits to it.
     - Google's RRSI, on Harvey's legal benchmark: unregularised harness evolution scored best on the tasks it evolved against (93.0 vs a 89.4 baseline) and gained little or lost elsewhere, one method ending below baseline on APEX-Agents (31.7 vs 34.2); the regularised version gave up some of that score to gain on every other benchmark [EM §3.3b, primary].
     - Rise and collapse: RL self-training peaks then falls about 17 points [EM §3.3b].
     - Within a fixed search space, classical optimisers still beat LLM agents; a hybrid did best (Hutter et al., arXiv 2603.24647) [EM §3.3c, primary].
     - **FIGURE, maybe:** RRSI Table 1 as a small chart.
 
-48. I have seen the same overfitting in prompt optimisation on document extraction: the gain was real but small, and the optimiser kept writing more specific instructions that encoded the quirks of the set it tuned on.
+49. I have seen the same overfitting in prompt optimisation on document extraction: the gain was real but small, and the optimiser kept writing more specific instructions that encoded the quirks of the set it tuned on.
     - First-hand: GEPA-style optimisation of system prompts and instruction fragments; the over-specific prompts did worse on documents it had not seen [V, first-hand].
     - It is the same result as RRSI's, at a smaller scale: optimising a prompt or harness against one set is fitting a model, and it overfits like one.
     - **[REVIEW]** Proposed: the first-hand note becomes its own paragraph.
 
-49. If you run a self-improvement loop, treat it as training: a fixed eval it cannot edit, a held-out set it never sees, a limit on how much it can change at once, and a person approving what ships.
+50. If you run a self-improvement loop, treat it as training: a fixed eval it cannot edit, a held-out set it never sees, a limit on how much it can change at once, and a person approving what ships.
     - Autoresearch makes its data and eval read-only, so the agent can only change the training code [EM §3.3c, primary].
     - RRSI's regularisation is a budget on how many edits a candidate can bundle, pressure toward unexplored approaches, and a critic plus a pruner that remove marginal or costly changes [EM §3.3b, primary].
     - LangChain, after its harness-only gain: "Changes that overfit to a task are bad for generalization and can lead to regressions in other Tasks," with a person reviewing proposed changes [BV §2g, primary, checked].
     - Keep the checks you monitor with separate from the checks you optimise against (Cotra) [SEC §1, primary].
     - **[REVIEW]** Proposed: a practical paragraph so the section ends on what a company can do now.
 
-50. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
+51. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
     - Define the term once: a verifier, grader or eval, meaning anything automated that scores an attempt.
     - That check is what lets an agent be improved, a model be trained, and a system improve itself. Without it, none of the three can go far.
     - The market agrees: Cognition calls environment quality "the most important factor for downstream model performance," and Mercor bought an environment builder saying "the constraint has shifted to the environments themselves" [ENV §2, §1, primary, self-interested].
@@ -332,32 +335,33 @@ Working title: **[DECIDE]**, options in the author todo.
 
 ## How to decide
 
-51. Place your problem on a rung by what you own and what is failing.
+52. Place your problem on a rung by what you own and what is failing.
     - Reviewing everything means the measurement layer is missing. Unexplained downstream rework means silent errors are unpriced. Dispersed saved hours mean the workflow was never redesigned [BV §2b].
 
-52. Two numbers set the operating point at rung 2: what a silent error costs, and the coverage-versus-error curve on your own data.
+53. Two numbers set the operating point at rung 2: what a silent error costs, and the coverage-versus-error curve on your own data.
 
-53. Enter rung 3 when prompting has plateaued and you have a training signal; volume decides whether it pays, not whether it works.
+54. Enter rung 3 when prompting has plateaued and you have a training signal; volume decides whether it pays, not whether it works.
 
 ---
 
 ## Close
 
-54. The numbers in this post will date within a year, and the structure should not.
+55. The numbers in this post will date within a year, and the structure should not.
 
-55. **[YOU]** End on the failures actually witnessed and what they share: someone skipped measurement and went straight to the machinery.
+56. **[YOU]** End on the failures actually witnessed and what they share: someone skipped measurement and went straight to the machinery.
     - The prior draft's ending, trimmed [V].
 
 ---
 
 ## Reading notes
 
-- **55 paragraphs** at 150 to 200 words each gives roughly 8,000 to 11,000 words.
-- **Multi-agent, added this round:** vendor features as rung 1 (9); one agent or several, with cost against speed (18); coordination failure in the failure table (19); a second agent as checker (27); multi-agent RL in rung 3 (43); research run by teams of agents (45). Evidence in multiagent.md, including papers from your saved reading list (§8).
-- **Earlier this round:** build paths (17); failure types decided as a table (19); self-improvement grown to six paragraphs (45 to 50), with your prompt-optimisation experience as its own paragraph (48).
+- **56 paragraphs** at 150 to 200 words each gives roughly 8,000 to 11,000 words.
+- **Multi-agent, added this round:** vendor features as rung 1 (9); one agent or several, with cost against speed (18); coordination failure in the failure table (19); a second agent as checker (27); multi-agent RL in rung 3 (44); research run by teams of agents (46). Evidence in multiagent.md, including papers from your saved reading list (§8).
+- **Earlier this round:** build paths (17); failure types decided as a table (19); self-improvement grown to six paragraphs (46 to 51), with your prompt-optimisation experience as its own paragraph (49).
 - **Corrections found:** Spotify never used an AI reviewer; Uber's review figures are from 2025; "four in five wrong beliefs" added a category the paper counts as skill; MAST's 42% is v2; the Fable guidance is for Fable 5 and about skills; the small model's tool gain is points; Google's multi-agent study is 260 configurations in v3; on-policy distillation titles are now 271 in 2026; the old draft's 4 to 220x prefill figure is real but the 220x is one outlier.
-- **First-hand passages:** rung 1 context setup (10), context (21), graders that are wrong (30), the extraction fine-tune (34), prompt optimisation overfitting (48). Rung 1's result is open; see the author todo.
+- **First-hand passages:** rung 1 context setup (10), context (21), graders that are wrong (30), the extraction fine-tune (35), prompt optimisation overfitting (49). Rung 1's result is open; see the author todo.
 - **Material left out on purpose:** most survey statistics, most RSI papers, the full case-study table, most security frameworks, the older silent-failure cases, most code-review studies, most multi-agent and MARL papers, the internal Research Swarm notes. It stays in the notes.
-- **Proposed, please check:** build paths (17) and one agent or several (18); self-improvement at six paragraphs (45 to 50).
-- **Decisions to settle before drafting:** title (options at the top); whether the old paragraph 9 comes back as its own paragraph (8); the open-models bet (35); the rung 2 close (31); rung 1 result (15, optional).
+- **Proposed, please check:** build paths (17) and one agent or several (18); self-improvement at six paragraphs (46 to 51).
+- **Decided:** title, How to Customize Agents, and When to Own Them.
+- **Decisions to settle before drafting:** whether the old paragraph 9 comes back as its own paragraph (8); the open-models bet (36); the rung 2 close (31) and the new bridge to rung 3 (32); rung 1 result (15, optional).
 - **Weakest evidence, say so in the prose:** over-escalation's cost to people is modelled, not measured (19, 28); no public study compares an in-house agent with a vendor agent on the same work (16); AI review's effect on production defects is unmeasured (12); most multi-agent cost and speed figures are vendor self-reports (18).
