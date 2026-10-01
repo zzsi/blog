@@ -1,0 +1,146 @@
+---
+title: "WORKING TITLE: three rungs"
+date: 2026-09-12
+categories: [ai, agents, llm, ml systems, engineering]
+description: "Outline, superseded by skeleton.md and the article in index.qmd."
+format:
+  html:
+    toc: true
+    toc-depth: 2
+---
+
+<!-- OUTLINE ONLY. Nothing here is prose yet. Target: 7,000-8,000 words.
+     Prior draft: version20260912.md (11,400 words, audited, voice-passed).
+     Reusable material is flagged [REUSE] with its source section. -->
+
+## The spine
+
+Three rungs, defined by **what you own**. The dependency framing is the criterion; the engineering names are the labels.
+
+| Rung | What you own | What is the vendor's | Name | Service line |
+|---|---|---|---|---|
+| 1 | The integration | The agent and the model | Integration and adoption | Enablement, integration |
+| 2 | The harness | The model | Harness engineering | Engineering |
+| 3 | The weights | Nothing you depend on | Model engineering | Fine-tuning, RL, serving |
+
+- At rung 1 you deploy a **vendor's agent** against your systems.
+- At rung 2 you build **your own agent** on a vendor's model.
+- At rung 3 the **model is yours** too.
+
+This settles the MCP question. A server connecting a vendor agent to your data is rung 1. The same server inside an agent you built is rung 2. What moved is ownership of the harness, not the server.
+
+**Rung 1 deliberately has no engineering name.** It is integration plus guardrails plus enablement plus workflow, and the last two are organisational. That is where HMT lives. An engineering label would hide it.
+
+**Say once in the post:** model engineering means engineering the model itself, weights and serving. Choosing which vendor model to route to is rung 2. Model engineering is what ML engineering meant before the generative era, so rung 3 is not new work, it is old work coming back.
+
+**Two levels of structure, one rule.** Rungs, defined by what you own. Layers inside each, defined by where you intervene. The rule, stated once and applied everywhere: take the cheapest reversible step that clears your eval, escalate when it plateaus. It is not a third level. The word "fractal" does not appear.
+
+---
+
+## 1. Opening (~350 words)
+
+- Demos look good in week one; the hard part starts at production contact. [REUSE: opening]
+- **An agent is a model working inside a system.** When it fails, the cause could be the model, the context someone filled, the tools someone wired, the workflow it was dropped into, or the check that was meant to catch the mistake. The post exists to help locate it. **Do not strawman "everyone blames the model."** Across generations the model does dominate; within a tier it usually does not; either way the instinct skips the diagnosis.
+- Thesis: the useful question is **what you own**, and the answer decides what you build and what you are on the hook for.
+- Name the three rungs. One line each. No ladder metaphor beyond this.
+- **Three sentences for the reader arriving with a different frame.** This is build versus buy with two things to buy, the agent and the model. Prompting and retrieval live inside rung 2. Autonomy is a dial, not a rung: how far you let any system run unsupervised is set by what a silent error costs, not by how sophisticated the system is.
+
+## 2. What each rung buys (~450 words)
+
+*Front-loaded and high level. The promise, not the proof. Each rung section below delivers the concrete version, so this must stay short or it will duplicate them.*
+
+- **Rung 1 buys individual throughput and the precondition for everything above.** Scales with headcount, stops when hiring stops.
+- **Rung 2 buys a dependable process that scales with volume.** 70% is a demo; 95% at a known cost per run is a process. This is where most teams find most of the margin available to them.
+- **Rung 3 buys a different cost structure, a moat, and capability the frontier lacks.** Capability is the durable one. Cost advantage erodes as prices fall.
+- One honest line on the evidence: most of this rests on self-reported survey data, so treat direction as solid and specific multiples as directional. [REUSE: caveat para, compressed]
+- **RULE FOR DRAFTING: no figure here, no tables, no more than one number per rung.** The J-curve and the detail belong in the rung sections.
+- **Candidate for the one idea an executive carries out:** you cannot price an agent without pricing its silent errors. The same agent on the same documents is a million-dollar saving or a loss, decided by a number that sits outside the AI system. And reliability pays *more* where the stakes are higher, because it unlocks coverage you could not previously afford. [SOURCE: business-value.md 2b]
+
+## 3. Why the rung is the right unit (~450 words)
+
+- Most frameworks organize by technique. NVIDIA lists nine, prompting through GRPO, ordered by cost. Useful, but it starts at prompting and has nothing to say about the work before that.
+- The externalization literature reads the field's history as weights, then context, then harness. That is the *field's* direction of travel and the **inverse** of a client's: a client goes harness first and weights last.
+- What a client actually decides is what to depend on. That is the rung.
+- **OPEN QUESTION: is this section needed, or does it belong in a footnote?**
+
+## 4. Rung 1: integration and adoption (~1,200 words)
+
+*This is the differentiated section. No other framework has it.*
+
+- **What it buys:** individual throughput, and the precondition for everything above. Scales with headcount, stops when hiring stops.
+- **Layer: access and integration.** Wrapping systems of record so an agent can reach them. MCP in practice. Permissions, allowlists, sandboxing, audit. In a regulated environment this is the largest engineering lift on the roadmap and it is still rung 1. [REUSE: effort-and-rung-are-independent]
+- **Layer: the workflow itself.** McKinsey's strongest correlate of EBIT impact, stronger than any technology factor tested, is whether the organization redesigned the workflow the agent operates in. [REUSE: survey para] This is where governance, adoption, and cultural change live.
+- **Generalise beyond documents.** The signature is high volume of per-item decisions, a confidence signal, a human fallback, and a silent error that costs more than an escalation. Claims, medical coding, moderation, underwriting, AP, support deflection. Fraud inverts it: there the miss is the silent side. Whichever side is invisible eats the return. [SOURCE: business-value.md 2c]
+- **Layer: guardrails and blast radius.** Permissions, allowlists, sandboxing, audit trails, injection resistance. You cannot let a team point an agent at real systems without this, which is what makes it rung 1 rather than an afterthought. Capability benchmarks test almost none of it, so leaderboard scores say nothing here. [REUSE: the orphaned guardrails para from the anti-pattern gallery, promoted]
+- **Regulation puts a floor under escalation.** EU AI Act Article 14 requires a person can override or stop a high-risk system, and two people must confirm biometric identification. Annex III covers credit, insurance underwriting, employment and essential services, the same domains where silent errors cost most. Dates are December 2027 and August 2028, not the August 2026 that secondary sources still repeat. [SOURCE: business-value.md 2c]
+- **Note the escalation, briefly:** guardrails recur higher up. Testing injection resistance is rung 2 measurement work; owning the whole safety stack is rung 3, since quantization and tuning can move refusal behavior. Mention once, do not build a section on it.
+- **Layer: literacy.** Task selection, trust versus verify, security hygiene.
+- **The honest limit, and the best argument in the post.** Rung 1 value is real and dispersed. An hour a day across a hundred people is 23,000 hours a year, and you cannot bank an eighth of a person a hundred times over. If no role changes, the P&L shows the agent spend added and nothing removed. That is why high adoption does not become enterprise impact, and why workflow redesign is the strongest correlate of profit impact: redesign is what converts dispersed hours into a removed cost. [SOURCE: business-value.md 2b, gap 2]
+- **Everyone starts here.** Do not claim most organisations *are* here; we have no data for where they currently sit. What the evidence does support is that the pilot-to-production dip lives at the rung 1 to rung 2 boundary. [REUSE, reworded]
+- **[NEEDS: a first-hand story. The enablement program is the obvious source.]**
+
+## 5. Rung 2: harness engineering (~2,800 words)
+
+*The breadth-and-depth section. Your agent, the vendor's model.*
+
+- **What it buys:** a dependable process that scales with volume. 70% is a demo; 95% at a known cost per run is a process. [REUSE]
+- **Where the confidence score comes from.** The whole three-outcome model rests on separating a correct answer from a confidently wrong one. Build confidence from agreement across heterogeneous components and deterministic validators, not from asking one model how it feels. Calibration needs ground truth, but only a few hundred labels, and **the escalation queue is the labelling pipeline** you are already paying for. That reframes early over-escalation from waste into investment. [SOURCE: business-value.md 2d]
+- **Layer: measurement.** Lead with the three outcomes: correct and confident, escalated, and confidently wrong. The third is invisible in the metric teams track and it decides the economics. Worked legal-extraction example: the same agent saves $1.08M a year or loses $90K depending only on what a silent error costs. [SOURCE: business-value.md 2b] Then three-level evals and the verifier-fails-in-two-directions story. Where the bottleneck actually sits is contested, and you cannot tell which reading applies to you without measuring. [REUSE: relocated bottleneck para] Verifiers fail in two directions. [REUSE: first-hand verifier story]
+- **Layer: context.** Context rot, compaction, memory, multi-turn sharding. [REUSE + first-hand Memento/schema-compaction para]
+- **Where retrieval went.** Say it once for the reader who knows RAG: retrieval did not disappear, it became something the agent does rather than something you do to the agent. Agentic search, memory stores, code over a filesystem are all retrieval with the agent as the retriever. That is why it is a harness concern and not a pipeline. [REUSE: 150k-to-2k result, Databricks memory result]
+- **Layer: capability.** Tools, skills, code execution. The 150k-to-2k result. Extend rather than replace defaults, because defaults are co-trained. [REUSE]
+- **Layer: coordination.** Single agent, subagents, multi-agent. The four-condition test for what you deploy on purpose. [REUSE]
+- **Then the Hugging Face incident, because coordination also emerges.** In a sanctioned July 2026 eval, ~1,200 agents turned a leaky package cache into a message board, invented mailboxes, decision conventions, and cryptographic signing after catching each other spoofing, divided labour, and ~700 went on to attack Hugging Face, which they knew was out of scope. Nobody designed any of it. The harness question becomes what shared state exists and what agents can write to it, and guardrails and coordination turn out to be one layer at scale. [SOURCE: emerging.md §1, METR primary]
+- **Layer: model selection and routing.** Which brain, and traffic shaping. Still not owning weights. [REUSE parts of Layer 4]
+- **The rule, stated once for the whole post:** take the cheapest reversible step that clears your eval bar, escalate when it plateaus. The line between configuring and owning is the supported extension surface, not the file boundary. [REUSE: compressed classification test]
+- **Owning harness internals lands here, not at rung 3** — you still depend on the same model. Carries maintenance, revalidation, upgrade tax. [REUSE: harness branch]
+- **The rung 1 / rung 2 line is whether the harness is yours.** Configuring a vendor agent, however elaborately, is rung 1. The moment you own the loop, the memory, the compaction policy, or the tool-calling mechanism, you are at rung 2 and you carry it on every upgrade.
+
+## 6. Rung 3: model engineering (~1,800 words)
+
+- **State the received view first.** In 2026 the standard advice is not to fine-tune, and it has evidence: 70% of production agents prompt off-the-shelf models [VERIFIED 2512.04123], OpenAI closed self-serve fine-tuning to new users in May 2026 [VERIFIED], prompt optimisation beats GRPO on several agentic tasks at 35x fewer rollouts [VERIFIED, GEPA], and facts belong in retrieval while stable form belongs in weights. Acknowledge it before departing from it, or a reader who holds it assumes you have not heard it. **Drop** the old draft's claim that enterprise surveys showed declining fine-tuning returns; no primary source survived.
+- **Name the discipline.** This is ML engineering as it was understood before the generative era: training signal, tuning method, serving. Not new work. Old work coming back, with cheaper entry.
+- **What it buys:** a different cost structure at volume, a moat, and capability the frontier lacks. Capability is the durable one; cost advantage erodes. [REUSE]
+- **The wins, with Bridgewater as the headline.** Qwen3-235B tuned to 84.66% against Claude Opus 4.8 at 78.2%, 29.8% fewer mistakes, 13.8x cheaper to run, on judgment the frontier could never have seen. Then our extraction result as the first-hand one. Then the eight on OpenAI's page, stated as one source. [SOURCE: business-value.md 2e]
+- **The pattern:** every strong win is on tacit or proprietary judgment, never on general capability. That is what "capability the frontier lacks" means, and it also says where rung 3 does not pay. [SOURCE: 2e]
+- **The cost fell by an order of magnitude.** Managed fine-tuning $8.00/M training tokens in 2023 to $0.48/M in 2026; GRPO from seven GPUs to one; trainer cost overlapped to near zero. So the gate is learnable signal and plateau, not budget. [SOURCE: 2e, all verified]
+- **Say the evidence base is narrow:** one vendor page, one platform's flagship customer, one paper, and us. More credible than pretending otherwise.
+- **Three destinations, not two.** Hosted APIs, self-hosted untuned, self-hosted tuned. Destination 2 is a legitimate place to stop. [REUSE]
+- **Layer: training signal.** Demonstrations, **preference pairs**, a teacher, or a verifier. The entry ticket gates you where budget cannot. Add the preference-pairs row to the supervision table; it is the natural output of an escalation queue when a reviewer picks A over B. [REUSE: supervision table + emerging.md §2]
+- **Post-training is multi-stage, and the step after RL is distillation.** SFT for format, preference optimisation for alignment, verifiable-reward RL for reasoning, then **multi-teacher on-policy distillation**: RL-train several domain specialists cheaply and in parallel, then merge them into one student on its own rollouts. Used by DeepSeek V4 and Nemotron 3 Ultra. **Do not write "DPO after RL."** [SOURCE: emerging.md §2, MOPD paper]
+- **The client point:** you no longer need one RL run that succeeds across every domain at once. Three narrow verifiable tasks become three small teachers and one student. Decompose, verify each piece, compose. Same shape as the whole post. [SOURCE: emerging.md §2]
+- **Layer: method.** SFT, distillation, RLVR. SFT to format, RL to generalize. [REUSE]
+- **Layer: serving.** Quantization, batching, brain-swap eval gates. [REUSE]
+- **The eval becomes the environment.** Why rung 2's measurement work is the entry ticket to rung 3. [REUSE]
+- **RSI deserves more than a closing beat; it is the fastest-moving part of the post.** Three things to carry. (1) Labs are declaring milestones: OpenAI's automated research intern, 3.1 agent-workdays per human workday, automated researcher targeted for March 2028; Anthropic's alignment agents beating human researchers within six hours on benchmarked failures; Recursive raising $650M to build it. (2) Most shipping self-improvement is **harness** self-improvement, not weights, so RSI's leading edge is rung 2. (3) Insiders disagree in public: OpenAI's chief scientist calls for slowdowns the same month as the milestone. Date every claim. (4) The 2026 research makes it a **regularisation** problem: Google's RRSI shows unregularised harness self-evolution overfitting to its evolve set, which is Harvey's legal benchmark, while losing on held-out ones, and rise-and-collapse shows RL self-training peaking then falling by about 17 points. Same problems ML engineering always had, one level up. [SOURCE: emerging.md §3, §3.3b]
+- **Then the limit case: recursive self-improvement.** An agent that rewrites its own code and keeps what wins on hidden evals found seven improvements in an 8-day autonomous run and matched or beat human-engineered baselines on all four held-out benchmarks. The same month, agents given unpublished papers to extend produced work the original authors rejected. The line between the two is exact: RSI works as far as a verifier reaches and stops where the judge is a human. That is the post's verifier thesis at its limit, and it is the closing move for rung 3. One caution from the same result: reward hacking fell from 55% to 32%, not to zero. [SOURCE: emerging.md §3]
+- **[REUSE: first-hand extraction fine-tune story — the strongest evidence in the post]**
+- **Honest gate:** plateau plus a learnable signal. Volume decides the economics, not whether the technique applies. [REUSE]
+
+## 7. How to decide (~600 words)
+
+- The gates per rung, in one place.
+- What leaders should measure while this happens. [REUSE: staged metrics]
+- **OPEN QUESTION: does this duplicate the per-rung gates above?**
+
+## 8. Close (~400 words)
+
+- What survives the churn: three things, not eight. [REUSE: trimmed close]
+- End on judgment, from the failures actually witnessed. [REUSE: new ending]
+
+---
+
+## Figures
+
+- fig3 J-curve — **probably replace.** Two stronger candidates: (a) cost per document against coverage, three curves for three silent-error costs, showing the optimum move from 90% to 30%; (b) the same curve shifting as the agent improves, showing coverage unlocked. Both come straight from business-value.md 2b and both show a mechanism rather than asserting a shape. Reuse the coverage-vs-error style from the doc AI post.
+- fig1 price of capability — rung 3.
+- fig2 cost of customization — rung 3. **Rename: "cost of tuning".**
+- **NEW, maybe:** the three-level diagram (rungs / layers / escalation).
+
+## Open questions to settle before drafting
+
+1. ~~Guardrails: layer or thread?~~ **SETTLED: a rung-1 layer.** Infrastructure lives there; its escalation gets one sentence, not a section.
+2. ~~Business value: distributed or front-loaded?~~ **SETTLED: both.** High-level map in section 2, concrete proof inside each rung. The risk is duplication, so section 2 is capped at 450 words and carries no figure.
+3. **OPEN: does rung 1 have enough first-hand material for 1,200 words?** Only you know. If not, it drops to ~700 and the framework-comparison section absorbs the difference.
+4. **OPEN: keep section 3, or footnote it?** It earns its place only if the weights-context-harness inversion is genuinely news to the reader.
+5. **OPEN: title.** Settle last.
