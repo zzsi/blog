@@ -214,7 +214,9 @@ Title: **How to Customize Agents, and When to Own Them** (decided).
 31. The tests you use to judge the agent can themselves be wrong, passing bad work and failing good work.
     - "Tests" here means your own evals and graders: the automated checks that decide pass or fail.
     - Public benchmarks: 61.1% of SWE-bench samples flagged for tests that reject valid solutions; SWE-bench Pro graders 8.5% false positive, 24% false negative [V, audited].
-    - First-hand: loose checks agents slipped past, strict ones that failed correct answers [V].
+    - First-hand, from a small local eval suite used while building custom agents: some checks were loose enough that the agent could pass without solving the task, and some heuristic checks failed valid solutions [author].
+    - One concrete too-strict case from the run log (June 2026): a check that banned certain commands also scanned the agent's memory notes, so a run failed for writing down the very constraint it was obeying. Limiting the check to commands the agent actually ran fixed it [author's repo, run log and commit]. **[YOU]** OK to describe this publicly?
+    - Do not carry over the old draft's unconfirmed details: "most of the bugs I found were not in the agents," agents editing tests to pass, and "spend a day tuning a prompt." The forbidden-path lists in the repo were there from the first commit, as a precaution, not added after an incident [checked against the repo].
 
 *Close.*
 
@@ -319,15 +321,14 @@ Title: **How to Customize Agents, and When to Own Them** (decided).
     - **FIGURE, maybe:** RRSI Table 1 as a small chart.
 
 50. I have seen the same overfitting in prompt optimisation on document extraction: the gain was real but small, and the optimiser kept writing more specific instructions that encoded the quirks of the set it tuned on.
-    - First-hand: GEPA-style optimisation of system prompts and instruction fragments; the over-specific prompts did worse on documents it had not seen [V, first-hand].
-    - It is the same result as RRSI's, at a smaller scale: optimising a prompt or harness against one set is fitting a model, and it overfits like one.
+    - First-hand: GEPA-style optimisation of system prompts and instruction fragments; the over-specific prompts did worse on documents it had not seen. It is RRSI's result at a smaller scale: optimising a prompt or harness against one set is fitting a model, and it overfits like one [V, first-hand].
     - **[REVIEW]** Proposed: the first-hand note becomes its own paragraph.
 
-51. If you run a self-improvement loop, treat it as training: a fixed eval it cannot edit, a held-out set it never sees, a limit on how much it can change at once, and a person approving what ships.
-    - Autoresearch makes its data and eval read-only, so the agent can only change the training code [EM §3.3c, primary].
-    - RRSI's regularisation is a budget on how many edits a candidate can bundle, pressure toward unexplored approaches, and a critic plus a pruner that remove marginal or costly changes [EM §3.3b, primary].
-    - LangChain, after its harness-only gain: "Changes that overfit to a task are bad for generalization and can lead to regressions in other Tasks," with a person reviewing proposed changes [BV §2g, primary, checked].
-    - Keep the checks you monitor with separate from the checks you optimise against (Cotra) [SEC §1, primary].
+51. If you run a self-improvement loop, keep it from grading itself: it must not edit its own test or see the held-out set, it should change little at a time, and a person approves what ships.
+    - Protect the scorecard: autoresearch makes its data and eval read-only, so the agent can only change the training code [EM §3.3c, primary]; keep the checks you monitor with separate from the checks you optimise against (Cotra) [SEC §1, primary].
+    - Change little at a time: RRSI's regularisation is a budget on how many edits a candidate can bundle, pressure toward unexplored approaches, and a critic plus a pruner that remove marginal or costly changes [EM §3.3b, primary].
+    - A person approves: LangChain suggests human review of proposed harness changes to catch overfitting [BV §2g, primary, paraphrased].
+    - Answers the author's question: this is broader than leakage. Two parts keep the evaluation clean (no editing it, no peeking at the held-out set); the other two slow the drift (small changes, human approval). The LangChain overfitting quote moved out because the rung 2 close already uses it.
     - **[REVIEW]** Proposed: a practical paragraph so the section ends on what a company can do now.
 
 52. **Short coda.** For a company, the lasting asset is a good automatic check for its own work: domain-specific evals and RL environments that can say whether an attempt succeeded.
