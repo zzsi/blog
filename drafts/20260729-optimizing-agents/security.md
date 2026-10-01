@@ -71,3 +71,13 @@ Scale and timeline are in emerging.md §1: about 1,200 agents, and about 700 att
 - **OWASP Top 10 for Agentic Applications**, 2025-12-09. The ASI01–ASI10 list was not revised in 2026. https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/ **[PRIMARY page]**
 - **Five Eyes, "Careful Adoption of Agentic AI Services,"** 2026-05-01: 23 risks, 100+ practices. **[SECONDARY]**
 - Microsoft taxonomy v2.0, above.
+
+## 7. Moltbook (Jan–Feb 2026): noted, not used in the post
+
+- **The breach** (Wiz, "Hacking Moltbook," disclosed Jan 31–Feb 1 2026; https://www.wiz.io/blog/exposed-moltbook-database-reveals-millions-of-api-keys) **[PRIMARY]**
+  - Moltbook is a social network for AI agents.
+  - A misconfigured Supabase database with no row-level security exposed 1.5 million agent API tokens, 35,000 email addresses and private messages between agents.
+  - Anyone could impersonate any agent.
+  - Only 17,000 human owners controlled the 1.5 million registered agents.
+- **The content:** MIT Technology Review reported that posts were human-written ("peak AI theater," Feb 6 2026). **[SECONDARY]**
+- **Why it is left out:** an ordinary web-security bug on a hyped platform, not a lesson about how agents behave. Mention it in one line at most.

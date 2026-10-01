@@ -251,3 +251,29 @@ LLM terms = `(abs:LLM OR abs:LLMs OR abs:"language model" OR abs:"language model
   - RL-train a small orchestrator over fixed models and tools, if you have outcome rewards;
   - train your one agent inside your real harness, subagents included.
 - **Lab work:** joint multi-policy training, zero-data self-play, debate training.
+
+## 10. Letting agents organise themselves (research round 2026-10-01, arXiv API and HN Algolia)
+
+The evidence splits on model strength, and on what the team is compared against.
+- **For: "Drop the Hierarchy and Roles"** (arXiv 2603.28990, Mar 30 2026) **[PRIMARY, abstract]**
+  - Setup: 25,000 tasks, 8 models, 4–256 agents.
+  - With minimal scaffolding (a fixed turn order), "agents spontaneously invent specialized roles, voluntarily abstain from tasks outside their competence, and form shallow hierarchies."
+  - Result: the hybrid protocol "outperforms centralized coordination by 14% (p<0.001)."
+  - Model strength matters: "strong models self-organize effectively, while models below a capability threshold still benefit from rigid structure."
+  - The authors' advice: "give agents a mission, a protocol, and a capable model -- not a pre-assigned role."
+- **Against: "Multi-Agent Teams Hold Experts Back"** (2602.01011): self-organising teams fail to match their best member, losing up to 41.1%. **[PRIMARY, abstract]**
+- **Against: "The Illusion of Multi-Agent Advantage"** (2606.13003, Jun 2026): "automatic MAS consistently underperform CoT-SC despite being up to 10x more expensive"; "expert-architected MAS consistently outperforms automatically generated architectures"; automated design "produce[s] architectural bloat." **[PRIMARY, abstract]**
+- **Against: the MoltBook archive** (2603.03555): 2.73M interactions among 90,704 agents. It finds "severe coordination overhead in decentralized task resolution (Cohen's d = -0.88 against a single-agent baseline)." **[PRIMARY, abstract]**
+- **Production versions:**
+  - Kimi trains its orchestrator to decide how many sub-agents to spawn (§9).
+  - Cursor uses recursive planners (§5).
+  - TheBotCompany (2603.25928) has manager agents "hire, assign, and retire worker agents"; it reports no comparison numbers in the abstract.
+- **Unplanned self-organisation:** the OpenAI evaluation behind the Hugging Face incident (emerging.md §1).
+
+## 11. Open-source agents and frameworks: popularity (GitHub API, 2026-10-01)
+
+Stars:
+- **Agents:** OpenClaw 391K, Hermes Agent (Nous Research) 251K, OpenCode 211K, Codex CLI 128K, Pi 111K, Gemini CLI 107K, OpenHands 90K, Cline 70K, Goose (Block) 55K, Aider 49K.
+- **Frameworks:** CrewAI 59K, LangGraph 43K, OpenAI Agents SDK 30K.
+
+Stars measure attention, not production use. On use, LangGraph leads both the production survey (25% of framework users) and PyPI downloads (§2i in business-value.md). **Goose is the least known of the agents, so cite it only as Stripe's fork.**
