@@ -169,6 +169,8 @@ Only one thing changes across these three cases: what a confidently wrong extrac
 
 **[CORRECTION 2026-10-01]** An earlier version of this table labelled 30% as the cheapest coverage for the $3,000 case and gave its result as the optimum. Recomputing from the model's own inputs (error rate 0.5% at 10% coverage, 0.8% at 30%, 1.5% at 50%, 10% at 90%, 14% at 100%) puts the $3,000 optimum at 10% coverage, saving $240K, which matches the reliability table below. The $90K loss is what happens one notch past the optimum. Corrected claim: the same agent's best operating point moves from 90% coverage to 10%, and its savings fall from $1.08M to $240K, purely because of a number that sits outside the AI system; pushing coverage past the optimum turns the saving into a loss.
 
+**[CORRECTION 2026-10-13]** The correction above was itself wrong. The model also allows 0% coverage, a person reviewing every form, which costs $12.30 a form ($0.30 for the attempt plus $12 for the review). At 10% coverage the cost is $12.60 ($0.30 + 0.9 × $12 + 0.1 × 0.5% × $3,000). So at $3,000 an error the optimum is 0% coverage, saving $270K a year, not 10% and $240K. The article now says this. The $3,000 row of the reliability table below and the line "today's agent can be trusted with 10% of documents" predate this correction: today's agent should not handle any documents alone at $3,000 an error.
+
 ### The metric everyone tracks is dangerous on its own
 
 "Amount of human intervention" is the natural business metric and it is the visible one. Optimising it means driving coverage up, which drives outcome 3 up with it. Push coverage to 100%:
