@@ -1,6 +1,20 @@
 on:
   push:
     branches: main
+    # Only rebuild when something the site renders changes; drafts/, examples/ and docs/ are not rendered.
+    paths:
+      - index.qmd
+      - about.qmd
+      - posts/**
+      - _quarto.yml
+      - styles.css
+      - profile.jpg
+      - .github/workflows/quarto_publish.yml
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: true
 
 name: Render and Publish
 
