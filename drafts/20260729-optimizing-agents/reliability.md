@@ -154,7 +154,7 @@ Researched 2026-09-28. [PRIMARY] read in full text or company page; [PRIMARY-abs
 - **Ask or Assume, arXiv 2603.26233. [PRIMARY]** Claude Sonnet 4.5 on SWE-bench Verified: 70.8% with the full issue, 54.8% with details hidden.
 - **DriftBench, arXiv 2604.28031. [PRIMARY-abs]** Models restate a constraint they are violating at the same moment: 8–99% across 7 models.
 - **Compaction**: recurrent compression increases blocked actions and repeated exploration (arXiv 2608.06503, preliminary) [PRIMARY]; models "cannot reliably tell when their own context is rotting" (arXiv 2606.23525) [PRIMARY-abs]. Context management mostly prevents overflow and its benefit shrinks as windows grow (arXiv 2609.20804) [PRIMARY].
-- **Memory**: the best model detects a silently invalidated memory only 55.2% of the time (STALE, arXiv 2605.06527) [PRIMARY-abs].
+- **Memory**: the best model (Gemini-3.1-pro) reaches only 55.2% overall accuracy on implicitly invalidated memories (STALE, arXiv 2605.06527) [PRIMARY]. That is the average of noticing, rejecting a stale premise and applying the update, not a detection rate; corrected 2026-10-16, see research/memory-and-skills-2026.md.
 - **Anthropic, harness design for long-running apps, Mar 24 2026. [PRIMARY]** Sonnet 4.5 showed "context anxiety," wrapping up early near its believed limit; with Opus 4.5 context resets could be dropped entirely.
 - **The o3 64.1% example** is now ICLR 2026, but the models (o3, GPT-4.1, Claude 3.7, Gemini 2.5) are unchanged. Replace it.
 
