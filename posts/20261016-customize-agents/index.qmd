@@ -9,8 +9,6 @@ format:
     toc-depth: 2
 ---
 
-<!-- Review copy for comments and edits: https://claude.ai/code/artifact/b3bcc840-b1d6-4b44-889e-15f5275c454b (Claude Docs). This file is the source; review edits are synced back here and committed. -->
-
 ## TL;DR
 
 - Off-the-shelf agents make people faster, but the business gains only when the work is redesigned around them.
