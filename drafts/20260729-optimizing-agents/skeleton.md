@@ -256,7 +256,7 @@ Title: **How to Customize Agents, and When to Own Them** (decided).
     - **FIGURE:** reuse fig2, relabelled "cost of tuning", with the Together price updated.
 
 39. The training method follows from the signal you have: examples to imitate, preferences between answers, a stronger model to learn from, or an automatic check.
-    - Supervision table, four rows [EM §2]. The paragraphs that follow take them in the order a recipe uses them: imitate, prefer, reinforce, then distil.
+    - Supervision table, four rows [EM §2]. The paragraphs that follow take them in the order a recipe uses them: imitate, prefer, reinforce, then distill.
 
 40. Supervised fine-tuning is cheap, needs surprisingly little data, and is the right tool for format and behaviour, but it memorises and can erase what the model already knew.
     - 50 good examples is OpenAI's starting recommendation; s1 fine-tuned a 32B model on 1,000 reasoning traces in 26 minutes on 16 H100s [PT §2, primary].
@@ -295,8 +295,8 @@ Title: **How to Customize Agents, and When to Own Them** (decided).
 
 46. Distillation, training a small model on a stronger one, is the cheapest way to move a skill into a model you own, and the newest recipes use it to merge RL-trained specialists into one model.
     - Distilling beat running RL directly: 72.6 vs 47.0 on AIME for a 32B model (DeepSeek-R1). On-policy distillation, where the teacher grades the student's own attempts, matched RL at about a tenth of the GPU hours (Qwen3) [PT §2, primary].
-    - Merging: train narrow specialists with RL, then distil them into one student. DeepSeek V4, Nemotron 3 Ultra (10+ teachers), MiMo-V2-Flash, Kimi K3 and GLM-5 do this; Nemotron 3 Ultra's merged model beat its own terminal-coding teacher, 54.0 vs 50.0. Papers with on-policy distillation in the title went from 10 in 2025 to 271 in 2026 by late September [PT §2, primary].
-    - Anthropic's and Google's terms forbid using their models to train competing ones; Anthropic publicly named labs that ran 16M+ exchanges through fake accounts to do it [PT §2, primary]. Distil from open-weight teachers or a vendor's own distillation service.
+    - Merging: train narrow specialists with RL, then distill them into one student. DeepSeek V4, Nemotron 3 Ultra (10+ teachers), MiMo-V2-Flash, Kimi K3 and GLM-5 do this; Nemotron 3 Ultra's merged model beat its own terminal-coding teacher, 54.0 vs 50.0. Papers with on-policy distillation in the title went from 10 in 2025 to 271 in 2026 by late September [PT §2, primary].
+    - Anthropic's and Google's terms forbid using their models to train competing ones; Anthropic publicly named labs that ran 16M+ exchanges through fake accounts to do it [PT §2, primary]. Distill from open-weight teachers or a vendor's own distillation service.
     - For a client: three narrow tasks can become three small teachers and one student.
     - Merges the old distillation and specialist-merging paragraphs, placed after RL.
 

@@ -1,0 +1,48 @@
+---
+title: "How to Customize Agents: The 5-Minute Version"
+date: 2026-10-16
+categories: [ai, agents, llm, ml systems, engineering]
+description: "The short version of How to Customize Agents, and When to Own Them: three ways to customize an agent, what each one buys, and why an eval built from your own tasks tells you when to go deeper."
+---
+
+*This is the short version of [How to Customize Agents, and When to Own Them](../20261016-customize-agents/index.qmd), which has the full evidence and more examples.*
+
+Agents keep making the news. In September 2025, MIT's CRESt [found a better fuel-cell catalyst](https://news.mit.edu/2025/ai-system-learns-many-types-scientific-information-and-runs-experiments-discovering-new-materials-0925) after more than 900 experiments, and this September about 10,000 of OpenAI's agents [settled the Navier–Stokes problem](https://www.quantamagazine.org/ai-has-solved-one-of-maths-1-million-millennium-prize-problems-20260908/), one of the Millennium Prize problems. Then you try an agent in your day-to-day work, and it does not work nearly as well. It keeps needing you to steer it, and it tends to say it is done when it is not.
+
+Why the difference? Part of it is the model and the compute behind it. The rest is that the results in both problems could be checked automatically, and each agent ran inside a system built around that check: robots made and tested the catalysts CRESt proposed, and a proof checker, Lean, confirmed every step of the proof OpenAI's agents wrote. Most business work is not like that. No program can tell you whether a contract summary left out the clause that matters, or whether a support reply actually solved the customer's problem.
+
+So you may need a lot of customization before an agent works reliably for you: the context and tools it needs, automated checks wherever the work allows them, and people to check the rest. Which customizations pay off, and when should you stop buying and start building your own agents or models? I sort the options into three layers, from the outside in.
+
+![](../20261016-customize-agents/fig-layers-rings.svg){fig-alt="Three nested rings: integration and adoption on the outside, the harness in the middle, the model at the core. Each layer you own takes you closer to the model."}
+
+## Layer 1: connect an off-the-shelf agent
+
+You start with Claude Code or Codex and connect it to your tools, your company knowledge and your instruction files. People get faster, and review becomes the bottleneck: across 22,000 developers in 2026, Faros found [median review time up fivefold](https://www.faros.ai/research/ai-acceleration-whiplash). AI reviewers and LLM judges can help as a first pass, but Cloudflare says its own AI reviewer ["isn't a replacement for human code review, at least not yet"](https://blog.cloudflare.com/ai-code-review/).
+
+Faster people do not make a faster business on their own. Across more than 400 companies, DX found AI usage up 65% while median pull-request throughput rose only [7.76%](https://getdx.com/report/ai-and-engineering-velocity-a-longitudinal-analysis/). The gains come from redesigning the work. In a [2026 randomized trial of 515 startups](https://sites.insead.edu/facultyresearch/research/doc.cfm?did=75343), all had the same AI tools, and some, picked at random, were also shown how other firms had reorganized their work around AI. Those firms earned 1.9 times the revenue.
+
+## Layer 2: build your own agent
+
+Off-the-shelf agents are built to work beside a person. Stripe built its own agent for unattended work, because off-the-shelf local coding agents are ["optimized for working through code changes as a companion to engineers"](https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents-part-2). It now merges more than 1,300 of its agent's pull requests a week, none containing human-written code, and a person reviews each one before it merges. Ramp's own background agent writes about [30% of merged pull requests](https://builders.ramp.com/post/why-we-built-our-background-agent) in its frontend and backend repositories. You keep renting the model and own everything around it, the harness: what the agent sees at each step, the tools it can reach, the workflow between model calls, and the checks on its work.
+
+Much of that work is reliability. A [2026 Scale AI paper](https://arxiv.org/abs/2607.28802) sorts 41 kinds of agent failure by where each starts, and by my reading, a harness can prevent or limit 27 of them. Most failed runs go wrong because the agent acts on a wrong belief about the task, even when it has the context it needs. A [July 2026 study](https://arxiv.org/abs/2607.09510) traced the decisive mistake in more than a thousand failed terminal-agent runs: in 58% of them, the agent had the information it needed, or could have checked it, and did not use it. In the same study, a quarter of failed runs claimed success with fake evidence. So check the claimed result itself, not the agent's account of it. A second agent can do this checking: Shopify's security harness has a second agent, on a different model, write and run tests against each finding, and the tests decide. And check your checks, because they can pass bad work and fail good work.
+
+How much of the process to hand the agent depends on how bad an uncaught mistake could get, and who is accountable for it. At an invoice-factoring company I worked with, a purchase cannot be undone. We first agreed on what counts as a bad outcome, then replayed past invoices to see what the model would have bought at each level of automation. Next it ran on live invoices in stages, each signed off by the people who answer for credit losses. In a randomized test on 1% of invoices, disputes fell across all invoices in the test group. My reading is that people spent less time on easy invoices and more on risky ones.
+
+## Layer 3: own the model
+
+Sooner or later, harness changes hit diminishing returns on your eval. You can wait for the next frontier release, or own the model. The first thing to try is running an open-weight model as it is, on your own infrastructure. So far, only a minority of teams do this. Whether it pays depends on your traffic, and keeping GPUs busy requires solid chops in [distributed systems](https://vllm-project.github.io/2026/09/29/disaggregated-serving-guide.html).
+
+Training your own model can pay off when the right answer is in your proprietary data. Bridgewater and Thinking Machines tuned an open Qwen3 model that beat Claude Opus 4.8, the best frontier model they tested, on six financial-judgment tasks, at [13.8 times lower cost to run](https://thinkingmachines.ai/news/learning-to-replicate-expert-judgment-in-financial-tasks/). My colleagues and I have repeatedly seen small open models, fine-tuned on our own examples, beat frontier models on narrow tasks. The entry price keeps falling, too: a 1.5B reasoning model was RL-trained [for $9](https://arxiv.org/abs/2504.15777).
+
+What you can train depends on the signal you have:
+
+- **Examples:** supervised fine-tuning teaches format and behavior, but it can erase what the model already knew. Thinking Machines trained Qwen3-8B on internal documents and watched its instruction-following score [fall from 85% to 45%](https://thinkingmachines.ai/blog/on-policy-distillation/).
+- **An automatic check:** reinforcement learning. If you built an eval for your agent, you already have its tasks and a first version of its verifier. Harden the verifier before you train against it, because the model learns whatever shortcuts it allows.
+- **A stronger model:** on-policy distillation, where the teacher grades the student's own attempts, matched RL at about a tenth of the GPU hours in [Qwen3's report](https://arxiv.org/abs/2505.09388).
+
+## The eval is what lasts
+
+Most numbers in this post will date within a year. What lasts is the eval: a set of real tasks, and an automatic check that scores each attempt. The same check measures the agent, decides at run time which outputs go to a person, becomes the reward when you train your own models, and is the target that a self-improving loop climbs. In Andrej Karpathy's [autoresearch](https://github.com/karpathy/autoresearch), an agent keeps a change to a training script only if validation loss improves, and it cannot edit the data or the eval. A narrow eval misleads, though. An automatic prompt optimizer I used in the style of [GEPA](https://arxiv.org/abs/2507.19457) kept writing instructions that encoded the quirks of its training data, and those prompts did worse on documents it had not seen.
+
+Yet in [one 2026 survey](https://www.langchain.com/state-of-agent-engineering), only about half of teams tested their agents against a fixed set of tasks. The headline agents worked where results could be checked automatically. A business needs to build those checks where it can. Before you add the next tool, decide how you will know the agent got it right.

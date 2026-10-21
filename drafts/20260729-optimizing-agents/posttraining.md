@@ -64,7 +64,7 @@ Research round, 2026-09-28. **[PRIMARY]** vendor page, paper or official post re
 - Google Gemini API terms: "You may not use the Services to develop models that compete with the Services." [PRIMARY]
 - OpenAI terms: 403; recalled clause not verified. **Confirm before quoting.**
 - Anthropic, Feb 23 2026, "Detecting and preventing distillation attacks": DeepSeek, Moonshot and MiniMax ran 16M+ exchanges through ~24,000 fraudulent accounts. Anthropic: "Distillation is a widely used and legitimate training method"; these campaigns broke its terms. [PRIMARY]
-- **Practical reading:** distil from open-weight teachers, or through a vendor's own distillation product.
+- **Practical reading:** distill from open-weight teachers, or through a vendor's own distillation product.
 
 ## Summary table
 

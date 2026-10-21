@@ -247,7 +247,7 @@ LLM terms = `(abs:LLM OR abs:LLMs OR abs:"language model" OR abs:"language model
 **For a company training its own agent**
 - **Usable now:**
   - compile a fixed workflow into a small model with SFT (cheapest);
-  - distil traces from your multi-agent system into one model;
+  - distill traces from your multi-agent system into one model;
   - RL-train a small orchestrator over fixed models and tools, if you have outcome rewards;
   - train your one agent inside your real harness, subagents included.
 - **Lab work:** joint multi-policy training, zero-data self-play, debate training.
