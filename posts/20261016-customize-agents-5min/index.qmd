@@ -2,7 +2,7 @@
 title: "How to Customize Agents: The 5-Minute Version"
 date: 2026-10-16
 categories: [ai, agents, llm, ml systems, engineering]
-description: "The short version of How to Customize Agents, and When to Own Them: three ways to customize an agent, what each one buys, and why an eval built from your own tasks tells you when to go deeper."
+description: "October 2026 version"
 ---
 
 *This is the short version of [How to Customize Agents, and When to Own Them](../20261016-customize-agents/index.qmd), which has the full evidence and more examples.*
