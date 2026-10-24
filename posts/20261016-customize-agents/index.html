@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="dcterms.date" content="2026-10-16">
-<meta name="description" content="Three ways to customize agents, sorted by what you own: the integration, the agent, or the model. What each one buys, where it stops paying, and how to tell which one your problem needs.">
+<meta name="description" content="October 2026 version">
 
 <title>How to Customize Agents, and When to Own Them – Blog</title>
 <style>
@@ -118,7 +118,7 @@ ul.task-list li input[type="checkbox"] {
       <h1 class="title">How to Customize Agents, and When to Own Them</h1>
                   <div>
         <div class="description">
-          Three ways to customize agents, sorted by what you own: the integration, the agent, or the model. What each one buys, where it stops paying, and how to tell which one your problem needs.
+          October 2026 version
         </div>
       </div>
                           <div class="quarto-categories">
@@ -159,7 +159,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#connecting-data-tools-and-knowledge" id="toc-connecting-data-tools-and-knowledge" class="nav-link" data-scroll-target="#connecting-data-tools-and-knowledge">Connecting data, tools and knowledge</a></li>
   <li><a href="#instruction-files-and-skills-procedural-memory" id="toc-instruction-files-and-skills-procedural-memory" class="nav-link" data-scroll-target="#instruction-files-and-skills-procedural-memory">Instruction files and skills: procedural memory</a></li>
   <li><a href="#review-and-governance" id="toc-review-and-governance" class="nav-link" data-scroll-target="#review-and-governance">Review and governance</a></li>
-  <li><a href="#turning-use-into-business-gains" id="toc-turning-use-into-business-gains" class="nav-link" data-scroll-target="#turning-use-into-business-gains">Turning use into business gains</a></li>
+  <li><a href="#turning-adoption-into-business-gains" id="toc-turning-adoption-into-business-gains" class="nav-link" data-scroll-target="#turning-adoption-into-business-gains">Turning adoption into business gains</a></li>
   </ul></li>
   <li><a href="#layer-2-harness-engineering" id="toc-layer-2-harness-engineering" class="nav-link" data-scroll-target="#layer-2-harness-engineering">Layer 2: harness engineering</a>
   <ul class="collapse">
@@ -249,8 +249,8 @@ ul.task-list li input[type="checkbox"] {
 <p>A pain point I hear from many people: the more code agents write, the more people have to review. Across 22,000 developers in 2026, Faros found <a href="https://www.faros.ai/research/ai-acceleration-whiplash">median review time up fivefold</a>. Spotify’s answer is <a href="https://engineering.atspotify.com/2026/6/code-with-claude-coding-is-no-longer-the-constraint">“auto-merging what’s safe, focusing review where it matters most”</a>. Many teams add an AI reviewer to CI, or an LLM judge that scores output against a rubric, and either can help as a first pass. Anthropic says that after it added its AI reviewer, the share of pull requests getting substantive review comments rose <a href="https://claude.com/blog/code-review">from 16% to 54%</a>. Cloudflare’s AI reviewer costs about a dollar a review, and the company says it <a href="https://blog.cloudflare.com/ai-code-review/">“isn’t a replacement for human code review, at least not yet”</a>. Independent studies are less flattering. Developers adopt AI review suggestions <a href="https://arxiv.org/abs/2603.15911">less often</a> than human ones, and on 2026 benchmarks AI reviewers catch roughly <a href="https://arxiv.org/abs/2603.26130">15 to 31%</a> of the issues human reviewers flag. So far I have found no controlled study showing that AI review reduces the bugs that reach production.</p>
 <p>What an agent may access and what it may spend can be settled in code. Intercom’s <a href="https://ideas.fin.ai/p/how-we-use-claude-code-today-at-intercom">permission hook</a> sorts the shell commands people approved over the past two weeks into green (safe), yellow (caution) and red (never run without asking), and from then on lets the agent run the green ones on its own. Uber shows engineers a <a href="https://www.uber.com/us/en/blog/efficient-software-factory/">live cost counter</a>, alerts them as they near their expected spend, and defaults reasoning effort to medium. Weekly users grew sevenfold while its total AI spend “relatively stabilized”. The harder question is organizational, and no benchmark measures it: who may use which agent on which data, and who signs off on what it does. Regulation is heading the same way. The EU AI Act’s <a href="https://artificialintelligenceact.eu/article/14/">Article 14</a> requires that a person can oversee, override and stop high-risk systems, with obligations phasing in from December 2027.</p>
 </section>
-<section id="turning-use-into-business-gains" class="level3">
-<h3 class="anchored" data-anchor-id="turning-use-into-business-gains">Turning use into business gains</h3>
+<section id="turning-adoption-into-business-gains" class="level3">
+<h3 class="anchored" data-anchor-id="turning-adoption-into-business-gains">Turning adoption into business gains</h3>
 <p>For technical leaders, getting people to use agents is one problem and turning that adoption into business gains is another. Across more than 400 companies, DX found AI usage up 65% while median pull-request throughput rose only <a href="https://getdx.com/report/ai-and-engineering-velocity-a-longitudinal-analysis/">7.76%</a>, and in a survey of nearly 6,000 executives, <a href="https://www.nber.org/papers/w34836">89% reported no impact on labor productivity</a>. My reading is that two things keep the gains from being realized. First, the work moves downstream: faster coding feeds review, testing and deployment, which did not speed up. In the Faros data, developers completed more tasks, but there were <a href="https://www.faros.ai/research/ai-acceleration-whiplash">more incidents per pull request and fewer deployments a week</a>. Second, saved time adds nothing unless someone puts it to other use. <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai">McKinsey’s survey</a> points the same way: redesigning how the work gets done was more closely tied to profit from AI than anything else it measured, technology included.</p>
 <p>Does redesigning the work cause the gains, or do companies that redesign just do better anyway? A <a href="https://sites.insead.edu/facultyresearch/research/doc.cfm?did=75343">2026 randomized trial of 515 startups</a> tested this. All had the same AI tools, and some, picked at random, were also shown how other firms had reorganized their work around AI. Those firms found 44% more uses for AI, completed 12% more tasks and earned 1.9 times the revenue, and their demand for staff did not change. The authors conclude that “discovering where and how to deploy AI is a key bottleneck”. A <a href="https://www.gsb.stanford.edu/faculty-research/publications/human-ai-accounting-early-evidence-field">2026 study of accountants</a> shows what the process change can look like. On an AI accounting platform serving 79 small and mid-sized firms, accountants who used the AI more spent less time on routine data entry and more on client communication and quality checks, and their books closed faster at month end. Accountants stepped in mainly when the AI’s confidence score was low.</p>
 <p>An education company in a <a href="https://digitaleconomy.stanford.edu/app/uploads/2026/03/EnterpriseAIPlaybook_PereiraGraylinBrynjolfsson.pdf">2026 Stanford study of 51 AI deployments</a> stopped having its subject experts write course material. They now review AI drafts instead, which the company says saved millions. Its engineers saved 20 to 30% of their time with coding assistants, and the company spent that time on its product backlog instead of cutting staff.</p>
@@ -424,7 +424,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="how-to-decide" class="level2">
 <h2 class="anchored" data-anchor-id="how-to-decide">How to decide</h2>
-<p>To decide where to invest, start from what you see. The table below maps common symptoms to what they usually mean and what to work on, and the diagram after it walks through which layer to work at.</p>
+<p>In practice, you rarely start by picking a layer. You start from a problem you can see, such as a review queue that never shrinks or a token bill that keeps growing. The table maps common ones to what they usually mean and what to work on, and the flowchart after it shows which layer that work belongs to.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -467,7 +467,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>The token bill dominates at your volume</td>
 <td>The unit cost is the problem</td>
-<td>Cache the repeated part of each prompt, route steps to cheaper models and trim context first. If volume is high, distill into a smaller model you run</td>
+<td>Route steps to cheaper models and trim context first. If volume is high, distill into a smaller model you run</td>
 </tr>
 </tbody>
 </table>
